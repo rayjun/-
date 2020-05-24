@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><title>Git 高阶教程 [ 芜园 ]</title><link rel="stylesheet" href="/css/grassland.css"><script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css"><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script><meta name="generator" content="Hexo 4.2.1"></head><body><div class="menu-outer"><a class="blog-name" href="/">芜园</a><nav class="menu-inner"><a class="menu" href="/">首页</a><a class="menu" href="/archives">归档</a></nav></div><div class="content">     <div class="content-left"><div class="content-inne"><article class="post"><h1>Git 高阶教程</h1><p>在之前的两篇文章中，详细介绍了 Git 的入门和 Git 的底层数据结构。在掌握了 Git 的基本命令后，基本就可以使用 Git 进行版本管理了。</p>
+<p>当然，如果你需要将 Git 使用的更强大以及更有效率。那么你就需要这篇文章。</p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/git/git-flow.png" alt=""></p>
+<p>上图是 Git 的关键流程流转图，本文内容按照 Git 的关键流程进行。</p>
+<h3>本地操作</h3>
+<p>在将修改的内容提交到远程仓库之前，我们所有的操作都在暂存区、工作区以及本地仓库之中进行。</p>
+<p>首先我们先来理解一下分支和 HEAD。HEAD 通常执行<strong>当前分支</strong>的最后一次提交。也就是说 HEAD 指向<strong>本地仓库</strong>的<strong>最新提交</strong>。</p>
+<p><strong>比较工作区和暂存区的文件差异</strong>：</p>
+<p>比较所有文件:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git diff</span><br></pre></td></tr></table></figure></p>
+<p>比较单个文件:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git diff -- filename</span><br></pre></td></tr></table></figure></p>
+<p><strong>比较暂存区和 HEAD 的文件差异</strong>：</p>
+<p>比较所有文件：
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git diff --cached</span><br></pre></td></tr></table></figure></p>
+<p>或者</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git diff --staged</span><br></pre></td></tr></table></figure></p>
+<p>比较单个文件:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git diff --cached -- filename</span><br></pre></td></tr></table></figure></p>
+<p><strong>让暂存区恢复成与 HEAD 一样</strong></p>
+<p>恢复所有文件:
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git reset HEAD</span><br></pre></td></tr></table></figure></p>
+<p>恢复部分文件:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git reset HEAD -- filenames</span><br></pre></td></tr></table></figure></p>
+<p><strong>让工作区的文件恢复为暂存区一样</strong></p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span>   git checkout -- filename</span><br></pre></td></tr></table></figure></p>
+<p><strong>缓存暂存区和工作区的内容</strong></p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git stash</span><br></pre></td></tr></table></figure></p>
+<p>恢复并且保留缓存</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git stash apply</span><br></pre></td></tr></table></figure></p>
+<p>恢复并且删除缓存</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git stash pop</span><br></pre></td></tr></table></figure></p>
+<p><strong>隔离不需要纳入到版本管理的文件</strong></p>
+<p>通过创建 .gitignore 文件，该文件中存储不需要纳入到版本管理的文件名称，可以使用正则表达式。</p>
+<p><strong>从 HEAD 中删除文件</strong></p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git rm filename</span><br></pre></td></tr></table></figure></p>
+<p><strong>查看不同 commit 的指定文件的差异</strong></p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git diff commit1 commit2  -- filename</span><br></pre></td></tr></table></figure></p>
+<p><strong>查看不同分支的指定文件的差异</strong></p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git diff branch1 branch2 -- filename</span><br></pre></td></tr></table></figure></p>
+<p><strong>修改最新的 commit 的 message</strong></p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git commit --amend</span><br></pre></td></tr></table></figure></p>
+<p><strong>修改旧的 commit 的 message</strong></p>
+<p>parentCommitId 是指要修改的 commit 的上一次 commit的哈希值。</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git rebase -i parantCommitId</span><br></pre></td></tr></table></figure></p>
+<p>进入交互式界面后修改 pick 为 reward，然后修改 commit 的 message。</p>
+<p><strong>合并连续的 commit</strong></p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git rebase -i parantCommitId</span><br></pre></td></tr></table></figure></p>
+<p>进入交互式界面后把需要合并的commit 的 pick 修改为 squash，然后合并 commit。</p>
+<p>**删除最近几次 commit **</p>
+<p>强制回到某一次 commit，该 commit 之后的 commit 会小时，commitId 为该commit 的哈希值。
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git reset --hard  commitId</span><br></pre></td></tr></table></figure></p>
+<p><strong>查看 Git 的提交历史</strong></p>
+<p>查看所有的提交历史:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git log</span><br></pre></td></tr></table></figure></p>
+<p>下面的命令表示查看最近的三次提交:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git log -n3</span><br></pre></td></tr></table></figure></p>
+<p>所有的 commit 只展示一行数据:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git log --oneline</span><br></pre></td></tr></table></figure></p>
+<p>图形化展示提交记录:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git log --graph</span><br></pre></td></tr></table></figure></p>
+<p>上述的命令都可以组合使用。</p>
+<h3>多人协作环境</h3>
+<p><strong>不同的人修改了相同文件的不同区域或者不同的文件</strong>:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git merge otherBranch</span><br></pre></td></tr></table></figure></p>
+<p><strong>不同的人修改了相同文件的相同区域</strong></p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git pull</span><br></pre></td></tr></table></figure></p>
+<p>然后进行手动解决冲突。解决冲突后提交修改</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git commit -am"Resolved conflict"</span><br></pre></td></tr></table></figure></p>
+<p><strong>变更了文件名，并且其他人基于文件做出了修改</strong></p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git pull</span><br></pre></td></tr></table></figure></p>
+<p><strong>不同的人修改同一文件的文件名</strong></p>
+<p>手动处理，选择其中一个文件名，然后解决冲突，提交。</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git commit -am"Resolved conflict"</span><br></pre></td></tr></table></figure></p>
+<p><strong>集成分支</strong></p>
+<p>禁止向集成分支进行 git push -f
+集成分支不能进行 git rebase 操作（修改历史）</p>
+<p>(完)</p>
+<p><strong>参考文献:</strong></p>
+<ol>
+<li>https://github.com/progit/progit2</li>
+<li>https://git-scm.com/docs</li>
+</ol>
+</article><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><div id="gitalk-container"></div><script type="text/javascript">$(function() {
+ var gitalk = new Gitalk({
+     clientID: 'f2fb4cd28b5a49eb236e',
+     clientSecret: 'e67e321141db91e098ac2cc695f2c9df5b7b2769',
+     id: decodeURI(window.location.pathname),
+     repo: 'comments',
+     owner: 'rayjun',
+     admin: 'rayjun'
+ })
+ gitalk.render('gitalk-container')
+}());
+ </script></div></div><div class="content-right"><div class="content-box"><div class="wechat"><div class="header"><h3>微信公众号</h3></div><img src="/images/wechat.jpeg"></div></div></div></div><div class="bottom-outer"><div class="bottom-inner"><span>© 2020</span><span> ray </span><br></div></div><script src="/js/grassland.js"></script></body></html>

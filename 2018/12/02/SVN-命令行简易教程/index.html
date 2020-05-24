@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><title>SVN 命令行简易教程 [ 芜园 ]</title><link rel="stylesheet" href="/css/grassland.css"><script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css"><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script><meta name="generator" content="Hexo 4.2.1"></head><body><div class="menu-outer"><a class="blog-name" href="/">芜园</a><nav class="menu-inner"><a class="menu" href="/">首页</a><a class="menu" href="/archives">归档</a></nav></div><div class="content">     <div class="content-left"><div class="content-inne"><article class="post"><h1>SVN 命令行简易教程</h1><h3>SVN 基础概念</h3>
+<p>SVN 是一种版本管理系统(VCS)，VCS 可以完成以下的事：</p>
+<ul>
+<li>
+<p>允许多人同时在一个项目中工作</p>
+</li>
+<li>
+<p>不会重写每个人的修改</p>
+</li>
+<li>
+<p>可以保持每个版本的全部历史</p>
+</li>
+</ul>
+<p>VCS 可以分为中心化版本控制系统和分布式版本控制系统，SVN 属于中心化的版本控制系统。</p>
+<p><strong>SVN 的相关概念</strong>:</p>
+<ul>
+<li>仓库：SVN 只有一个仓库，就是中心仓库，所有人的提交都会提交到这里</li>
+<li>主干：trunk，这里存放项目代码或相关文件</li>
+<li>标签：tags 用于标示项目中呗命名的快照</li>
+<li>分支：用于创建项目的一个一个分支，可以在新的分支上继续工作，一个项目可以有多个分支</li>
+<li>工作副本：将项目从仓库拉取到本地之后，就是一个工作副本</li>
+</ul>
+<h3>SVN 命令行操作</h3>
+<p>svn 在使用的过程中主要包括如下的过程:</p>
+<h4>从仓库获取阶段</h4>
+<p><strong>从仓库检出代码</strong>：
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn checkout svn://gitee.com/XXX/svn_test_items --username=leijun19930412@sina.com</span><br></pre></td></tr></table></figure></p>
+<p><strong>查看 SVN 信息</strong>:
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn info</span><br></pre></td></tr></table></figure></p>
+<p><strong>查看提交历史</strong>:
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn log</span><br></pre></td></tr></table></figure></p>
+<p><strong>从仓库更新代码</strong>：
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn update</span><br></pre></td></tr></table></figure></p>
+<h4>工作副本阶段</h4>
+<p><strong>查看工作副本状态</strong>:
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn status</span><br></pre></td></tr></table></figure></p>
+<p><strong>查看文件变化</strong>:
+可以查看单个文件和单个文件夹的变化，也可以查看整个项目的变化。
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn diff</span><br></pre></td></tr></table></figure></p>
+<p><strong>添加全部新增文件</strong>:
+会忽略 svn.ignore 的文件，也可以只添加单独的文件和目录
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn add . --force</span><br></pre></td></tr></table></figure></p>
+<p><strong>添加文件或者目录到 ignore</strong>:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn propset svn:ignore fileOrdir ./</span><br></pre></td></tr></table></figure></p>
+<p><strong>解除项目的ignore</strong>:
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn add fileOrDir --no-ignore</span><br></pre></td></tr></table></figure></p>
+<p><strong>放弃文件的修改</strong>：
+如果想放弃某个文件的修改
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn revert hello.c</span><br></pre></td></tr></table></figure></p>
+<p>如果想放弃整个目录的修改:
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn revert -R dir</span><br></pre></td></tr></table></figure></p>
+<p>如果想放弃整个项目的修改:
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn revert -R .</span><br></pre></td></tr></table></figure></p>
+<p><strong>解决文件冲突</strong>:</p>
+<ul>
+<li>将代码与仓库同步</li>
+</ul>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn update</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>查看冲突的文件</li>
+</ul>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn status</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>手动合并被标示为 C 的文件</li>
+<li>然后解决冲突</li>
+</ul>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn resolve --accept=working filename</span><br></pre></td></tr></table></figure></p>
+<p><strong>新建tag</strong>:
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn copy --revision=version(版本号) trunk/ tags/tag_name</span><br></pre></td></tr></table></figure></p>
+<p><strong>分支</strong>:
+新建分支:
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn copy trunk branches/branch_name</span><br></pre></td></tr></table></figure></p>
+<p>合并分支:
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn merge  brancjes/branch_name</span><br></pre></td></tr></table></figure></p>
+<h4>提交更改阶段</h4>
+<p><strong>提交文件的修改</strong>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> svn commit -m "Update"</span><br></pre></td></tr></table></figure></p>
+</article><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><div id="gitalk-container"></div><script type="text/javascript">$(function() {
+ var gitalk = new Gitalk({
+     clientID: 'f2fb4cd28b5a49eb236e',
+     clientSecret: 'e67e321141db91e098ac2cc695f2c9df5b7b2769',
+     id: decodeURI(window.location.pathname),
+     repo: 'comments',
+     owner: 'rayjun',
+     admin: 'rayjun'
+ })
+ gitalk.render('gitalk-container')
+}());
+ </script></div></div><div class="content-right"><div class="content-box"><div class="wechat"><div class="header"><h3>微信公众号</h3></div><img src="/images/wechat.jpeg"></div></div></div></div><div class="bottom-outer"><div class="bottom-inner"><span>© 2020</span><span> ray </span><br></div></div><script src="/js/grassland.js"></script></body></html>

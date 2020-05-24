@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><title>linux系列-deamon详解 [ 芜园 ]</title><link rel="stylesheet" href="/css/grassland.css"><script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css"><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script><meta name="generator" content="Hexo 4.2.1"></head><body><div class="menu-outer"><a class="blog-name" href="/">芜园</a><nav class="menu-inner"><a class="menu" href="/">首页</a><a class="menu" href="/archives">归档</a></nav></div><div class="content">     <div class="content-left"><div class="content-inne"><article class="post"><h1>linux系列-deamon详解</h1><h3>daemon 与 service</h3>
+<p>在 Linux 系统中，常驻在内存中，提供一些系统或者网络功能的程序就称之为 service，而这个运行的程序我们就称之为 daemon。
+实际上，这两个概念没有必要分得那么清楚，这两个名称只是在不同角度的不同的称谓， service 是在系统角度来看的， daemon 则是
+在程序的角度上来看的。</p>
+<p>在这篇文章中，我们主要详细介绍一下常规 daemon 的详细配置以及开机启动配置，在后续的文章中，我会详细介绍 deamon。</p>
+<h3>deamon 的启动脚本与启动方式</h3>
+<p>deamon 程序通常是由一个脚本来启动，在启动 deamon 的时候，脚本会完成以下的工作:</p>
+<ul>
+<li>环境的侦测</li>
+<li>配饰文件的分析</li>
+<li>PID 文件的放置</li>
+<li>以及给程序运行过程中相关的文件上锁</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>作用</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>/etc/init.d/*</td>
+<td>启动脚本放置的地方</td>
+<td></td>
+</tr>
+<tr>
+<td>/etc/sysyconfig/*</td>
+<td>各服务的初始化环境配置文件</td>
+<td></td>
+</tr>
+<tr>
+<td>/etc/xinetd.conf /etc/xinted.d/*</td>
+<td>super deamon</td>
+<td></td>
+</tr>
+<tr>
+<td>/etc/*</td>
+<td>各服务各自的配置文件</td>
+<td></td>
+</tr>
+<tr>
+<td>/var/lib/*</td>
+<td>各服务器产生的数据库</td>
+<td></td>
+</tr>
+<tr>
+<td>/var/run/*</td>
+<td>各服务的程序的 PID 文件目录</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>所以在启动后台程序的时候，可以使用 /etc/init.d/* 里面的脚本来完成 deamon 程序：</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/syslog start</span><br><span class="line"></span><br><span class="line">/etc/init.d/syslog restart</span><br><span class="line"></span><br><span class="line">/etc/init.d/syslog stop</span><br></pre></td></tr></table></figure></p>
+<p>这是启动的一个方法，还可以利用其他的方法来完成以上的功能，那就是 service 程序，service 本身
+其实也是一个脚本，最后实际调用的还是 /etc/init.d/* 中的脚本。</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">service syslog start</span><br><span class="line"></span><br><span class="line">service syslog restart</span><br><span class="line"></span><br><span class="line">service syslog stop</span><br></pre></td></tr></table></figure></p>
+<h3>chkconfig 管理系统服务是否默认启动</h3>
+<p>当我们的 deamon 程序的脚本加入到 /etc/init.d/ 中后，我们就可以通过 chkconfig 命令很好的将这些程序
+管理起来，比如将一些 deamon 程序配置成开机启动。</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chkconfig  [--level [0123456]] [服务名称] [on|off]</span><br></pre></td></tr></table></figure></p>
+<p>上面的命令就可以让某个服务在特定的运行等级下默认启动或者默认不启动。</p>
+</article><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><div id="gitalk-container"></div><script type="text/javascript">$(function() {
+ var gitalk = new Gitalk({
+     clientID: 'f2fb4cd28b5a49eb236e',
+     clientSecret: 'e67e321141db91e098ac2cc695f2c9df5b7b2769',
+     id: decodeURI(window.location.pathname),
+     repo: 'comments',
+     owner: 'rayjun',
+     admin: 'rayjun'
+ })
+ gitalk.render('gitalk-container')
+}());
+ </script></div></div><div class="content-right"><div class="content-box"><div class="wechat"><div class="header"><h3>微信公众号</h3></div><img src="/images/wechat.jpeg"></div></div></div></div><div class="bottom-outer"><div class="bottom-inner"><span>© 2020</span><span> ray </span><br></div></div><script src="/js/grassland.js"></script></body></html>

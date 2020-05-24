@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><title>构建可扩展 Web 应用的 7 个阶段 [ 芜园 ]</title><link rel="stylesheet" href="/css/grassland.css"><script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css"><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script><meta name="generator" content="Hexo 4.2.1"></head><body><div class="menu-outer"><a class="blog-name" href="/">芜园</a><nav class="menu-inner"><a class="menu" href="/">首页</a><a class="menu" href="/archives">归档</a></nav></div><div class="content">     <div class="content-left"><div class="content-inne"><article class="post"><h1>构建可扩展 Web 应用的 7 个阶段</h1><p>这是一篇<a href="http://highscalability.com/blog/2008/9/23/the-7-stages-of-scaling-web-apps.html" target="_blank" rel="noopener">译文</a>。文章分享了构建一个可扩展 Web 应用的 7 个通用步骤。文章有点老，但是观点不过时。</p>
+<hr>
+<p>John Engales 是 Rackspace（一家云计算公司）的 CTO。他说一个表现良好的网站通常要经历以下 7 个阶段：</p>
+<p><strong>阶段 1</strong>
+刚开始：使用简单的架构，系统复杂度很低，没有冗余。只使用防火墙、负载均衡器、一对web服务器、数据库服务器和内部存储。</p>
+<p><strong>阶段 2</strong>
+基本上没有什么变化，只是规模会更大。</p>
+<p><strong>阶段 3</strong>
+痛苦的开始：媒体曝光度增加。开始使用反向代理，缓存静态资源，继续使用负载均衡和更多的数据库，并且开始重构代码。</p>
+<p><strong>阶段 4</strong>
+痛苦加剧：开始 memcached 进行缓存，数据的写入和复制都太耗时，要开始对数据库进行分区，对有些内容进行共享存储，对数据库进行重大的架构调整。</p>
+<blockquote>
+<p>现在用 memcached 的少， redis 用的更多了</p>
+</blockquote>
+<p><strong>阶段 5</strong>
+真的痛苦：重新思考整个应用架构，比如根据用户地理位置来进行区分等等，需要创建用户集群，使用哈希计算来确定用户属于哪个集群。</p>
+<blockquote>
+<p>这句话里面的信息量比较大，既可以说是在请求的分发阶段，也可以包括数据的存储阶段。</p>
+</blockquote>
+<p><strong>阶段 6</strong>
+痛苦开始少了一些了：已经有了可扩展的应用和数据库的架构，可以接受的性能，开始在系统里面添加新的功能，并且优化一些代码，规模还在增长但是依然可控。</p>
+<p><strong>阶段 7</strong>
+进入未知区域：剩下的瓶颈是什么（算力，空间，带宽，CDN，防火墙，负载均衡，存储，人力，进度，数据库），所有的鸡蛋还在一个篮子里（单个数据中心，单个数据备份）。</p>
+</article><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><div id="gitalk-container"></div><script type="text/javascript">$(function() {
+ var gitalk = new Gitalk({
+     clientID: 'f2fb4cd28b5a49eb236e',
+     clientSecret: 'e67e321141db91e098ac2cc695f2c9df5b7b2769',
+     id: decodeURI(window.location.pathname),
+     repo: 'comments',
+     owner: 'rayjun',
+     admin: 'rayjun'
+ })
+ gitalk.render('gitalk-container')
+}());
+ </script></div></div><div class="content-right"><div class="content-box"><div class="wechat"><div class="header"><h3>微信公众号</h3></div><img src="/images/wechat.jpeg"></div></div></div></div><div class="bottom-outer"><div class="bottom-inner"><span>© 2020</span><span> ray </span><br></div></div><script src="/js/grassland.js"></script></body></html>
