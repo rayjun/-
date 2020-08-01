@@ -213,18 +213,67 @@
 <p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xlog:gc*=info:file=gc.log:hostname,level,uptime,tags</span><br></pre></td></tr></table></figure></p>
 <p>常用的 GC 日志参数如下：</p>
 <h3>GC日志参数</h3>
-<p>| JDK8 | JDk9 Or Later | 备注 |
-|------|---------------+------|
-|-XX:+PrintGC |	-Xlog:gc|	打印 GC 信息|
-|-XX:+PrintGCDeatils |	-Xlog:gc*|	打印 GC 详细信息|
-|-XX:+PrintGCTimeStamps|	uptime| 装饰器	打印 GC 过程中具体的时间戳|
-|-XX:+PrintHeapAtGC|	-Xlog:gc+heap=trace|	打印 GC 前后堆的详细信息|
-|-XX:+PrintGCApplicationStoppedTime|	-Xlog:safepoint|	打印 GC 期间程序暂停的时间|
-|-XX:+PrintGCApplicationConcurrentTime|	-Xlog:safepoint|	打印 GC 前，程序未中断的执行时间|
-|-Xloggc:filename |	-Xlog:gc:file=gc.log|	GC 日志的保存为文件，默认为项目根目录|
-|-XX:+PrintTenuringDistribution|	-Xlog:gc+age*=trace|	查看对象存在于新生代所经历 Minor GC 次数的阈值|
-|-XX:PrintReferenceGC|	-Xlog:gc+ref*=debug|	打印软引用、弱引用、虚引用和Finallize队列|
-|-XX:+PrintTLAB|	-XX:+PrintTLAB|	打印 TLAB 信息|</p>
+<table>
+<thead>
+<tr>
+<th>JDK8</th>
+<th>JDk9 Or Later</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-XX:+PrintGC</td>
+<td>-Xlog:gc</td>
+<td>打印 GC 信息</td>
+</tr>
+<tr>
+<td>-XX:+PrintGCDeatils</td>
+<td>-Xlog:gc*</td>
+<td>打印 GC 详细信息</td>
+</tr>
+<tr>
+<td>-XX:+PrintGCTimeStamps</td>
+<td>uptime</td>
+<td>装饰器	打印 GC 过程中具体的时间戳</td>
+</tr>
+<tr>
+<td>-XX:+PrintHeapAtGC</td>
+<td>-Xlog:gc+heap=trace</td>
+<td>打印 GC 前后堆的详细信息</td>
+</tr>
+<tr>
+<td>-XX:+PrintGCApplicationStoppedTime</td>
+<td>-Xlog:safepoint</td>
+<td>打印 GC 期间程序暂停的时间</td>
+</tr>
+<tr>
+<td>-XX:+PrintGCApplicationConcurrentTime</td>
+<td>-Xlog:safepoint</td>
+<td>打印 GC 前，程序未中断的执行时间</td>
+</tr>
+<tr>
+<td>-Xloggc:filename</td>
+<td>-Xlog:gc:file=gc.log</td>
+<td>GC 日志的保存为文件，默认为项目根目录</td>
+</tr>
+<tr>
+<td>-XX:+PrintTenuringDistribution</td>
+<td>-Xlog:gc+age*=trace</td>
+<td>查看对象存在于新生代所经历 Minor GC 次数的阈值</td>
+</tr>
+<tr>
+<td>-XX:PrintReferenceGC</td>
+<td>-Xlog:gc+ref*=debug</td>
+<td>打印软引用、弱引用、虚引用和Finallize队列</td>
+</tr>
+<tr>
+<td>-XX:+PrintTLAB</td>
+<td>-XX:+PrintTLAB</td>
+<td>打印 TLAB 信息</td>
+</tr>
+</tbody>
+</table>
 <h3>其他GC参数</h3>
 <table>
 <thead>
