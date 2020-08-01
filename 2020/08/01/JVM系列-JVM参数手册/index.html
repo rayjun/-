@@ -13,28 +13,117 @@
 </li>
 </ul>
 <h2>通用参数</h2>
-<p>| JDK8 | JDk9 Or Later | 备注 |
-|------+---------------+------|
-|-verbose:class |	-verbose:class | 输出 jvm 载入类的相关信息， 可用于排查找不到类或者类冲突问题|
-|-verbose:gc |	-verbose:gc| 输出 GC 信息，当日志被保存为文件时，这个参数无效|
-|-verbose:jni|	-verbose:jni|	输出 native 方法的调用情况，用于排查 JNI 调用问题|
-|-Xms|	-Xms |	初始堆大小，默认物理内存的 1/64|
-|-Xmx|	-Xmx |	最大堆大小，默认为物理内存的 1/4|
-|-Xmn|	-Xmn |	新生代大小|
-|-Xss|	-Xss |	堆栈大小，JDK5 以后，每个线程的对接默认为 1 M|
-|-Xnoclassgc|	-Xnoclassgc|	关闭对类的回收|
-|-XX:MaxMetaspaceSize|	-XX:MaxMetaspaceSize|	元空间的最大值|
-|-XX:MetaspaceSize|	-XX:MetaspaceSize|	指定元空间触发 Full GC 的阈值，也就是默认元空间的大小|
-|-XX:SurvivorRatio|	-XX:SurvivorRatio|	新生代中 Eden 与 Survivor 的比值，默认为 8，Survivor 有两块空间， from 和 to，实际上，Eden 与 Survivor 的比值大小为 8 : 2|
-|-XX:NewRatio |	-XX:NewRatio|	新生代和老年代空间的比值|
-|-XX:LargePageSizeInBytes|	-XX:LargePageSizeInBytes|	设置用于Java堆的大页面尺寸|
-|-XX:+UseLargePages|	-XX:+UseLargePages|	使用大页面内存|
-|-XX:MaxHeapFreeRatio|	-XX:MaxHeapFreeRatio|	GC后java堆中空闲量空间的最大占比|
-|-XX:MinHeapFreeRatio|	-XX:MinHeapFreeRatio|	GC后java堆中空闲量空间的最小占比|
-|-XX:NewSize |	-XX:NewSize|	新生代对象生成时占用内存的默认值|
-|-XX:MaxNewSize|	-XX:MaxNewSize|	新生成对象能占用内存的最大值|
-|-XX:MaxPermSize|	-XX:MaxPermSize|	老生代对象能占用内存的最大值|
-|-XX:ThreadStackSize|	-XX:ThreadStackSize |	设置线程栈大小，若为0则使用系统默认值|</p>
+<table>
+<thead>
+<tr>
+<th>JDK8</th>
+<th>JDk9 Or Later</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-verbose:class</td>
+<td>-verbose:class</td>
+<td>输出 jvm 载入类的相关信息， 可用于排查找不到类或者类冲突问题</td>
+</tr>
+<tr>
+<td>-verbose:gc</td>
+<td>-verbose:gc</td>
+<td>输出 GC 信息，当日志被保存为文件时，这个参数无效</td>
+</tr>
+<tr>
+<td>-verbose:jni</td>
+<td>-verbose:jni</td>
+<td>输出 native 方法的调用情况，用于排查 JNI 调用问题</td>
+</tr>
+<tr>
+<td>-Xms</td>
+<td>-Xms</td>
+<td>初始堆大小，默认物理内存的 1/64</td>
+</tr>
+<tr>
+<td>-Xmx</td>
+<td>-Xmx</td>
+<td>最大堆大小，默认为物理内存的 1/4</td>
+</tr>
+<tr>
+<td>-Xmn</td>
+<td>-Xmn</td>
+<td>新生代大小</td>
+</tr>
+<tr>
+<td>-Xss</td>
+<td>-Xss</td>
+<td>堆栈大小，JDK5 以后，每个线程的对接默认为 1 M</td>
+</tr>
+<tr>
+<td>-Xnoclassgc</td>
+<td>-Xnoclassgc</td>
+<td>关闭对类的回收</td>
+</tr>
+<tr>
+<td>-XX:MaxMetaspaceSize</td>
+<td>-XX:MaxMetaspaceSize</td>
+<td>元空间的最大值</td>
+</tr>
+<tr>
+<td>-XX:MetaspaceSize</td>
+<td>-XX:MetaspaceSize</td>
+<td>指定元空间触发 Full GC 的阈值，也就是默认元空间的大小</td>
+</tr>
+<tr>
+<td>-XX:SurvivorRatio</td>
+<td>-XX:SurvivorRatio</td>
+<td>新生代中 Eden 与 Survivor 的比值，默认为 8，Survivor 有两块空间， from 和 to，实际上，Eden 与 Survivor 的比值大小为 8 : 2</td>
+</tr>
+<tr>
+<td>-XX:NewRatio</td>
+<td>-XX:NewRatio</td>
+<td>新生代和老年代空间的比值</td>
+</tr>
+<tr>
+<td>-XX:LargePageSizeInBytes</td>
+<td>-XX:LargePageSizeInBytes</td>
+<td>设置用于Java堆的大页面尺寸</td>
+</tr>
+<tr>
+<td>-XX:+UseLargePages</td>
+<td>-XX:+UseLargePages</td>
+<td>使用大页面内存</td>
+</tr>
+<tr>
+<td>-XX:MaxHeapFreeRatio</td>
+<td>-XX:MaxHeapFreeRatio</td>
+<td>GC后java堆中空闲量空间的最大占比</td>
+</tr>
+<tr>
+<td>-XX:MinHeapFreeRatio</td>
+<td>-XX:MinHeapFreeRatio</td>
+<td>GC后java堆中空闲量空间的最小占比</td>
+</tr>
+<tr>
+<td>-XX:NewSize</td>
+<td>-XX:NewSize</td>
+<td>新生代对象生成时占用内存的默认值</td>
+</tr>
+<tr>
+<td>-XX:MaxNewSize</td>
+<td>-XX:MaxNewSize</td>
+<td>新生成对象能占用内存的最大值</td>
+</tr>
+<tr>
+<td>-XX:MaxPermSize</td>
+<td>-XX:MaxPermSize</td>
+<td>老生代对象能占用内存的最大值</td>
+</tr>
+<tr>
+<td>-XX:ThreadStackSize</td>
+<td>-XX:ThreadStackSize</td>
+<td>设置线程栈大小，若为0则使用系统默认值</td>
+</tr>
+</tbody>
+</table>
 <h2>GC 参数</h2>
 <p>在 JDK9 以后，日志相关的参数的都统一到了 <code>-Xlog</code> 中，注意，不仅仅 gc 的日志，是所有的日志，对于 -Xlog，配置方法如下：</p>
 <p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xlog[:[selector][:output[:[decorators][:output-options]]]]</span><br></pre></td></tr></table></figure></p>
@@ -48,27 +137,84 @@
 <li>file=</li>
 </ul>
 <p>decorators 称之为装饰器，可以在 GC 日志中增加其他的信息，方便对问题进行定位，装饰器可以同时使用多个，下面是对装饰器的汇总：</p>
-<p>| 全名 | 缩写 | 备注 |
-|------+---------------+------|
-|hostname|	hn|	机器名称|
-|level|	l|	日志等级|
-|pid|	p|	进程标识符|
-|tid|	ti|	线程标识符|
-|tags|	tg|	与消息相关联的所有标签|
-|time|	t|	当前时间和日期为ISO-8601格式（例如：2020-07-31T18：42：58.418 + 0000）|
-|timemillis|	tm|	当前时间以毫秒为单位，与System.currentTimeMillis()生成的值相同|
-|timenanos|	tn|	当前时间以纳秒为单位，与System.nanoTime()生成的值相同|
-|uptime|	u|	自JVM启动以来运行的时间，以秒为单位|
-|uptimemillis|	um|	自JVM启动以来运行的毫秒数|
-|uptimenanos|	un|	自JVM启动以来运行的纳秒数|
-|utctime|	utc|	当前时间和日期，UTC 格式，例如：2020-07-31T12：42：58.418-0600）|</p>
+<table>
+<thead>
+<tr>
+<th>全名</th>
+<th>缩写</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hostname</td>
+<td>hn</td>
+<td>机器名称</td>
+</tr>
+<tr>
+<td>level</td>
+<td>l</td>
+<td>日志等级</td>
+</tr>
+<tr>
+<td>pid</td>
+<td>p</td>
+<td>进程标识符</td>
+</tr>
+<tr>
+<td>tid</td>
+<td>ti</td>
+<td>线程标识符</td>
+</tr>
+<tr>
+<td>tags</td>
+<td>tg</td>
+<td>与消息相关联的所有标签</td>
+</tr>
+<tr>
+<td>time</td>
+<td>t</td>
+<td>当前时间和日期为ISO-8601格式（例如：2020-07-31T18：42：58.418 + 0000）</td>
+</tr>
+<tr>
+<td>timemillis</td>
+<td>tm</td>
+<td>当前时间以毫秒为单位，与System.currentTimeMillis()生成的值相同</td>
+</tr>
+<tr>
+<td>timenanos</td>
+<td>tn</td>
+<td>当前时间以纳秒为单位，与System.nanoTime()生成的值相同</td>
+</tr>
+<tr>
+<td>uptime</td>
+<td>u</td>
+<td>自JVM启动以来运行的时间，以秒为单位</td>
+</tr>
+<tr>
+<td>uptimemillis</td>
+<td>um</td>
+<td>自JVM启动以来运行的毫秒数</td>
+</tr>
+<tr>
+<td>uptimenanos</td>
+<td>un</td>
+<td>自JVM启动以来运行的纳秒数</td>
+</tr>
+<tr>
+<td>utctime</td>
+<td>utc</td>
+<td>当前时间和日期，UTC 格式，例如：2020-07-31T12：42：58.418-0600）</td>
+</tr>
+</tbody>
+</table>
 <p>在默认情况下，会使用 uptime，level 以及 tags 等装饰器，也可以使用 none 来关闭所有的装饰器。</p>
 <p>假如说现在要获取日志等级为info，需要打印机器名称、日志等级，JVM 的运行时间，所属 tag，并且要把这些日志保存为 gc.log 文件，配置如下：</p>
 <p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xlog:gc*=info:file=gc.log:hostname,level,uptime,tags</span><br></pre></td></tr></table></figure></p>
 <p>常用的 GC 日志参数如下：</p>
 <h3>GC日志参数</h3>
 <p>| JDK8 | JDk9 Or Later | 备注 |
-|------+---------------+------|
+|------|---------------+------|
 |-XX:+PrintGC |	-Xlog:gc|	打印 GC 信息|
 |-XX:+PrintGCDeatils |	-Xlog:gc*|	打印 GC 详细信息|
 |-XX:+PrintGCTimeStamps|	uptime| 装饰器	打印 GC 过程中具体的时间戳|
@@ -80,22 +226,87 @@
 |-XX:PrintReferenceGC|	-Xlog:gc+ref*=debug|	打印软引用、弱引用、虚引用和Finallize队列|
 |-XX:+PrintTLAB|	-XX:+PrintTLAB|	打印 TLAB 信息|</p>
 <h3>其他GC参数</h3>
-<p>| JDK8 | JDk9 Or Later | 备注 |
-|------+---------------+------|
-|-XX:MaxTenuringThreshold |	-XX:MaxTenuringThreshold|	对象存在于新生代所能经历 Minor GC 的最大次数|
-|-XX:PretenureSizeThreshold |	-XX:PretenureSizeThreshold|	超出该大小的对象直接在老年代分配，单位字节|
-|-XX:+UseSerialGC |	-XX:+UseSerialGC|	使用 serial 和 serial old 收集器（client VM 的默认值）|
-|-XX:+UseParallelGC |	-XX:+UseParallelGC|	使用 parallel 和 parallel old 收集器（serverVM 的默认值）|
-|-XX:+UseConcMarkSweepGC |	-XX:+UseConcMarkSweepGC|	使用 ParNew 和 CMS 收集器|
-|-XX:+UseParNewGC |	-XX:+UseParNewGC|	使用 ParNew 和 serial old 收集器（已不推荐）|
-|-XX:ParallelGCThreads|	-XX:ParallelGCThreads|	并行收集的线程数，最好与 CPU 数量相同|
-|-XX:GCTimeRatio|	-XX:GCTimeRatio|	设置并行收集器的吞吐量，如 99 表示 1 /(1+99) = 1 %,表示 GC 只能占用 1 % 的时间，满足不了则会缩小 新生代空间|
-|-XX:MaxGCPauseMillis|	-XX:MaxGCPauseMillis|	每次年轻代垃圾回收的最长时间|
-|-XX:CMSFullGCsBeforeCompaction|	-XX:CMSFullGCsBeforeCompaction|	设置在 n 次 CMS 垃圾收集后，触发一次内存整理|
-|-XX:UseCMSCompactAtFullCollection|	-XX:UseCMSCompactAtFullCollection|	每次 FullGC 后都会触发内存整理|
-|-XX:CMSInitiatingOccupancyFraction|	-XX:CMSInitiatingOccupancyFraction|	触发CMS收集的内存比例|
-|-XX:+DisableExplicitGC | -XX:+DisableExplicitGC|	禁用 System.gc()|
-|-XX:+CollectGen0First|	 -XX:+CollectGen0First |	Full GC 前是否先进行 YGC|</p>
+<table>
+<thead>
+<tr>
+<th>JDK8</th>
+<th>JDk9 Or Later</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-XX:MaxTenuringThreshold</td>
+<td>-XX:MaxTenuringThreshold</td>
+<td>对象存在于新生代所能经历 Minor GC 的最大次数</td>
+</tr>
+<tr>
+<td>-XX:PretenureSizeThreshold</td>
+<td>-XX:PretenureSizeThreshold</td>
+<td>超出该大小的对象直接在老年代分配，单位字节</td>
+</tr>
+<tr>
+<td>-XX:+UseSerialGC</td>
+<td>-XX:+UseSerialGC</td>
+<td>使用 serial 和 serial old 收集器（client VM 的默认值）</td>
+</tr>
+<tr>
+<td>-XX:+UseParallelGC</td>
+<td>-XX:+UseParallelGC</td>
+<td>使用 parallel 和 parallel old 收集器（serverVM 的默认值）</td>
+</tr>
+<tr>
+<td>-XX:+UseConcMarkSweepGC</td>
+<td>-XX:+UseConcMarkSweepGC</td>
+<td>使用 ParNew 和 CMS 收集器</td>
+</tr>
+<tr>
+<td>-XX:+UseParNewGC</td>
+<td>-XX:+UseParNewGC</td>
+<td>使用 ParNew 和 serial old 收集器（已不推荐）</td>
+</tr>
+<tr>
+<td>-XX:ParallelGCThreads</td>
+<td>-XX:ParallelGCThreads</td>
+<td>并行收集的线程数，最好与 CPU 数量相同</td>
+</tr>
+<tr>
+<td>-XX:GCTimeRatio</td>
+<td>-XX:GCTimeRatio</td>
+<td>设置并行收集器的吞吐量，如 99 表示 1 /(1+99) = 1 %,表示 GC 只能占用 1 % 的时间，满足不了则会缩小 新生代空间</td>
+</tr>
+<tr>
+<td>-XX:MaxGCPauseMillis</td>
+<td>-XX:MaxGCPauseMillis</td>
+<td>每次年轻代垃圾回收的最长时间</td>
+</tr>
+<tr>
+<td>-XX:CMSFullGCsBeforeCompaction</td>
+<td>-XX:CMSFullGCsBeforeCompaction</td>
+<td>设置在 n 次 CMS 垃圾收集后，触发一次内存整理</td>
+</tr>
+<tr>
+<td>-XX:UseCMSCompactAtFullCollection</td>
+<td>-XX:UseCMSCompactAtFullCollection</td>
+<td>每次 FullGC 后都会触发内存整理</td>
+</tr>
+<tr>
+<td>-XX:CMSInitiatingOccupancyFraction</td>
+<td>-XX:CMSInitiatingOccupancyFraction</td>
+<td>触发CMS收集的内存比例</td>
+</tr>
+<tr>
+<td>-XX:+DisableExplicitGC</td>
+<td>-XX:+DisableExplicitGC</td>
+<td>禁用 System.gc()</td>
+</tr>
+<tr>
+<td>-XX:+CollectGen0First</td>
+<td>-XX:+CollectGen0First</td>
+<td>Full GC 前是否先进行 YGC</td>
+</tr>
+</tbody>
+</table>
 <h2>REF</h2>
 <p>[1] <a href="https://openjdk.java.net/jeps/158" target="_blank" rel="noopener">https://openjdk.java.net/jeps/158</a></p>
 <p>[2] <a href="https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE" target="_blank" rel="noopener">https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE</a></p>
