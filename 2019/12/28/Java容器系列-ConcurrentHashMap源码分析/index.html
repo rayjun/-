@@ -1,4 +1,43 @@
-<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><title>Java容器系列-ConcurrentHashMap源码分析 [ 芜园 ]</title><link rel="stylesheet" href="/css/grassland.css"><script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css"><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script><meta name="generator" content="Hexo 4.2.1"></head><body><div class="menu-outer"><a class="blog-name" href="/">芜园</a><nav class="menu-inner"><a class="menu" href="/">首页</a><a class="menu" href="/archives">归档</a></nav></div><div class="content">     <div class="content-left"><div class="content-inne"><article class="post"><h1>Java容器系列-ConcurrentHashMap源码分析</h1><p>ConcurrentHashMap 用法上与 HashMap 差别不大，但 ConcurrentHashMap 是线程安全的，可以在多线程环境中使用。这篇文章主要会说明 ConcurrentHashMap 专有的一些特点，与 HashMap 类似部分将不再赘述。</p>
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>芜园</title>
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <a class="blog-name" href="/">芜园</a>
+        <nav class="menu-inner">
+            
+                <a class="menu" href="/">首页</a>
+            
+                <a class="menu" href="/archives">归档</a>
+            
+        </nav>
+    </div>
+
+    <div class="content">
+        <div class="content-left">
+            <div class="content-inner">
+                <article class="post">
+    <h1>Java容器系列-ConcurrentHashMap源码分析</h1>
+    <p>ConcurrentHashMap 用法上与 HashMap 差别不大，但 ConcurrentHashMap 是线程安全的，可以在多线程环境中使用。这篇文章主要会说明 ConcurrentHashMap 专有的一些特点，与 HashMap 类似部分将不再赘述。</p>
 <p><img src="concurrenthashmap-class.png" alt=""></p>
 <blockquote>
 <p>本文基于 JDK1.8</p>
@@ -77,15 +116,41 @@
 <p>在扩容代码中我们看到了 cs 和 baseCount 其实都是用来的统计容器个数，在并发情况下，会先记录到 cs 最后但是需要注意的是，因为 sumCount 没有加锁，所以最后返回的值也不是完全准确的。</p>
 <p>另外 ConcurrentHashMap 使用的是 fail-safe 的机制，也就是说在迭代的过程中如果容器中的元素变化，也不会抛出 ConcurrentModificationException 异常。</p>
 <p>最后说一下迭代器的问题，KeySetView，ValuesView，EntrySetView 这三个类分别可以迭代键、值、和键值对。具体的实现相对比较简单，而且对于迭代的过程也没有加上并发的控制，所以最后遍历的结果也不一定是准确的。</p>
-</article><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><div id="gitalk-container"></div><script type="text/javascript">$(function() {
- var gitalk = new Gitalk({
-     clientID: 'f2fb4cd28b5a49eb236e',
-     clientSecret: 'e67e321141db91e098ac2cc695f2c9df5b7b2769',
-     id: decodeURI(window.location.pathname),
-     repo: 'comments',
-     owner: 'rayjun',
-     admin: 'rayjun'
- })
- gitalk.render('gitalk-container')
-}());
- </script></div></div><div class="content-right"><div class="content-box"><div class="wechat"><div class="header"><h3>微信公众号</h3></div><img src="/images/wechat.jpeg"></div></div></div></div><div class="bottom-outer"><div class="bottom-inner"><span>© 2020</span><span> ray </span><br></div></div><script src="/js/grassland.js"></script></body></html>
+
+</article>
+
+
+    
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+    
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+    <div id="gitalk-container">
+    </div>
+    
+<script src="/js/gitalk.js"></script>
+
+
+            </div>
+        </div>
+        <div class="content-right">
+            <div class="context-box">
+                <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</html>

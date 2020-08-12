@@ -1,4 +1,43 @@
-<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><title>Git 底层数据结构研究 [ 芜园 ]</title><link rel="stylesheet" href="/css/grassland.css"><script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css"><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script><meta name="generator" content="Hexo 4.2.1"></head><body><div class="menu-outer"><a class="blog-name" href="/">芜园</a><nav class="menu-inner"><a class="menu" href="/">首页</a><a class="menu" href="/archives">归档</a></nav></div><div class="content">     <div class="content-left"><div class="content-inne"><article class="post"><h1>Git 底层数据结构研究</h1><p>Git 作为当前最好用的版本管理工具，在之前的文章中，已经介绍了基本的用法，在这篇文章中，我们来探究一下 Git 的底层是如何构成的。</p>
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>芜园</title>
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <a class="blog-name" href="/">芜园</a>
+        <nav class="menu-inner">
+            
+                <a class="menu" href="/">首页</a>
+            
+                <a class="menu" href="/archives">归档</a>
+            
+        </nav>
+    </div>
+
+    <div class="content">
+        <div class="content-left">
+            <div class="content-inner">
+                <article class="post">
+    <h1>Git 底层数据结构研究</h1>
+    <p>Git 作为当前最好用的版本管理工具，在之前的文章中，已经介绍了基本的用法，在这篇文章中，我们来探究一下 Git 的底层是如何构成的。</p>
 <p>任意一个使用 git 进行版本管理的目录都会有一个 .git 目录，在这个目录中存储了这个项目的所有的版本管理的信息。</p>
 <h3>.git 目录解析</h3>
 <p>使用 <strong>git init git-test</strong> 初始化一个 git 项目后，在项目目录底下的 .git 目录中发现有如下的内容:</p>
@@ -56,15 +95,41 @@
 <li>https://github.com/progit/progit2</li>
 <li>https://git-scm.com/docs</li>
 </ol>
-</article><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><div id="gitalk-container"></div><script type="text/javascript">$(function() {
- var gitalk = new Gitalk({
-     clientID: 'f2fb4cd28b5a49eb236e',
-     clientSecret: 'e67e321141db91e098ac2cc695f2c9df5b7b2769',
-     id: decodeURI(window.location.pathname),
-     repo: 'comments',
-     owner: 'rayjun',
-     admin: 'rayjun'
- })
- gitalk.render('gitalk-container')
-}());
- </script></div></div><div class="content-right"><div class="content-box"><div class="wechat"><div class="header"><h3>微信公众号</h3></div><img src="/images/wechat.jpeg"></div></div></div></div><div class="bottom-outer"><div class="bottom-inner"><span>© 2020</span><span> ray </span><br></div></div><script src="/js/grassland.js"></script></body></html>
+
+</article>
+
+
+    
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+    
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+    <div id="gitalk-container">
+    </div>
+    
+<script src="/js/gitalk.js"></script>
+
+
+            </div>
+        </div>
+        <div class="content-right">
+            <div class="context-box">
+                <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</html>

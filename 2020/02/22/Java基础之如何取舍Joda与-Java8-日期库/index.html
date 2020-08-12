@@ -1,4 +1,43 @@
-<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><title>Java基础之如何取舍Joda与 Java8 日期库 [ 芜园 ]</title><link rel="stylesheet" href="/css/grassland.css"><script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css"><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script><meta name="generator" content="Hexo 4.2.1"></head><body><div class="menu-outer"><a class="blog-name" href="/">芜园</a><nav class="menu-inner"><a class="menu" href="/">首页</a><a class="menu" href="/archives">归档</a></nav></div><div class="content">     <div class="content-left"><div class="content-inne"><article class="post"><h1>Java基础之如何取舍Joda与 Java8 日期库</h1><p>在 Java8 以前，时间和日期的类库很难用，而且有线程安全等诸多问题。</p>
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>芜园</title>
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <a class="blog-name" href="/">芜园</a>
+        <nav class="menu-inner">
+            
+                <a class="menu" href="/">首页</a>
+            
+                <a class="menu" href="/archives">归档</a>
+            
+        </nav>
+    </div>
+
+    <div class="content">
+        <div class="content-left">
+            <div class="content-inner">
+                <article class="post">
+    <h1>Java基础之如何取舍Joda与 Java8 日期库</h1>
+    <p>在 Java8 以前，时间和日期的类库很难用，而且有线程安全等诸多问题。</p>
 <p>Joda time 弥补了 Java 在这方面的不足，但是在 Java8 时，增加了 <code>java.time</code> 包，对 Java 在日期 API 方面的进行了增强，这些代码实现了 JSR-310 的标准。Joda 的官方推荐迁移到 Java8 的时间类库上来。</p>
 <p>下面来详细对比对比一下两个类库，看看 Java8 的日期 API 是否能真正替代 Joda time。</p>
 <h2>基础概念对比</h2>
@@ -98,15 +137,41 @@
 <p>但我认为 Joda time 的 API 更加简洁一些，Joda time 的使用可以直接从 DateTime 这个类开始。而 Java time 的使用则更加繁琐。</p>
 <p>从设计上来说 Java time 都不再使用 new 来创建实例，而是使用工厂方法来创建实例。这点上比 Joda time 的设计要更好，而且更加安全。</p>
 <p>既然 Joda time 都推荐迁移回 Java time 了，那么最终肯定是要迁移的。但是目前来说，我觉得 Joda time 用起来更加顺手一些，暂时还会继续使用这个。</p>
-</article><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><div id="gitalk-container"></div><script type="text/javascript">$(function() {
- var gitalk = new Gitalk({
-     clientID: 'f2fb4cd28b5a49eb236e',
-     clientSecret: 'e67e321141db91e098ac2cc695f2c9df5b7b2769',
-     id: decodeURI(window.location.pathname),
-     repo: 'comments',
-     owner: 'rayjun',
-     admin: 'rayjun'
- })
- gitalk.render('gitalk-container')
-}());
- </script></div></div><div class="content-right"><div class="content-box"><div class="wechat"><div class="header"><h3>微信公众号</h3></div><img src="/images/wechat.jpeg"></div></div></div></div><div class="bottom-outer"><div class="bottom-inner"><span>© 2020</span><span> ray </span><br></div></div><script src="/js/grassland.js"></script></body></html>
+
+</article>
+
+
+    
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+    
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+    <div id="gitalk-container">
+    </div>
+    
+<script src="/js/gitalk.js"></script>
+
+
+            </div>
+        </div>
+        <div class="content-right">
+            <div class="context-box">
+                <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</html>

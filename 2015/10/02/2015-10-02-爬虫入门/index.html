@@ -1,4 +1,43 @@
-<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><title>爬虫入门 [ 芜园 ]</title><link rel="stylesheet" href="/css/grassland.css"><script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css"><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script><meta name="generator" content="Hexo 4.2.1"></head><body><div class="menu-outer"><a class="blog-name" href="/">芜园</a><nav class="menu-inner"><a class="menu" href="/">首页</a><a class="menu" href="/archives">归档</a></nav></div><div class="content">     <div class="content-left"><div class="content-inne"><article class="post"><h1>爬虫入门</h1><p>最近在由于项目的需要，需要从一个网站上爬取一些数据，量不是特别大，于是就自己动手写了一个小爬虫。爬虫虽小，五脏具全，好歹是将整个过程体验了一下。下面是整个爬虫的开发过程。</p>
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>芜园</title>
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <a class="blog-name" href="/">芜园</a>
+        <nav class="menu-inner">
+            
+                <a class="menu" href="/">首页</a>
+            
+                <a class="menu" href="/archives">归档</a>
+            
+        </nav>
+    </div>
+
+    <div class="content">
+        <div class="content-left">
+            <div class="content-inner">
+                <article class="post">
+    <h1>爬虫入门</h1>
+    <p>最近在由于项目的需要，需要从一个网站上爬取一些数据，量不是特别大，于是就自己动手写了一个小爬虫。爬虫虽小，五脏具全，好歹是将整个过程体验了一下。下面是整个爬虫的开发过程。</p>
 <h3>开发准备</h3>
 <p>对于写一个简单的爬虫来说，需要准备一些基础知识。实际来说，就是简单的获取网页的方法以及如何解析整个网页。在这篇文章中我们使用 <strong>php</strong> 来完成整个爬虫的开发。需要用到 php_curl 模块和 php 的多线程(虽然这不是 php 所擅长的)以及正则的基本知识。</p>
 <h3>获取网页</h3>
@@ -43,15 +82,41 @@ $w-&gt;on_worker_start = function($worker) use ($count) {
 $w-&gt;run();
 </code></pre>
 <p>可以通过线程来控制每个爬虫的爬取次数，这个 worker 工具并不是我写的，参考<a href="https://github.com/owner888/phpspider/blob/master/phpspider/worker.php" target="_blank" rel="noopener">这里</a>。好了，到这里，一个简单的爬虫基本就完成了，将数据存入数据库的部分我并没有写出来，那个根本就不需要专门说了。对于爬虫，也还是需要慢慢的探索。</p>
-</article><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><div id="gitalk-container"></div><script type="text/javascript">$(function() {
- var gitalk = new Gitalk({
-     clientID: 'f2fb4cd28b5a49eb236e',
-     clientSecret: 'e67e321141db91e098ac2cc695f2c9df5b7b2769',
-     id: decodeURI(window.location.pathname),
-     repo: 'comments',
-     owner: 'rayjun',
-     admin: 'rayjun'
- })
- gitalk.render('gitalk-container')
-}());
- </script></div></div><div class="content-right"><div class="content-box"><div class="wechat"><div class="header"><h3>微信公众号</h3></div><img src="/images/wechat.jpeg"></div></div></div></div><div class="bottom-outer"><div class="bottom-inner"><span>© 2020</span><span> ray </span><br></div></div><script src="/js/grassland.js"></script></body></html>
+
+</article>
+
+
+    
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+    
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+    <div id="gitalk-container">
+    </div>
+    
+<script src="/js/gitalk.js"></script>
+
+
+            </div>
+        </div>
+        <div class="content-right">
+            <div class="context-box">
+                <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</html>

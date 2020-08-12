@@ -1,4 +1,43 @@
-<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><title>Laravel系列之队列的坑 [ 芜园 ]</title><link rel="stylesheet" href="/css/grassland.css"><script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css"><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script><meta name="generator" content="Hexo 4.2.1"></head><body><div class="menu-outer"><a class="blog-name" href="/">芜园</a><nav class="menu-inner"><a class="menu" href="/">首页</a><a class="menu" href="/archives">归档</a></nav></div><div class="content">     <div class="content-left"><div class="content-inne"><article class="post"><h1>Laravel系列之队列的坑</h1><h3>Laravel 队列</h3>
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>芜园</title>
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <a class="blog-name" href="/">芜园</a>
+        <nav class="menu-inner">
+            
+                <a class="menu" href="/">首页</a>
+            
+                <a class="menu" href="/archives">归档</a>
+            
+        </nav>
+    </div>
+
+    <div class="content">
+        <div class="content-left">
+            <div class="content-inner">
+                <article class="post">
+    <h1>Laravel系列之队列的坑</h1>
+    <h3>Laravel 队列</h3>
 <p>Laravel 队列使用起来很方便，任何的 Event 和 Job 只要实现了 ShouldQueue 这个接口就代表着这些 Event 或者 Job 在
 触发的时候会被加入到队列中。本文中的队列是基于 redis 实现的，其他的配置方法可以查看<a href="https://laravel.com/docs/5.2/queues" target="_blank" rel="noopener">官网</a>。</p>
 <h3>队列监听</h3>
@@ -12,15 +51,41 @@
 <p>将这个命令写入到 supervosird 的配置文件中基本就算完成配置了，但是这里有一个坑，这个命令有一个 --tries 的参数，这个参数的意思是在队列
 任务执行失败之后，需要重新执行多少次，它的默认值特别具有迷惑性，它的默认值是 0，这个0不是尝试0次，而是不断的尝试，之前就是因为没有配置这个
 参数才导致微信的模板消息被消耗光。在不断尝试的时候，也不会发送队列执行失败的邮件。找了半天才发现这个bug。</p>
-</article><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><div id="gitalk-container"></div><script type="text/javascript">$(function() {
- var gitalk = new Gitalk({
-     clientID: 'f2fb4cd28b5a49eb236e',
-     clientSecret: 'e67e321141db91e098ac2cc695f2c9df5b7b2769',
-     id: decodeURI(window.location.pathname),
-     repo: 'comments',
-     owner: 'rayjun',
-     admin: 'rayjun'
- })
- gitalk.render('gitalk-container')
-}());
- </script></div></div><div class="content-right"><div class="content-box"><div class="wechat"><div class="header"><h3>微信公众号</h3></div><img src="/images/wechat.jpeg"></div></div></div></div><div class="bottom-outer"><div class="bottom-inner"><span>© 2020</span><span> ray </span><br></div></div><script src="/js/grassland.js"></script></body></html>
+
+</article>
+
+
+    
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+    
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+    <div id="gitalk-container">
+    </div>
+    
+<script src="/js/gitalk.js"></script>
+
+
+            </div>
+        </div>
+        <div class="content-right">
+            <div class="context-box">
+                <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</html>

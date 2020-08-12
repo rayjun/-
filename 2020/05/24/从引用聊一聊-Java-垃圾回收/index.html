@@ -1,4 +1,43 @@
-<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><title>从引用聊一聊 Java 垃圾回收 [ 芜园 ]</title><link rel="stylesheet" href="/css/grassland.css"><script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css"><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script><meta name="generator" content="Hexo 4.2.1"></head><body><div class="menu-outer"><a class="blog-name" href="/">芜园</a><nav class="menu-inner"><a class="menu" href="/">首页</a><a class="menu" href="/archives">归档</a></nav></div><div class="content">     <div class="content-left"><div class="content-inne"><article class="post"><h1>从引用聊一聊 Java 垃圾回收</h1><p>对象是 Java 世界的一等公民，所有的对象都是引用类型。除了 8 种基本的数据类型之外，其他的都是对象。</p>
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>芜园</title>
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <a class="blog-name" href="/">芜园</a>
+        <nav class="menu-inner">
+            
+                <a class="menu" href="/">首页</a>
+            
+                <a class="menu" href="/archives">归档</a>
+            
+        </nav>
+    </div>
+
+    <div class="content">
+        <div class="content-left">
+            <div class="content-inner">
+                <article class="post">
+    <h1>从引用聊一聊 Java 垃圾回收</h1>
+    <p>对象是 Java 世界的一等公民，所有的对象都是引用类型。除了 8 种基本的数据类型之外，其他的都是对象。</p>
 <h2>JVM 和垃圾回收</h2>
 <p>在开始讨论引用之前，首先需要了解一下 JVM 和垃圾回收。Java 与 C 语言等不同，C 语言代码经过编译器编译之后，就可以直接在 CPU 上执行，而 Java 不同，Java 语言需要先编译生成字节码文件，再由 JVM 生成可以在 CPU 上运行的代码。</p>
 <p>而且 Java 在生成对象时，并不需要手动分配内存，而是由 JVM 自动进行分配，对于不再使用的对象，JVM 会对这些对象占用的内存进行回收，这个过程称之为垃圾回收（Garbage Collection，简称 GC）。</p>
@@ -50,15 +89,41 @@
 <p>判断一个对象是否存活其实就是通过引用的类型来进行判断，对于弱引用和虚引用来说，基本就可以认为是不可达了，在下次垃圾回收时就会被回收，而对于强引用，毫无疑问，肯定是可达的。</p>
 <p>最难处理的就是软引用。软引用在 JVM 中并没有明确把软引用判断为可达还是不可达，而是会根据当前系统的状态进行判断，如果当前系统内存充足，那么该对象就会被判断为可达，如果系统内存不足，那么该对象就会倾向被回收。</p>
 <p>文 / Rayjun</p>
-</article><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><div id="gitalk-container"></div><script type="text/javascript">$(function() {
- var gitalk = new Gitalk({
-     clientID: 'f2fb4cd28b5a49eb236e',
-     clientSecret: 'e67e321141db91e098ac2cc695f2c9df5b7b2769',
-     id: decodeURI(window.location.pathname),
-     repo: 'comments',
-     owner: 'rayjun',
-     admin: 'rayjun'
- })
- gitalk.render('gitalk-container')
-}());
- </script></div></div><div class="content-right"><div class="content-box"><div class="wechat"><div class="header"><h3>微信公众号</h3></div><img src="/images/wechat.jpeg"></div></div></div></div><div class="bottom-outer"><div class="bottom-inner"><span>© 2020</span><span> ray </span><br></div></div><script src="/js/grassland.js"></script></body></html>
+
+</article>
+
+
+    
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+    
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+    <div id="gitalk-container">
+    </div>
+    
+<script src="/js/gitalk.js"></script>
+
+
+            </div>
+        </div>
+        <div class="content-right">
+            <div class="context-box">
+                <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</html>

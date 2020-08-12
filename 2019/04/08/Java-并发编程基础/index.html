@@ -1,4 +1,43 @@
-<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><title>Java 并发编程基础 [ 芜园 ]</title><link rel="stylesheet" href="/css/grassland.css"><script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css"><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script><meta name="generator" content="Hexo 4.2.1"></head><body><div class="menu-outer"><a class="blog-name" href="/">芜园</a><nav class="menu-inner"><a class="menu" href="/">首页</a><a class="menu" href="/archives">归档</a></nav></div><div class="content">     <div class="content-left"><div class="content-inne"><article class="post"><h1>Java 并发编程基础</h1><p>并发编程这种技术在早期是没有的，因为所有的程序都能够独享 CPU、内存和 IO 设备，程序一个个接着执行，谁也不干扰谁，只要程序的逻辑没有出错，得到的结果就是准确的。但是慢慢有人发现：CPU、内存、和 IO 之间速度的差异太大。大致可以描述为：<strong>CPU 一天，内存一年、IO 设备几百年</strong>，所以特别贵的 CPU 和内存在程序执行的过程大多数时候都是空闲的，这就造成了资源的极大浪费。</p>
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>芜园</title>
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <a class="blog-name" href="/">芜园</a>
+        <nav class="menu-inner">
+            
+                <a class="menu" href="/">首页</a>
+            
+                <a class="menu" href="/archives">归档</a>
+            
+        </nav>
+    </div>
+
+    <div class="content">
+        <div class="content-left">
+            <div class="content-inner">
+                <article class="post">
+    <h1>Java 并发编程基础</h1>
+    <p>并发编程这种技术在早期是没有的，因为所有的程序都能够独享 CPU、内存和 IO 设备，程序一个个接着执行，谁也不干扰谁，只要程序的逻辑没有出错，得到的结果就是准确的。但是慢慢有人发现：CPU、内存、和 IO 之间速度的差异太大。大致可以描述为：<strong>CPU 一天，内存一年、IO 设备几百年</strong>，所以特别贵的 CPU 和内存在程序执行的过程大多数时候都是空闲的，这就造成了资源的极大浪费。</p>
 <p>后来 Unix 系统提出了 CPU 分时的解决方法，这样就能多个程序在一个 CPU上并发的执行，提高 CPU 的使用效率。所以 Java 中出现的多线程编程是为了更好的利用 CPU 的资源。进程之间的数据都是独享，而线程之间的状态和数据都共享同一个进程的，所以线程之间的切换要比进程之间的切换代价更小。线程是现代操作系统进行任务调度的最小单位。</p>
 <h3>并发编程的三大模块</h3>
 <p>并发的核心功能都是来自于操作系统的延展。所以在 Java 以及其他的编程语言的并发模块中，背后都有着共同的理论模型。</p>
@@ -70,15 +109,41 @@
 <p>还有一种保证线程安全的方法就是不要使用共享数据，不涉及到共享数据，自然也就没有了线程安全的问题。具体的方法有<strong>栈封闭</strong>和<strong>线程本地存储</strong>的方法。</p>
 <p>这篇文章简单的将 Java 并发编程中涉及到的内容都总结归纳了一下，可以算作学习 Java 并发编程的指南。</p>
 <p>(完)</p>
-</article><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><div id="gitalk-container"></div><script type="text/javascript">$(function() {
- var gitalk = new Gitalk({
-     clientID: 'f2fb4cd28b5a49eb236e',
-     clientSecret: 'e67e321141db91e098ac2cc695f2c9df5b7b2769',
-     id: decodeURI(window.location.pathname),
-     repo: 'comments',
-     owner: 'rayjun',
-     admin: 'rayjun'
- })
- gitalk.render('gitalk-container')
-}());
- </script></div></div><div class="content-right"><div class="content-box"><div class="wechat"><div class="header"><h3>微信公众号</h3></div><img src="/images/wechat.jpeg"></div></div></div></div><div class="bottom-outer"><div class="bottom-inner"><span>© 2020</span><span> ray </span><br></div></div><script src="/js/grassland.js"></script></body></html>
+
+</article>
+
+
+    
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+    
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+    <div id="gitalk-container">
+    </div>
+    
+<script src="/js/gitalk.js"></script>
+
+
+            </div>
+        </div>
+        <div class="content-right">
+            <div class="context-box">
+                <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</html>
