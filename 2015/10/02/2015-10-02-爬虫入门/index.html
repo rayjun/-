@@ -94,9 +94,19 @@ $w-&gt;run();
 
     <div id="gitalk-container">
     </div>
-    
-<script src="/js/gitalk.js"></script>
-
+    <script type="text/javascript">
+        $(function () {
+            var gitalk = new Gitalk({
+                clientID: 'f2fb4cd28b5a49eb236e',
+                clientSecret: 'e67e321141db91e098ac2cc695f2c9df5b7b2769',
+                id: decodeURI(window.location.pathname),
+                repo: 'comments',
+                owner: 'rayjun',
+                admin: 'rayjun'
+            })
+            gitalk.render('gitalk-container')
+        }());
+    </script>
 
             </div>
         </div>
