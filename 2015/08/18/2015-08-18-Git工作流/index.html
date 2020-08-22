@@ -11,10 +11,10 @@
         
     
     
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
     
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
 
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
@@ -22,20 +22,23 @@
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
-        <a class="blog-name" href="/">芜园</a>
-        <nav class="menu-inner">
-            
-                <a class="menu" href="/">首页</a>
-            
-                <a class="menu" href="/archives">归档</a>
-            
-        </nav>
+        <div class="container">
+            <a class="blog-name" href="/">芜园</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+            </nav>
+        </div>
     </div>
 
     <div class="content">
-        <div class="content-left">
-            <div class="content-inner">
-                <article class="post">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <article class="post">
     <h1>Git 工作流</h1>
     <p>作为一个 <code>web</code> 开发者，<code>Git</code> 已经成为一个很重要的工具。我们现在已经习惯每天打开电脑，然后编码，然后将代码推送到 <code>Github</code> 服务器上。这几乎成为日常工作的标配，<code>Git</code> 也成为了一个极其重要的软件。再搭配上 <code>emacs</code> 的 <code>magit</code> 插件，就成为了开发的神器，当然这只是我自己的喜好。不过还是强烈推荐。回到正题。<code>Git</code> 很强大，是一款很好的团队协作软件，分支与合并是它最为强大的两个特性，正因为太过于强大也就带来了不少的问题。因为可以随意的创建分支与合并，所以导致项目的主线变得难以协调和维护。一个好的 <code>Git</code> 工作流将大大提高工作效率，让所有人的协作变的井井有条。下面的 <code>Git</code> 流是参考了 <a href="http://www.ruanyifeng.com/blog/2015/08/git-use-process.html" target="_blank" rel="noopener">阮一峰的文章</a> 下面是一个推荐的工作流：</p>
 <p><img src="http://www.ruanyifeng.com/blogimg/asset/2015/bg2015080501.png" alt="git"></p>
@@ -99,15 +102,16 @@ $ git rebase origin/master
         }());
     </script>
 
+                </div>
             </div>
-        </div>
-        <div class="content-right">
-            <div class="context-box">
-                <div class="wechat">
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
     <div class="header">
         <img src="/images/wechat.jpeg">
     </div>
 </div>
+                </div>
             </div>
         </div>
     </div>

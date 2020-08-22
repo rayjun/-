@@ -11,10 +11,10 @@
         
     
     
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
     
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
 
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
@@ -22,20 +22,23 @@
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
-        <a class="blog-name" href="/">芜园</a>
-        <nav class="menu-inner">
-            
-                <a class="menu" href="/">首页</a>
-            
-                <a class="menu" href="/archives">归档</a>
-            
-        </nav>
+        <div class="container">
+            <a class="blog-name" href="/">芜园</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+            </nav>
+        </div>
     </div>
 
     <div class="content">
-        <div class="content-left">
-            <div class="content-inner">
-                <article class="post">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <article class="post">
     <h1>如何使用 Apache CXF 快速实现一个 WebService</h1>
     <p>在单体架构向分布式架构演进的过程中，跨进程的通信成为刚需，如果直接利用 Socket 进行通信，那么就会使得编程变得很复杂。</p>
 <p>在 1984 年，Bruce Jay Nelson 提出了<a href="https://dl.acm.org/doi/pdf/10.1145/2080.357392" target="_blank" rel="noopener">跨进程通信</a>的标准，也就是我们通常说的 RPC(Remote Procedure Call)。后面所有的所有的 RPC 框架都是通过这个标准来设计的。</p>
@@ -101,15 +104,16 @@
         }());
     </script>
 
+                </div>
             </div>
-        </div>
-        <div class="content-right">
-            <div class="context-box">
-                <div class="wechat">
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
     <div class="header">
         <img src="/images/wechat.jpeg">
     </div>
 </div>
+                </div>
             </div>
         </div>
     </div>

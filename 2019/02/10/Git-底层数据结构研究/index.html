@@ -11,10 +11,10 @@
         
     
     
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
     
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
 
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
@@ -22,20 +22,23 @@
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
-        <a class="blog-name" href="/">芜园</a>
-        <nav class="menu-inner">
-            
-                <a class="menu" href="/">首页</a>
-            
-                <a class="menu" href="/archives">归档</a>
-            
-        </nav>
+        <div class="container">
+            <a class="blog-name" href="/">芜园</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+            </nav>
+        </div>
     </div>
 
     <div class="content">
-        <div class="content-left">
-            <div class="content-inner">
-                <article class="post">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <article class="post">
     <h1>Git 底层数据结构研究</h1>
     <p>Git 作为当前最好用的版本管理工具，在之前的文章中，已经介绍了基本的用法，在这篇文章中，我们来探究一下 Git 的底层是如何构成的。</p>
 <p>任意一个使用 git 进行版本管理的目录都会有一个 .git 目录，在这个目录中存储了这个项目的所有的版本管理的信息。</p>
@@ -121,15 +124,16 @@
         }());
     </script>
 
+                </div>
             </div>
-        </div>
-        <div class="content-right">
-            <div class="context-box">
-                <div class="wechat">
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
     <div class="header">
         <img src="/images/wechat.jpeg">
     </div>
 </div>
+                </div>
             </div>
         </div>
     </div>

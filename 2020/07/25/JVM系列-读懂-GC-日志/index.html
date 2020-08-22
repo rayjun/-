@@ -11,10 +11,10 @@
         
     
     
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
     
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
 
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
@@ -22,20 +22,23 @@
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
-        <a class="blog-name" href="/">芜园</a>
-        <nav class="menu-inner">
-            
-                <a class="menu" href="/">首页</a>
-            
-                <a class="menu" href="/archives">归档</a>
-            
-        </nav>
+        <div class="container">
+            <a class="blog-name" href="/">芜园</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+            </nav>
+        </div>
     </div>
 
     <div class="content">
-        <div class="content-left">
-            <div class="content-inner">
-                <article class="post">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <article class="post">
     <h1>JVM系列-读懂 GC 日志</h1>
     <p>Java 生态发展到今天，JVM （Java Virtual Machine）的价值可能已经超过了 Java 语言本身。</p>
 <p>而 GC （垃圾回收）机制也是 JVM 的核心之一，在程序运行的过程中，GC 的过程会以日志的形式记录下来，看懂 GC 日志是研究 GC 机制的基础，GC日志也是判断 Java 程序运行是否正常的重要依据。</p>
@@ -180,15 +183,16 @@
         }());
     </script>
 
+                </div>
             </div>
-        </div>
-        <div class="content-right">
-            <div class="context-box">
-                <div class="wechat">
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
     <div class="header">
         <img src="/images/wechat.jpeg">
     </div>
 </div>
+                </div>
             </div>
         </div>
     </div>

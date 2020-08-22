@@ -11,10 +11,10 @@
         
     
     
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/agate.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
     
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
 
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
@@ -22,20 +22,23 @@
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
-        <a class="blog-name" href="/">芜园</a>
-        <nav class="menu-inner">
-            
-                <a class="menu" href="/">首页</a>
-            
-                <a class="menu" href="/archives">归档</a>
-            
-        </nav>
+        <div class="container">
+            <a class="blog-name" href="/">芜园</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+            </nav>
+        </div>
     </div>
 
     <div class="content">
-        <div class="content-left">
-            <div class="content-inner">
-                <article class="post">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <article class="post">
     <h1>Spring系列之依赖注入</h1>
     <p>Spring 中所有的 Bean 都是通过容器来进行管理的。每个 POJO 都可以是一个 Spring Bean。容器会管理 Bean 的依赖关系，这种依赖关系有可能是 Bean 之间的，也有可能是 Bean 对配置数据的依赖。在使用 Spring 的时候，开发者需要做的就是让 Spring 容器知道这些依赖关系，然后剩下的事情交给 Spring 容器就行了。</p>
 <p><img src="spring-container.png" alt=""></p>
@@ -127,15 +130,16 @@
         }());
     </script>
 
+                </div>
             </div>
-        </div>
-        <div class="content-right">
-            <div class="context-box">
-                <div class="wechat">
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
     <div class="header">
         <img src="/images/wechat.jpeg">
     </div>
 </div>
+                </div>
             </div>
         </div>
     </div>
