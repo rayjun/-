@@ -170,6 +170,7 @@ a {
 .post h2 {
   font-size: 28px;
   font-weight: 500;
+  margin-top: 20px;
   margin-bottom: 30px;
   color: red;
 }
@@ -177,6 +178,7 @@ a {
 .post h3 {
   font-size: 24px;
   font-weight: 400;
+  margin-top: 10px;
   margin-bottom: 15px;
 }
 
@@ -285,25 +287,28 @@ a {
 
 
 
-table {
+.post > table {
     border-spacing: 0;
     width: 100%;
-}
-table {
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 20px;
     border: solid #ccc 1px;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
-    /*-webkit-box-shadow: 0 1px 1px #ccc;
-    -moz-box-shadow: 0 1px 1px #ccc;
-    box-shadow: 0 1px 1px #ccc;   */
 }
 
-table td, .table th {
-    border: 1px solid #ccc;
-    /*border-top: 1px solid #ccc;*/
+.post > table thead {
+  background-color: #e0e0e0;
+}
+
+.post > table td {
+    border-top: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    font-size: 13px;
     padding: 10px;
-    text-align: left;
+}
+.post > table th {
+    border-right: 1px solid #ccc;
+    padding: 10px;
 }
 
 .highlight>table{
