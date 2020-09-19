@@ -82,8 +82,7 @@ window.onload = function() {
                 var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
                 $resultContent.innerHTML = "";
                 if (this.value.trim().length <= 0) {
-                    document.getElementById("div-body").style.display="";
-                    document.getElementById("paginator").style.display="";
+                    showSearchResult(false);
                     return;
                 }
 
@@ -158,8 +157,7 @@ window.onload = function() {
                         str += "</li>";
                     }
                 });
-                document.getElementById("div-body").style.display="none";
-                document.getElementById("paginator").style.display="none";
+                showSearchResult(true)
                 str += "</ul>";
                 if (str.indexOf('<li>') === -1) {
                     $resultContent.innerHTML = BTN + "<div class='local-search-empty'>没有找到内容，请尝试更换检索词</div>";
@@ -179,11 +177,23 @@ window.onload = function() {
     btnClose.onclick = function() {
         inputArea.value = '';
         $resultContent.innerHTML = '';
-
         inputArea.placeholder = '输入关键词以搜索';
         inputArea.focus();
-        document.getElementById("div-body").style.display="";
-        document.getElementById("paginator").style.display="";
+        showSearchResult(false);
     };
+  }
+}
+
+function showSearchResult(show) {
+  if (!show) {
+        document.getElementById("div-body").style.display="";
+        if (document.getElementById("paginator")) {
+            document.getElementById("paginator").style.display="";
+        }
+  } else {
+        document.getElementById("div-body").style.display="none";
+        if (document.getElementById("paginator")) {
+            document.getElementById("paginator").style.display="none";
+        }
   }
 }
