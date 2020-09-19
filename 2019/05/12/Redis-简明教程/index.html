@@ -39,7 +39,7 @@
                 <span>
                     <i class="fa fa-search"></i>
                 </span>
-                <input type="text" name="search" placeholder="搜索" id="local-search-input">
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
             </div>
             </nav>
         </div>
@@ -50,6 +50,7 @@
             <div class="content-left">
                 <div class="content-inner">
                     <div id="local-search-result"></div>
+                    <div id="div-body">
                     <article class="post">
     <h1>Redis 简明教程</h1>
     <p>Redis 是一个非常快的非关系型的数据库，通过 key-value 的形式保存数据。key 总是字符串，而 value 支持 5 种类型（字符串、列表、集合、哈希表、有序集合），单个 value 的大小不超过 512 M。Redis 的键值对是存储在内存中的，但是也能持久化到硬盘中。</p>
@@ -486,6 +487,7 @@
         }());
     </script>
 
+                    </div>
                 </div>
             </div>
             <div class="content-right">
@@ -505,8 +507,6 @@
             <span>rayjun</span>
         </div>
     </div>
-
-</body>
     
         
         
@@ -514,4 +514,5 @@
 
         
     
+</body>
 </html>

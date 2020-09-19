@@ -39,7 +39,7 @@
                 <span>
                     <i class="fa fa-search"></i>
                 </span>
-                <input type="text" name="search" placeholder="搜索" id="local-search-input">
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
             </div>
             </nav>
         </div>
@@ -50,6 +50,7 @@
             <div class="content-left">
                 <div class="content-inner">
                     <div id="local-search-result"></div>
+                    <div id="div-body">
                     <article class="post">
     <h1>Laravel 中的 oauth2</h1>
     <h4>Web Api</h4>
@@ -180,6 +181,7 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
         }());
     </script>
 
+                    </div>
                 </div>
             </div>
             <div class="content-right">
@@ -199,8 +201,6 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
             <span>rayjun</span>
         </div>
     </div>
-
-</body>
     
         
         
@@ -208,4 +208,5 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
         
     
+</body>
 </html>

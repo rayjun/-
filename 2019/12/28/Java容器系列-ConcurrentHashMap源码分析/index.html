@@ -39,7 +39,7 @@
                 <span>
                     <i class="fa fa-search"></i>
                 </span>
-                <input type="text" name="search" placeholder="搜索" id="local-search-input">
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
             </div>
             </nav>
         </div>
@@ -50,6 +50,7 @@
             <div class="content-left">
                 <div class="content-inner">
                     <div id="local-search-result"></div>
+                    <div id="div-body">
                     <article class="post">
     <h1>Java容器系列-ConcurrentHashMap源码分析</h1>
     <p>ConcurrentHashMap 用法上与 HashMap 差别不大，但 ConcurrentHashMap 是线程安全的，可以在多线程环境中使用。这篇文章主要会说明 ConcurrentHashMap 专有的一些特点，与 HashMap 类似部分将不再赘述。</p>
@@ -157,6 +158,7 @@
         }());
     </script>
 
+                    </div>
                 </div>
             </div>
             <div class="content-right">
@@ -176,8 +178,6 @@
             <span>rayjun</span>
         </div>
     </div>
-
-</body>
     
         
         
@@ -185,4 +185,5 @@
 
         
     
+</body>
 </html>

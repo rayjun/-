@@ -39,7 +39,7 @@
                 <span>
                     <i class="fa fa-search"></i>
                 </span>
-                <input type="text" name="search" placeholder="搜索" id="local-search-input">
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
             </div>
             </nav>
         </div>
@@ -50,6 +50,7 @@
             <div class="content-left">
                 <div class="content-inner">
                     <div id="local-search-result"></div>
+                    <div id="div-body">
                     <article class="post">
     <h1>Spring系列之依赖注入</h1>
     <p>Spring 中所有的 Bean 都是通过容器来进行管理的。每个 POJO 都可以是一个 Spring Bean。容器会管理 Bean 的依赖关系，这种依赖关系有可能是 Bean 之间的，也有可能是 Bean 对配置数据的依赖。在使用 Spring 的时候，开发者需要做的就是让 Spring 容器知道这些依赖关系，然后剩下的事情交给 Spring 容器就行了。</p>
@@ -142,6 +143,7 @@
         }());
     </script>
 
+                    </div>
                 </div>
             </div>
             <div class="content-right">
@@ -161,8 +163,6 @@
             <span>rayjun</span>
         </div>
     </div>
-
-</body>
     
         
         
@@ -170,4 +170,5 @@
 
         
     
+</body>
 </html>

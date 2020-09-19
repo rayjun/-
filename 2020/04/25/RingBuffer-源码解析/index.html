@@ -39,7 +39,7 @@
                 <span>
                     <i class="fa fa-search"></i>
                 </span>
-                <input type="text" name="search" placeholder="搜索" id="local-search-input">
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
             </div>
             </nav>
         </div>
@@ -50,6 +50,7 @@
             <div class="content-left">
                 <div class="content-inner">
                     <div id="local-search-result"></div>
+                    <div id="div-body">
                     <article class="post">
     <h1>RingBuffer 源码解析</h1>
     <p>RingBuffer 主要用于在生产者和消费者之间传递数据。至于核心的控制机制已经被转移到 <code>Sequencer</code> 中了，具体的控制机制后续会有写专门的文章，这里先聚焦 RingBuffer。</p>
@@ -115,6 +116,7 @@
         }());
     </script>
 
+                    </div>
                 </div>
             </div>
             <div class="content-right">
@@ -134,8 +136,6 @@
             <span>rayjun</span>
         </div>
     </div>
-
-</body>
     
         
         
@@ -143,4 +143,5 @@
 
         
     
+</body>
 </html>

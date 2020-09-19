@@ -82,7 +82,7 @@ window.onload = function() {
                 var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
                 $resultContent.innerHTML = "";
                 if (this.value.trim().length <= 0) {
-                    document.getElementById("post-list").style.display="";
+                    document.getElementById("div-body").style.display="";
                     document.getElementById("paginator").style.display="";
                     return;
                 }
@@ -158,7 +158,7 @@ window.onload = function() {
                         str += "</li>";
                     }
                 });
-                document.getElementById("post-list").style.display="none";
+                document.getElementById("div-body").style.display="none";
                 document.getElementById("paginator").style.display="none";
                 str += "</ul>";
                 if (str.indexOf('<li>') === -1) {
@@ -182,7 +182,7 @@ window.onload = function() {
 
         inputArea.placeholder = '输入关键词以搜索';
         inputArea.focus();
-        document.getElementById("post-list").style.display="";
+        document.getElementById("div-body").style.display="";
         document.getElementById("paginator").style.display="";
     };
   }
