@@ -13,6 +13,9 @@
         
     
     
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
     
@@ -32,6 +35,12 @@
                 
                     <a class="menu" href="/archives">归档</a>
                 
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" name="search" placeholder="搜索" id="local-search-input">
+            </div>
             </nav>
         </div>
     </div>
@@ -40,6 +49,7 @@
         <div class="container">
             <div class="content-left">
                 <div class="content-inner">
+                    <div id="local-search-result"></div>
                     <article class="post">
     <h1>Java 为什么需要包装类</h1>
     <p>在 Java 的世界中，对象是一等公民，但 Java 也还是做出了妥协，出于对性能的考虑而保留了 8 种基础数据类型。

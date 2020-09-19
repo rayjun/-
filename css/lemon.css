@@ -89,6 +89,13 @@ a {
   font-size: 18px;
   height: auto;
   margin-left: 30px;
+  display: inline-block;
+}
+
+.nav-search > input {
+    border: none;
+    outline: none;
+    background: none;
 }
 
 .content {
@@ -331,4 +338,17 @@ a {
 .container {
   display: flex;
   justify-content: space-between;
+}
+
+
+#local-search-result li{
+  list-style: none;
+}
+
+#local-search-result li>a{
+  font-weight: bold;
+}
+
+.search-keyword {
+  color: red;
 }

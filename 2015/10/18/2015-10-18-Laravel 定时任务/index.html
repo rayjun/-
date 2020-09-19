@@ -13,6 +13,9 @@
         
     
     
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
     
@@ -32,6 +35,12 @@
                 
                     <a class="menu" href="/archives">归档</a>
                 
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" name="search" placeholder="搜索" id="local-search-input">
+            </div>
             </nav>
         </div>
     </div>
@@ -40,6 +49,7 @@
         <div class="container">
             <div class="content-left">
                 <div class="content-inner">
+                    <div id="local-search-result"></div>
                     <article class="post">
     <h1>Laravel 定时任务</h1>
     <p>在 php 中使用定时器是一件不太简单的事情，之前大概只能通过 cron 来实现定时任务。但是在 Laravel5 中，定时任务将会变得很简单。</p>

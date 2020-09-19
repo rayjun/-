@@ -13,6 +13,9 @@
         
     
     
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
     
@@ -32,6 +35,12 @@
                 
                     <a class="menu" href="/archives">归档</a>
                 
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" name="search" placeholder="搜索" id="local-search-input">
+            </div>
             </nav>
         </div>
     </div>
@@ -40,6 +49,7 @@
         <div class="container">
             <div class="content-left">
                 <div class="content-inner">
+                    <div id="local-search-result"></div>
                     <article class="post">
     <h1>从 Java 中的零拷贝到五种IO模型 </h1>
     <p>在之前的文章中，我们聊过了 Java 中的零拷贝，零拷贝就是指数据不会在内核空间和用户空间之间相互拷贝。这样就减少了内核态与用户态的切换，自然就很高效。</p>

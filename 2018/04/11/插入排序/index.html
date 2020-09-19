@@ -13,6 +13,9 @@
         
     
     
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
     
@@ -32,6 +35,12 @@
                 
                     <a class="menu" href="/archives">归档</a>
                 
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" name="search" placeholder="搜索" id="local-search-input">
+            </div>
             </nav>
         </div>
     </div>
@@ -40,6 +49,7 @@
         <div class="container">
             <div class="content-left">
                 <div class="content-inner">
+                    <div id="local-search-result"></div>
                     <article class="post">
     <h1>插入排序</h1>
     <p>插入排序通过构建有序序列，对于未排序的数据，从已排序的序列从后向前扫描，并找到相应的位置插入。</p>

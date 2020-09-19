@@ -13,6 +13,9 @@
         
     
     
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
     
@@ -32,6 +35,12 @@
                 
                     <a class="menu" href="/archives">归档</a>
                 
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" name="search" placeholder="搜索" id="local-search-input">
+            </div>
             </nav>
         </div>
     </div>
@@ -40,6 +49,7 @@
         <div class="container">
             <div class="content-left">
                 <div class="content-inner">
+                    <div id="local-search-result"></div>
                     <article class="post">
     <h1>构建可扩展 Web 应用的 7 个阶段</h1>
     <p>这是一篇<a href="http://highscalability.com/blog/2008/9/23/the-7-stages-of-scaling-web-apps.html" target="_blank" rel="noopener">译文</a>。文章分享了构建一个可扩展 Web 应用的 7 个通用步骤。文章有点老，但是观点不过时。</p>

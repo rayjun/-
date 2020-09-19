@@ -13,6 +13,9 @@
         
     
     
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
     
@@ -32,6 +35,12 @@
                 
                     <a class="menu" href="/archives">归档</a>
                 
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" name="search" placeholder="搜索" id="local-search-input">
+            </div>
             </nav>
         </div>
     </div>
@@ -40,6 +49,7 @@
         <div class="container">
             <div class="content-left">
                 <div class="content-inner">
+                    <div id="local-search-result"></div>
                     <article class="post">
     <h1>Java 并发编程基础</h1>
     <p>并发编程这种技术在早期是没有的，因为所有的程序都能够独享 CPU、内存和 IO 设备，程序一个个接着执行，谁也不干扰谁，只要程序的逻辑没有出错，得到的结果就是准确的。但是慢慢有人发现：CPU、内存、和 IO 之间速度的差异太大。大致可以描述为：<strong>CPU 一天，内存一年、IO 设备几百年</strong>，所以特别贵的 CPU 和内存在程序执行的过程大多数时候都是空闲的，这就造成了资源的极大浪费。</p>

@@ -13,6 +13,9 @@
         
     
     
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
     
@@ -32,6 +35,12 @@
                 
                     <a class="menu" href="/archives">归档</a>
                 
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" name="search" placeholder="搜索" id="local-search-input">
+            </div>
             </nav>
         </div>
     </div>
@@ -40,6 +49,7 @@
         <div class="container">
             <div class="content-left">
                 <div class="content-inner">
+                    <div id="local-search-result"></div>
                     <article class="post">
     <h1>Disruptor为何这么快</h1>
     <p>Disruptor 是一个开源并且高效的<strong>生产者-消费者</strong>框架，很难直接解释这个框架是做什么的，但是可以把这个框架理解成 Java 中的 <code>BlockingQueue</code>。这样理解起来是不是轻松多了，这就是一个生产者-消费者队列，只不过它的性能要比 <code>BloockingQueue</code> 好很多，号称单机器可以有百万的 TPS。</p>
