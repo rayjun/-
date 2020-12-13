@@ -65,14 +65,14 @@
 <p>完成之后就可以安装插件了，在这里只演示安装 fzf 的插件，在 home 目录下新建一个 .vimrc 文件，然后在文件中填入以下内容:</p>
 <p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">call plug<span class="comment">#begin('~/.vim/plugged')</span></span><br><span class="line"></span><br><span class="line">Plug <span class="string">'junegunn/fzf'</span>, &#123; <span class="string">'do'</span>: &#123; -&gt; fzf<span class="comment">#install() &#125; &#125;</span></span><br><span class="line">Plug <span class="string">'junegunn/fzf.vim'</span></span><br><span class="line"></span><br><span class="line">call plug<span class="comment">#end()</span></span><br></pre></td></tr></table></figure></p>
 <p>使用 :PlugInstall 对进行安装，如下表示安装完成。</p>
-<p><img src="" alt="1.png"></p>
+<p><img src="1.png" alt=""></p>
 <h2>2. 使用</h2>
 <p>为了更好的使用 fzf 插件在使用之前，还需要做一个简单的配置，为了在打开文件后，能够准确的找到工作目录所在，需要在 .vimrc 中加上如下配置:</p>
 <p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> autochdir <span class="comment"># 自动切换工作目录</span></span><br><span class="line"></span><br><span class="line">call plug<span class="comment">#begin('~/.vim/plugged')</span></span><br><span class="line"></span><br><span class="line">Plug <span class="string">'junegunn/fzf'</span>, &#123; <span class="string">'do'</span>: &#123; -&gt; fzf<span class="comment">#install() &#125; &#125;</span></span><br><span class="line">Plug <span class="string">'junegunn/fzf.vim'</span></span><br><span class="line"></span><br><span class="line">call plug<span class="comment">#end()</span></span><br></pre></td></tr></table></figure></p>
 <p>vim 中的命令与命令行稍微有点差别，对 fzf 的使用做了一些简单的封装，这样就不用做更多的配置。</p>
 <p>核心的命令其实就一个 <code>:Files [path]</code></p>
 <p>使用这个命令之后，就会把目标目录下所有的文件（包括子目录）以一个小窗口的形式展现出来，而且带预览功能。</p>
-<p><img src="" alt="2.png"></p>
+<p><img src="2.png" alt=""></p>
 <p>同样使用 CTRL-J 和 CTRL-K 对文件进行选择，直接对文件名称进行回车会在当前窗口窗口打开文件，可以使用 CTRL-T 以新 tab 的形式打开文件，CTRL-X 以水平分屏的形式打开文件，CTRL-V 垂直分屏的形式打开文件。</p>
 <p>对于已经打开的文件，可以使用 <code>:Buffers</code> 来进行查看，操作和打开文件的方法与 :Files 命令一样。</p>
 <p>甚至还与 git 做了一定程度的结合，使用 <code>:GFiles</code>  来查看 git 文件，相当于 <code>git ls-files</code>。使用 <code>:GFiles?</code> 查看 git 状态，相当于 <code>git status</code>。</p>
