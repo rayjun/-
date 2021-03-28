@@ -11021,7 +11021,7 @@ Benjamin</a> 在 2014 年写下的这篇 Java8 的入门教程我觉得非常不
 <p>第一个区块被称之为 genesis block，其中不存储交易信息。每个区块可以被分为<strong>区块头</strong>、<strong>区块数据</strong>和<strong>区块元数据</strong>。区块头中存储着当前区块的区块号、当前区块的 hash 值和上一个区块的 hash 值，这样才能把所有的区块连接起来。区块数据中包含了交易数据。区块元数据中则包括了区块写入的时间、写入人及签名。</p>
 <p><img src="3.png" alt=""></p>
 <p>其中每一笔交易的结构如下，在 Header 中，包含了 ChainCode 的名称、版本信息。Signature 就是交易发起用户的签名。Proposal 中主要是一些参数。Response 中是智能合约执行的结果。Endorsements 中是背书结果返回的结果。</p>
-<p><img src="04.png" alt=""></p>
+<p><img src="4.png" alt=""></p>
 <p>WorldState中维护了账本的当前状态，数据以 Key-Value 的形式存储，可以快速查询和修改，每一次对 WorldState 的修改都会被记录到区块链中。WorldState 中的数据需要依赖外部的存储，通常使用 LevelDB 或者 CouchDB。</p>
 <p>区块链和 WorldState 组成了一个完整的账本，World State 保证的业务数据的灵活变化，而区块链则保证了所有的修改是可追溯和不可篡改的。</p>
 <p>在交易完成之后，数据已经写入账本，就需要将这些数据同步到其他的 Peer，Fabric 中使用的是 Gossip 协议。Gossip 也是 Channel 隔离的，只会在 Channel 中的 Peer 中广播和同步账本数据。</p>
