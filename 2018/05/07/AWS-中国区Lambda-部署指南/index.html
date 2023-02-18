@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>AWS 中国区Lambda 部署指南</h1>
+    <p>serverless 框架中部署Lambda + API Gateway:</p>
+<ol>
+<li>
+<p>Lambda 服务目前只在北京区域(cn-north-1)上线，宁夏区域(cn-northwest-1)目前不支持。</p>
+</li>
+<li>
+<p>API 部署时，需要为 <code>API Gateway</code> 配置<code>Principal</code>，配置方法如下:</p>
+<p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">resources:</span></span><br><span class="line"><span class="attr">  Resources:</span></span><br><span class="line"><span class="attr">    AppLambdaPermissionApiGateway:</span></span><br><span class="line"><span class="attr">      Properties:</span></span><br><span class="line"><span class="attr">        Principal:</span> <span class="string">apigateway.amazonaws.com</span></span><br></pre></td></tr></table></figure></p>
+</li>
+<li>
+<p>部署后的API 不能直接访问，需要配置一个在光环新网上备案的域名，或者使用 <code>aws_iam</code>方式访问接口，配置方法如下:</p>
+<p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">functions:</span></span><br><span class="line"><span class="attr">  app:</span></span><br><span class="line"><span class="attr">    handler:</span> <span class="string">index.handler</span></span><br><span class="line"><span class="attr">    events:</span></span><br><span class="line"><span class="attr">      - http:</span> </span><br><span class="line"><span class="attr">          method:</span> <span class="string">ANY</span></span><br><span class="line"><span class="attr">          path:</span> <span class="string">/</span></span><br><span class="line"><span class="attr">          authorizer:</span> <span class="string">aws_iam</span></span><br></pre></td></tr></table></figure></p>
+<p>使用<code>Postman</code>方式访问方法如下，Authorization 的方式选择 AWS Signature，然后使用IAM账户的AccessKey 和 SecretKey，AWS Region 填写 cn-north-1，Service Name 填写 execute-api:</p>
+<p><img src="../../../../../../../var/folders/9j/t84xr7l14xs5fwmch7128cxw0000gn/T/abnerworks.Typora/image-20180507180000661.png" alt="image-20180507180000661"></p>
+<p>​</p>
+</li>
+<li>
+<p>不要在 <code>provider</code>和<code>functions</code>中配置<code>environment</code>，这一配置在<code>cn-north-1</code>区域不支持</p>
+</li>
+<li>
+<p>以下是一个简单的 serverless 配置:</p>
+<p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">service:</span> <span class="string">serverless-aap2</span></span><br><span class="line"></span><br><span class="line"><span class="attr">custom:</span></span><br><span class="line"><span class="attr">  tableName:</span> <span class="string">'users-table-$&#123;self:provider.stage&#125;'</span></span><br><span class="line"><span class="attr">  dynamodb:</span></span><br><span class="line"><span class="attr">    start:</span></span><br><span class="line"><span class="attr">      migrate:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="attr">provider:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">aws</span></span><br><span class="line"><span class="attr">  runtime:</span> <span class="string">nodejs8.10</span></span><br><span class="line"><span class="attr">  stage:</span> <span class="string">dev</span></span><br><span class="line"><span class="attr">  endpointType:</span> <span class="string">REGIONAL</span></span><br><span class="line"><span class="attr">  region:</span> <span class="string">cn-north-1</span></span><br><span class="line"><span class="attr">  iamRoleStatements:</span></span><br><span class="line"><span class="attr">    - Effect:</span> <span class="string">Allow</span></span><br><span class="line"><span class="attr">      Action:</span></span><br><span class="line"><span class="attr">        - dynamodb:</span><span class="string">Query</span></span><br><span class="line"><span class="attr">        - dynamodb:</span><span class="string">Scan</span></span><br><span class="line"><span class="attr">        - dynamodb:</span><span class="string">GetItem</span></span><br><span class="line"><span class="attr">        - dynamodb:</span><span class="string">PutItem</span></span><br><span class="line"><span class="attr">        - dynamodb:</span><span class="string">UpdateItem</span></span><br><span class="line"><span class="attr">        - dynamodb:</span><span class="string">DeleteItem</span></span><br><span class="line"><span class="attr">      Resource:</span></span><br><span class="line"><span class="bullet">        -</span> <span class="string">&#123;</span> <span class="string">"Fn::GetAtt"</span><span class="string">:</span> <span class="string">["UsersDynamoDBTable",</span> <span class="string">"Arn"</span> <span class="string">]</span> <span class="string">&#125;</span></span><br><span class="line">  <span class="comment">#environment:</span></span><br><span class="line">    <span class="comment">#USERS_TABLE: $&#123;self:custom.tableName&#125;</span></span><br><span class="line"><span class="attr">plugins:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">serverless-dynamodb-local</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">serverless-offline</span></span><br><span class="line"></span><br><span class="line"><span class="attr">functions:</span></span><br><span class="line"><span class="attr">  app:</span></span><br><span class="line"><span class="attr">    handler:</span> <span class="string">index.handler</span></span><br><span class="line"><span class="attr">    events:</span></span><br><span class="line"><span class="attr">      - http:</span> </span><br><span class="line"><span class="attr">          method:</span> <span class="string">ANY</span></span><br><span class="line"><span class="attr">          path:</span> <span class="string">/</span></span><br><span class="line"><span class="attr">          authorizer:</span> <span class="string">aws_iam</span></span><br><span class="line"><span class="attr">      - http:</span> </span><br><span class="line"><span class="attr">          method:</span> <span class="string">ANY</span></span><br><span class="line"><span class="attr">          path:</span> <span class="string">'&#123;proxy+&#125;'</span></span><br><span class="line"><span class="attr">          authorizer:</span> <span class="string">aws_iam</span> </span><br><span class="line"></span><br><span class="line"><span class="attr">resources:</span></span><br><span class="line"><span class="attr">  Resources:</span></span><br><span class="line"><span class="attr">    AppLambdaPermissionApiGateway:</span></span><br><span class="line"><span class="attr">      Properties:</span></span><br><span class="line"><span class="attr">        Principal:</span> <span class="string">apigateway.amazonaws.com</span></span><br><span class="line"><span class="attr">    UsersDynamoDBTable:</span></span><br><span class="line"><span class="attr">      Type:</span> <span class="string">'AWS::DynamoDB::Table'</span></span><br><span class="line"><span class="attr">      Properties:</span></span><br><span class="line"><span class="attr">        AttributeDefinitions:</span></span><br><span class="line"><span class="bullet">          -</span></span><br><span class="line"><span class="attr">            AttributeName:</span> <span class="string">userId</span></span><br><span class="line"><span class="attr">            AttributeType:</span> <span class="string">S</span></span><br><span class="line"><span class="attr">        KeySchema:</span></span><br><span class="line"><span class="bullet">          -</span></span><br><span class="line"><span class="attr">            AttributeName:</span> <span class="string">userId</span></span><br><span class="line"><span class="attr">            KeyType:</span> <span class="string">HASH</span></span><br><span class="line"><span class="attr">        ProvisionedThroughput:</span></span><br><span class="line"><span class="attr">          ReadCapacityUnits:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">          WriteCapacityUnits:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">        TableName:</span> <span class="string">$&#123;self:custom.tableName&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p>​</p>
+</li>
+</ol>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

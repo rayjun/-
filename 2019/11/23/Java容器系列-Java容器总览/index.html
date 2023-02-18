@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Java容器系列-Java容器总览</h1>
+    <p>Java 的容器是 Java 语言中很重要的一部分，日常写代码会大量用到各种容器。Java 中的容器有一个庞大的体系，纠缠于细节很难全面掌握。这篇文章就总览一下 Java 的容器，然后再深入到细节中学习。</p>
+<p>Java 中的容器主要分为两部分，<strong>Collection</strong> 和 <strong>Map</strong> 两种。Collection 主要用于存储单个的元素。而 Map 则主要是存储键值对。</p>
+<blockquote>
+<p>本文基于 JDK1.8</p>
+</blockquote>
+<h3>Collection</h3>
+<p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/Java/collection/collection.jpg" alt=""></p>
+<p>上图中圆圈代表<strong>接口</strong>, 长方形代表<strong>类</strong>，包括抽象类和普通类。绿色代表线程安全，黄色代表不是线程安全。上面的类图中只包括了 <code>java.util</code> 下的类，<code>java.util.concurrent</code> 下面的容器类从功能的角度上来说并没有太大不同，但是这个包下的类都是线程安全的。</p>
+<p>从类图中可以看到 Collection 继承了 Iterator 接口,说明所有的 Collection 都可以通过<strong>迭代器</strong>来进行访问。</p>
+<p>Collection 接口有三个子接口，<code>List</code>、<code>Set</code> 和 <code>Queue</code>。List 会按照元素的插入顺序保存元素，Set 中的元素都不能重复。Collection 中定义了一些公共的方法，都是一些基础的工具方法，比如获取容器的大小、判断容器时候为空、清空容器、迭代容器元素等方法。在 JDK1.8 以后，在 Collection 接口中加入了 default 方法，这些方法都是用于支持 Java8 的函数式编程。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Collection</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">Iterable</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(Object o)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">Iterator&lt;E&gt; <span class="title">iterator</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    Object[] toArray();</span><br><span class="line"></span><br><span class="line">    &lt;T&gt; T[] toArray(T[] a);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">default</span> &lt;T&gt; T[] toArray(IntFunction&lt;T[]&gt; generator) &#123;</span><br><span class="line">        <span class="keyword">return</span> toArray(generator.apply(<span class="number">0</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">remove</span><span class="params">(Object o)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">containsAll</span><span class="params">(java.util.Collection&lt;?&gt; c)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(java.util.Collection&lt;? extends E&gt; c)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">removeAll</span><span class="params">(java.util.Collection&lt;?&gt; c)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">default</span> <span class="keyword">boolean</span> <span class="title">removeIf</span><span class="params">(Predicate&lt;? <span class="keyword">super</span> E&gt; filter)</span> </span>&#123;</span><br><span class="line">        Objects.requireNonNull(filter);</span><br><span class="line">        <span class="keyword">boolean</span> removed = <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">final</span> Iterator&lt;E&gt; each = iterator();</span><br><span class="line">        <span class="keyword">while</span> (each.hasNext()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (filter.test(each.next())) &#123;</span><br><span class="line">                each.remove();</span><br><span class="line">                removed = <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> removed;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">retainAll</span><span class="params">(java.util.Collection&lt;?&gt; c)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> Spliterator&lt;E&gt; <span class="title">spliterator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Spliterators.spliterator(<span class="keyword">this</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">default</span> Stream&lt;E&gt; <span class="title">stream</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> StreamSupport.stream(spliterator(), <span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">default</span> Stream&lt;E&gt; <span class="title">parallelStream</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> StreamSupport.stream(spliterator(), <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4>List</h4>
+<p><code>List</code> 接口下的 ArrayList 日常写代码使用的很多。ArrayList 的部分代码如下。从代码中可以看到，ArrayList 底层的数据结构就是一个数组，而且 ArrayList 实现了 RandomAccess 来支持随机访问。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArrayList</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">        <span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt;, <span class="title">RandomAccess</span>, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">transient</span> Object[] elementData;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>ArrayList 与数组的功能很像，但是提供了更多便利的操作。Vector 与 ArrayList 的功能基本一致，但是是线程安全的，Vector 的子类 Stack 同样也是线程安全的，但是这些类基本都不推荐再使用了。如果要使用线程安全的类，java.util.concurrent 中的 <code>CopyOnWriteArrayList</code> 是一种更好的选择。</p>
+<p>LinkedList 与 ArrayList 功能也比较相近，从功能的角度上来说，它们之间最大的区别在于 ArrayList 支持<strong>随机访问</strong>，而 LinkedList 则不支持。LinkedList 部分代码如下，可以看到 LinkedList 底层使用的是双向链表的数据结构。而且还实现了 Deque 接口，所以除了可以作为列表容器来使用之外，还可以作为队列或者双端队列来使用。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LinkedList</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractSequentialList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">        <span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt;, <span class="title">Deque</span>&lt;<span class="title">E</span>&gt;, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">transient</span> <span class="keyword">int</span> size = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">transient</span> Node&lt;E&gt; first;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">transient</span> Node&lt;E&gt; last;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>LinkedList 同样在 java.util.concurrent 中提供 LinkedBlockingQueue 和 LinkedBlockingDeque 来实现同样的功能，除了在多线程环境比 LinkedList 更有优势外，功能方面基本没有差别。</p>
+<h4>Set</h4>
+<p>各类 <code>Set</code> 的共同点在于 set 的元素是不重复的，这一特性在一些情况下非常有用，HashSet 是用的最多的 Set 类。以下是 HashSet 的部分代码，比较有意思的是 HashSet 底层是使用 HashMap 实现的，所有的值都存着在 HashMap 的 Key 中，Value 的位置就放一个固定的对象 PRESENT。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HashSet</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">        <span class="keyword">extends</span> <span class="title">AbstractSet</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">        <span class="keyword">implements</span> <span class="title">Set</span>&lt;<span class="title">E</span>&gt;, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">transient</span> HashMap&lt;E, Object&gt; map;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object PRESENT = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HashSet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>HashSet 里面的元素是无序的，如果需要让 set 中元素有序，那么就可以使用 LinkedHashSet，LinkedHashSet 中通过构造一个双向链表来记录插入顺序。而 TreeSet 则是通过底层的红黑树结构提供了排序顺序的访问方式，具体用哪种可以看具体的需求。同样 Set 也有线程安全的版本 <code>CopyOnWriteArraySet</code>。</p>
+<h4>Queue</h4>
+<p><code>Queue/Deque</code> 是 Java 中的提供的 队列接口。ArrayQueue 是具体可以使用的队列类，可以作为普通队列或则双端队列来使用。但是队列在并发情况使用的更多一点，使用 LinkedBlockingQueue 或者 LinkedBlockingDeque 会是更好的选择。有时候除了顺序队列之外，可能还需要通过优先级来调度的队列，PriorityQueue 就是为这个需求而生的，在并发情况下与之对应的就是 PriorityBlockingQueue。</p>
+<h3>Map</h3>
+<p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/Java/collection/map.jpg" alt=""></p>
+<p>Map 的类图结构相对来说就简单很多。所有的 Map 类都继承了 Map 接口。HashMap 是使用的最多的 Map 类，HashMap 也是无序的，和 Set 类似，LinkedHashMap 和 TreeMap 也从不同的方面保证顺序，LinkedHashMap 通过双向链表来记录插入顺序。TreeMap 则是对其中的元素进行排序，可以按照排序的顺序进行访问。</p>
+<p>作为 Map 的典型实现，HashMap 代码结构就复杂的多，HashMap 号称是有着 $O(1)$ 的访问速度（只是近似，在极端情况下可能退化成 $O(N)$）。这么快速的关键在于哈希函数的实现，哈希函数好的实现可以帮助键值对均匀的分布，从而有 $O(1)$ 的访问速度，以下是 HashMap 的哈希函数的实现，而且 HashMap 的扩容和处理哈希碰撞等问题的处理也很复杂。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> h;</span><br><span class="line">        <span class="keyword">return</span> (key == <span class="keyword">null</span>) ? <span class="number">0</span> : (h = key.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>与 Collection 中的结构类似，HashTable 也与 HashMap 功能类似，但是 HashTable 是线程安全的。同样因为 HashTable 实现的方式不如 java.util.concurrent 中提供的性能好，所以不推荐使用 HashTable。在并发情况下推荐使用 ConcurrentHashMap，ConcurrentHashMap 通过分段锁的机制，在并发情况下也能有较好的性能。如果在并发情况下也需要保证 Map 的顺序，那就使用 ConcurrentNavigableMap。</p>
+<h3>Collections 工具类</h3>
+<p>在 java.util 包下有一个 Collections 类，这是一个工具类，里面所有的方法都是静态的，而且类不能被实例化。里面提供了各种方法，可以用来更有效率的操作各类容器对象。</p>
+<p>比如对 List 排序：
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList();</span><br><span class="line">list.add(<span class="number">1</span>);</span><br><span class="line">list.add(<span class="number">4</span>);</span><br><span class="line">list.add(<span class="number">6</span>);</span><br><span class="line">list.add(<span class="number">2</span>);</span><br><span class="line">list.add(<span class="number">8</span>);</span><br><span class="line">Collections.sort(list);</span><br></pre></td></tr></table></figure>
+当然还可以自定义排序的规则，自己实现一个 <code>Comparator</code> 然后作为参数传入就好了。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Collections.sort(list, <span class="keyword">new</span> Comparator&lt;Integer&gt;() &#123; </span><br><span class="line">    <span class="meta">@Override</span>   </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(Integer o1, Integer o2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> o1 &gt; o2 ? <span class="number">1</span> : <span class="number">0</span>;    </span><br><span class="line">    &#125;</span><br><span class="line"> &#125;);</span><br></pre></td></tr></table></figure>
+还有开箱即用的二分查找算法:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Collections.binarySearch(list, <span class="number">2</span>);</span><br></pre></td></tr></table></figure></p>
+<p>还可以直接把 list 进行反转：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Collections.reverse(list);</span><br></pre></td></tr></table></figure>
+还可以把 list 使用洗牌算法打乱：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Collections.shuffle(list);</span><br></pre></td></tr></table></figure>
+以上只是其中的一部分方法，还有可以交换 list 中的元素，找出 list 中的最小、最大值等方法。</p>
+<p>因为 java.util 包下的容器大部分都不是线程安全的，Collections 有一类方法可以把 普通的容器对象转成线程安全的对象：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Collections.synchronizedList(list);</span><br></pre></td></tr></table></figure>
+对于 Map 和 Set 也有类似的工具方法。</p>
+<p>在并发环境下，还可以把一个普通容器对象转化成一个不可变的容器对象，这样在并发环境下也是线程安全的：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Collections.unmodifiableList(list);</span><br></pre></td></tr></table></figure></p>
+<p>(完)</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

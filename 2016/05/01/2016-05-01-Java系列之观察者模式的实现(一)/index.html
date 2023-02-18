@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Java系列之观察者模式的实现(一)</h1>
+    <p>在 Java 中，观察者模式是一个很重要的设计模式，在这篇文章中，我们来简单了解一下如何利用 Java 语言的特性来实现
+一个简单的观察者模式。</p>
+<h4>Java 中的 Obserable 与 Observer</h4>
+<p>在 Java SE 中，有一个 Observer 接口和一个 Observer 类。在 api 文档中，描述如下：</p>
+<ul>
+<li><code>Observer</code> 一个类实现乐这个接口之后，被观察的对象如果有改变，那么这个类就可以接收到通知。实现这个接口必须要实现 <code>update</code> 方法。</li>
+<li><code>Obserable</code> 这个类代表一个可观察的对象，或者 model 层的一个实例，可以被认为是想被观察的对象的一个子类。一个可观察的对象可以有多个观察者。</li>
+</ul>
+<h4>实现简单的观察者模式</h4>
+<p>首先需要定义一个可观察的对象,这个对象中有一个 data 变量，这个变量在被改变的时候会通知到观察者：</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class ObservableObject extends Observable&#123;</span><br><span class="line"></span><br><span class="line">	int data &#x3D; 0;</span><br><span class="line">	</span><br><span class="line">	public void changeData(int change) &#123;</span><br><span class="line">		data &#x3D; change;</span><br><span class="line">		this.setChanged(); &#x2F;&#x2F;标记对象被改变</span><br><span class="line">		this.notifyObservers();  &#x2F;&#x2F;通知所有的观察者</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>定义观察者，观察者在接收到被观察者的改变之后，会将改变的值打印出来:</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class ObserverObject implements Observer &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void update(Observable o, Object arg) &#123;</span><br><span class="line">		ObservableObject oo &#x3D; (ObservableObject) o;</span><br><span class="line">		</span><br><span class="line">		System.out.println(&quot;被观察者的数据被修改为：&quot;+ oo.data);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>测试：</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		ObservableObject observableObject &#x3D; new ObservableObject();</span><br><span class="line">		ObserverObject observerObject &#x3D; new ObserverObject();</span><br><span class="line">	</span><br><span class="line">		observableObject.addObserver(observerObject);</span><br><span class="line">		observableObject.changeData(1);</span><br><span class="line">		observableObject.changeData(-100);</span><br><span class="line">		</span><br><span class="line">		observableObject.deleteObserver(observerObject); &#x2F;&#x2F;移除观察者</span><br><span class="line">		observableObject.changeData(200);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行结果为：</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">被观察者的数据被修改为：1</span><br><span class="line">被观察者的数据被修改为：-100</span><br></pre></td></tr></table></figure></p>
+<p>需要注意的是只打印了两个结果，是因为在第三次改变之前将观察者移除了，这样造成的结果是被观察者的改变将不能通知到被移除的观察者。</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

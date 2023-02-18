@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>SQL是什么</h1>
+    <p>SQL 的全称是结构查询语言，这是第一个实现了关系模型的语言。是一种特定领域语言，如果你想开发一个软件，仅仅依靠 SQL 是无法完成的，它只能用于数据的查询和统计。与之相反，C 语言等就被称之为通用语言。</p>
+<p>SQL 是关系模型的实现，在被 Oracle，MySQL 等各大关系型数据库所采用，但 SQL 不仅仅在关系型数据库中使用的很广泛，在大数据领域中也有很大的使用空间，Spark、Flink 等前沿的计算框架也都提供了 SQL 接口。</p>
+<h2>1. SQL结构</h2>
+<p>SQL 语言本身可以分成 DDL、DCL、DML等类型，每一类都有不同功能。</p>
+<p>在 SQL 中有大量的操作符可以使用，而且为了更方便的查询和统计数据，SQL 中还内置了很多函数。</p>
+<p>无论是上面三种类型的哪一种，都是由基础的元素构成，最基础的元素有三种：</p>
+<ul>
+<li>子句（Clauses)：每一个SQL 都可以分解成一个个子句</li>
+<li>表达式（Expressions)：可以产生任何标量值</li>
+<li>谓词（Predicates)：产生一个三值逻辑值（true/false/unknow）或者布尔值。</li>
+</ul>
+<p>还有另外两种元素是由上面的部分组成的。</p>
+<ul>
+<li>查询（Queries）：基于特定的条件检索数据</li>
+<li>语句（Statements）：可以持久化地影响数据和数据结构</li>
+</ul>
+<p>也就是说，执行中的 SQL，要么是查询，要么就是语句。</p>
+<p>以 SQL 中的 SELECT <strong>查询</strong>为例：</p>
+<p><img src="0.png" alt=""></p>
+<p>以 SQL 中的 UPDATE <strong>语句</strong>为例：</p>
+<p><img src="1.png" alt=""></p>
+<p>这里介绍的是 SQL 的标准语法，在不同数据库中的实现有所不同。</p>
+<h3>DDL</h3>
+<p>DDL 全称是 data definition language，用于定义数据结构。</p>
+<p>因为如果要能使用 SQL，就要求数据是结构化的。结构化就是指数据的数据结构，有哪些字段，字段是哪种类型，都需要提前定义好。</p>
+<p>通俗来说，就是用来创建数据，创建表，修改表结构等等。</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> book(</span><br><span class="line"> <span class="keyword">id</span> <span class="built_in">bigint</span>(<span class="number">20</span>) primary <span class="keyword">key</span> auto_increment,</span><br><span class="line"> <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">50</span>),</span><br><span class="line"> author <span class="built_in">VARCHAR</span>(<span class="number">50</span>),</span><br><span class="line"> <span class="keyword">content</span> <span class="built_in">varchar</span>(<span class="number">50</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<h3>DCL</h3>
+<p>每个数据库系统中都会涉及到权限和安全，DCL 就是用来维护系统访问权限，全称是 data control language。</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span>, <span class="keyword">UPDATE</span></span><br><span class="line"><span class="keyword">ON</span> book</span><br><span class="line"><span class="keyword">TO</span> user1;</span><br></pre></td></tr></table></figure></p>
+<h3>DML</h3>
+<p>DML 是日常使用最频繁的一类，全称是 data manipulation language。</p>
+<p>对数据表的增删改查都是属于这一类。</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> *</span><br><span class="line"><span class="keyword">FROM</span>  Book</span><br><span class="line"><span class="keyword">WHERE</span> price &gt; <span class="number">100.00</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> title;</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> book</span><br><span class="line">(<span class="keyword">name</span>, author, <span class="keyword">content</span>)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">(<span class="string">'围城'</span>, <span class="string">'钱钟书'</span>, <span class="string">'城里的人想出来，墙外的人想进去'</span>);</span><br></pre></td></tr></table></figure></p>
+<h3>操作符</h3>
+<p>SQL 中还提供了很多逻辑操作符操作符，这些逻辑操作符会和表达式组合形成一个谓词，用来过滤数据。</p>
+<ul>
+<li>=</li>
+<li>&lt;&gt;</li>
+<li>
+<blockquote></blockquote>
+</li>
+<li>&lt;</li>
+<li>≥</li>
+<li>≤</li>
+<li>between</li>
+<li>like</li>
+<li>in &amp; not in</li>
+<li>is null &amp; is not null</li>
+<li>is true &amp; is not true</li>
+<li>is false &amp; is not false</li>
+<li>is not distinct from (两个值相等或者都为空)</li>
+<li>as</li>
+</ul>
+<h3>内置函数</h3>
+<p>在数据查询统计的需求中，通常会涉及到对数据的汇总和统计，SQL 中提供了很多内置的函数来帮助完成这个过程。</p>
+<p>比如时间类的函数：</p>
+<ul>
+<li>DAY</li>
+<li>MONTH</li>
+<li>WEEKDAY</li>
+<li>YEAR</li>
+<li>...</li>
+</ul>
+<p>字符串函数：</p>
+<ul>
+<li>LOWER</li>
+<li>UPPER</li>
+<li>...</li>
+</ul>
+<p>聚合函数：</p>
+<ul>
+<li>COUNT</li>
+<li>AVG</li>
+<li>MAX</li>
+<li>MIN</li>
+<li>...</li>
+</ul>
+<h2>2. SQL标准</h2>
+<p>SQL 起源于 1970 年的一篇论文[5]，然后由 IBM 实现了这篇关系模型的论文，这就是 SQL 的前身，然后自家产品不断推出相关的产品。</p>
+<p>Oracle 看到了 SQL 的潜力，也加入竞争，经历了一段时间的野蛮生长之后，这两家公司共同促进了 SQL 的标准化。</p>
+<p>在 1986 年，SQL 成为了 ANSI 的标准，一年之后也成为了 ISO 的标准。</p>
+<p>目前最新的 SQL 标准是 SQL-2016，SQL-2019 的标准正在制定中。</p>
+<p>SQL 的标准号是通过年份来决定的，历史上的各个 SQL 标准如下：</p>
+<ul>
+<li>1986 SQL-86</li>
+<li>1989 SQL-89</li>
+<li>1992 SQL-92</li>
+<li>1999 SQL:1999</li>
+<li>2003 SQL:2003</li>
+<li>2006 SQL:2006</li>
+<li>2008 SQL:2008</li>
+<li>2011 SQL:2011</li>
+<li>2016 SQL:2016</li>
+<li>2019 SQL:2019（正在制定中）</li>
+</ul>
+<p>需要注意的是，SQL 标准与实际使用的 SQL 还是有很大区别的，比如在不同的数据库中，对 SQL 的实现不完全相同。</p>
+<p>也就是说，很有可能 SQL 标准中的某个特性在具体的数据库中不能使用，比如在 MySQL 中，就抛弃了很多功能，但不妨碍它受欢迎。就像网络的七层协议一样，最后的实现也并不是完整按照这七层协议来，而是选择最实用的方式来实现。</p>
+<p>文 / Rayjun</p>
+<h3>REF</h3>
+<p>[1] <a href="https://en.wikipedia.org/wiki/SQL" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/SQL</a></p>
+<p>[2] <a href="https://en.wikipedia.org/wiki/SQL_syntax" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/SQL_syntax</a></p>
+<p>[3] <a href="https://en.wikipedia.org/wiki/Domain-specific_language" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Domain-specific_language</a></p>
+<p>[4] <a href="https://en.wikipedia.org/wiki/General-purpose_language" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/General-purpose_language</a></p>
+<p>[5] <a href="https://dl.acm.org/doi/10.1145/362384.362685" target="_blank" rel="noopener">https://dl.acm.org/doi/10.1145/362384.362685</a></p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

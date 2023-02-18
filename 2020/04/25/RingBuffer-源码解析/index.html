@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>RingBuffer 源码解析</h1>
+    <p>RingBuffer 主要用于在生产者和消费者之间传递数据。至于核心的控制机制已经被转移到 <code>Sequencer</code> 中了，具体的控制机制后续会有写专门的文章，这里先聚焦 RingBuffer。</p>
+<h2>RingBuffer 基本结构</h2>
+<p>缓存行填充技术在 Disruptor 中被大量使用，在这里同样也用到了，关于缓存行填充在上一篇文章中已经姜的很详细了，就是为了将 RingBuffer 中不会修改的值一直缓存在 CPU 缓存中，减少访问内存的次数。</p>
+<p>而且 RingBuffer 中的对象在 Disruptor 启动时就会被创建后，后续会对这些对象进行重复利用，而不用创建新的对象，所以 Disruptor 中也基本不用进行垃圾回收，以下的代码就是用来初始化对象：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">fill</span><span class="params">(EventFactory&lt;E&gt; eventFactory)</span></span>&#123;    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; bufferSize; i++)    &#123;        </span><br><span class="line">        entries[BUFFER_PAD + i] = eventFactory.newInstance();    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+在初始化 RingBuffer 时，需要指定三个参数，EventFactory，bufferSize 和 WaitStrategy。EventFactory 就是用来生成数组中元素的工厂，如上代码。</p>
+<p>bufferSize 是用来存储消息的数组的容量， 必须是 2 的次方，在 Java 的 HashMap 中，也需要保证容量是 2 的次方，这两个地方的设计是相同的，都是为了可以快速找到目标地址。</p>
+<p>我们知道 RingBuffer 中是使用循环数组来存储消息，获取元素位置的时候一般会使用 &amp; 来获取元素位置，如下：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> E <span class="title">elementAt</span><span class="params">(<span class="keyword">long</span> sequence)</span></span>&#123;   </span><br><span class="line">      <span class="keyword">return</span> (E) UNSAFE.getObject(entries, REF_ARRAY_BASE + ((sequence &amp; indexMask) &lt;&lt; REF_ELEMENT_SHIFT));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+sequence 就是当前消息的序列号，indexMask 的值是 bufferSize - 1。在 bufferSize 的值为 2 的 N 次方的情况下，sequence &amp; indexMask 的值就是元素的位置。在 HashMap 中，如果传入的值不是 2 的 N 次方，会被自动转成最接近传入值的 2 的 N 次方，而在 Disruptor 中，则会直接报错。</p>
+<p>其实利用取余操作也可以获取到元素的位置，但是取余的操作效率是比 &amp; 操作效率低，对于 Disruptor 这么最求性能极致的框架来说，怎么会放过这个压榨性能的机会。</p>
+<p>WaitStrategy 是消费者在等待 RingBuffer 中消息的策略，默认是 BlockingWaitStrategy，也就是获取不到消息时进行阻塞，也可以根据的自己的需要实现自己的等待策略。</p>
+<p>创建 RingBuffer 时，可以指定是一个生产者还是多个生产者，但实际就是创建不同的 Sequencer，Sequencer 的原理我们下篇文章再讲：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 生成支持多个生产者的 RingBuffer， 实际是创建不同的 Sequencer</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;E&gt; <span class="function">RingBuffer&lt;E&gt; <span class="title">createMultiProducer</span><span class="params">( EventFactory&lt;E&gt; factory, <span class="keyword">int</span> bufferSize, WaitStrategy waitStrategy)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    MultiProducerSequencer sequencer = <span class="keyword">new</span> MultiProducerSequencer(bufferSize, waitStrategy);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> RingBuffer&lt;E&gt;(factory, sequencer);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 生成支持单个生产者的 RingBuffer</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;E&gt; <span class="function">RingBuffer&lt;E&gt; <span class="title">createSingleProducer</span><span class="params">(EventFactory&lt;E&gt; factory, <span class="keyword">int</span> bufferSize, WaitStrategy waitStrategy)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    SingleProducerSequencer sequencer = <span class="keyword">new</span> SingleProducerSequencer(bufferSize, waitStrategy);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> RingBuffer&lt;E&gt;(factory, sequencer);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>除了上面两种默认的方式之外，还可以通过 create 方法来创建指定类型的 RingBuffer。</p>
+<p>RingBuffer 的核心功能就是存储和传输消息，其他功能已经被抽离到其他组件中。</p>
+<h2>RingBuffer 如何传输数据</h2>
+<p>RingBuffer 的核心功能就是将消息从生产者取过来，然后给消费者处理。</p>
+<h3>生产者生产数据</h3>
+<p>在 RingBuffer 中有很多 translateAndPublish 重载方法，支持不同的参数，但是核心都是传入一个 <code>EventTranslator</code> 的实现类，并且需要实现 <code>translateTo</code> 方法，也就是说，如何将数据放进 RingBuffer 操作又回到了用户的手上。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> &lt;A&gt; <span class="function"><span class="keyword">void</span> <span class="title">translateAndPublish</span><span class="params">(EventTranslatorOneArg&lt;E, A&gt; translator, <span class="keyword">long</span> sequence, A arg0)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        translator.translateTo(get(sequence), sequence, arg0);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">finally</span></span><br><span class="line">    &#123;</span><br><span class="line">        sequencer.publish(sequence);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>简单的 EventTranslator 实现如下：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">EventTranslatorOneArg&lt;LongEvent, ByteBuffer&gt; TRANSLATOR =</span><br><span class="line">            <span class="keyword">new</span> EventTranslatorOneArg&lt;LongEvent, ByteBuffer&gt;()</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">translateTo</span><span class="params">(LongEvent event, <span class="keyword">long</span> sequence, ByteBuffer bb)</span></span></span><br><span class="line"><span class="function">                </span>&#123;</span><br><span class="line">                    event.set(bb.getLong(<span class="number">0</span>));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br></pre></td></tr></table></figure></p>
+<p>除了利用 EventTranslator，我们也可以自己来实现完整的生产者，如下：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LongEventProducer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RingBuffer&lt;LongEvent&gt; ringBuffer;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LongEventProducer</span><span class="params">(RingBuffer&lt;LongEvent&gt; ringBuffer)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.ringBuffer = ringBuffer;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onData</span><span class="params">(ByteBuffer bb)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> sequence = ringBuffer.next();  </span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            LongEvent event = ringBuffer.get(sequence); </span><br><span class="line">            event.set(bb.getLong(<span class="number">0</span>));  </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            ringBuffer.publish(sequence);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对比这两种不同的实现可以发现，在将消息存入 RingBuffer 时，需要获取一个 sequence，并且在存入数据后需要调用 publish 方法。</p>
+<p>获取 sequence 表示的就是当前可以存入数据的位置，在存入数据之后，需要通过 publish 方法高速消费者这个位置的消息可用。</p>
+<h3>消费者处理数据</h3>
+<p>在实例化 Disruptor 时，需要配置 Handler：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Disruptor&lt;LongEvent&gt; disruptor = <span class="keyword">new</span> Disruptor&lt;LongEvent&gt;(factory, bufferSize, DaemonThreadFactory.INSTANCE);</span><br><span class="line">disruptor.handleEventsWith(<span class="keyword">new</span> LongEventHandler());</span><br></pre></td></tr></table></figure>
+同样，数据具体如何处理，也由用户自己来决定：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LongEventHandler</span> <span class="keyword">implements</span> <span class="title">EventHandler</span>&lt;<span class="title">LongEvent</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(LongEvent event, <span class="keyword">long</span> sequence, <span class="keyword">boolean</span> endOfBatch)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Event: "</span> + event);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Disruptor 支持多个消费者，所以可以添加多个消费者:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">disruptor.handleEventsWith(<span class="keyword">new</span> LongEventHandler(), <span class="keyword">new</span> AnotherLongEventHandler());</span><br></pre></td></tr></table></figure></p>
+<p>当然也可以调整这几个 Handler 之间的执行顺序：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">disruptor.handleEventsWith(<span class="keyword">new</span> LongEventHandler()).then(<span class="keyword">new</span> AnotherLongEventHandler());</span><br></pre></td></tr></table></figure></p>
+<p>随着 Disruptor 的演进，RingBuffer 功能也慢慢变的单一，只要负责数据的存储和传输，不需要负责具体的控制逻辑，这样整个框架结构更je简单，内聚性更好，这个符合 Disruptor 追求极致性能的目标。</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

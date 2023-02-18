@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>container 包详解</h1>
+    <p>Go 语言中有一个 container 包，如果只是看这个包名，可能很容易让人误解，但这个 container 和  Docker 之类的容器没有关系，这个容器是指提供的代码</p>
+<p>在 container 包中，有三种开箱即用的数据结构，可以直接使用，分别是 heap、list 和 ring。</p>
+<h2>heap</h2>
+<p>heap 中提供了一个<strong>堆</strong>的实现，可以直接使用。如果想创建一个堆，只需要先实现一些方法，这里以整数堆为例：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> IntHeap []<span class="keyword">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h IntHeap)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span>           &#123; <span class="keyword">return</span> <span class="built_in">len</span>(h) &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h IntHeap)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123; <span class="keyword">return</span> h[i] &lt; h[j] &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h IntHeap)</span> <span class="title">Swap</span><span class="params">(i, j <span class="keyword">int</span>)</span></span>      &#123; h[i], h[j] = h[j], h[i] &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *IntHeap)</span> <span class="title">Push</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	*h = <span class="built_in">append</span>(*h, x.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *IntHeap)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	old := *h</span><br><span class="line">	n := <span class="built_in">len</span>(old)</span><br><span class="line">	x := old[n<span class="number">-1</span>]</span><br><span class="line">	*h = old[<span class="number">0</span> : n<span class="number">-1</span>]</span><br><span class="line">	<span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在上面的实现中，没有对堆的实现，因为 heap 包已经把这些实现抽象出来了，在使用的时候，只需要自己实现堆中数据比较大小的逻辑。上面的代码写完之后，就可以来初始化并使用堆：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">h := &amp;IntHeap&#123;<span class="number">2</span>, <span class="number">1</span>, <span class="number">5</span>&#125;</span><br><span class="line">heap.Init(h) <span class="comment">// 初始化堆</span></span><br><span class="line"></span><br><span class="line">heap.Push(h, <span class="number">3</span>) <span class="comment">// 入堆</span></span><br><span class="line">heap.Pop(h) <span class="comment">// 出堆，拿出堆顶的第一个元素</span></span><br></pre></td></tr></table></figure></p>
+<p>在 Go 的官方文档中，甚至使用 heap 包实现了一个优先级队列，如果在业务场景中有这个需求，都可以直接使用了。具体见：<a href="https://golang.google.cn/pkg/container/heap/" target="_blank" rel="noopener">https://golang.google.cn/pkg/container/heap/</a></p>
+<h2>list</h2>
+<p>list 是一个双向链表的实现，这个数据结构的使用就更简单了，开箱即用：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">l := list.New()  <span class="comment">// 创建一个双向链表</span></span><br><span class="line">e4 := l.PushBack(<span class="number">4</span>) <span class="comment">// 从后面加入元素</span></span><br><span class="line">e1 := l.PushFront(<span class="number">1</span>) <span class="comment">// 从前面加入元素</span></span><br><span class="line">l.InsertBefore(<span class="number">3</span>, e4) <span class="comment">// 在某个元素之前插入</span></span><br><span class="line">l.InsertAfter(<span class="number">2</span>, e1) <span class="comment">// 在某个元素之后插入</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 按照链表的顺序，从前向后遍历</span></span><br><span class="line"><span class="keyword">for</span> e := l.Front(); e != <span class="literal">nil</span>; e = e.Next() &#123;</span><br><span class="line">	  fmt.Println(e.Value)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2>ring</h2>
+<p>ring 这个数据结构有点特殊，是一个环状的双向链表，这个数据结构在有些场景下很有用，比如用作任务队列。</p>
+<p>这个结构有个好处是内存在初始化的时候申请一次就可以了，其中的内存式可以重复利用了。</p>
+<p>使用起来也比较方便，可以使用 Next 和 Prev 方法去获取前面和后面的元素:</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">r := ring.New(<span class="number">5</span>) <span class="comment">// 创建一个大小为 5 的ring</span></span><br><span class="line"></span><br><span class="line">n := r.Len() <span class="comment">// 获取 ring 的长度</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 向 ring 中填充数据</span></span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">	r.Value = i</span><br><span class="line">	r = r.Next()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打印 ring 中的数据</span></span><br><span class="line">r.Do(<span class="function"><span class="keyword">func</span><span class="params">(p <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	fmt.Println(p.(<span class="keyword">int</span>))</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>ring 中还提供了两个特殊的方法：Link 和 UnLink。</p>
+<p>Link 方法可以把两个 ring 连接起来:</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">r := ring.New(<span class="number">2</span>)</span><br><span class="line">s := ring.New(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">lr := r.Len()</span><br><span class="line">ls := s.Len()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; lr; i++ &#123;</span><br><span class="line">	r.Value = <span class="number">0</span></span><br><span class="line">	r = r.Next()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j := <span class="number">0</span>; j &lt; ls; j++ &#123;</span><br><span class="line">	s.Value = <span class="number">1</span></span><br><span class="line">	s = s.Next()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">rs := r.Link(s)</span><br><span class="line"></span><br><span class="line">rs.Do(<span class="function"><span class="keyword">func</span><span class="params">(p <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	fmt.Println(p.(<span class="keyword">int</span>))</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>UnLink 方法是从 ring 摘除调一些节点，Unlink 的参数是整数 n ，表示从 <a href="http://r.Next" target="_blank" rel="noopener">r.Next</a> 开始，摘除三个元素:</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">r := ring.New(<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">n := r.Len()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">	r.Value = i</span><br><span class="line">	r = r.Next()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">r.Unlink(<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">r.Do(<span class="function"><span class="keyword">func</span><span class="params">(p <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	fmt.Println(p.(<span class="keyword">int</span>))</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>文 / Rayjun</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

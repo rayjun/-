@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Vim搜索神器fzf</h1>
+    <p>在上一篇文章中，介绍了命令行神器 fzf 的使用，这个工具不止能在命令行使用，还可以在 vim 中使用。</p>
+<p>vim 编辑器的功能很强大，但是在项目的文件管理方面却有点弱，缺乏有效的文件搜索功能，这点与 emacs 比起来就差太多了。</p>
+<p>但是 fzf 插件能够帮助 vim 补足一下短板。</p>
+<p>本文基于 macOS Big Sur 11.0.1，macVim8.2</p>
+<h2>1. 安装</h2>
+<p>vim 的安装不再赘述，使用 Homebrew 或者直接下载安装包进行安装。</p>
+<p>在安装 fzf 之前，需要先安装一下 vim 的插件管理工具，当前比较主流的管理工具有 Vundle 以及 vim-plug，这里我们使用的是后者。</p>
+<p>vim-plug 的安装很简单：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -fLo ~/.vim/<span class="built_in">autoload</span>/plug.vim --create-dirs \</span><br><span class="line">    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim</span><br></pre></td></tr></table></figure></p>
+<p>完成之后就可以安装插件了，在这里只演示安装 fzf 的插件，在 home 目录下新建一个 .vimrc 文件，然后在文件中填入以下内容:</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">call plug<span class="comment">#begin('~/.vim/plugged')</span></span><br><span class="line"></span><br><span class="line">Plug <span class="string">'junegunn/fzf'</span>, &#123; <span class="string">'do'</span>: &#123; -&gt; fzf<span class="comment">#install() &#125; &#125;</span></span><br><span class="line">Plug <span class="string">'junegunn/fzf.vim'</span></span><br><span class="line"></span><br><span class="line">call plug<span class="comment">#end()</span></span><br></pre></td></tr></table></figure></p>
+<p>使用 :PlugInstall 对进行安装，如下表示安装完成。</p>
+<p><img src="1.png" alt=""></p>
+<h2>2. 使用</h2>
+<p>为了更好的使用 fzf 插件在使用之前，还需要做一个简单的配置，为了在打开文件后，能够准确的找到工作目录所在，需要在 .vimrc 中加上如下配置:</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> autochdir <span class="comment"># 自动切换工作目录</span></span><br><span class="line"></span><br><span class="line">call plug<span class="comment">#begin('~/.vim/plugged')</span></span><br><span class="line"></span><br><span class="line">Plug <span class="string">'junegunn/fzf'</span>, &#123; <span class="string">'do'</span>: &#123; -&gt; fzf<span class="comment">#install() &#125; &#125;</span></span><br><span class="line">Plug <span class="string">'junegunn/fzf.vim'</span></span><br><span class="line"></span><br><span class="line">call plug<span class="comment">#end()</span></span><br></pre></td></tr></table></figure></p>
+<p>vim 中的命令与命令行稍微有点差别，对 fzf 的使用做了一些简单的封装，这样就不用做更多的配置。</p>
+<p>核心的命令其实就一个 <code>:Files [path]</code></p>
+<p>使用这个命令之后，就会把目标目录下所有的文件（包括子目录）以一个小窗口的形式展现出来，而且带预览功能。</p>
+<p><img src="2.png" alt=""></p>
+<p>同样使用 CTRL-J 和 CTRL-K 对文件进行选择，直接对文件名称进行回车会在当前窗口窗口打开文件，可以使用 CTRL-T 以新 tab 的形式打开文件，CTRL-X 以水平分屏的形式打开文件，CTRL-V 垂直分屏的形式打开文件。</p>
+<p>对于已经打开的文件，可以使用 <code>:Buffers</code> 来进行查看，操作和打开文件的方法与 :Files 命令一样。</p>
+<p>甚至还与 git 做了一定程度的结合，使用 <code>:GFiles</code>  来查看 git 文件，相当于 <code>git ls-files</code>。使用 <code>:GFiles?</code> 查看 git 状态，相当于 <code>git status</code>。</p>
+<p>还可以使用 <code>:Colors</code> 来为 vim 切换主题。</p>
+<p>有了上面的这些功能之后，vim 在操作文件上面就很强了，算是补足了 vim 的一个弱点。</p>
+<p>上面的功能基本已经够用了，fzf 的 vim 插件也还有不少高阶的用法，感兴趣的可以自行查看文档。</p>
+<p>文 / Rayjun</p>
+<h2>REF</h2>
+<p>[1] <a href="https://github.com/junegunn/fzf.vim" target="_blank" rel="noopener">https://github.com/junegunn/fzf.vim</a></p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

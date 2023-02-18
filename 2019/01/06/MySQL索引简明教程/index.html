@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>MySQL索引简明教程</h1>
+    <h3>MySQL 索引</h3>
+<p>在 MySQL 中建立索引就像是为一本书创建目录一样，建立了索引之后，MySQL 就能快速在表中找到所要查询的内容的大致区域，如果不使用索引，那么就需要去整张表中遍历数据才能查询到结果。</p>
+<p>MySQL 的索引是建立在表的基础之上的，一个表中可以用多个索引。在表中建立索引后，虽然查询的效率提高了，但是 insert 和 update 操作的效率就降低了。</p>
+<h4>索引的类型</h4>
+<p>在 MySQL 中可以建立多种类型的索引，比如最常用的就是<strong>主键索引</strong>，索引有以下的类型：</p>
+<ul>
+<li>唯一索引(UNIQUE)：不允许出现相同的值，可以有 NULL 值</li>
+<li>普通索引(Index)：允许出现相同的索引内容</li>
+<li>主键索引(PRIMARY KEY)：不允许出现相同的值</li>
+<li>全文索引(FULLTEXT INDEX)：可以为值中的某个值建立索引，但是全文索引的效率很低，而且全文索引的优先级很高</li>
+</ul>
+<p>通常是把一个字段创建为一个索引，但是同时也可以在一个索引中使用多个字段，这种索引称之为<strong>组合索引</strong>。</p>
+<h4>索引的创建与删除</h4>
+<p>索引可以在建表阶段或者表建立之后进行创建，在建表阶段，使用 <strong>CREATE INDEX</strong> 建立索引：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">INDEX</span> index_name <span class="keyword">on</span> table_name (column_list)</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">UNIQUE</span> <span class="keyword">INDEX</span> index_name <span class="keyword">on</span> table_name (column_list)</span><br></pre></td></tr></table></figure>
+CREATE INDEX 只能创建<strong>普通索引</strong>和<strong>唯一索引</strong>这两种类型的索引。</p>
+<p>还有一种方式就是通过 <strong>ALTER TABLE</strong> 方式创建索引：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 省略索引名称，索引名称和第一个列名一样</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> <span class="keyword">index</span> (column_list)</span><br><span class="line"></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> <span class="keyword">index</span> index_name (column_list)</span><br><span class="line"></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> uniuque (column_list)</span><br><span class="line"></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> primary <span class="keyword">key</span> (column_list)</span><br><span class="line"></span><br><span class="line">// 为索引指定长度</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> <span class="keyword">index</span> index_name (<span class="keyword">column</span>(<span class="keyword">length</span>))</span><br></pre></td></tr></table></figure></p>
+<p>删除索引可以通过 <strong>ALTER TABLE</strong> 和 <strong>DROP INDEX</strong> 来实现：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">INDEX</span> index_name <span class="keyword">on</span> table_name</span><br><span class="line"></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">drop</span> <span class="keyword">index</span> index_name</span><br><span class="line"></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">drop</span> primary <span class="keyword">key</span></span><br></pre></td></tr></table></figure></p>
+<h4>索引的使用</h4>
+<p>在创建完索引之后，并不需要手动去使用索引，而是由 MySQL 的引擎来决定是否使用索引，可以通过 <strong>EXPLAIN</strong> 关键字来查看 MySQL 是如何使用索引的，同时也可以通过这个关键词来分析 SQL 语句，使用起来很方便，只需要加在 SQL 前就可以：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> username = <span class="string">'ray'</span></span><br></pre></td></tr></table></figure></p>
+<p>在 SQL 要避免以下的查询，以下的查询都不会使用索引：</p>
+<ul>
+<li>索引列参与了计算或者使用了函数运算</li>
+<li>查询的时候使用了正则表达式</li>
+<li>字符串与数字进行比较</li>
+<li>使用 or 查询，但是不是所有的条件都有索引</li>
+<li>语句中使用 NOT IN、&lt;&gt;、!= 操作</li>
+</ul>
+<h4>索引建立原则</h4>
+<ul>
+<li>单表中索引的数量需要控制</li>
+<li>添加索引时最好不要加在字符串字段上</li>
+<li>如果非要加在字段上，要限制索引的长度，只使用前缀索引</li>
+<li>不要使用 not in \ like 等查询字段，如果非要使用 like，使用后匹配 like， 如 &quot;beijing%&quot;，not in 使用 not exists 替代</li>
+<li>不要在低基数列创建索引，比如 <strong>status</strong> 字段</li>
+<li>尽量不要在经常修改的列上添加索引</li>
+<li>删除冗余索引，没有用到的索引必须全部删除</li>
+<li>创建索引的列不应该有 null 值，有 null 值得列是不会加入到索引中的</li>
+<li>如果是多条件查询，不要为每个条件字段创建索引，而是应该创建复合索引，<strong>MySQL一次只会使用一个索引</strong></li>
+<li>在创建复合索引时，要注意索引的左匹配原则，如果创建了 index(c1, c2, c3)，那么就相当于同时创建了 index(c1), index(c1, c2) 和 index(c1, c2, c3) 这三个索引</li>
+<li>数据库的主键最好是使用自增的，如果担心主键泄露信息，可以再使用一个uuid类型的字段对外展示</li>
+</ul>
+<h4>字符串索引优化</h4>
+<p>添加一个冗余字段，将字符串使用 hash 方法将字符串转化为整数，例如：username_key=hashToInt(username)，对username_key建立索引，查询时可以用如下查询</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> username_key = hashToInt(‘ray’) <span class="keyword">and</span> username = ‘ray</span><br></pre></td></tr></table></figure></p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>从LeetCode371 理解位运算</h1>
+    <p>在日常刷 LeetCode 的过程中，发现了 LeetCode371 这道题。题目的模板代码是这样的:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSum</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+看到这里的时候，内心是震惊的，这也能作为 LeetCode 的题，难道我的水平只能和小学生相当？激动两分钟发现问题并没有这么简单，这道题附带了另一个条件，那就是不能使用 <strong>+</strong> 和 <strong>-</strong> 操作符。看到之后更震惊，还有这种操作？</p>
+<p>分析了半天，最后想出了<strong>自增</strong>和<strong>自减</strong>的方式来解决了这道题，虽然被 <strong>AC</strong> 了，但是还是觉得不是很顺畅。于是 Google 了一下其他的解法，让我发现了一个更让我震惊的解法。</p>
+<h4>LeetCode371 的正确打开方式</h4>
+<p>先贴上代码:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSum</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> (b==<span class="number">0</span>? a: getSum(a^b, (a&amp;b)&lt;&lt;<span class="number">1</span> ));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+这是一个递归的解法，不过这并不重要。重要的是 <strong>a^b</strong> 和 <strong>(a&amp;b)</strong> 这两个操作。我解决这个问题使用了十几行代码，这种方式只有了一行代码，玄机就在这两个运算上面。</p>
+<p>首先 <strong>^</strong> 是异或运算，<strong>a^b</strong> 会让 a 和 b 的二进制进行异或操作，两位相同为 0， 两位不同为 1，也就是说异或运行会将二进制运算中所有的进位都放弃，所以异或也称之为<strong>不进位加法</strong>。</p>
+<p><strong>(a&amp;b)&lt;&lt;1</strong> 中 <strong>a&amp;b</strong> 就容易懂了，就是与操作，两位都为 1 结果才为 1，否则都为 0。<strong>&lt;&lt;</strong> 操作叫做左移操作，每左移一位，结果就相当于乘 2，所以 <strong>(a&amp;b)&lt;&lt;1</strong> 相当于 <strong>(a&amp;b) * 2</strong>。分析到这里所以的细节应该都是理解了，但是为什么这样递归到 <strong>b==0</strong> 就能得到两个数相加的结果呢？</p>
+<p>拿个具体的例子分析一下 <strong>2+3</strong>，也就是 <strong>010 + 011</strong>，那么使用上面的步骤来 <strong>010 ^ 011</strong> 的结果是 <strong>001</strong>，中间那两个 1 产生的进位被丢弃了。<strong>(010 &amp; 011)</strong> 的结果是 <strong>010</strong>，然后左移一位得到 <strong>100</strong>，发现什么没有， <strong>001 + 100</strong> 的结果是 <strong>101</strong>，就是我们的答案 <strong>5</strong>。但是有个问题呀，这里还是使用了 <strong>+</strong>。</p>
+<p>那就继续进行这个过程，这次 a 为 001，b 为 100，001 ^ 100 为 101，(a&amp;b) 的结果为 000，左移一位依然是 0， 那 b 的值等于0，a 的值就是我们所需要的结果了，在这个例子中是 5。</p>
+<p>在合适的问题上，使用位运算有意想不到的效果，而且位运算的速度往往要比直接进行计算要快。在 Java 中，支持如下的位运算:</p>
+<ul>
+<li>&amp; (与操作)</li>
+<li>| (或操作)</li>
+<li>^ (异或操作)</li>
+<li>~ (取反操作)</li>
+<li>&lt;&lt; (左移操作)</li>
+<li>&gt;&gt; (右移操作)</li>
+<li>&gt;&gt;&gt;(逻辑右移操作)</li>
+</ul>
+<h4>位运算技巧</h4>
+<p>位运算有很多的小技巧，我整理了一些：</p>
+<ol>
+<li><strong>与运算技巧</strong></li>
+</ol>
+<p>a&amp;(a-1) 去掉 a 的最后一个1。
+两个相同的数与运算是本身，其中一个减一后相与就取掉了 a 的最后一个1。
+可以用这个技巧判断一个数是不是 2 的 次幂:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a &gt; <span class="number">0</span> &amp;&amp; (a &amp; (a -<span class="number">1</span>) == <span class="number">0</span>)</span><br></pre></td></tr></table></figure></p>
+<p>判断一个数的奇偶性，结果为 true 则是奇数：
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(n &amp; <span class="number">1</span>) == <span class="number">1</span></span><br></pre></td></tr></table></figure></p>
+<ol start="2">
+<li><strong>异或技巧</strong></li>
+</ol>
+<p>a 异或 b 两次等于 a 本身，看一段代码:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> temp = a;</span><br><span class="line">a = b;</span><br><span class="line">b = temp;</span><br></pre></td></tr></table></figure>
+如果使用异或可以这么处理，不需要中间变量:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a = a^b;</span><br><span class="line">b = a^b;</span><br><span class="line">a = a^b;</span><br></pre></td></tr></table></figure></p>
+<p>还有这个问题，在一个数组 a 中，除了一个单独存在的数之外，其他的数都是两两存在的，找出这个单独的数，循环结束后，result 就是那个单独的数:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; i++)</span><br><span class="line">&#123;</span><br><span class="line">     result ^= a[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>异或还可以用于加密，比如对与 <strong>Hello</strong> 对应的 char 的数值是 72、101、108、108、111。每个 char 都与 任意一个数字进行异或操作，比如 12，得到 68、105、96、96、99。这个就是加密后的结果，如果要得到原文，再与 12 <strong>左移做乘法</strong>异或一次就行了。</p>
+<p>异或还可以用于判断两个数的符号是不是一样:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a ^ b) &gt;= <span class="number">0</span></span><br></pre></td></tr></table></figure></p>
+<p>异或还可以把如下的逻辑写成一行代码:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(x == a) </span><br><span class="line">    x = b; </span><br><span class="line"><span class="keyword">if</span>(x == b) </span><br><span class="line">    x = a;</span><br></pre></td></tr></table></figure>
+简化后:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x = a ^b ^x;</span><br></pre></td></tr></table></figure></p>
+<ol start="3">
+<li><strong>左移技巧</strong></li>
+</ol>
+<p>a 乘以 2 的 (n-1) 次方。
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a &lt;&lt; n</span><br></pre></td></tr></table></figure></p>
+<p>获得 int 的最大值:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a &lt;&lt; <span class="number">31</span>) -<span class="number">1</span></span><br></pre></td></tr></table></figure></p>
+<p>获得 int 的最小值:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a &lt;&lt; <span class="number">31</span></span><br></pre></td></tr></table></figure></p>
+<p>4 .<strong>右移技巧</strong></p>
+<p>a 除以 2 的 (n-1) 次方。
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a &gt;&gt; n</span><br></pre></td></tr></table></figure></p>
+<p>求两个数的平均值:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a + b) &gt;&gt; <span class="number">1</span></span><br></pre></td></tr></table></figure></p>
+<ol start="5">
+<li><strong>取反技巧</strong></li>
+</ol>
+<p>计算 n + 1:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-~n</span><br></pre></td></tr></table></figure>
+计算 n - 1:
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~-n</span><br></pre></td></tr></table></figure></p>
+<p>计算相反数:
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~n + <span class="number">1</span></span><br></pre></td></tr></table></figure></p>
+<ol start="6">
+<li><strong>复合技巧</strong></li>
+</ol>
+<p>取绝对值:
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(n ^ (n &gt;&gt; <span class="number">31</span>)) - (n &gt;&gt; <span class="number">31</span>)</span><br></pre></td></tr></table></figure>
+取两个数中的较大值（如果a&gt;=b,(a-b)&gt;&gt;31为0，否则为-1）：
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b &amp; ((a-b) &gt;&gt; <span class="number">31</span>) | a &amp; (~(a-b) &gt;&gt; <span class="number">31</span>)</span><br></pre></td></tr></table></figure>
+同样可以取较小值:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a &amp; ((a-b) &gt;&gt; <span class="number">31</span>) | b &amp; (~(a-b) &gt;&gt; <span class="number">31</span>)</span><br></pre></td></tr></table></figure>
+(完)</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

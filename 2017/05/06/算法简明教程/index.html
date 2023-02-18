@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>算法简明教程</h1>
+    <h3>复杂度分析</h3>
+<p>通过直接跑算法得到的执行时间和占用内存大小的统计称之为<strong>事后统计法</strong>，这种方法有很大的局限性：</p>
+<ul>
+<li>测试结果非常依赖测试环境</li>
+<li>测试结果受数据规模的影响很大</li>
+</ul>
+<p><strong>大 O 复杂度表示法</strong>可以不用具体的数据进行测试，就可以粗略的估算算法的执行效率。</p>
+<h4>时间复杂度</h4>
+<blockquote>
+<p>所有代码的执行时间 $T(n)$ 与每行代码执行的执行次数 n 成正比</p>
+</blockquote>
+<p>$$T(n) = O(f(n))$$</p>
+<p>这就是大 O 时间复杂度表示法，但这个方法实际上并不代表代码真正的执行时间，而是代表代码执行时间随数据规模增长的变化趋势，也称之为渐进时间复杂度。</p>
+<p>如何具体的分析算法的时间复杂度：</p>
+<ul>
+<li>只关注循环执行次数最多的一段代码</li>
+<li>加法法则：总复杂度等于量级最大的那段代码的复杂度</li>
+<li>乘法法则：嵌套代码的复杂度等于嵌套内外代码复杂度的乘积</li>
+</ul>
+<p><strong>常见的时间复杂度</strong>：</p>
+<ul>
+<li>常量阶： $O(1)$</li>
+<li>对数阶： $O(logn)$</li>
+<li>线性阶： $O(n)$</li>
+<li>线性对数阶： $O(nlogn)$</li>
+<li>平方、立方、k次方阶： $O(n^2)$ $O(n^3)$ $O(n^k)$</li>
+<li>指数阶： $O(2^n)$</li>
+<li>阶乘阶： $O(n!)$</li>
+</ul>
+<p><strong>最好时间复杂度</strong>：最理想的情况下，执行这段代码的时间复杂度
+<strong>最坏时间复杂度</strong>：最坏的情况下，执行这段代码的时间复杂度
+<strong>平均时间复杂度</strong>：加权平均复杂度或者期望时间复杂度
+<strong>摊还时间复杂度</strong>：把一次复杂操作的时间平均到 n - 1 次简单操作上，所以整体还是简单操作的时间复杂度</p>
+<h4>空间复杂度</h4>
+<p>表示算法的存储空间与数据规模之间的增长关系，通常用到的空间复杂度有 $O(1)$、$O(N)$、$O(N^2)$。</p>
+<h3>递归</h3>
+<p>可以使用递归方法解决问题的三个条件:</p>
+<ul>
+<li>一个问题可以分解为多个问题的解</li>
+<li>这个问题与分解之后的子问题，除了数据规模不同，其他的完全一样</li>
+<li>存在递归终止条件</li>
+</ul>
+<blockquote>
+<p>编写递归代码时，需要找出递推公式，而不要去想每一层递归的细节</p>
+</blockquote>
+<p>递归的问题：</p>
+<ul>
+<li>警惕出现堆栈溢出</li>
+<li>警惕重复计算</li>
+</ul>
+<h3>排序</h3>
+<h4>排序算法的衡量标准:</h4>
+<ul>
+<li>排序算法的执行效率
+<ul>
+<li>最好情况、最坏情况、平均时间复杂度</li>
+<li>时间复杂度的系数、常数、低阶</li>
+<li>比较次数和交换次数</li>
+</ul>
+</li>
+<li>排序算法的内存消耗</li>
+<li>排序算法的稳定性</li>
+</ul>
+<h4>冒泡排序</h4>
+<p>时间复杂度：$O(n^2)$
+最好时间复杂度： $O(n)$
+最坏时间复杂度： $O(n^2)$
+空间复杂度: $O(1)$ 原地排序
+稳定性：稳定
+数据范围： 适合小规模数据</p>
+<h4>插入排序</h4>
+<p>时间复杂度：$O(n^2$
+最好时间复杂度：$O(n)$
+最坏时间复杂度：$O(n^2))$
+空间复杂度：$O(1)$
+稳定性: 稳定
+数据范围： 适合小规模数据</p>
+<h4>选择排序</h4>
+<p>时间复杂度：$O(n^2)$
+最好时间复杂度: $O(n^2)$
+最坏时间复杂度: $O(n^2)$
+空间复杂度: $O(1)$
+稳定性: 不稳定
+数据范围: 适合小规模数据</p>
+<h4>归并排序</h4>
+<p>归并排序是自下而上的排序方法，所以要先分区再处理数据，而快排则是相反的，需要先处理数据，再来分区。</p>
+<p>时间复杂度: $O(nlogn)$
+最好时间复杂度: $O(nlogn)$
+最坏时间复杂度: $O(nlogn)$
+空间复杂度: $O(n)$
+稳定性: 稳定
+数据范围: 适合大规模数据</p>
+<h4>快速排序</h4>
+<p>快速排序进行分区时，使用的方式与选择排序有点类似，首先选择这个分区的最后一个值作为分区点的值。就是将小于分区点的元素都放在数组的前面，最后把分区点移到中间，后面的元素就都大于分区点，分区也就完成了。</p>
+<p>利用快速排序可以在 $O(N)$ 的时间复杂度内找出一个无序数组中第 K 大的元素。</p>
+<p>时间复杂度：$O(nlogn)$
+最好时间复杂度: $O(nlogn)$
+最坏时间复杂度: $O(nlogn)$
+空间复杂度: $O(1)$
+稳定性: 不稳定
+数据范围: 适合大规模数据</p>
+<h4>桶排序</h4>
+<p>桶排序的核心思想是将要排序的数据分别分到几个桶里面，然后对桶里面的数据进行单独的排序。桶内排序完成之后，将每个桶内的元素按照顺序取出，得到的结果就是有序的。</p>
+<p>时间复杂度：$O(n)$
+最好时间复杂度: $O(n)$
+最坏时间复杂度: $O(nlogn)$
+空间复杂度: $O(n)$
+稳定性:  稳定
+数据范围： 适合大规模数据</p>
+<h4>计数排序</h4>
+<p>时间复杂度：$O(n)$
+最好时间复杂度: $O(n)$
+最坏时间复杂度: $O(nlogn)$
+空间复杂度: $O(n)$
+稳定性:  稳定
+数据范围： 适合数据范围不大的场景</p>
+<h4>基数排序</h4>
+<p>基数排序对要排序的数据是有要求的，需要可以分割出独立的‘位’来进行比较。
+时间复杂度：$O(n)$
+最好时间复杂度: $O(n)$
+最坏时间复杂度: $O(nlogn)$
+空间复杂度: $O(n)$
+稳定性:  稳定
+数据范围： 适合数据范围不大的场景</p>
+<h4>堆排序</h4>
+<p>时间复杂度: $O(NlogN)$
+最好时间复杂度: $O(NlogN)$
+最坏时间复杂度: $O(NlogN)$
+空间复杂度: $O(1)$
+稳定性：不稳定
+适用范围：适用于数据处在动态变化中的数据</p>
+<h3>二分查找</h3>
+<p>二分查找针对的是一个有序的数据集合，查找思想有点类似分治思想。每次都通过跟区间的中间元素对比，将待查找的区间缩小为一半，直到找到要查找的元素，或者区间缩小为0。</p>
+<p>时间复杂度: $O(logN)$
+空间复杂度: $O(1)$</p>
+<blockquote>
+<p>二分查找对于数据有着严格的要求，数据必须存储在连续内存中，而且必须有序。</p>
+</blockquote>
+<p>二分查找算法有很多的变体：</p>
+<ul>
+<li>查找第一个值等于给定值的元素</li>
+<li>查找最后一个值等于给定值的元素</li>
+<li>查找第一个大于等于给定值的元素</li>
+<li>查找最后一个小于等于给定值的元素</li>
+</ul>
+<h3>字符串匹配算法</h3>
+<p>字符串匹配算法在各个编程语言中都有实现。</p>
+<p>字符串匹配算法有很多实现:</p>
+<ul>
+<li>BF: 暴力匹配算法（朴素匹配算法）</li>
+<li>RK: 在 BF 的基础之上引入哈希算法来提高效率</li>
+<li>BM: 通过一次多移动位数来提高效率</li>
+<li>KPM: 引入了动态规划的思想</li>
+</ul>
+<h3>四种算法思想</h3>
+<h4>贪心算法</h4>
+<p>对一组数据，定义了期望值和限制值，希望从中选出几个数据，在满足限制值得情况下，期望值最大，这个时候就可以使用贪心算法。</p>
+<p>贪心算法应用有：</p>
+<ul>
+<li>霍夫曼编码</li>
+<li>最小生成树算法</li>
+<li>Dijkstra 最短路径算法</li>
+</ul>
+<h4>分治算法</h4>
+<p>分治算法的关键在于将原问题分解为 n 个与原问题结构相似的子问题，然后递归的解决这些子问题，最后合并成一个结果，就是分而治之。</p>
+<p>分治算法的应用有：</p>
+<ul>
+<li>MapReduce</li>
+<li>处理海量数据</li>
+<li>归并排序</li>
+</ul>
+<h4>回溯算法</h4>
+<p>回溯的思想有点类似于枚举搜索。为了让枚举的过程有序，会将枚举的过程分成多个阶段，每个阶段都会选择一个路径，但路径走不通时，就会退回到上一个阶段，选择另一条路径。</p>
+<p>回溯算法的应用有：</p>
+<ul>
+<li>深度优先搜索</li>
+<li>八皇后</li>
+<li>0-1 背包</li>
+<li>图的着色</li>
+<li>旅行商问题</li>
+<li>数独</li>
+<li>全排列</li>
+<li>正则表达式</li>
+</ul>
+<h4>动态规划</h4>
+<p>动态规划一般用来解决最优问题。可以用动态规划解决的问题一般有三个特征:</p>
+<ul>
+<li>最优子结构：问题的最优解当中包含子问题的最优解，也就是说可以通过子问题的最优解来推断问题的最优解</li>
+<li>无后效性：在推导后续的问题时，只关注当前阶段的状态值，而不关心这个状态是怎么推导出来的。而且某个阶段的状态确定后，就不会收后续阶段的影响。</li>
+<li>重复子问题</li>
+</ul>
+<p>动态规划的应用有：</p>
+<ul>
+<li>爬楼梯</li>
+<li>0-1 背包</li>
+</ul>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

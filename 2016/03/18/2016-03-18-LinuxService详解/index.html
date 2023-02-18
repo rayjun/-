@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>linux系列-deamon详解</h1>
+    <h3>daemon 与 service</h3>
+<p>在 Linux 系统中，常驻在内存中，提供一些系统或者网络功能的程序就称之为 service，而这个运行的程序我们就称之为 daemon。
+实际上，这两个概念没有必要分得那么清楚，这两个名称只是在不同角度的不同的称谓， service 是在系统角度来看的， daemon 则是
+在程序的角度上来看的。</p>
+<p>在这篇文章中，我们主要详细介绍一下常规 daemon 的详细配置以及开机启动配置，在后续的文章中，我会详细介绍 deamon。</p>
+<h3>deamon 的启动脚本与启动方式</h3>
+<p>deamon 程序通常是由一个脚本来启动，在启动 deamon 的时候，脚本会完成以下的工作:</p>
+<ul>
+<li>环境的侦测</li>
+<li>配饰文件的分析</li>
+<li>PID 文件的放置</li>
+<li>以及给程序运行过程中相关的文件上锁</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>作用</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>/etc/init.d/*</td>
+<td>启动脚本放置的地方</td>
+<td></td>
+</tr>
+<tr>
+<td>/etc/sysyconfig/*</td>
+<td>各服务的初始化环境配置文件</td>
+<td></td>
+</tr>
+<tr>
+<td>/etc/xinetd.conf /etc/xinted.d/*</td>
+<td>super deamon</td>
+<td></td>
+</tr>
+<tr>
+<td>/etc/*</td>
+<td>各服务各自的配置文件</td>
+<td></td>
+</tr>
+<tr>
+<td>/var/lib/*</td>
+<td>各服务器产生的数据库</td>
+<td></td>
+</tr>
+<tr>
+<td>/var/run/*</td>
+<td>各服务的程序的 PID 文件目录</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>所以在启动后台程序的时候，可以使用 /etc/init.d/* 里面的脚本来完成 deamon 程序：</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;etc&#x2F;init.d&#x2F;syslog start</span><br><span class="line"></span><br><span class="line">&#x2F;etc&#x2F;init.d&#x2F;syslog restart</span><br><span class="line"></span><br><span class="line">&#x2F;etc&#x2F;init.d&#x2F;syslog stop</span><br></pre></td></tr></table></figure></p>
+<p>这是启动的一个方法，还可以利用其他的方法来完成以上的功能，那就是 service 程序，service 本身
+其实也是一个脚本，最后实际调用的还是 /etc/init.d/* 中的脚本。</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">service syslog start</span><br><span class="line"></span><br><span class="line">service syslog restart</span><br><span class="line"></span><br><span class="line">service syslog stop</span><br></pre></td></tr></table></figure></p>
+<h3>chkconfig 管理系统服务是否默认启动</h3>
+<p>当我们的 deamon 程序的脚本加入到 /etc/init.d/ 中后，我们就可以通过 chkconfig 命令很好的将这些程序
+管理起来，比如将一些 deamon 程序配置成开机启动。</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chkconfig  [--level [0123456]] [服务名称] [on|off]</span><br></pre></td></tr></table></figure></p>
+<p>上面的命令就可以让某个服务在特定的运行等级下默认启动或者默认不启动。</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

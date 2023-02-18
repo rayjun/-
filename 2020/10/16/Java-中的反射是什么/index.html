@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Java 中的反射是什么</h1>
+    <p>反射是一个程序语言用来自检和修改自身结构和行为的过程。</p>
+<p>这么说可能有些晦涩，反射可以理解为在程序运行过程中，获取程序的<strong>结构信息</strong>，从而根据不同的情况来调整程序的行为。</p>
+<p>在使用汇编语言编程的时代，汇编语言可以直接获取任何信息，可以认为汇编语言天然就支持反射。但是到后来的一些高级语言，比如 Fortran 和 C 语言等等，由于不支持反射，也就无法获取信息。</p>
+<p>再到后续的 Java，C# 等语言中都自带了反射框架，这些语言就可以通过反射来实现通用的框架，比如在 Java 的 Spring 中就大量使用了反射。</p>
+<p>这篇文章重点介绍 Java 中的反射。</p>
+<p>本文基于 OpenJDK11</p>
+<h2>1. 反射能干什么</h2>
+<p>在 Java 中，反射可以获取类的定义、属性和方法，并且可以调用这些方法，或者构造对象，甚至可以在运行时修改类的定义。</p>
+<p>先来看一个简单的例子，通过这个例子可以知道反射能做什么，例子中的代码下面会详细讲解：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 利用反射来执行方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">methodInvoke</span><span class="params">(Object o, Method method, Object[] params)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> method.invoke(o, params);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InvocationTargetException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>使用反射来生成 <code>ArrayList</code> 对象并调用方法：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取 ArrayList 的 Class 对象和构造函数，并生成对象</span></span><br><span class="line">Class clazz = ArrayList.class;</span><br><span class="line">Constructor&lt;ArrayList&gt; constructor = clazz.getConstructor();</span><br><span class="line">ArrayList instance = constructor.newInstance();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取 add 方法，并调用 add 方法添加元素</span></span><br><span class="line">Method add = clazz.getDeclaredMethod(<span class="string">"add"</span>, Object.class);</span><br><span class="line">Object[] params = &#123;<span class="string">"reflection"</span>&#125;;</span><br><span class="line">methodInvoke(instance, add, params);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取 get 方法，并调用 get 方法获取刚刚添加的元素</span></span><br><span class="line">Method get = clazz.getDeclaredMethod(<span class="string">"get"</span>, <span class="keyword">int</span>.class);</span><br><span class="line">Object[] params1 = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">System.out.println(methodInvoke(instance, get, params1));</span><br></pre></td></tr></table></figure></p>
+<p>如果不使用反射，这个代码很简单：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ArrayList list = <span class="keyword">new</span> ArrayList();</span><br><span class="line">list.add(<span class="string">"reflection"</span>);</span><br><span class="line">System.out.println(list.get(<span class="number">0</span>));</span><br></pre></td></tr></table></figure></p>
+<p>反射这么麻烦，为什么还要使用它？</p>
+<p>观察一下上面利用反射来执行方法的代码可以发现，<strong>执行任何类的方法，那段代码都不需要修改，而且更重要的是，具体执行的方法还可以在程序运行的过程中改变</strong>。</p>
+<p>反射用起来虽然麻烦，但是反射的动态性提高了 Java 的灵活性，很多框架都依赖反射。</p>
+<h2>2. 相关概念</h2>
+<p>在 Java 中，有很多的类，每个类都有自己的属性，方法，构造函数等等信息，这些信息都需要通过一种方式表示，在 Java 中就是通过 Class 对象来表示。</p>
+<p>这里不要把 Class 与 Object 混在一起，Object 是所有类的父类，而 Class 类则不一样，在每个类中，都有一个 Class <strong>对象</strong>来保存类的信息。即使对于 Java 中的原生数据类型，也有自己的 class 对象。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class clazz = <span class="keyword">int</span>.class;</span><br></pre></td></tr></table></figure></p>
+<p>每个 Class 对象中都有主要有三个主要部分：Field、Method 和 Constructor。这些和反射相关的类都在 <strong>java.lang.reflect</strong> 包下。</p>
+<p>Method 和 Constructor 在上面的代码中都看到了，分别表示类的方法和构造函数。Field 则表示类的属性。</p>
+<p>除了上面这些信息外，还有其他的信息，比如判断属性或者方法是否能访问，获取类、方法、属性的注解等等：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Method add = clazz.getDeclaredMethod(<span class="string">"add"</span>, Object.class);</span><br><span class="line">add.isAccessible(); <span class="comment">// 判断是否能访问</span></span><br></pre></td></tr></table></figure></p>
+<p>即使对于私有方法或者属性，也可以通过下面的方式来访问：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Method add = clazz.getDeclaredMethod(<span class="string">"add"</span>, Object.class);</span><br><span class="line">add.setAccessible(<span class="keyword">true</span>); <span class="comment">// 通过这个设置，即使私有方法也能访问</span></span><br></pre></td></tr></table></figure></p>
+<p>在 Java 中，注解用的很多，实际上，注解本身并没有包含额外的内容，只是起到标记的作用，所有的注解都可以通过反射来获取，然后再进行相应的逻辑处理。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Method add = clazz.getDeclaredMethod(<span class="string">"add"</span>, Object.class);</span><br><span class="line">add.getDeclaredAnnotations(); <span class="comment">// 获取该方法所有的注解</span></span><br></pre></td></tr></table></figure></p>
+<p>还可以获取方法的参数，返回值的类型等等信息。</p>
+<p>所以总的来说，<strong>反射是一个框架，可以帮助获取程序内部的信息</strong>，至于获取这些信息来做什么，就看开发人员的发挥。</p>
+<p>反射虽然很强大，但是性能上相比于普通方式性能上难免会有一些损失，需要注意，在程序执行的过程中，需要尽量少用反射。而且反射连私有方法都可以访问，如果滥用就可能造成程序的不安全。</p>
+<h2>3. 反射的基本用法</h2>
+<p>使用行业的第一步，就是获取目标类型的 Class 对象，如果获取不到，那就说明目标类型无法完成类加载，也就不能进行后续的反射操作。</p>
+<h3>获取 Class 对象的方法</h3>
+<p>有 4 种方法可以获取 Class 对象。</p>
+<p>通过类的 class 属性:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class clazz1 = String.class;</span><br></pre></td></tr></table></figure></p>
+<p>通过 Class.forName() 方法：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class clazz2 = Class.forName(<span class="string">"java.lang.String"</span>);</span><br></pre></td></tr></table></figure></p>
+<p>通过对象的 getClass() 方法：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class clazz3 = <span class="string">"string"</span>.getClass();</span><br></pre></td></tr></table></figure></p>
+<p>对于基本类型的包装类，还有一种方法可以获取 Class 对象：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class clazz4 = Integer.TYPE;</span><br></pre></td></tr></table></figure></p>
+<h3>创建对象</h3>
+<p>在获取到 Class 对象之后就可以创建对象了，创建对象有两种方式。</p>
+<p>通过 Class 对象直接生成：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class clazz = String.class;</span><br><span class="line">String str = (String) clazz.newInstance();</span><br></pre></td></tr></table></figure></p>
+<p>通过构造函数生成：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Constructor&lt;String&gt; constructor = clazz.getConstructor();</span><br><span class="line">String str1 = constructor.newInstance();</span><br></pre></td></tr></table></figure></p>
+<p>如果构造函数有参数：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Constructor&lt;String&gt; constructor2 = clazz.getConstructor(String.class);</span><br><span class="line">String str2 = constructor2.newInstance(<span class="string">"String"</span>);</span><br></pre></td></tr></table></figure></p>
+<h3>调用方法</h3>
+<p>在生成了对象之后，自然就可以调用方法，调用的方式和上面的代码一样。</p>
+<p>首先获取 Method，如果方法没有参数，直接获取执行就可以：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Method lengthMethod = clazz.getMethod(<span class="string">"length"</span>);</span><br><span class="line">lengthMethod.invoke(str2);</span><br></pre></td></tr></table></figure></p>
+<p>如果有参数，在获取方法的时候就需要声明方法的类型和个数，而且参数的顺序不能乱：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Method substringMethod = clazz.getMethod(<span class="string">"substring"</span>, <span class="keyword">int</span>.class, <span class="keyword">int</span>.class);</span><br><span class="line">substringMethod.invoke(str2, <span class="number">1</span>,<span class="number">2</span>);</span><br></pre></td></tr></table></figure></p>
+<h3>其他工具方法</h3>
+<p>上面是反射的一些基本用法，当然反射也提供了其他的一些工具方法。</p>
+<p>获取所有已经声明的属性、方法和构造函数，包括 <code>private</code> 的也会被获取出来：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Field[] fields = clazz.getDeclaredFields();</span><br><span class="line">Method[] methods = clazz.getDeclaredMethods();</span><br><span class="line">Constructor[] constructors = clazz.getDeclaredConstructors();</span><br></pre></td></tr></table></figure></p>
+<p>判断是否是内部类：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clazz.isMemberClass();</span><br></pre></td></tr></table></figure></p>
+<p>还有其他判断是否接口、注解，获取类的泛型信息等等方法。</p>
+<p>文 / Rayjun</p>
+<h2>REF</h2>
+<p>[1] <a href="https://en.wikipedia.org/wiki/Reflection_(computer_programming)" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Reflection_(computer_programming)</a></p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

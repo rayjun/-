@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Jenkins 简明教程</h1>
+    <p>持续交付现在是一个软件团队非常想达到的一个目标，一个良好运转的持续交付平台能够大大提高开发的效率。持续交付可以分为两部分：</p>
+<p><strong>持续交付 = 持续集成 + 自动部署</strong></p>
+<blockquote>
+<p>本文以 Java Web 项目为基础进行</p>
+</blockquote>
+<h4>持续交付的工作流程</h4>
+<p>持续交付的流程可以分成 <strong>代码提交-&gt;代码拉取-&gt;构建-&gt;部署到机器</strong></p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/autodeploy.png" alt=""></p>
+<p>现在主流的内部代码托管平台是 <strong>Gitlab</strong>，而持续集成使用的比较多的工具就是 <strong>Jenkins</strong> 了。这两个工具都是开源的，而且都有着丰富的插件来支持不同的持续交付的需求。至于部署应用对于不同的需求差别就很大了，简单的部署写一个部署脚本就可以解决了，复杂的大量的部署就需要自动部署的工具了。</p>
+<h4>Jenkins 简介：</h4>
+<p>Jenkins 是一个开源的持续集成工具，Jenkins 有着丰富的插件，可以按照自己的环境灵活的定制构建和发布流程。还能监控集成环境中产生的错误，并且会产生详细的日志文件，这些日志对于排错有着非常大的帮助。通过图表可以方便的统计出近期的构建质量。</p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/jenkins.png" alt=""></p>
+<p>在整个持续交付的过程中，Jenkins 主要干两件事，第一件事就是从托管平台上拉取最新的代码，然后将这些代码构建成我们的部署包。第二件事就是就这些应用包分发到目标机器上。</p>
+<p>Jenkins 可以安装代码托管平台的插件，比如 Gitlab 的插件，在流程构建起来后，只要 Gitlab 上有新的代码提交，那么 Jenkins 就会触发自动的构建的流程将代码部署上去。</p>
+<p>目前在 Jenkins 上使用的最多的是 Pipline 流程。</p>
+<h4>Jenkins Pipline 工作流程</h4>
+<p>Jenkins Pipline 是运行在 Jenkins 上的一个工作流框架，并且支持将原来运行的一个个单独的工作串联起来构建一个复杂的工作流程。而且这个工作流程是非侵入式的，也就是说，对于不同的项目可以灵活的构建不同的工作流程，而不需要去对 Jenkins进行二次开发。而定义一个 Pipline 的工作流程，只需要一个简单的 <strong>Groovy</strong> 脚本：</p>
+<p><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">'Build'</span>) &#123;</span><br><span class="line">        steps &#123;</span><br><span class="line">            sh <span class="string">'~/shell/jenkins_check_build.sh'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    stage(<span class="string">'Test'</span>) &#123;</span><br><span class="line">        steps &#123;</span><br><span class="line">            echo <span class="string">'Testing'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    stage(<span class="string">'Deploy - Staging'</span>) &#123;</span><br><span class="line">        steps &#123;</span><br><span class="line">            echo <span class="string">'./deploy staging'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    stage(<span class="string">'Deploy - Production'</span>) &#123;</span><br><span class="line">        steps &#123;</span><br><span class="line">            sh <span class="string">'~/shell/jenkins_check_deploy.sh'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>一个完成的 Pipline 中有多个 <strong>stage</strong>，对于不同的 stage 可以执行的不同的任务，这些任务都是可以通过自定义脚本来实现的。</p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/pipline.png" alt=""></p>
+<p>这些脚本甚至都不用部署到 Jenkins 平台上，只需要在源代码的目录底下新建一个 Jenkinsfile 的文件，把这段脚本放进去。然后将代码提交，Jenkins 就会根据 Jenkinsfile 中的配置自动去进行工作了。</p>
+<blockquote>
+<p>Jenkins 在 Windows 上和 Linux 上都是可以工作的，但是部署应用到 Windows 服务器上时，需要在 Windows 上配置 freesshd。</p>
+</blockquote>
+<p>[1] https://jenkins.io/doc/
+[2] https://time.geekbang.org/column/104</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

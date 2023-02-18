@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Go 的 UTF-8 实现</h1>
+    <p>计算机刚开始诞生的时候，计算机内的字符可以全部由 ASCII 来表示，ASCII 字符的长度是 7 位，可以表示 128 个字符，对于美国等国家来说是够了，但是对于世界上的其他国家，特别是东亚国家，文字不是由字母组成，汉字就有几万个，ASCII 码根本不够用。</p>
+<p>字符本质就是对应计算机中的一个数值，既然不够用，那么解决方法就是把这个范围扩大，Unicode 的出现就解决了这个问题，它包括了世界上所有的字符，每一个字符都对应一个数值，这个数值被称之为 <strong>Unicode 码点</strong>。</p>
+<p>但是 Unicode 也不是没有缺点，因为表示的范围大，所以每一个 Unicode 都需要 4 个字节来表示，但是对于原本的 ASCII 编码，本来只需要一个字节，现在也需要 4个字节，这样会浪费很多存储。</p>
+<p>UTF-8 的出现解决了这个问题，它解决问题的思路是让每个字符选择自己的大小，需要多少字节就用多少。对于占不同字节的字符，有不同的表示格式：</p>
+<ul>
+<li>1 字节：0xxxxxxx</li>
+<li>2 字节：110xxxxx 10xxxxxx</li>
+<li>3 字节：1110xxxx 10xxxxxx 10xxxxxx</li>
+<li>4 字节：11110xxx 10 xxxxxx 10xxxxxx 10xxxxxx</li>
+</ul>
+<p>通过识别每个字符串的头部来判断占几个字节。</p>
+<p>每个 Unicode 字符都对应一个码点，在字符串中，可以对码点进行转义，使用 <code>\uhhhh</code> 表示 16 位码点，使用 <code>\Uhhhhhhhh</code> 来表示 32 位码点，每一个 h 都代表一个十六进制的数字。</p>
+<p>这里有一点比较特殊，对于码点值小于 256 的文字符号可以使用单个十六进制的数字来表示，比如 'A' 可以使用 '\x41' 来表示，对于大于 256 的码点，就必须使用 \u 或者 \U 来转义。</p>
+<p>Go 语言对于 UTF-8 的支持很好，这里有一点很有意思，Go 语言的两位作者 Ken Thompson 和  Rob Pike 同时也是 UTF-8 的发明者，Go 语言对 UTF-8 的支持赢在起跑线。</p>
+<p>Go 语言总是使用 UTF-8 来处理源文件，同时也是优先使用 UTF-8 来处理字符串。所以上面说到的那些 Unicode 字符的转义被 Go 直接处理，比如下面三个字符串在 Go 语言中是等价的:</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"世界"</span></span><br><span class="line"><span class="string">"\u4e16\u754c"</span></span><br><span class="line"><span class="string">"\U00004e16\U0000u754c"</span></span><br></pre></td></tr></table></figure></p>
+<p>Go 字符串使用只读的 []byte 来存储，所以字符串值是不变的，这样做更安全，效率也很高：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">s := <span class="string">"left root"</span></span><br><span class="line">t := s</span><br><span class="line">s += <span class="string">", right root"</span></span><br><span class="line"></span><br><span class="line">fmt.Println(s) <span class="comment">// left root, right root</span></span><br><span class="line">fmt.Println(t) <span class="comment">// left root</span></span><br></pre></td></tr></table></figure></p>
+<p>在上面的例子中， s 的值出现了变化，但是 t 的值还是旧的字符串。由于是 [] byte 是 slice 类型，所以字符串的截取操作效率很高，但是在字符串截取的过程中，就会出现一些坑。</p>
+<p>Go 中的字符串底层使用了只读的 []byte 来存储，所以**本质上 Go 语言中的字符串是使用字节来表示，而不是字符表示，**理解这一点很重要。</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">str := <span class="string">"hello world"</span></span><br><span class="line">fmt.Println(str[:<span class="number">2</span>]) <span class="comment">// he</span></span><br><span class="line"></span><br><span class="line">str = <span class="string">"你好，世界"</span></span><br><span class="line">fmt.Println(str[:<span class="number">2</span>]) <span class="comment">// ��，这个符号用来表示 UTF-8 里面的未知字符，码点是</span></span><br></pre></td></tr></table></figure></p>
+<p>非 ASCII 码的字符一般占用的字节会超过一个，如果直接截取，就会导致截取不到正确的位置，从而乱码。在上面的例子中，一个中文字符占 3 个字节，只有严格按照字节数来截取才能获取到显示正常的字符：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str = <span class="string">"你好，世界"</span></span><br><span class="line">fmt.Println(str[:<span class="number">3</span>]) <span class="comment">// 你</span></span><br></pre></td></tr></table></figure></p>
+<p>那么在这个时候，如果要按照字符截取，就需要把字符串转成 []rune，每个 rune 都代表一个 UTF-8 中的码点，对 []rune 按照字符截取就不会出现乱码：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">str = <span class="string">"你好，世界"</span></span><br><span class="line">runeStr := []<span class="keyword">rune</span>(str)</span><br><span class="line">fmt.Println(<span class="keyword">string</span>(runeStr[:<span class="number">1</span>])) <span class="comment">// 你</span></span><br></pre></td></tr></table></figure></p>
+<p>把字符串转成 []rune，就是把字符串转成 UTF-8 码点，而不是 []byte，rune 其实就是 int32 类型。</p>
+<p>Go 语言中有一个专门 <code>unicode/utf8</code> 包来处理 utf8 字符。由于每个字符占据的字节可能不一样，所以字符数和字节数大小是两回事：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">s := <span class="string">"Hello, 世界"</span> <span class="comment">// 逗号是半角符号</span></span><br><span class="line">fmt.Println(<span class="built_in">len</span>(s))                    <span class="comment">// 13</span></span><br><span class="line">fmt.Println(utf8.RuneCountInString(s)) <span class="comment">// 9</span></span><br></pre></td></tr></table></figure></p>
+<p>如果要获取字符占据的总字节数，就使用 len 方法，如果需要计算字符的个数，那就需要使用 utf8.RuneCountInString 方法。</p>
+<p>这个包里面还提供了其他常用函数：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断是否符合 utf8 编码：</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Valid</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="title">bool</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">ValidRune</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">ValidString</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">bool</span></span></span><br><span class="line"><span class="function">// 判断 <span class="title">rune</span> 所占的字节数</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">RuneLen</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">int</span></span></span><br><span class="line"><span class="function">// 判断字节串或者字符串中的 <span class="title">rune</span> 字符数</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">RuneCount</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="title">int</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">RuneCountInString</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">int</span></span></span><br><span class="line"><span class="function">// 对 <span class="title">rune</span> 的编码和解码</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">EncodeRune</span><span class="params">(p []<span class="keyword">byte</span>, r <span class="keyword">rune</span>)</span> <span class="title">int</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">DecodeRune</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(r <span class="keyword">rune</span>, size <span class="keyword">int</span>)</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">DecodeRuneInString</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(r <span class="keyword">rune</span>, size <span class="keyword">int</span>)</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">DecodeLastRune</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(r <span class="keyword">rune</span>, size <span class="keyword">int</span>)</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">DecodeLastRuneInString</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(r <span class="keyword">rune</span>, size <span class="keyword">int</span>)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>除了 utf8 包之外， <code>unicode</code> 包对提供了一系列 IsXX 函数来 rune 的检查：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Is</span><span class="params">(rangeTab *RangeTable, r <span class="keyword">rune</span>)</span> <span class="title">bool</span> // 是否是 <span class="title">RangeTable</span> 类型的</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">In</span><span class="params">(r <span class="keyword">rune</span>, ranges ...*RangeTable)</span> <span class="title">bool</span>  // 是否是 <span class="title">ranges</span> 中任意一个类型的字符</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsControl</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span>  // 是否是控制字符</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsDigit</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span>  // 是否是阿拉伯数字字符，即 0-9</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsGraphic</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span> // 是否是图形字符</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsLetter</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span> // 是否是字母</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsLower</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span> // 是否是小写字符</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsMark</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span> // 是否是符号字符</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsNumber</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span> // 是否是数字字符，包含罗马数字</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsOneOf</span><span class="params">(ranges []*RangeTable, r <span class="keyword">rune</span>)</span> <span class="title">bool</span> // 是否是 <span class="title">RangeTable</span> 中的一个</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsPrint</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span> // 是否是可打印字符</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsPunct</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span> // 是否是标点符号</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsSpace</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span> // 是否是空格</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsSymbol</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span> // 是否符号字符</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsTitle</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span> // 字符串中的每个单词的第一个字符是否是大写</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">IsUpper</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span> // 是否是大写字符</span></span><br></pre></td></tr></table></figure></p>
+<p>RangeTable 是对所有 Unicode 字符的分类，比如验证一个字符是否是汉字：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">r := <span class="string">'中'</span></span><br><span class="line">result := unicode.Is(unicode.Han, r)</span><br><span class="line">fmt.Println(result) <span class="comment">// true</span></span><br></pre></td></tr></table></figure></p>
+<p>其中 <code>unicode.Han</code> 就是 RangeTable 类型，表示汉字。</p>
+<p>文 / Rayjun</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

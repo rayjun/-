@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>提升用户体验，从新钱包开始</h1>
+    <ol>
+<li></li>
+</ol>
+<p>在之前的文章中有提到，现在的以太坊应用层需要解决的是应用不足和用户体验问题。最近很多的 eip 提案也都是瞄准了这个方向。</p>
+<p>最近的 ERC4337 想要解决的就是钱包问题。在 web3 的世界里面，钱包是一个非常重要的基础设施，这个就是进入 web3 世界的钥匙。但是目前在以太坊中，EOA（外部账户）以及合约账户的使用门槛都很高。用户需要对区块链的一些基础知识有一些理解才能开始使用，而且使用的时候要一直注意安全，用户的心智负担很重。</p>
+<p>让一个小白用户去接触以太坊的钱包，就好比是让一个互联网的用户直接使用 http 协议来和应用交互，很明显这个不合理。</p>
+<p>最近比较讨论比较多的 ERC4337 就是这样的一个方向。这个钱包的设计在不改动以太坊合约层的情况下，来给用户和链之间加上一个中间层，用户可以通过社交恢复()的方式来修改自己的私钥或者找回丢失的资产。</p>
+<p>在这个钱包体系下，用户的交易被定义为一个 UserOperation，多个 UserOperation 可以聚合在一起提交到链上（对，在这里好像看到了 rollup 的身影），而且在交易的过程中，用户可以不需要使用 ETH 来支付 gas，可以使用任意一种 ERC20 的币来替代。用户在这样的情况下甚至完全不用感受到以太坊的存在，但是交易确实已经被提交到了以太坊。</p>
+<ol start="2">
+<li></li>
+</ol>
+<p>但在计算机的世界中，没有什么问题是增加一个中间层解决不了的。</p>
+<p>随着以太坊的不断升级，已经越来越像是一个基础设施，等完成分片升级之后，以太坊就是一个真正意义上的全球数据库（账本）了，它更大的作用是用来承载数据，让上链的数据不可更改。很明显，这些升级都不是为普通用户准备的。</p>
+<p>对于更多要进入 web3 的用户来说，他们需要一个更方便的接入方式。那么一个合理的方式就是来增加一个中间层。</p>
+<p>目前还有一些方案，想要修改以太坊的共识层来提升用户体验，这个方向是不对的，应该还是要从应用层动手。与之类似的，在开发互联网产品时，总不能说为了满足用户的需求而去修改 MySQL 的源码。</p>
+<p>现在的以太坊上需要更多这样的协议，来丰富应用层，让更多的人使用，只有这样，才能让以太坊真正的被主流人群用起来，而被主流人群用起来的关键就是将以太坊隐藏掉。这个也确实是合理的做法，在当前互联网模式下，绝大多数用户是感知不到互联网的存在，但又无时无刻不在使用互联网。</p>
+<ol start="3">
+<li></li>
+</ol>
+<p>也许有人就会质疑，这样的应用还叫 web3 么，说好的去中心化呢？在以前的互联网中，所有的平台都建设有自己的数据中心，应用之间的交互很困难，就像是一座座孤岛。而在以太坊上，以太坊的的去中心化程度决定了上层应用的去中心化程度。只要以太坊的底层足够安全，足够去中心化，那么上层的应用也是去中心化的。</p>
+<p>而且一直认为，web3 和 web2 不是对立面，它们必然是要走向融合的。在 web3 的世界中，也不是所有的数据都需要上传的链上，只需要保留用户关键的资产就可以。用户关心的也是这些资产是否可以正常地流通，其他的信息都分散在各个系统中。</p>
+<p>在后续 layer2 层的方案逐渐完善的时候，web3 应用也会基于 layer2 层来构建，而不是直接基于以太坊，这样用链的成本也降下来了。到那个时候，用户使用 web3 就像使用 web2 一样便利，那样才会带来 web3 的真正爆发。</p>
+<p>参考链接：</p>
+<p>[1] <a href="https://eips.ethereum.org/EIPS/eip-4337" target="_blank" rel="noopener">https://eips.ethereum.org/EIPS/eip-4337</a></p>
+<p>[2] <a href="https://www.notion.so/EIP-4337-0baad80755eb498c81d4651ccb527eb2" target="_blank" rel="noopener">https://www.notion.so/EIP-4337-0baad80755eb498c81d4651ccb527eb2</a></p>
+<p>[3] <a href="https://mp.weixin.qq.com/s/ZGzw3VE-8KEQE5xu7Jw_8A" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/ZGzw3VE-8KEQE5xu7Jw_8A</a></p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

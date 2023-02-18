@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>如何为自己准备选择一个开源协议</h1>
+    <p>开源推动了软件的发展，对于这个结论，至今应该不会有人再有意见了。但是最近最好的开源社区卖身给了曾经最反对开源的组织--微软。em….好像有一种奇怪的感觉，但是好在如今微软对开源的态度已经和以往截然不同了，希望微软能在这一点上继续坚持下去，好好推动开源软件的发展。</p>
+<p>说到开源，好像一直就有一些误解。很多人认为开源就是免费，其实这两者是有本质的差别的。因为如果开源就等于免费，那开源这件事基本上是没有办法继续下去了。比如 A 发布了一个开源的软件，非常好用，然后 B 将这个开源软件的源码修改之后就不再开源，并且将这些软件拿去卖钱，这样一来，A 不干了，说我采用的是 GPL 开源协议，B 这样干是违法的。B 如果对于开源协议不了解，就会一脸懵逼，说好的开源呢？其实这里 B 对于开源就有很深的误解了。</p>
+<p>对于一份代码来说，会涉及到很多的内容，比如说代码的协议和版权信息，代码的商标，代码造成犯罪的责任承担等等,大体上可以分成以下的：</p>
+<ul>
+<li>a 协议和版本信息：在代码中保留作者提供的协议和版权信息</li>
+<li>b 声明变更：在代码中声明对原来代码的重大修改和变更</li>
+<li>c 公开源码：源码必须公开</li>
+<li>d 商业使用：代码用于商业活动</li>
+<li>e 责任承担：代码的作者承担代码使用后造成的后果</li>
+<li>f 商标使用：可以使用作者的姓名、作品的 LOGO或者商标</li>
+<li>g 附加协议：在原来的协议的基础上增加新的附加协议</li>
+</ul>
+<p>下面是常见的六种开源协议上对这些规则的限定：</p>
+<table>
+<thead>
+<tr>
+<th>协议</th>
+<th>要求</th>
+<th>允许</th>
+<th>禁止</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Apache</td>
+<td>a b</td>
+<td>d g</td>
+<td>e f</td>
+</tr>
+<tr>
+<td>GPL</td>
+<td>a b c</td>
+<td>d</td>
+<td>e g</td>
+</tr>
+<tr>
+<td>MIT</td>
+<td>a</td>
+<td>d</td>
+<td>e</td>
+</tr>
+<tr>
+<td>BSD</td>
+<td>a</td>
+<td>d g</td>
+<td>e</td>
+</tr>
+<tr>
+<td>LGPL</td>
+<td>a c</td>
+<td>d g</td>
+<td>e</td>
+</tr>
+<tr>
+<td>Mozilla</td>
+<td>a c</td>
+<td>d g</td>
+<td>e f</td>
+</tr>
+</tbody>
+</table>
+<p>当然，看完这些之后，你是不是还是一头雾水，当然了，一下子要记住这么多晦涩的东西确实不是一件简单的事情，那么还有一个更简单的方法来帮助你选择，下面这张图是阮一峰大神从国外汉化过来的，可以说是很清晰了：</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201105/free_software_licenses.png" alt=""></p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

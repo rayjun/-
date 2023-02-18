@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Java NIO 简明教程</h1>
+    <p>Java NIO 是在 Java1.4 之后推出的一套全新的 IO 接口，是用来解决传统 Java IO 和 Java 网络包中 API 的扩展性差、效率低等问题。 NIO 有着一套完全不同的设计理念。</p>
+<blockquote>
+<p>NIO 指的是 Non-blocking，而不是 New-IO</p>
+</blockquote>
+<p>IO 通常可以分为两种类型:</p>
+<ul>
+<li>网络 IO</li>
+<li>文件 IO (对外部设备的操作都可以看作是对文件的操作)</li>
+</ul>
+<p>对于一个 IO 操作来，可以分成两步:</p>
+<ul>
+<li>发起 IO 请求</li>
+<li>实际 IO 操作</li>
+</ul>
+<p>如果在<strong>发起 IO 请求</strong>阶段被阻塞，那就是<strong>阻塞 IO</strong>，如果不阻塞，那就是<strong>非阻塞 IO</strong>。</p>
+<p>如果在<strong>实际 IO 操作</strong>阶段阻塞进程，那么就是<strong>同步 IO</strong>，如果不阻塞进程，而是由操作系统完成 IO 操作，然后把结果返回给进程，那么就是<strong>异步 IO</strong>。</p>
+<p>Java NIO 在发起 IO 请求时是非阻塞的，但是在实际的 IO 操作过程中是阻塞的，所以 Java NIO 是属于<strong>同步非阻塞IO</strong>。在 Java1.7 以后提供了 <strong>AIO</strong>，这是真正的<strong>异步非阻塞 IO</strong>。在这篇文章中我们只讨论 Java1.4 中的 NIO。</p>
+<p>还要一个概念需要说明一下，<strong>并发</strong>和<strong>并行</strong>, 简单来说:</p>
+<ul>
+<li>并发：可以处理多个任务，多个任务不一定要同时处理</li>
+<li>并行：同时处理多个任务的能力。</li>
+</ul>
+<h3>NIO 核心组件</h3>
+<p>在 NIO 中，有三个核心的组件:</p>
+<ul>
+<li>Buffers</li>
+<li>Channels</li>
+<li>Selectors</li>
+</ul>
+<p>核心三个组件的类图如下：</p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/Java/nio/nio.png" alt=""></p>
+<p>Buffer 是数据容器，除了 boolean 以外，每一个基本类型都有 Buffer 的实现。</p>
+<p>Channel 和 java.io 中的 Stream 非常相似，但是有几点重要的区别:</p>
+<ul>
+<li>Channel 可以读也可以写，但是 Stream 同时只能读或者只能写</li>
+<li>Channel 的读写都是基于 Buffer 来进行的。</li>
+</ul>
+<p>Selector 是在单线程里面利用事件机制去监听多个 Channel，然后让准备就绪的 Channel 进入到 IO 操作阶段。 但是在实际进行 IO 的阶段，依然是阻塞的，所以这也就是为什么 Java NIO 是 <strong>同步非阻塞的</strong>。</p>
+<h3>Channel 详解</h3>
+<p>在上图中，已经将 Channel 的 4 个重要的实现都列出来了，分别是:</p>
+<ul>
+<li>FileChannel (文件数据的读写)</li>
+<li>DatagramChannel (UDP 数据的读写)</li>
+<li>SocketChannel（TCP 数据的读写）</li>
+<li>ServerCocketChannel (监听 TCP 链接请求，每个请求都会创建一个 SocketChannel)</li>
+</ul>
+<p>Channel 用于连接外部的 IO 服务和 NIO 中的Buffer。Channel 与操作系统的关系非常紧密。在不同的操作系统中都有着不同的实现。</p>
+<p>Channel 可以一般可以设置为阻塞和非阻塞的模式。</p>
+<blockquote>
+<p>FileChannel 只有阻塞模式，所以不能注册到 Selector。</p>
+</blockquote>
+<p>通常来说，一个 Channel 会向一个 Buffer 中读或者写数据，但是 Channel 也支持 Scatter 和 Gather，Scatter 是指把 Channel 中读取到的数据写入到多个 Buffer 中。Gather 是指把多个 Buffer 中的数据写入到一个 Channel 中。</p>
+<blockquote>
+<p>在把一个 Channel 的数据读入到多个 Buffer 中时，会在写满一个 Buffer 后再接着写另一个 Buffer。</p>
+</blockquote>
+<p>在 FileChannel 中，有两个很有用的方法，一个是 <strong>transferFrom()</strong>，一个是 <strong>transferTo()</strong>，
+可以用来拷贝文件，两个方法的用法大致相同。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">RandomAccessFile fromFile = <span class="keyword">new</span> RandomAccessFile(<span class="string">"from.txt"</span>, <span class="string">"rw"</span>);</span><br><span class="line">FileChannel      fromChannel = fromFile.getChannel();</span><br><span class="line"></span><br><span class="line">RandomAccessFile toFile = <span class="keyword">new</span> RandomAccessFile(<span class="string">"to.txt"</span>, <span class="string">"rw"</span>);</span><br><span class="line">FileChannel      toChannel = toFile.getChannel();</span><br><span class="line"></span><br><span class="line"><span class="keyword">long</span> position = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">long</span> count    = fromChannel.size();</span><br><span class="line"></span><br><span class="line">toChannel.transferFrom(fromChannel, position, count);</span><br></pre></td></tr></table></figure></p>
+<h3>Buffer 详解</h3>
+<p>Buffer 用于和 Channel 进行交互，Channel 从 BUffer 中读取数据和写入数据，Buffer 的本质是一块内存区域，Buffer 提供了一系列的接口来操作这块内存的数据。</p>
+<p>Buffer 有两种不同的模式，一种是<strong>读</strong>模式，这种模式下只能从 Buffer 中读取数据，一种是<strong>写</strong>模式，这个时候只能往 Buffer 中写数据。</p>
+<p>Buffer 中有几个非常关键的属性:</p>
+<ul>
+<li>capacity：这个属性表示 Buffer 的容量，这个值是不可变的。</li>
+<li>position： 在<strong>写</strong>模式下，需要有一个确定的位置可以来写入数据，默认 position 为 0，position 最大为 capacity - 1；在变成<strong>读</strong>模式下，position 归零，position 变成读的初始位置，每次读取后，position 后移。</li>
+<li>limit：在<strong>写</strong>模式下，limit 的含义就是我们能写入的最大数据量，等于 capacity；在<strong>读</strong>模式下，limit 表示我们所能读取的最大数据量，等同于<strong>写</strong>模式下 position 的值。</li>
+</ul>
+<p>下面的代码简单展示了如何操作 Buffer，以及如何向 Channel 中读取和写 Buff：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ByteBuffer buff = ByteBuffer.allocate(<span class="number">8</span>);</span><br><span class="line"></span><br><span class="line">SocketChannel socketChannel = SocketChannel.open();</span><br><span class="line"></span><br><span class="line">socketChannel.read(buff);</span><br><span class="line"></span><br><span class="line">IntBuffer intBuff = buff.asIntBuffer();</span><br><span class="line"></span><br><span class="line">buff.clear();</span><br><span class="line">intBuff.put(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">intBuff.put(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">socketChannel.write(buff);</span><br></pre></td></tr></table></figure></p>
+<p>当 Channel 开始写入数据到 Buffer 中时，Buffer 会记录已经写入的数据的大小。当需要读取数据时，Buffer 会通过 flip() 方法将 Buffer 从写的模式调整为读的模式，然后就可以读取 Buffer 中所有已经写入的数据。</p>
+<p>在将数据读取完成后，需要清除已经读取过的数据，有两种方式，一个方法是 clear() 方法，一个是 compact() 方法。clear 方法会清空 Buffer 中所有的数据， 而 compact 只会清空已经读取的数据，然后会把未读取的数据移到 Buffer 开始的位置，新写入的数据的开始位置则在未读取的数据之后。</p>
+<h3>Selector 详解</h3>
+<p>Selector 管理着一个被注册的了 Channel 的集合和它们的就绪状态。</p>
+<p>只有继承了 SelectableChannel 的 Channel 才能被注册到 Selector，一个 Channel 可以被注册到多个 Selector 上，而每个 Selector 只能被注册一次。Channel 在被注册到 Selector 之前，首先要先设置成为<strong>非阻塞模式</strong>。</p>
+<p>SelectionKey 封装了 Channel 与 Selector 的注册关系。</p>
+<p>在 SelectionKey 中定义了四种状态：</p>
+<ul>
+<li>SelectionKey.OP_CONNECT</li>
+<li>SelectionKey.OP_ACCEPT</li>
+<li>SelectionKey.OP_READ</li>
+<li>SelectionKey.OP_WRITE</li>
+</ul>
+<p>在将一个 Channel 注册到一个 Selector 时，我们可以设置我们对哪个状态感兴趣：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Selector operation</span></span><br><span class="line">SocketChannel channel = SocketChannel.open();</span><br><span class="line">Selector selector = Selector.open();</span><br><span class="line">channel.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">channel.register(selector, SelectionKey.OP_CONNECT);</span><br></pre></td></tr></table></figure>
+register 方法中的第二个参数就是我们希望处理的状态，Selector 会把这些状态收集起来作为一个我们关注的<strong>兴趣集</strong>。</p>
+<p>如果底层操作系统通知 Selector 一个 Channel已经处于就绪状态，那么 Selector 就会把这个 Channel 的key 放入到它<strong>就绪集</strong>中。</p>
+<p>Selector 可以在单线程中处理多个 Channel，就是是说可以用少量的线程就可以处理更多的连接，可以减少线程之前的切换，从而提升系统的并发能力。</p>
+<p>在 Selector 中会维护 SelectionKey 的集合来完成对 Channel 的调度。</p>
+<h4>Selector 如何维护 selectionKeys</h4>
+<p>在 Selector 中维护着三个 selectionKeys 的集合:</p>
+<ul>
+<li><strong>key set</strong>: 这里面包含着所有的 selectionKeys，所有注册的 channel 都在里面，可以通过 selector.keys() 来获得这个集合。</li>
+<li><strong>selected-key set</strong>： 这个集合一定是 key set 的子集，包含着我们在注册 Channel 时传入的一种状态相匹配的 key。可以通过 <strong>selector.selectionKeys()</strong> 获取到集合。</li>
+<li><strong>cancelled-key set</strong>：这里面的 key 也一定是 key set 的子集，其中的每一个 selectionKey 都已经被取消了，但注册的 Channel 还没有被注销。</li>
+</ul>
+<p>在一个新创建的 selector 中，着三个集合都是空着的。每注册一个 Channel，key set 中都会增加一条记录。在 Selector 轮序期间，一些准备就绪的 SelectionKey 会被添加到 selected-key set 中。这些key 可以通过 <strong>remove</strong> 方法来移除。在调用了 <strong>channel.close</strong> 或者 <strong>selectionKey.cancel()</strong> 方法后，这些 SelectionKey 会被添加到 <strong>cancelled-key set</strong> 中。</p>
+<h4>Selector 如何选择就绪的 Channel</h4>
+<p>在 Selector 执行了 <strong>selector()</strong> <strong>selecotr(long)</strong> 和 <strong>selectNow()</strong> 方法之后，SelectionKeys 都可以在 selected-key set 中填金额或者被删除，同时也可以从 key set 和 cancelled-key set 中删除。在执行 select() 方法后，会涉及到以下的三个步骤:</p>
+<ol>
+<li>
+<p>首先 cancelled-key set 中的 key 会从 key set 中被删除，并且对于的 Channel 会被注销。然后 cancelled-key set 变成空。</p>
+</li>
+<li>
+<p>然后查询底层操作系统来获得 <strong>Selector</strong> 中剩余的 Channel 的就绪状态从 调用 <strong>select()</strong> 方法到此刻的更新情况，只要有 Channel 的就绪状态与传入的状态值匹配上，就会做以下两件事:
+1. 如果这个 Channel 的 key 还没有在 selected-key set 中，并将这个 Channel 的就绪状态集修改成只包含 Channel 当前的状态，任何之前的就绪状态都会被丢弃。
+2. 如果这个 Channel 的 key 在 selected-key set 中存在，那么就保留就绪状态集中先前的就绪状态，并且将 Channel 当前的状态写进去，底层系统会通过<strong>与</strong>操作来更新当前的就绪集。</p>
+<p>如果兴趣集为空，那么 selected-key set 和 就绪状态集都不会被更新。</p>
+</li>
+<li>
+<p>如果在第 2 步中将任何 key 添加到 cancelled-key set 中，就按步骤 1 处理它们。</p>
+</li>
+</ol>
+<p>（完）</p>
+<p><strong>参考文献</strong>:</p>
+<ol>
+<li>http://tutorials.jenkov.com/java-nio/index.html</li>
+</ol>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

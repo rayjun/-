@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>如何搭建一个Hadoop集群</h1>
+    <p>在学习大数据系统时，搭建一个 Hadoop 是基本的操作，很多大数据上层的应用都依赖 HDFS，本文介绍一种搭建 Hadoop 集群的方法。</p>
+<p>所需软件及环境如下：</p>
+<ul>
+<li>本地服务器集群</li>
+<li>openjdk1.8</li>
+<li>hadoop-2.9.2</li>
+</ul>
+<p>在之前我写过一篇搭建本地服务器集群的方法，如果有需要，可以参考这里搭建一个本地的服务器集群。</p>
+<h2>环境准备</h2>
+<p>在开始搭建 Hadoop 之前，还需要做一些准备。</p>
+<p>首先，关闭服务器的防火墙，并且禁止开机启动，这样就不用在各个服务器上对端口进行控制。</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl stop firewalld.service</span><br><span class="line">$ systemctl <span class="built_in">disable</span> firewalld.service</span><br></pre></td></tr></table></figure></p>
+<p>然后需要定义一下服务器的 hostname，在集群内，直接使用 hostname 来替代机器进行操作，以 IP 为 192.168.56.3 的服务器为例（这是我的服务器集群的地址，具体看自己集群的 IP 配置）：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ vi /etc/sysconfig/network</span><br><span class="line">NETWORKING=yes</span><br><span class="line">HOSTNAME=bigdata1</span><br><span class="line">GATEWAY=192.168.56.2</span><br></pre></td></tr></table></figure></p>
+<p>同样编辑另外两台服务器，起名为 bigdata2 和 bigdata3。</p>
+<p>然后编辑各个服务器的 <code>/etc/hosts</code> 文件，添加 hostname 到 IP 的映射：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ vi /etc/hosts</span><br><span class="line">192.168.56.3 bigdata1</span><br><span class="line">192.168.56.4 bigdata2</span><br><span class="line">192.168.56.5 bigdata3</span><br></pre></td></tr></table></figure></p>
+<p>最后，为了在宿主机上可以方便的访问各个服务器，同样也要编辑宿主机的 hosts 文件：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ vi /etc/hosts</span><br><span class="line"></span><br><span class="line">192.168.56.3 bigdata1</span><br><span class="line">192.168.56.4 bigdata2</span><br><span class="line">192.168.56.5 bigdata3</span><br></pre></td></tr></table></figure></p>
+<p>到这里，服务器集群的配置就完成了，接下来就开始配置 Hadoop 环境。</p>
+<p>Hadoop 也依赖 Java 环境，所以首先需要配置 JDK，本文使用的是 openjdk1.8。</p>
+<p>本文所有的软件都会安装到 <code>/opt/module</code> 目录下，如果没有这个目录，创建一个。</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir /opt/module</span><br></pre></td></tr></table></figure></p>
+<p>可以将下载好的 jdk 通过 scp 命令从宿主机拷贝到 服务器，然后解压到目标目录：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tar -zxvf openjdk-8u41-b04-linux-x64-14_jan_2020.tar.gz -C /opt/module/</span><br></pre></td></tr></table></figure></p>
+<p>解压完成后再配置环境变量：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ vi /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="comment">#Java config</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/opt/module/java-se-8u41-ri</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$JAVA_HOME</span>/bin</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ java -version</span><br><span class="line"></span><br><span class="line">Openjdk version <span class="string">"1.8.0_41"</span></span><br><span class="line">OpenJDK Runtime Environment (build 1.8.0_41-b04)</span><br><span class="line">OpenJDK 64-Bit Server VM (build 25.40-b25, mixed mode)</span><br></pre></td></tr></table></figure></p>
+<p>JDK 配置完成。</p>
+<p>然后同样将 scp 命令将 hadoop 安装包拷贝到服务器，解压到 /opt/module 目录中：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tar -zxvf hadoop-2.9.2.tar.gz -C /opt/module/</span><br></pre></td></tr></table></figure></p>
+<p>同样配置环境目录</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ vi /etc/profile</span><br><span class="line"><span class="comment">#Hadoop config</span></span><br><span class="line"><span class="built_in">export</span> HADOOP_HOME=/opt/module/hadoop-2.9.2</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$HADOOP_HOME</span>/bin</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$HADOOP_HOME</span>/sbin</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ hadoop version</span><br><span class="line">Hadoop 2.9.2</span><br><span class="line">Subversion https://git-wip-us.apache.org/repos/asf/hadoop.git -r 826afbeae31ca687bc2f8471dc841b66ed2c6704</span><br><span class="line">Compiled by ajisaka on 2018-11-13T12:42Z</span><br><span class="line">Compiled with protoc 2.5.0</span><br><span class="line">From <span class="built_in">source</span> with checksum 3a9939967262218aa556c684d107985</span><br><span class="line">This <span class="built_in">command</span> was run using /opt/module/hadoop-2.9.2/share/hadoop/common/hadoop-common-2.9.2.jar</span><br></pre></td></tr></table></figure></p>
+<p>hadoop 的安装完成，到这里，单台机器的软件已经安装完成。</p>
+<p>如果每台机器都要这样配置就太繁琐了，可以利用 rsync 将安装好的软件直接拷贝到其他的机器，这里当然也可以使用 scp 命令进行拷贝，但是 scp 命令每次都是全量拷贝，在文件很多时，拷贝的速度会很慢，而 rsync 是增量拷贝，只拷贝那些被修改了的文件，所以拷贝的速度会很快。</p>
+<p>如果系统上，没有这个软件，就使用以下命令进行安装：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install rsync</span><br></pre></td></tr></table></figure></p>
+<p>安装完成后利用 rsync 将安装好的软件同步到另外两台服务器：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ rsync -rvl /opt/module/ root@bigdata2:/opt/module</span><br><span class="line">$ rsync -rvl /opt/module/ root@bigdata3:/opt/module</span><br></pre></td></tr></table></figure></p>
+<p>然后分别配置环境变量（其实 /etc/profile 文件也可以被同步到另外的服务器，这里为了演示，就没有直接同步过去）：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ vi /etc/profile</span><br><span class="line"><span class="comment">#Java config</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/opt/module/java-se-8u41-ri</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$JAVA_HOME</span>/bin</span><br><span class="line"></span><br><span class="line"><span class="comment">#Hadoop config</span></span><br><span class="line"><span class="built_in">export</span> HADOOP_HOME=/opt/module/hadoop-2.9.2</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$HADOOP_HOME</span>/bin</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$HADOOP_HOME</span>/sbin</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure></p>
+<p>到这里，所有软件安装完成。</p>
+<h2>集群规划</h2>
+<p>基础环境配置完成后，需要对集群中服务器做规划，让每台服务器承担不同的角色。</p>
+<p>具体规划如下，最重要的 NameNode 放在第一台服务器上，yarn 的 ResourceManager 放在 第二台服务器上，SecondaryNamenode 则放在第三台服务器上。</p>
+<p>具体规划如下：</p>
+<p><img src="jiqunguihua.jpg" alt=""></p>
+<h2>集群配置</h2>
+<p>然后就可以根据上面的规划来配置集群，以 IP 为 192.168.56.3 的服务器为例。</p>
+<p>Hadoop 的所有配置文件都在 <code>etc/hadoop</code> 目录下：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /opt/module/hadoop-2.9.2/etc/hadoop</span><br></pre></td></tr></table></figure></p>
+<p>首先配置 Hadoop 的核心文件，打开 <code>core-site.xml</code>，添加如下配置，确定 NameNode 所在的服务器：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ vi core-site.xml</span><br><span class="line"></span><br><span class="line">&lt;property&gt;</span><br><span class="line">    &lt;name&gt;fs.defaultFS&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;hdfs://bigdata1:9000&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">    &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;/opt/module/hadoop-2.9.2/data/tmp&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br></pre></td></tr></table></figure></p>
+<p>然后打开 <code>[hadoop-env.sh](http://hadoop-env.sh)</code> 配置 JDK:</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ vi hadoop-env.sh</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/opt/module/java-se-8u41-ri/</span><br></pre></td></tr></table></figure></p>
+<p>然后接着配置 HDFS 相关，配置每个文件的保存的份数，同时配置 SecondaryNameNode 所在的服务器，编辑 <code>hdfs-site.xml</code>文件:</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ vi hdfs-site.xml</span><br><span class="line"></span><br><span class="line">&lt;property&gt;</span><br><span class="line">    &lt;name&gt;dfs.replication&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;3&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">    &lt;name&gt;dfs.namenode.secondary.http-address&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;bigdata3:50090&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br></pre></td></tr></table></figure></p>
+<p>然后就开始配置 yarn：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ vi yarn-env.sh</span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/opt/module/java-se-8u41-ri/</span><br></pre></td></tr></table></figure></p>
+<p>确定mapreduce 所用的算法，以及确定 ResourceManager 所在的服务器，编辑 <code>yarn-site.xml</code>:</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ vi yarn-site.xml</span><br><span class="line">&lt;property&gt;</span><br><span class="line">    &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;mapreduce_shuffle&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">    &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;bigdata2&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br></pre></td></tr></table></figure></p>
+<p>然后配置一下 mapreduce:</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ vi mapred-env.sh</span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/opt/module/java-se-8u41-ri/</span><br></pre></td></tr></table></figure></p>
+<p>配置 mapreduce 任务在通过 yarn 来调度：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ cp mapred-site.xml.template mapred-site.xml</span><br><span class="line">$ vi mapred-site.xml</span><br><span class="line">&lt;property&gt;</span><br><span class="line">    &lt;name&gt;mapreduce.framework.name&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;yarn&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br></pre></td></tr></table></figure></p>
+<p>最后还要做一个集群的配置，让各个服务器知道这个集群中有哪些服务器：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ vi slaves</span><br><span class="line">bigdata1</span><br><span class="line">bigdata2</span><br><span class="line">bigdata3</span><br></pre></td></tr></table></figure></p>
+<p>然后将配置同步到另外两台机器：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ rsync -rvl /opt/module/hadoop-2.9.2/ root@bigdata2:/opt/module/hadoop-2.9.2</span><br><span class="line">$ rsync -rvl /opt/module/hadoop-2.9.2/ root@bigdata3:/opt/module/hadoop-2.9.2</span><br></pre></td></tr></table></figure></p>
+<p>所有的配置到这里就完成了。</p>
+<h2>集群操作</h2>
+<p>接下来启动集群，首次启动集群需要对 NameNode 进行格式化：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /opt/module/hadoop-2.9.2</span><br><span class="line">$ bin/hdfsnamenode-format</span><br></pre></td></tr></table></figure></p>
+<p>然后启动 hdfs，要在第一台服务器(IP: 192.168.56.3) 上启动：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sbin/start-dfs.sh</span><br></pre></td></tr></table></figure></p>
+<p>然后启动 yarn，在第二台服务器（IP：192.168.56.4）上启动：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sbin/start-yarn.sh</span><br></pre></td></tr></table></figure></p>
+<p>然后访问 http://192.168.56.5:50090/，如果看到如下的的界面，说明集群就启动成功了。</p>
+<p><img src="hadoop.png" alt=""></p>
+<p>停止集群时通过如下命令停止就可以了：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sbin/stop-yarn.sh</span><br><span class="line">$ sbin/stop-dfs.sh</span><br></pre></td></tr></table></figure></p>
+<p>文 / Rayjun</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Mac OS 中如何优雅的创建定时任务</h1>
+    <p>Mac 中可以使用 crontab 一样的方式来使用定时任务。但是 crontab 来配置定时任务很容易出错。在 Mac 中，配置定时任务有更好的选择。</p>
+<p>Mac 中有一个 <strong>launchctl</strong> 工具，这个工具是 Mac OS X 中用于启动进程的工具。Mac 中的各个进程都被配置成了 <strong>plist</strong> 文件。需要启动一个进行的时候只要执行以下命令：</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">launchctl load xxx.plist</span><br></pre></td></tr></table></figure>
+停止一个进程只需要：</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">launchctl unload xxx.plist</span><br></pre></td></tr></table></figure></p>
+<h3>Plist 文件配置</h3>
+<p>在 Mac 系统中，可以将需要处理的事情都写在 plist 文件中，plist 是一个 xml 格式的文件。plist 文件根据不同的需要可以放在不同的目录底下。Mac OS X 中支持放 plist 的目录如下：</p>
+<ul>
+<li>/Library/LaunchDaemons: 系统启动后就会执行</li>
+<li>/Library/LaunchAgents: 当用户登录系统后才会执行</li>
+<li>~/Library/LaunchAgents: 用户自定义的 plist</li>
+<li>/System/Library/LaunchAgents: 由 Mac OS X 为用户定义的任务</li>
+<li>/System/Library/LaunchDaemons: 由 Mac OS X 定义的守护进程任务</li>
+</ul>
+<p>一个常见的 plist 文件模板如下：</p>
+<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span> <span class="meta">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">plist</span> <span class="attr">version</span>=<span class="string">"1.0"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--Plist 名称，必须唯一--&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">key</span>&gt;</span>Label<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>cn.rayjun..plist<span class="tag">&lt;/<span class="name">string</span>&gt;</span> </span><br><span class="line">        <span class="comment">&lt;!-- 指定要运行的程序的名称，可以是一个程序或者是一段脚本 --&gt;</span>   </span><br><span class="line">        <span class="tag">&lt;<span class="name">key</span>&gt;</span>ProgramArguments<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">string</span>&gt;</span>/path/to/programer<span class="tag">&lt;/<span class="name">string</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 执行时间的指定 --&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">key</span>&gt;</span>StartCalendarInterval<span class="tag">&lt;/<span class="name">key</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">dict</span>&gt;</span> </span><br><span class="line">            <span class="comment">&lt;!--在第几分钟会被执行 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">key</span>&gt;</span>Minute<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">integer</span>&gt;</span>00<span class="tag">&lt;/<span class="name">integer</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 在第几个小时会被执行--&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">key</span>&gt;</span>Hour<span class="tag">&lt;/<span class="name">key</span>&gt;</span> </span><br><span class="line">            <span class="tag">&lt;<span class="name">integer</span>&gt;</span>22<span class="tag">&lt;/<span class="name">integer</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 运行日志 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">key</span>&gt;</span>StandardOutPath<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>/path/to/log/x.log<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 错误日志 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">key</span>&gt;</span>StandardErrorPath<span class="tag">&lt;/<span class="name">key</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>/path/to/err/x.err<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dict</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">plist</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>plist 脚本编写完成后放入到相应的目录底下即可，然后执行一下 <strong>launchctl load xx.plist</strong> 就可以启动任务。</p>
+<h3>定时任务配置</h3>
+<p>在 Plist 中，支持两种定时任务的设置：</p>
+<ul>
+<li>StartInterval：定义任务多长时间（单位，秒）执行一次</li>
+<li>StartCalendarInterval：这个配置类似在 crontab 中的配置，指定具体的执行日期、星期、每月、每日的各个时间点，具体参照上面的配置文件。月份和天数的配置类似。</li>
+</ul>
+<p>（完）</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

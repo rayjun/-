@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Spring系列之面向切面编程</h1>
+    <p>面向切面编程（AOP）是 Spring 的另外一大核心，但 Spring 容器与 AOP 却不耦合，这意味着如果不需要 AOP，就不需要引入相关依赖。</p>
+<p>Spring 中引入 AOP 主要用于两个方面：</p>
+<ul>
+<li>提供声明式企业级服务，比如声明式事务管理</li>
+<li>让 Spring 的用户可以在面向对象编程中（OOP）使用面向切面编程（AOP）</li>
+</ul>
+<p>通过下面这张图就可以表现 AOP 的核心之处。正常的逻辑代码都是从上往下写的，是纵向的。而 AOP 则是在这些纵向的代码中插入一个切面，在这个切面里面假如一些逻辑，这些代码是横向的，这样就不会影响现有的逻辑。</p>
+<p><img src="aop.png" alt=""></p>
+<h2>AOP 的基本概念</h2>
+<p>在第一篇文章里面，简单介绍了一些 AOP 的相关概念。这里使用日志这个例子，来详细的说明 AOP 的概念。</p>
+<p>看下面这段代码，现在有一个 Soldier 类，类中有一个 fight 方法，这个类就是上图中的黄色部分，正常的逻辑代码，现在有一个需求，要记录下 fight 过程，正常来说，当然也可以在 fight 中使用 Logger 来记录日志，带上这样就需要修改原有的代码，而且代码中会充斥着各种记录日志的代码。</p>
+<p>这个问题可以使用 AOP 来解决，FightLog 就是上图中的紫色部分，这些代码不会影响到原有的逻辑，却可以完成记录 fight 日志的功能。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Soldier</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Weapon weapon;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Soldier</span><span class="params">(Weapon weapon)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.weapon = weapon;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        weapon.attack();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FightLog</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Pointcut</span>(<span class="string">"execution(* cn.rayjun.spring5demo.container.Soldier.fight(..))"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pointcut</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Before</span>(<span class="string">"pointcut()"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightLogBefore</span><span class="params">(JoinPoint j)</span> </span>&#123;</span><br><span class="line">        System.out.println(j);</span><br><span class="line">        System.out.println(<span class="string">"FightBefore"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@After</span>(<span class="string">"pointcut()"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightLogAfter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"FightAfter"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@AfterReturning</span>(<span class="string">"pointcut()"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightLogReturn</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"FightReturn"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@AfterThrowing</span>(<span class="string">"pointcut()"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightLogThrowing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"FightThrowing"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Around</span>(<span class="string">"pointcut()"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightAround</span><span class="params">(ProceedingJoinPoint pr)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">"FightAroundBefore"</span>);</span><br><span class="line">            pr.proceed();</span><br><span class="line">            System.out.println(<span class="string">"FightAroundAfter"</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable throwable) &#123;</span><br><span class="line">            throwable.printStackTrace();</span><br><span class="line">            System.out.println(<span class="string">"FightAroundThrowing"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"FightAround"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+在上面的 FightLog 中，有 @Aspect，@Before，@After 这些注解都代表中特定的概念。</p>
+<p>AOP 中的关键概念如下：</p>
+<ul>
+<li>切面（Aspect）</li>
+<li>连接点（Join point）</li>
+<li>切点（Pointcut）</li>
+<li>通知（Advice）</li>
+<li>引入（Introduction）</li>
+<li>织入（Weaving）</li>
+</ul>
+<p>如果只看上面这些概念绝对让人很头疼，但是实际上，这些概念并不难，需要重点理解的也就切面、切点、通知三个。下面来详细看一下每个概念。</p>
+<p><strong>切面</strong>
+切面其实很简单，就是上面图中的紫色部分，代表着一个单独的类，使用 @Aspect 注解（当然也可以使用 xml 配置）来定义。在这个类中可以定义一系列操作，这些操作就是由切点和通知组成，新加的这些操作不会影响原有的代码。</p>
+<p><strong>连接点和切点</strong>
+其实连接点和切点表达的是同样的东西。如下图：</p>
+<p><img src="pointcut.png" alt=""></p>
+<p>在正常的逻辑代码中调用方法，修改属性的操作都可以作为一个连接点，这个连接点可以作为<strong>切面</strong>的<strong>切点</strong>。现在明白了，被切面所切入的连接点就叫做切点。</p>
+<p>在使用 AOP 的过程中，可以在切点上获取连接点的所有信息，包括方法名称，参数等等。</p>
+<p><strong>通知</strong>
+通知更好理解，通知就是在切点中进行的操作，通知有如下的种类：</p>
+<ul>
+<li>@Before: <strong>前置通知</strong>，在进入切点之前执行</li>
+<li>@AfterReturning: <strong>返回通知</strong>，在切点正常返回后执行</li>
+<li>@AfterThrowing: <strong>异常通知</strong>，在切点抛出异常后执行</li>
+<li>@After: <strong>后置通知</strong>，在正常执行或者抛出异常后都会执行</li>
+<li>@Around: <strong>环绕通知</strong>，这个比较特殊，这个通知方法会影响正常逻辑代码的执行，如果要使用这个通知，就必须要调用 ProceedingJoinPoint 的 proceed 方法才不影响正常的逻辑代码的执行。</li>
+</ul>
+<p><strong>引入和织入</strong></p>
+<p>这两个概念了解一下就可以，引入是指可以向现有的类添加新方法或者属性，织入则是把切面应用到目标方法并创建新的代理对象的过程。</p>
+<p>这亮光概念涉及到 AOP 底层的实现，后续再详细说明。</p>
+<blockquote>
+<p>Spring AOP 默认是使用 JDK 的动态代理来实现，如果有必要，也款已换成 CGLIB 代理来实现。</p>
+</blockquote>
+<h2>AOP 的配置及使用</h2>
+<p>Spring 容器默认是不启用 AOP 的，使用 AOP 需要引入额外的依赖，如下：
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-aop&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;5.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.aspectj&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;aspectjweaver&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.9.5&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-aspects&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;5.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></p>
+<p>同样，AOP 可以通过 xml 配置和 Java 配置。</p>
+<p>XML 配置如下，只需要加上 <code>&lt;aop:aspectj-autoproxy/&gt;</code> 这个配置即可。</p>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;</span><br><span class="line">&lt;beans xmlns=<span class="string">"http://www.springframework.org/schema/beans"</span></span><br><span class="line">       xmlns:xsi=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span><br><span class="line">       xmlns:context=<span class="string">"http://www.springframework.org/schema/context"</span></span><br><span class="line">       xmlns:aop=<span class="string">"http://www.springframework.org/schema/aop"</span></span><br><span class="line">       xsi:schemaLocation=<span class="string">"http://www.springframework.org/schema/beans</span></span><br><span class="line"><span class="string">       https://www.springframework.org/schema/beans/spring-beans.xsd</span></span><br><span class="line"><span class="string">       http://www.springframework.org/schema/context</span></span><br><span class="line"><span class="string">       https://www.springframework.org/schema/context/spring-context.xsd</span></span><br><span class="line"><span class="string">       http://www.springframework.org/schema/aop</span></span><br><span class="line"><span class="string">       https://www.springframework.org/schema/aop/spring-aop.xsd"</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;context:component-scan base-<span class="keyword">package</span>=<span class="string">"cn.rayjun.spring5demo"</span> /&gt;</span><br><span class="line">    &lt;aop:aspectj-autoproxy/&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure></p>
+<p>Java 配置更加简单，只需要加上 @EnableAspectJAutoProxy 注解就可以了。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAspectJAutoProxy</span></span><br><span class="line"><span class="meta">@ComponentScan</span>(basePackages = <span class="string">"cn.rayjun.spring5demo"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SoldierConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>配置完成之后就可以定义切面，任意一个类，被 @Aspect 注解之后就可以作为一个切面了。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FightLog</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在定义好了切面之后，就可以定义切点来实现自定义的功能了，从上面我们知道了切点就是被选择的连接点，定义一个切点的方式如下：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">execution(* cn.rayjun.spring5demo.container.Soldier.fight(..))</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>excution 表示这个切点的操作在连接点方法执行时触发。</li>
+<li><code>*</code> 表示返回任意的类型，就是对这个连接点方法的返回值没有要求</li>
+<li>中间就是连接点的全路径</li>
+<li><code>..</code> 表示的是对输入参数也没有要求，可以接受任意参数</li>
+</ul>
+<p>这样一来，方法名称是 fight，以及这个方法的多个重载方法都可以被该切点切入。</p>
+<p>切点定义好了之后就需要给这个切点自定义操作：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Before</span>(<span class="string">"execution(* cn.rayjun.spring5demo.container.Soldier.fight(..))"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightLogBefore</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"FightBefore"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>假如说这个切点要在多个通知上被使用，可以用如下的定义：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Pointcut</span>(<span class="string">"execution(* cn.rayjun.spring5demo.container.Soldier.fight(..))"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pointcut</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Before</span>(<span class="string">"pointcut()"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightLogBefore</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"FightBefore"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@After</span>(<span class="string">"pointcut()"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightLogAfter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"FightAfter"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面说到了切点就是被选择的连接点，假如说现在需要在切点中获取连接点的一些信息和状态，直接就可以在切点中加上一个 JoinPoint 的参数，这个就表示连接点，通过这个连接点就可以做一些有意义的操作，根据当前连接点的状态来做一些操作，比如记日志，做统计</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Before</span>(<span class="string">"pointcut()"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightLogBefore</span><span class="params">(JoinPoint j)</span> </span>&#123;</span><br><span class="line">    System.out.println(j);</span><br><span class="line">    System.out.println(<span class="string">"FightBefore"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>最后还需要说明的是环绕通知，这个比较特殊，这个通知的囊括了之前说的所有的通知，在这个通知中如果不调用 ProceedingJoinPoint 的 procceed 方法，原有的正常逻辑就无法执行，但是它的强大之处在于可以在这里自由的实现上述的各种通知，如下：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Around</span>(<span class="string">"pointcut()"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightAround</span><span class="params">(ProceedingJoinPoint pr)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">"FightAroundBefore"</span>);</span><br><span class="line">        pr.proceed();</span><br><span class="line">        System.out.println(<span class="string">"FightAroundAfter"</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable throwable) &#123;</span><br><span class="line">        throwable.printStackTrace();</span><br><span class="line">        System.out.println(<span class="string">"FightAroundThrowing"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">"FightAround"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>AOP 是 Spring 重要的组成部分，除了生僻的概念比较多，其他的也不是很复杂。</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

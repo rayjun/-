@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Java容器系列-ArrayList源码分析</h1>
+    <p>ArrayList 是使用的最为广泛的一个容器。ArrayList 的类的继承层次图如下:</p>
+<p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/Java/collection/ArrayList-Class.001.jpeg" alt=""></p>
+<p>ArrayList 实现了 <code>Collection</code> 和 <code>List</code> 接口，同时也实现了 <code>Cloneable</code>、<code>RandomAccess</code>，所以 ArrayList 可以被拷贝以及具有随机访问的特性。</p>
+<blockquote>
+<p>本文基于 JDK1.8</p>
+</blockquote>
+<h3>成员变量</h3>
+<p>在 ArrayList 类的头部，定义了以下几个成员变量。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_CAPACITY = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] EMPTY_ELEMENTDATA = &#123;&#125;;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</span><br><span class="line"><span class="keyword">transient</span> Object[] elementData;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> size;</span><br></pre></td></tr></table></figure></p>
+<p>这几个变量构成了 ArrayList 的基础。</p>
+<p><code>DEFAULT_CAPACITY</code> 表示 ArrayList 的初始容量。<code>elementData</code> 是存储具体数据的数组，也就是是说，ArrayList 底层数据结构就是一个数组，<code>size</code> 表示 ArrayList 中元素的个数。<code>EMPTY_ELEMENTDATA</code> 表示一个空的 ArrayList 对象，但 ArrayList 中没有数据时，elementData 指向的就是这个数组对象。<code>DEFAULTCAPACITY_EMPTY_ELEMENTDATA</code> 也表示空的 ArrayList，它只会在实例化一个不带参数的 ArrayList 的时候被使用一次：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ArrayList list = <span class="keyword">new</span> ArrayList(); <span class="comment">// 此时 elementData 指向的就是 DEFAULTCAPACITY_EMPTY_ELEMENTDATA</span></span><br></pre></td></tr></table></figure></p>
+<p>这些变量中需要注意的是 elementData 是不带访问修饰符的，这是为了让 ArrayList 的内部类可以方便的访问它，ArrayList 的内部类后面会讲到。elementData 变量是使用 transient 来修饰的，这表示在序列化的时候 elementData 是不会被序列化的，具体的序列化方式后面再讲。</p>
+<h3>初始化过程</h3>
+<p>在上面说到 <code>DEFAULT_CAPACITY</code> 是 ArrayList 的默认容量，值是10，但是需要注意的是，默认容量不一定用的上，在实例化 ArrayList 的时候分<strong>三种</strong>情况，第一种不给构造函数传参，但是此时会新建一个长度为 10 的对象数组。而是在<strong>添加第一个元素</strong>的时才会创建一个长度为 10 的数组，并把第一个元素添加进去。第二种情况会给构造参数传值 n，如果 n 大于0，那么就会直接创建一个长度为 n 的对象数组，如果 n 等于 0，那么就会把 EMPTY_ELEMENTDATA 赋值给 elementData。</p>
+<p>第三种实例化特殊一点，是直接传入另一个容器对象 c 来初始化 ArrayList 对象，此时会先检查 c 的长度，如果 c 容器里面没有元素，直接把 EMPTY_ELEMENTDATA 赋值给 elementData，如果 c 不为空，就会 c 中的元素拷贝到 elementData 中。</p>
+<h3>扩容过程</h3>
+<p>扩容的过程可以用以下的流程图来表示：</p>
+<p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/Java/collection/ArrayList%E6%89%A9%E5%AE%B9%E6%B5%81%E7%A8%8B.001.jpeg" alt=""></p>
+<p>扩容对 ArrayList 来说是一个很重要的过程，这也是为什么它比数组好用的原因。</p>
+<p>ArrayList 的扩容有两种方式，一个是自动扩容，一种是手动扩容。自动扩容每次会把当前容器的大小扩大 1.5 倍，手动扩容需要指定大小。既然已经有了自动扩容，那为什么还需要手动扩容呢？设想一个场景，实例化一个 ArrayList 之后，你大概知道会填充一万个元素，如果这个时候自动扩容的话要经过多次扩容才能装下这么多元素，但是手动指定容器大小的话只需要一次就可以了。</p>
+<p>具体把 ArrayList 扩容到多大是由下面这段代码决定的:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">newCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> oldCapacity = elementData.length;</span><br><span class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (newCapacity - minCapacity &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA)</span><br><span class="line">            <span class="keyword">return</span> Math.max(DEFAULT_CAPACITY, minCapacity);</span><br><span class="line">        <span class="keyword">if</span> (minCapacity &lt; <span class="number">0</span>) <span class="comment">// overflow</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> OutOfMemoryError();</span><br><span class="line">        <span class="keyword">return</span> minCapacity;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (newCapacity - MAX_ARRAY_SIZE &lt;= <span class="number">0</span>)</span><br><span class="line">        ? newCapacity</span><br><span class="line">        : hugeCapacity(minCapacity);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">hugeCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (minCapacity &lt; <span class="number">0</span>) <span class="comment">// overflow</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> OutOfMemoryError();</span><br><span class="line">    <span class="keyword">return</span> (minCapacity &gt; MAX_ARRAY_SIZE)</span><br><span class="line">        ? Integer.MAX_VALUE</span><br><span class="line">        : MAX_ARRAY_SIZE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>newCapacity</code> 是根据当前的元素的个数计算出来的，右移一位代表除以2，所以 newCapacity 为当前容量的 1.5 倍。然后这个值会与传入的值 <code>minCapacity</code> 进行对比，两个值哪个大就用哪个。</p>
+<p>为什么每次自动扩容都能为当前大小的 1.5 倍呢？那是因为自动扩容的时候传入的 minCapacity 都只比当前的容量大 1，所以肯定小于 newCapacity。而 newCapacity 就是 当前容量大小的 1.5 倍。</p>
+<p>当然有一个情况例外，那就是如果在实例化 ArrayList 没有指定大小的话，ArrayList 会至少扩容到 10。这一机制是靠以下代码实现的:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA)</span><br><span class="line">   <span class="keyword">return</span> Math.max(DEFAULT_CAPACITY, minCapacity);</span><br></pre></td></tr></table></figure></p>
+<p>扩容的时候，都是使用 <code>Arrays.copyOf</code> 将元素拷贝到新的容器中。所以基本都是 $O(N)$ 的时间复杂度，代价很大。所以尽可能减少扩容的次数。</p>
+<blockquote>
+<p>注意：ArrayList 没有缩容的过程。</p>
+</blockquote>
+<h3>具体实现</h3>
+<p>ArrayList 中有了很多的方法，这些方法核心都是围绕 elementData 操作的。</p>
+<p><code>siez()</code> 和 <code>isEmpty()</code> 方法想着简单，一个用来返回容器中的元素的数量，一个用来判断容器是否为空。</p>
+<p><code>clone()</code> 、 <code>toArray()</code> 和 <code>toArray(T[] a)</code> 这三个方法本质上都是对容器当前的元素做一个备份，都用到了 <code>Arrays.copyOf()</code> 方法。但是需要注意的是 <code>toArray(T[] a)</code> 的实现:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;T&gt; T[] toArray(T[] a) &#123;</span><br><span class="line">    <span class="keyword">if</span> (a.length &lt; size)</span><br><span class="line">        <span class="comment">// Make a new array of a's runtime type, but my contents:</span></span><br><span class="line">        <span class="keyword">return</span> (T[]) Arrays.copyOf(elementData, size, a.getClass());</span><br><span class="line">    System.arraycopy(elementData, <span class="number">0</span>, a, <span class="number">0</span>, size);</span><br><span class="line">    <span class="keyword">if</span> (a.length &gt; size)</span><br><span class="line">        a[size] = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在这个方法中除了使用 <code>Arrays.copyOf()</code> 还用到了 <code>System.arraycopy()</code>，其实 Arrays.copyOf() 底层就是使用 System.arraycopy() 方法实现的。但是区别在于前者会返回一个一个新的数组，后者则是直接在原数组上进行操作。</p>
+<p>ArrayList 中的 <code>add()</code>、<code>get()</code> 、<code>set()</code>、<code>remove()</code> 等方法用于元素的增删改查，实现并不复杂，只是在操作元素之前需要对容器的 size 进行检查，如果不满足操作要求，就会报出异常。</p>
+<p><code>euqal()</code> 类的方法主要都是对比每个元素的类型、顺序和值是否一致。</p>
+<p>在 JDK1.8 以后，出现了 <code>removeIf()</code> 方法，这个方法使得从容器中删除元素变得很简单。</p>
+<h4>迭代器</h4>
+<p>ArrayList 中有两个内部类 <code>Itr</code> 和 <code>ListItr</code>，主要方法如下：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Itr</span> <span class="keyword">implements</span> <span class="title">Iterator</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    Itr() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> E <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">ListItr</span> <span class="keyword">extends</span> <span class="title">Itr</span> <span class="keyword">implements</span> <span class="title">ListIterator</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    ListItr(<span class="keyword">int</span> index) &#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        cursor = index;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasPrevious</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">nextIndex</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">previousIndex</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> E <span class="title">previous</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>ListItr 继承了 Itr，这两个内部类都实现了迭代器模式，用于遍历 ArrayList 的元素。从上面的方法可知，Itr 和 ListItr 最大的区别在于 ListItr 可以从两个方向对容器的元素进行遍历。而 Itr 只能使用顺着一个方向进行遍历。</p>
+<p>在 JDK1.8 以后，ArrayList 中有一个 <code>ArrayListSpliterator</code> 内部类，这个类用于分割容器。用于提升多线程环境中的处理效率：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">    list.add(i);</span><br><span class="line">&#125;</span><br><span class="line">Spliterator&lt;Integer&gt; s0 = list.spliterator();</span><br><span class="line">System.out.println(s0.estimateSize()); <span class="comment">// 5</span></span><br><span class="line">Spliterator&lt;Integer&gt; s1 = s0.trySplit();</span><br><span class="line">System.out.println(s1.estimateSize()); <span class="comment">// 5</span></span><br></pre></td></tr></table></figure>
+<code>s0</code> 中有 10 个元素，在调用 <code>s0.trySplit()</code> 方法之后，s0 和 s1 中各有 5 个元素。然后可以对分割开的元素进行处理:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s0.forEachRemaining(i -&gt; System.out.println(i));</span><br></pre></td></tr></table></figure></p>
+<h4>SubList</h4>
+<p>ArrayList 中还有一个内部类 <code>SubList</code>。SubList 用于返回 ArrayList 的一部分元素，内部的操作方法与 ArrayList 基本一致，但是需要注意的是，对 SubList 的操作会直接影响到原 ArrarList。</p>
+<h4>fail-fast 机制</h4>
+<p>在 ArrayList 中，<code>checkForComodification()</code> 和 <code>ConcurrentModificationException()</code> 使用的频率很高。这个和 fail-fast 机制有关。</p>
+<p>ArrayList 不是线程安全的，所以在对容器操作的过程中，容器的元素倍其他的操作或者线程修改之后，就会出现 ConcurrentModificationException 异常。checkForComodification() 方法就是用来检查元素是否被修改。这个机制就称之为 <code>fail-fast</code>。</p>
+<p>后续会有其他的文章来介绍 <code>fail-fast</code>。</p>
+<p>(完)</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Cas 认证过程研究</h1>
+    <h3>Cas 认证</h3>
+<blockquote>
+<p>本文所讨论的 Cas 系统版本是 5.1.x</p>
+</blockquote>
+<p>CAS 系统是单点登录（SSO）的一种实现。在开始深入研究 CAS 的认证过程之前，需要了解一下 CAS 系统的一些专有名词。</p>
+<ul>
+<li><strong>SSO Session</strong>：由 CAS 服务器维护的一个单点登录的 Session，在 CAS 服务器中记录用户的登录状态</li>
+<li><strong>TGC</strong>(Ticket-Granting-Cookie)：由 SSO session 在浏览器端建立的一个 Cookie，这个 Cookie 用来维护客户端的登录状态</li>
+<li><strong>TGT</strong>(Ticket-Granting-Ticket)：TGT 存储在 TGC 中，CAS 服务器通过 TGT 来判断客户端在 CAS 服务器中是否存在 SSO Session</li>
+<li><strong>ST</strong>(Service-Ticket)：由 CAS 服务器为特定用户生成的用于访问特定客户端的凭证，ST 作为 GET 方法的参数进行传递</li>
+</ul>
+<h4>CAS 系统认证的环境</h4>
+<ul>
+<li><strong>CAS Server</strong>：CAS 认证的服务器，认证中心，用户输入的表单数据会在 CAS Server 中进行认证，认证成功后也由 CAS Server 发放（TGT），同时 CAS Server 也负责校验 TGT 的合法性。</li>
+<li><strong>CAS Management</strong>：CAS Server 的应用管理中心，每一个通过 CAS Server 认证的应用都需要在 CAS Management 中进行注册，CAS Management 默认已经注册，并且 CAS Management也是通过 CAS Server 进行认证 。</li>
+<li><strong>CAS Client</strong>：CAS Client 就是一个个应用，每一个 Client 在 cas-management 中进行注册之后，就可以在 CAS Server 中进行认证。</li>
+</ul>
+<p>CAS Server 和 CAS Management 官方都有提供开箱即用的程序，只要部署到 Tomcat 或者 Docker 中就行。</p>
+<p>而CAS Client 就是我们自己开发的应用程序，应用如果要集成到 CAS Server 中，还需要集成一些官方提供的模块，具体的集成方式在<a href="https://apereo.github.io/cas/5.1.x/integration/CAS-Clients.html" target="_blank" rel="noopener">这里</a>。</p>
+<p>在部署了 CAS Server 相关的程序后，访问应用程序就可以触发认证的过程。</p>
+<h4>CAS 具体认证过程</h4>
+<p>对于 CAS Server 来说，可以把认证的过程的分成三类，为了下文叙述方便，我们把 CAS Server 命名为 CS，应用1为 app1, 应用2为 app2：</p>
+<ul>
+<li>初次访问 app1</li>
+<li>认证通过后访问app1</li>
+<li>认证通过后访问应用群内的 app2</li>
+</ul>
+<p><strong>初次访问 app1</strong>：</p>
+<ol>
+<li>用户通过浏览器首次访问 app1，app1 检查用户的请求中是否包含认证信息，检查后发现没有，app1 就给浏览器返回了一个重定向，定向到 CS 的登录接口，并且携带一个 service 参数，参数的值为 app1 的 url。</li>
+<li>浏览器通过重定向访问 CS 的登录接口，CS 在接收到访问请求之后会先检查服务器中是否有 app1 的SSO Session，检查后发现没有就会返回一个登录的表单。</li>
+<li>用户在登录表单中填写用户名和密码。填写完成之后表单就会被提交到 CS，CS 对用户名和密码进行认证，如果认证通过 CS 就会为该用户生成一个 SSO Session、一个 ST。并且在浏览器中生成一个包含 TGT 的TGC Cookie。</li>
+<li>然后浏览器继续访问 app1，app1接收到这个请求后拿到 ST 参数，就会拿着 ST 去 CS进行校验，校验通过后 CS 会给 app1 返回一个 http 状态为 200 的回复（代表认证成功），同时携带一些 app1 需要的其他数据。app1 接收到后就会在浏览器中生成一个 app1 的 Cookie。然后用户就可以正常的访问 app1，用户首次访问 app1 的流程到这里也就结束了。</li>
+</ol>
+<p><strong>认证通过后访问 app1</strong>：</p>
+<ol>
+<li>首先 app1 会检查用户的 TGC 有没有过期，如果 TGC 过期，那么就需要重新走一次 初次访问的流程。</li>
+<li>如果 TGC 有效，那么 用户就可以继续访问 app1。</li>
+</ol>
+<p><strong>认证通过后访问 app2</strong>：</p>
+<ol>
+<li>用户通过浏览器访问 app2，然后 app2 会把这个请求重定向到 CS 的登录接口，CS 接收到请求后，会校验请求携带过来的 TGT，如果没有 TGT 或者 TGT 过期，那么就会重新走一次初次登录的逻辑。</li>
+<li>如果 TGT 通过校验，那么 CS 就会为 app2 生成一个新的 ST。然后浏览器就会带着这个新的 ST 去访问 app2， app2 拿到 ST 后会再次去 CS 校验 ST 的合法性。</li>
+<li>在 ST 得到了 CS 的验证后，app2 就会在浏览器中生成新的 cookie，然后让用户访问 app2。</li>
+</ol>
+<p>这三个过程基本就是 CAS 认证的所有过程了，任何的认证都可以归为这三类中的一类。虽然 CAS 认证的过程看起来很复杂，但是实际上可以总结为任何应用的访问权都需要 CS 来决定，在通过 CS 的认证后，每一个应用的访问就是一个普通 Web 程序的访问方式了。</p>
+<h4>CAS Ticket 研究</h4>
+<p>Ticket 可以算是 CAS 体系中最为核心的部分，那么对于 Ticket 来说，有两个重要的配置需要关注:</p>
+<ul>
+<li>TicketRegistry: Ticket 的存储</li>
+<li>ExpirationPolicy：Ticket 的过期策略</li>
+</ul>
+<p>在 CAS 系统中，Ticket 的存储可以有多种方式：</p>
+<p><strong>基于内存的存储</strong>：</p>
+<p>这种方式只适合开发阶段或者小项目的部署，涉及到项目时就不适合使用这种方式。</p>
+<p><strong>基于缓存的存储</strong>：
+这个方式很适合在高可用的部署环境中使用（部署在 Docker 上）。支持以下的存储方式:</p>
+<ul>
+<li>Hazelcast</li>
+<li>Encache</li>
+<li>Ignite</li>
+<li>Memcached</li>
+<li>Infinispan</li>
+</ul>
+<p><strong>基于关系型数据库的存储</strong>：</p>
+<p>这种方式适合在分布式部署中，有多个 CAS 节点的环境下：</p>
+<ul>
+<li>JPA</li>
+</ul>
+<p><strong>基于 NoSql 的存储</strong>：
+支持以下的 NoSql数据库:</p>
+<ul>
+<li>Infinispan</li>
+<li>Couchbase</li>
+<li>Redis</li>
+<li>MongoDb</li>
+<li>DynamoDb</li>
+</ul>
+<p>对于 TGT 和 ST 有着不同的过期策略：</p>
+<p><strong>TGT</strong>:</p>
+<ul>
+<li>Hard-Time：设定一个时间，到时间 TGT 就过期</li>
+<li>Timeout: 超时策略，超过一定时间没有访问就会过期</li>
+<li>Hard-Timeout：与 Hard-Time 类似，在 TGT 创建后的一段时间后就会过期</li>
+<li>Throttled：设定 TGT 最多每 N 秒使用一次，超过这个次数 TGT 就会过期</li>
+<li>Never: TGT 永不过期</li>
+</ul>
+<p><strong>ST</strong>:</p>
+<p>ST 只有一个过期策略，ST 是依赖 TGT 存在的，所以 ST 的过期策略与 TGT 有关，当 TGT 过期后，ST也会一起过期。</p>
+<p>（完）</p>
+<p>[1]<a href="https://apereo.github.io/cas/5.1.x/planning/Architecture.html" target="_blank" rel="noopener">CAS 官方文档</a></p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

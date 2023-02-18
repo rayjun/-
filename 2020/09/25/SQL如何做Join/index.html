@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>SQL如何做Join</h1>
+    <p>使用SQL 时，一个常见的场景就是多个表之间的关联查询。</p>
+<p>本文总结一下联表 Join 的多种形式。</p>
+<p>ANSI 的 SQL 标准中，SQL  join 共有 5 种，可以分为 <code>Inner Join</code>、<code>Left Join</code>、<code>Right Join</code>、 <code>Full join</code>、和 <code>Cross Join</code>，还有一种特殊的情况，与表自身 join 的 <code>Self join</code>。</p>
+<p>在这篇文章中只考虑两张表的情况，多张表的情况同理。</p>
+<p>两张表的结构（schema）如下：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_a (</span><br><span class="line">    <span class="keyword">id</span> <span class="built_in">bigint</span> auto_increment,</span><br><span class="line">    <span class="keyword">key</span> <span class="built_in">varchar</span>(<span class="number">255</span>)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_b (</span><br><span class="line">    <span class="keyword">id</span> <span class="built_in">bigint</span> auto_increment,</span><br><span class="line">    <span class="keyword">key</span> <span class="built_in">varchar</span>(<span class="number">255</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<p>下文的 SQL 只是伪代码，在不同的数据库系统中不同的表示， join 关系使用文氏图表示。</p>
+<h2>Cross Join</h2>
+<p>两个表做笛卡尔积，基本不会在正式的业务中使用，主要用来测试服务的性能。</p>
+<p><img src="0.png" alt=""></p>
+<p>笛卡尔积就是把两个集合中的每一项两两组合，得到一个新的集合，在数据库中，就是把两张表中的数据两两组合。</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_a <span class="keyword">cross</span> <span class="keyword">join</span> t_b;</span><br></pre></td></tr></table></figure></p>
+<p>Cross jojn 还有一种写法：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_a, t_b;</span><br></pre></td></tr></table></figure></p>
+<h2>Inner Join</h2>
+<p>Innner join 表示只取两张表重合的部分，重合的部分也就是满足条件的记录。</p>
+<p><img src="1.png" alt=""></p>
+<p>Inner Join SQL 如下：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_a a <span class="keyword">inner</span> <span class="keyword">join</span> t_b b <span class="keyword">on</span> a.key = b.key;</span><br></pre></td></tr></table></figure></p>
+<p>对于 Inner join，也可以看作是从上面的 Cross Join 中找出那些满足条件的记录。</p>
+<h2>Outer Join</h2>
+<p>下面将要说到的这些 Join 方式都可以统称为 Outer Join，Outer Join 是相对于 Inner Join ，Outer Join 会保留表的全部记录，至于保留哪部分，就取决于具体的 Join 方式。</p>
+<p>Left Join 就会保留左边表的全部记录，然后只取右边表的匹配记录。Right Join 就会保留右边表的全部记录，然后只取左边表的匹配记录。Full Join 则会把两个表的记录都取出来。</p>
+<h3>Left Join</h3>
+<p>Left join 也称之为 Left outer join。</p>
+<p>表示以 a 表为主，会将 a 表的数据全部查询出来，同时只查出 b 表中与 a 表相交的那部分。</p>
+<p><img src="2.png" alt=""></p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_a a <span class="keyword">left</span> <span class="keyword">join</span> t_b b <span class="keyword">on</span> a.key = b.key;</span><br></pre></td></tr></table></figure></p>
+<p>上面的 SQL 也可以写成：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_a a <span class="keyword">left</span> <span class="keyword">outer</span> <span class="keyword">join</span> t_b b <span class="keyword">on</span> a.key = b.key;</span><br></pre></td></tr></table></figure></p>
+<p>Left join 有一种变体，只获取那些不在表 b 中出现的结果，很简单，只需要做一个改动：</p>
+<p><img src="3.png" alt=""></p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_a a <span class="keyword">left</span> <span class="keyword">join</span> t_b b <span class="keyword">on</span> a.key = b.key <span class="keyword">where</span> b.key <span class="keyword">is</span> <span class="literal">null</span>;</span><br></pre></td></tr></table></figure></p>
+<h3>Right Join</h3>
+<p>Right join 也称之为 Right outer join。</p>
+<p>Right join 与 Left join 刚好相反，Right join 会以 b 表为主，会把 b 表中的数据都查询出来，同时只查询出 a 表中与表 b 相交的那部分。</p>
+<p><img src="4.png" alt=""></p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_a a <span class="keyword">right</span> <span class="keyword">join</span> t_b b <span class="keyword">on</span> a.key = b.key;</span><br></pre></td></tr></table></figure></p>
+<p>上面的 SQL 也可以写成：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_a a <span class="keyword">right</span> <span class="keyword">outer</span> <span class="keyword">join</span> t_b b <span class="keyword">on</span> a.key = b.key;</span><br></pre></td></tr></table></figure></p>
+<p>Right join 同样也有一种变体，只获取那些不在 a 表中出现的结果：</p>
+<p><img src="5.png" alt=""></p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_a a <span class="keyword">right</span> <span class="keyword">join</span> t_b b <span class="keyword">on</span> a.key = b.key <span class="keyword">where</span> a.key <span class="keyword">is</span> <span class="literal">null</span>;</span><br></pre></td></tr></table></figure></p>
+<h3>Full Join</h3>
+<p>Full join 也称之为 Full outer join。</p>
+<p><img src="6.png" alt=""></p>
+<p>Full join 比较特殊，会把两张表的中数据全部查询出来：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_a a <span class="keyword">full</span> <span class="keyword">join</span> t_b b <span class="keyword">on</span> a.key = b.key;</span><br></pre></td></tr></table></figure></p>
+<p>上面的 SQL 也可以写成：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_a a <span class="keyword">full</span> <span class="keyword">outer</span> <span class="keyword">join</span> t_b b <span class="keyword">on</span> a.key = b.key;</span><br></pre></td></tr></table></figure></p>
+<p>Full join 也有一种变体，只获取 a 表与 b 表相交之外的区域，刚好与 inner join相反：</p>
+<p><img src="7.png" alt=""></p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_a a <span class="keyword">full</span> <span class="keyword">join</span> t_b b <span class="keyword">on</span> a.key = b.key <span class="keyword">where</span> a.key <span class="keyword">is</span> <span class="literal">null</span> <span class="keyword">or</span> b.key <span class="keyword">is</span> <span class="literal">null</span>;</span><br></pre></td></tr></table></figure></p>
+<h2>Self join</h2>
+<p>在实际场景中，还有一种比较特殊的需求，比如我们需要查出一张表中某个字段相同的所有记录，这个时候就需要用到 Self join 了。</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_a a1 <span class="keyword">inner</span> <span class="keyword">join</span> t_a a2 <span class="keyword">on</span> a1.key = a2.key;</span><br></pre></td></tr></table></figure></p>
+<p>文 / Rayjun</p>
+<h2>REF</h2>
+<p>[1] <a href="https://en.wikipedia.org/wiki/Join_(SQL)" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Join_(SQL)</a></p>
+<p>[2] <a href="https://en.wikipedia.org/wiki/Venn_diagram" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Venn_diagram</a></p>
+<p>[3] <a href="https://en.wikipedia.org/wiki/American_National_Standards_Institute" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/American_National_Standards_Institute</a></p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

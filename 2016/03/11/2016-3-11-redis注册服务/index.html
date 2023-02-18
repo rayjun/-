@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>redis 注册服务</h1>
+    <h3>redis 注册为为服务</h3>
+<p>在 redis 安装完成之后，需要将 redis 注册为服务，这样做有多个好处:</p>
+<ul>
+<li>可以利用 service 命令方便的控制服务的启动和停止。</li>
+<li>可以利用 chkconfig 命令来控制程序的运行级别。</li>
+<li>可以让服务在开机时启动。</li>
+</ul>
+<h4>redis 安装</h4>
+<p>redis 的安装有多种方式，既可以通过源码安装，也可以通过操作系统的报管理器安装。这个就不详细说明了。</p>
+<h4>redis 注册服务</h4>
+<ul>
+<li>安装完成了之后，将源码中 /utils/redis_init_script (不知道文件在哪的可以通过 find / -name redis_init_script 来查找)
+文件复制到 /etc/init.d/redisd 文件。</li>
+<li>然后在 /etc 目录下创建 /etc/redis 目录(这个目录可以随便建)，并将修改的 redis.conf 复制到 redis目录下。</li>
+<li>然后修改 /etc/init.d/redisd 文件，在文件开始的地方添加服务的运行级别。</li>
+</ul>
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;bin&#x2F;sh</span><br><span class="line"># chkconfig:   2345 90 10</span><br></pre></td></tr></table></figure>
+</code></pre>
+<ul>
+<li>最后启动服务， chkconfig redisd on, 这样redis 就被注册成了服务。</li>
+</ul>
+<p>基本上所有的程序都可以这样被注册成服务，至于服务(service)和 chkconfig 的意义，在下一篇文章中会讨论。</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

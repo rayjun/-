@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>区块链中的链到底怎么形成的</h1>
+    <p>对于区块链这个词大多数人应该听的耳朵都快起茧了，但是区块链这条链到底是什么呢？知道的人应该就不多了，这篇文章会深入的介绍区块链中的链到底是由什么构成的。这篇文章会以比特币的结构为例来分析区块链的结构。</p>
+<p>区块链在运行的过程中，会不断的对用户提交的交易数据进行打包，只有那些被打包的数据才能真正算是区块链的一部分。而这个打包的过程，就是构建链的过程。就比特币来说，链的结构如图所示:</p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_039d02cb-fd09-40cc-840b-5f783ed63517.png" alt=""></p>
+<p>如果我们把图中的元素都搞清楚了，那么区块链的结构我们自然也就弄清楚了。首先区块链是一条链，这条链与数据结构的单向列表的结构非常类似。其中，这条链中的每一个节点都是一个区块的区块头，而每个区块头中都包含了三个非常重要的元素，一个是父区块的哈希值，第二个数据就是随机数题（难度、时间戳、nonce），最后一个就是 Merkle 树的树根。</p>
+<p><strong>区块的连接方式</strong>：首先所有区块的连接方式都是通过在当前的区块头中记录父区块的哈希值，在区块链中，每个区块的哈希值是独一无二的，所以每个区块通过链接父区块的哈希来构建成一块链。</p>
+<p><strong>区块的形成方式</strong>：不同的区块链形成区块的形式是不一样的，在比特币中，是通过计算一个随机数的值来进行的，计算的过程就是挖矿的过程。不同的区块链的有不同的实现，但是目标都是一样的，就是通过竞争来确定区块的归属权。</p>
+<p><strong>区块的数据</strong>：在比特币中，一个区块的所有交易数据都是通过 Merkle 树来存储的。而在区块头中只存储 Merkle 树的树根，其他的数据都挂载这个树根上。</p>
+<p>说到这里区块链的大体的结构差不多也可以弄清楚了。但是在实际的操作中是有很多问题存在的，比如区块链中由一个原则就是最长链原则，也就是说，只有最长的那条链上的区块才是有价值的，其他分叉的链都是无效的。那么这个问题在区块链中是如何解决的呢？</p>
+<p>在区块链形成的过程中，一个区块是可以同时成为多个区块的父区块的，但是这只是暂时的。这种情况称之为分叉，然后区块的产生可以继续在这几条分叉的链上继续进行，当其中的一个区块率先得到六次确认后，那么其他所有的分叉就会失效。而其他区块链上的区块被称之为过时块，那些过时块的交易数据会被打散，然后等待被重新被打包进交易。这样就确保链能够不断的产生。</p>
+<p>参考文献:</p>
+<p>[1] 精通比特币</p>
+<p>[2]比特币白皮书</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

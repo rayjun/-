@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>从技术的角度上来看，什么是区块链</h1>
+    <p>当我们开始说到区块链的时候，比特币肯定是绕不过去的一个点。首先是产生了比特币，而后才有了区块链的概念。比特币被发明者中本聪定义为一个<strong>点对点</strong>版本的电子现金系统。这样系统不需要金融机构等第三方机构来保证一笔钱不会被两次消费。这样一来，任意的双方都可以直接进行交易，而不用担心出现会被对方欺诈。所有的交易记录会形成一条<strong>工作证明链</strong>，这条链除非重新生成，否则这条链上的数据就不可能被改变。</p>
+<p>在上面对比特币的描述中，出现了两个非常重要的概念，一个是<strong>点对点</strong>，还有就是<strong>工作证明链</strong>，区块链的概念也正是脱胎于此。对于区块链，很难直接下定义，因为这个词里面包含了太多的内容，包括分布式网络、数据库、密码学、工程学、博弈论等等。但是从最直观的理解上来看，它就是一条链，这条链上并不是直接存储了数据，存储的是数据的哈希值。如下图（图片来源：比特币白皮书）：</p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_fb9d3a48-67b8-4089-b90c-7dd6b77c9f83.png" alt="比特币"></p>
+<p>所以，如果必须要从技术来给区块链下一个定义的话，那就是区块链是基于分布网络的数据库。</p>
+<p>但是如果只是从这个角度来说明区块链并不是很准确，如果只是搭建一个分布式的数据库系统，现有的很多的方案都要比区块链更好。区块链真正区别在于<strong>工作证明</strong>这个点上。当然，这个说法来源于比特币，其他的很多区块链系统都不是这个叫法，但是机制也与这个类似。</p>
+<p>正是这个工作证明才让区块链得以构建起来。对于区块链来说，最为重要的事情就是让这条链可以不断的延展下去，而整个区块链系统只认那条最长的链。但是区块链在构建最长链的过程当中，需要有人（节点）愿意不断参与。那就需要通过某种方式来给参与的人（节点）报酬，在收益的驱使下让人（节点）不断的参与进来。这种报酬的获取方式是在每个新的区块生成的时候产生，通常把这个报酬称之为 Token，在比特币系统中，这个报酬称之为比特币。因为只有最长的那条链上的才能产生 Token，所以参与人只能围绕这条最长链进行工作，而他们工作的方式就称之为。所有区块链系统的这部分设计实际上已经不是技术领域，实际上这个就属于经济学领域。</p>
+<p>所以到这里，我们就知道了，区块链其实就是通过分布式网络的节点参与建设的一条链，这条链上存储了诸多交易（或者其他数据）的哈希值，这些数据的本身这是存储在数据库中的。区块链系统通过不断的产生 Token 来奖励那些参与建设的节点，使得这些节点能够不断的围绕区块链的最长链持续的生成节点。这样，一个区块链系统就生成了。</p>
+<p>参考文献:</p>
+<p>[1] 比特币白皮书</p>
+<p>[2] 精通比特币</p>
+<p>[3] 区块链原理设计与应用</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

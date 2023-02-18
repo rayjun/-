@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>SQL 简明教程</h1>
+    <p>SQL(Structed Query Language)是结构化查询语句，在如今各类系统中有广泛的应用。在多次 <strong>No SQL</strong> 浪潮中依然生存下来，如今依然有着强大的生命力。是值得花时间投资的学习的一门技能。</p>
+<blockquote>
+<p>SQL 是一种标准，由美国国家标准化组织（ANSI）制定</p>
+</blockquote>
+<p>RDBMS 是关系型数据库管理系统。  比如 SQL Server、MySQL、Oracle 等。</p>
+<blockquote>
+<p>在不同的 RDBMS 中都有自己的 SQL 扩展。</p>
+</blockquote>
+<p>SQL 可以分成 <strong>DML(数据操作语言)</strong> 、<strong>DDL(数据定义语言)</strong> 以及<strong>DCL(数据控制语言)</strong>。</p>
+<p>最简单区分这三者的方法就是：</p>
+<ul>
+<li>操作表中数据的操作就是 DML</li>
+<li>操作数据库表、视图等操作就是 DDL</li>
+<li>操作数据库及数据库权限的就是 DCL</li>
+</ul>
+<blockquote>
+<p>本文实践的环境是 MySQL</p>
+</blockquote>
+<h3>DML 基础</h3>
+<blockquote>
+<p>c 代表列名，v 代表值</p>
+</blockquote>
+<p><strong>SELECT</strong></p>
+<p>select 用于从数据库中查询数据。
+有两种使用方式，一种是将表中的<strong>列</strong>全部查询出来，一种只查询出来指定的列。
+查询全部列：
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name</span><br></pre></td></tr></table></figure></p>
+<p>查询指定列：
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c1, c2, c3 <span class="keyword">from</span> table_name</span><br></pre></td></tr></table></figure></p>
+<p>在返回的数据中，有些列的值是重复的，可以使用 <strong>distinct</strong> 来返回一列的唯一值：
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">distinct</span> c2 <span class="keyword">from</span> table_name</span><br></pre></td></tr></table></figure></p>
+<p>如果需要在查询的的过程中加入条件，那就需要使用 <strong>where</strong> 来指定查询条件:
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 = v1;</span><br></pre></td></tr></table></figure>
+where 支持的运算符如下：</p>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>=</td>
+<td>等于</td>
+</tr>
+<tr>
+<td>&lt;&gt;</td>
+<td>不等于</td>
+</tr>
+<tr>
+<td>&gt;</td>
+<td>大于</td>
+</tr>
+<tr>
+<td>&lt;</td>
+<td>小于</td>
+</tr>
+<tr>
+<td>&gt;=</td>
+<td>大于等于</td>
+</tr>
+<tr>
+<td>&lt;=</td>
+<td>小于等于</td>
+</tr>
+<tr>
+<td>BETWEEN</td>
+<td>在某个范围内</td>
+</tr>
+<tr>
+<td>LIKE</td>
+<td>模糊查询</td>
+</tr>
+</tbody>
+</table>
+<p>假如说不止一个条件，可以使用 <strong>AND</strong> 和 <strong>OR</strong> 来连接多个 条件，AND 和 OR 可以组合使用。
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 = v1 <span class="keyword">and</span>  c2 = v2 <span class="keyword">or</span>  c3 &lt;&gt; v3;</span><br></pre></td></tr></table></figure></p>
+<p>使用 select 查询出来的结果的顺序可能不是想要的，那么就可以使用 <strong>ORDER BY</strong> 来对结果进行排序，order by 默认使用的是升序排序。</p>
+<p>使用 <strong>desc</strong> 来进行降序排序：
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">form</span> table_name <span class="keyword">where</span> c1 = v1 <span class="keyword">order</span> <span class="keyword">by</span> c1 <span class="keyword">desc</span>;</span><br></pre></td></tr></table></figure>
+对多个字段使用 order by：
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 = v1 <span class="keyword">order</span> <span class="keyword">by</span> c1, c2;</span><br></pre></td></tr></table></figure>
+对不同的字段使用不同的排序规则:
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 = v1 <span class="keyword">order</span> <span class="keyword">by</span> c1 <span class="keyword">asc</span>, c2 <span class="keyword">desc</span>;</span><br></pre></td></tr></table></figure></p>
+<p><strong>INSERT INTO</strong></p>
+<p>insert into 用于向数据库中插入数据。
+两种使用方式，一种是直接插入表中，不指定列，这样需要为每一列都填充数据，否则会报错:
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table_name <span class="keyword">values</span> (v1, v2, v3, v4);</span><br></pre></td></tr></table></figure></p>
+<p>也可以指定列:
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table_name (c2, c3, c4) <span class="keyword">values</span> (v2, v3, v4);</span><br></pre></td></tr></table></figure></p>
+<p><strong>UPDATE</strong></p>
+<p>update 用于更新数据，在更新数据的时候也可以使用 where 来限定某些条件的数据可以被更新。
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> table_name <span class="keyword">set</span> c1 = v1 <span class="keyword">where</span> c1 = v;</span><br></pre></td></tr></table></figure></p>
+<p><strong>DELETE</strong></p>
+<p>delete 用于删除表中的数据，可以使用 where 删除限定的数据，也可以删除全部数据。</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 = v1;</span><br></pre></td></tr></table></figure></p>
+<p>删除全部数据：
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> table_name;</span><br></pre></td></tr></table></figure></p>
+<p><strong>SELECT TOP</strong></p>
+<p>用于返回指定的记录的条数：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> top <span class="number">2</span> * <span class="keyword">from</span> table_name;</span><br></pre></td></tr></table></figure></p>
+<p>但是这个特性在有的数据库中不支持，但是有相应的替代方案可以选择，在 MySQL 中可以这样实现：
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">limit</span> <span class="number">2</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>LIKE</strong>
+like 用于 where 子句中进行模糊查询。</p>
+<p>表示查询 c1 列以 bar 开头的记录。
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 <span class="keyword">like</span> <span class="string">'bar%'</span>;</span><br></pre></td></tr></table></figure>
+like 支持如下的通配符:</p>
+<table>
+<thead>
+<tr>
+<th>通配符</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%</td>
+<td>替代一个或者多个字符</td>
+</tr>
+<tr>
+<td>_</td>
+<td>仅替代一个字符</td>
+</tr>
+<tr>
+<td>[chars]</td>
+<td>字符列中的任何单一字符（MySQL 不支持）</td>
+</tr>
+<tr>
+<td>[^chars] 或者 [!chars]</td>
+<td>不在字符列中的任何单一字符（MySQL不支持）</td>
+</tr>
+</tbody>
+</table>
+<p>如果想使用 like 来排除条件，可以使用 <strong>not like</strong>。</p>
+<blockquote>
+<p>在 MySQL 中，还支持正则表达式，可以使用 <strong>REGEXP(RLIKE)</strong> 和 <strong>NOT REGEXP(NOT RLIKE)</strong></p>
+</blockquote>
+<p><strong>IN</strong>
+in 可以指定 where 子句中在固定范围的内进行查询:</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 <span class="keyword">in</span> (v1, v2, v3);</span><br></pre></td></tr></table></figure></p>
+<p><strong>BETWEEN AND</strong></p>
+<p>between and 可以在 where 子句中指定查询的范围。</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 <span class="keyword">between</span> v1 <span class="keyword">and</span> v2;</span><br></pre></td></tr></table></figure>
+between and 同样可以使用 not 来表示查询不在这个范围内的数据，用法如下：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 <span class="keyword">not</span> <span class="keyword">between</span> v1 <span class="keyword">and</span> v2;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>between and 在不同的数据库中有不同的表现</p>
+</blockquote>
+<p><strong>ALIAS</strong></p>
+<p>在 SQL 进行查询的过程中，可以为<strong>列名</strong>和<strong>表名</strong>都增加别名。</p>
+<p>为列增加别名：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c1 <span class="keyword">as</span> c1_alias <span class="keyword">from</span> table_name;</span><br></pre></td></tr></table></figure>
+为表增加别名:
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">as</span> table_name_alias;</span><br></pre></td></tr></table></figure></p>
+<p><strong>多表查询</strong></p>
+<p>SQL 支持同时查询多个表。</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> a.c1,b.c2 <span class="keyword">from</span> table1 <span class="keyword">as</span> a, table2 <span class="keyword">as</span> b <span class="keyword">where</span> a.c1 = b.c2;</span><br></pre></td></tr></table></figure></p>
+<p><strong>JOIN</strong></p>
+<p>SQL 在查询多个表中的数据时，除了可以使用多表查询，还可以使用 join 来进行查询。</p>
+<p>上面多表查询的 SQL 与这条 SQL 是等价的：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> a.c1, b.c2  <span class="keyword">from</span> table1 <span class="keyword">as</span> a <span class="keyword">inner</span> <span class="keyword">join</span> table2 <span class="keyword">as</span> b <span class="keyword">on</span> a.c1 = b.c2;</span><br></pre></td></tr></table></figure>
+join 除了有 inner join 之外（inner join 与 join 等价），在上面的查询中，table1 称之为左表，table2 称之为右表。join 比多表关联查询功能强大的地方在于 join 可以根据需要，返回不同的结果。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JOIN (INNER JOIN)</td>
+<td>只返回表中匹配的记录</td>
+</tr>
+<tr>
+<td>LEFT JOIN (LEFT OUTER JOIN)</td>
+<td>即使右表中没有匹配的记录，也会将左表的所有记录返回</td>
+</tr>
+<tr>
+<td>RIGHT JOIN (RIGHT OUTER JOIN)</td>
+<td>即使左表中没有记录，也会将右表中所有的记录返回</td>
+</tr>
+<tr>
+<td>FULL JOIN (FULL OUTER JOIN)</td>
+<td>将两个表中所有的记录都返回</td>
+</tr>
+</tbody>
+</table>
+<p><strong>UNION</strong>
+union 用于合并多个 select 的查询结果。使用 union 需要满足以下几个条件:</p>
+<ul>
+<li>所有的 select 语句必须要有相同数量的列</li>
+<li>每列的数据类型必须一致</li>
+<li>所有列的排列顺序都需要相同</li>
+</ul>
+<blockquote>
+<p>列名不需要一致</p>
+</blockquote>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c1, c2 <span class="keyword">from</span> table1 </span><br><span class="line"><span class="keyword">union</span></span><br><span class="line"><span class="keyword">select</span> c3,c4 <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+直接使用 union 返回的结果中不包含重复列，如果需要返回全部的结果，可以使用 <strong>UNION ALL</strong>。</p>
+<h3>DDL 基础</h3>
+<p><strong>SELECT INTO</strong></p>
+<p>select into 可以用来创建表的备份，可以配合 where 、JOIN 等语句一起使用。</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">into</span> new_table <span class="keyword">from</span> lod_table <span class="keyword">where</span> c1 = v1;</span><br></pre></td></tr></table></figure>
+select into 直接使用是在同一个数据库操作，也可以通过 in 来实现跨数据库操作:
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">into</span> new_table <span class="keyword">in</span> new_datebase <span class="keyword">from</span> old_table <span class="keyword">where</span> c1 = v1;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>MySQL 不支持 SELECT INTO</p>
+</blockquote>
+<p><strong>CREATE DATABASE</strong></p>
+<p>create database 用于创建数据库，使用起来很简单。</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">database</span> database_name;</span><br></pre></td></tr></table></figure></p>
+<p>删除数据库:
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">database</span> database_name;</span><br></pre></td></tr></table></figure></p>
+<p><strong>CREATE TABLE</strong></p>
+<p>create table 用于创建数据库表。</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> table_name &#123;</span><br><span class="line">    c1 datatype,</span><br><span class="line">    c2 datatype,</span><br><span class="line">    c3 datatype</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+其中 datatype 是 SQL 支持的数据类型。</p>
+<p>上面的 SQL 展示了如何创建一个基本的数据库表，但是实际使用的过程中，创建数据表的语句不会这么简单，通常来说会给数据库中的列加上各种各样的<strong>约束</strong>来满足需要，下表是 SQL 支持的几种约束。</p>
+<table>
+<thead>
+<tr>
+<th>约束</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NOT NULL</td>
+<td>列不能为 NULL，主键通常不能为 NULL</td>
+</tr>
+<tr>
+<td>UNIQUE</td>
+<td>列的值在该表中唯一</td>
+</tr>
+<tr>
+<td>PRIMARY KEY</td>
+<td>数据的主键，在该表中也是唯一</td>
+</tr>
+<tr>
+<td>FOREIGN KEY</td>
+<td>数据的外键，通常是其他表中数据的主键</td>
+</tr>
+<tr>
+<td>CHECK</td>
+<td>对某列数据的值加以限制</td>
+</tr>
+<tr>
+<td>DEFAULT</td>
+<td>给某列数据设定默认值</td>
+</tr>
+<tr>
+<td>AUTO_INCREMENT</td>
+<td>加上了该约束的列的值会自增</td>
+</tr>
+</tbody>
+</table>
+<p>not null 就是标识一个字段不能为 null，通常在建表时指定:</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> table_name &#123;</span><br><span class="line">    c1 datatype <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    c2 datatype,</span><br><span class="line">    c3 datatype</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+unique 指定每条记录的唯一标识，每个表可以用多个 unique 标识。</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> table_name &#123;</span><br><span class="line">    c1 datatype <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    c2 datatype,</span><br><span class="line">    c3 datatype,</span><br><span class="line">    <span class="keyword">unique</span>(c1)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+也可以把多个字段组合成为唯一标识:
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> table_name &#123;</span><br><span class="line">    c1 datatype <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    c2 datatype,</span><br><span class="line">    c3 datatype,</span><br><span class="line">    <span class="keyword">constraint</span> uc_c1_c2 <span class="keyword">unique</span> (c1, c2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+对于已经创建的表添加 unique 约束以及删除现有的约束可以使用 <strong>alter table</strong> 来进行修改。</p>
+<p>删除表：</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> table_name;</span><br></pre></td></tr></table></figure>
+清除表中数据但是不删除表:</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">truncate</span> <span class="keyword">table</span> table_name;</span><br></pre></td></tr></table></figure></p>
+<p><strong>ALTER TBALE</strong></p>
+<p>使用 alter table 可以增加和删除表的字段，也可以修改字段的类型。</p>
+<p>增加字段：
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> c1 datatype;</span><br></pre></td></tr></table></figure>
+删除字段（有些数据库不允许这个操作）:
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">drop</span> <span class="keyword">column</span> c1;</span><br></pre></td></tr></table></figure>
+修改表中字段的数据类型:
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">column</span> c1 datatype;</span><br></pre></td></tr></table></figure></p>
+<p><strong>INDEX</strong></p>
+<p>在表中可以创建 index，以便更快更高效的查询数据。但是凡事都有代价，增加了索引的表在更新数据的时候会更慢。所以只会在经常被搜索的列和表上创建索引。</p>
+<p>创建一个索引，与 unique 一样，可以为一个字段创建一个索引，也可以为多个字段创建一个索引:</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> index_name <span class="keyword">on</span> table_name (c1);</span><br></pre></td></tr></table></figure>
+上面创建的这个索引的值是可以重复的，也可以创建唯一索引，唯一索引的值是不能重复的:</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">unique</span> <span class="keyword">index</span> index_name <span class="keyword">on</span> table_name (c1);</span><br></pre></td></tr></table></figure></p>
+<p>删除索引（MySQL）:</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">drop</span> <span class="keyword">index</span> index_name;</span><br></pre></td></tr></table></figure></p>
+<p><strong>VIEW</strong></p>
+<p>view 是基于 SQL 语句的结果集的可视化的表，也就是说，视图是一个 SQL 查询结果的集合，视图的结构和表一样，但是其中的字段数据一般来自于多个表。</p>
+<p>创建一个视图:</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">view</span> view_name <span class="keyword">as</span></span><br><span class="line"><span class="keyword">select</span>  a.c1, b.c2 <span class="keyword">from</span> table1 <span class="keyword">as</span> a, table2 <span class="keyword">as</span> b </span><br><span class="line"><span class="keyword">where</span> a.c1 = b.c2;</span><br></pre></td></tr></table></figure></p>
+<p>然后可以在这个视图中进行查询:</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> view_name;</span><br></pre></td></tr></table></figure></p>
+<p>删除视图:</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">view</span> view_name</span><br></pre></td></tr></table></figure></p>
+<h3>DCL 基础</h3>
+<p>DCL 用于控制数据库中的授权和事务。</p>
+<p><strong>GRANT</strong></p>
+<p>给 user1 在 table1 上赋予 select 和 update 的权限。
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">grant</span> privilege [<span class="keyword">select</span>, <span class="keyword">update</span>] <span class="keyword">on</span> table1 [user1]</span><br></pre></td></tr></table></figure></p>
+<p><strong>TRANSACTION</strong></p>
+<p>事务处理严格来说是 RDBMS 的功能，事务用来确保一组 SQL 要么全部执行，要么全部不执行。</p>
+<p>主要就是利用 <strong>COMMIT</strong> 来提交一个事务，利用 <strong>ROLLBACK</strong> 来回滚一个事务。</p>
+<h3>SQL 函数</h3>
+<p>除了基本的 SQL 语法外，SQL 中还有很重要的一个部分就是<strong>函数</strong>。</p>
+<p>函数可以分成两类：</p>
+<ul>
+<li><strong>聚合查询函数</strong>：操作一系列的值，然后返回单一的值</li>
+<li><strong>标量查询函数</strong>：操作一个单一的值，并且返回一个单独的值</li>
+</ul>
+<p>函数的使用方式：
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">function</span>(c1) <span class="keyword">form</span> table1;</span><br></pre></td></tr></table></figure></p>
+<p>基本上所有的函数都是这样使用的，但是有一点需要注意的是，如果聚合查询函数在和普通字段一起查询时，一定要加上 <strong>group by 关键字</strong>。
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c1 , <span class="keyword">max</span>(c2) <span class="keyword">from</span> table1 <span class="keyword">group</span> <span class="keyword">by</span> c1;</span><br></pre></td></tr></table></figure></p>
+<p>如果有时候我们需要把聚合查询函数作为一个条件来进行查询，但是聚合函数是不能和 where 一起配合使用的，这个时候就需要使用 having。
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c1, <span class="keyword">max</span>(c2) <span class="keyword">from</span> table1 <span class="keyword">having</span> <span class="keyword">max</span>(c2) &gt; v2;</span><br></pre></td></tr></table></figure></p>
+<p>也可以在函数查询上使用别名:
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c1, <span class="keyword">max</span>(c2) <span class="keyword">as</span> m1 <span class="keyword">from</span> table1 <span class="keyword">where</span> c1 &gt; v1;</span><br></pre></td></tr></table></figure></p>
+<p>常见聚合函数:</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>avg</td>
+<td>返回某列的平均值</td>
+</tr>
+<tr>
+<td>count</td>
+<td>返回某列的行数</td>
+</tr>
+<tr>
+<td>max</td>
+<td>返回某列的最高值</td>
+</tr>
+<tr>
+<td>min</td>
+<td>返回某列的最小值</td>
+</tr>
+</tbody>
+</table>
+<p>常见的标量函数:</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>format(v, format)</td>
+<td>格式化某列的显示方式</td>
+</tr>
+<tr>
+<td>now</td>
+<td>返回当前的系统时间</td>
+</tr>
+<tr>
+<td>len</td>
+<td>返回某列文本的长度</td>
+</tr>
+</tbody>
+</table>
+<h3>SQL 中的数据类型</h3>
+<p>SQL 是一种编程语言，自然也有其支持的数据类型。在不同的数据库中，数据类型的差异很大。在这里使用 MySQL 的数据类型为例来说明 SQL 中的数据类型。</p>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CHAR(size)</td>
+<td>保存固定长度的字符串（可包含字母、数字以及特殊字符）。在括号中指定字符串的长度。最多 255 个字符。</td>
+</tr>
+<tr>
+<td>VARCHAR(size)</td>
+<td>保存可变长度的字符串（可包含字母、数字以及特殊字符）。在括号中指定字符串的最大长度。最多 255 个字符。注释：如果值的长度大于 255，则被转换为 TEXT 类型。</td>
+</tr>
+<tr>
+<td>TINYTEXT</td>
+<td>存放最大长度为 255 个字符的字符串。</td>
+</tr>
+<tr>
+<td>TEXT</td>
+<td>存放最大长度为 65,535 个字符的字符串。</td>
+</tr>
+<tr>
+<td>BLOB</td>
+<td>用于 BLOBs (Binary Large OBjects)。存放最多 65,535 字节的数据。</td>
+</tr>
+<tr>
+<td>MEDIUMTEXT</td>
+<td>存放最大长度为 16,777,215 个字符的字符串。</td>
+</tr>
+<tr>
+<td>MEDIUMBLOB</td>
+<td>用于 BLOBs (Binary Large OBjects)。存放最多 16,777,215 字节的数据。</td>
+</tr>
+<tr>
+<td>LONGTEXT</td>
+<td>存放最大长度为 4,294,967,295 个字符的字符串。</td>
+</tr>
+<tr>
+<td>LONGBLOB</td>
+<td>用于 BLOBs (Binary Large OBjects)。存放最多 4,294,967,295 字节的数据。</td>
+</tr>
+<tr>
+<td>ENUM(x,y,z,etc.)</td>
+<td>允许你输入可能值的列表。可以在 ENUM 列表中列出最大 65535 个值。如果列表中不存在插入的值，则插入空值。注释：这些值是按照你输入的顺序存储的。可以按照此格式输入可能的值：ENUM('X','Y','Z')</td>
+</tr>
+<tr>
+<td>SET</td>
+<td>与 ENUM 类似，SET 最多只能包含 64 个列表项，不过 SET 可存储一个以上的值。</td>
+</tr>
+<tr>
+<td>TINYINT(size)</td>
+<td>-128 到 127 常规。0 到 255 无符号整数。在括号中规定最大位数。</td>
+</tr>
+<tr>
+<td>SMALLINT(size)</td>
+<td>-32768 到 32767 常规。0 到 65535 无符号整数。在括号中规定最大位数。</td>
+</tr>
+<tr>
+<td>MEDIUMINT(size)</td>
+<td>-8388608 到 8388607 普通。0 to 16777215 无符号整数。在括号中规定最大位数。</td>
+</tr>
+<tr>
+<td>INT(size)</td>
+<td>-2147483648 到 2147483647 常规。0 到 4294967295 无符号整数。在括号中规定最大位数。</td>
+</tr>
+<tr>
+<td>BIGINT(size)</td>
+<td>-9223372036854775808 到 9223372036854775807 常规。0 到 18446744073709551615 无符号整数。在括号中规定最大位数。</td>
+</tr>
+<tr>
+<td>FLOAT(size,d)</td>
+<td>带有浮动小数点的小数字。在括号中规定最大位数。在 d 参数中规定小数点右侧的最大位数。</td>
+</tr>
+<tr>
+<td>DOUBLE(size,d)</td>
+<td>带有浮动小数点的大数字。在括号中规定最大位数。在 d 参数中规定小数点右侧的最大位数。</td>
+</tr>
+<tr>
+<td>DECIMAL(size,d)</td>
+<td>作为字符串存储的 DOUBLE 类型，允许固定的小数点。</td>
+</tr>
+<tr>
+<td>DATE()</td>
+<td>日期。格式：YYYY-MM-DD注释：支持的范围是从 '1000-01-01' 到 '9999-12-31'</td>
+</tr>
+<tr>
+<td>DATETIME()</td>
+<td>日期和时间的组合。格式：YYYY-MM-DD HH:MM:SS注释：支持的范围是从 '1000-01-01 00:00:00' 到 '9999-12-31 23:59:59'</td>
+</tr>
+<tr>
+<td>TIMESTAMP()</td>
+<td>时间戳。TIMESTAMP 值使用 Unix 纪元('1970-01-01 00:00:00' UTC) 至今的描述来存储。格式：YYYY-MM-DD HH:MM:SS注释：支持的范围是从 '1970-01-01 00:00:01' UTC 到 '2038-01-09 03:14:07' UTC</td>
+</tr>
+<tr>
+<td>TIME()</td>
+<td>时间。格式：HH:MM:SS 注释：支持的范围是从 '-838:59:59' 到 '838:59:59'</td>
+</tr>
+<tr>
+<td>YEAR()</td>
+<td>2 位或 4 位格式的年。注释：4 位格式所允许的值：1901 到 2155。2 位格式所允许的值：70 到 69，表示从 1970 到 2069。</td>
+</tr>
+</tbody>
+</table>
+<p>（完）</p>
+<ol>
+<li>http://www.w3school.com.cn/sql</li>
+<li>MySQL必知必会（第四版）</li>
+<li>高性能MySQL（第三版）</li>
+</ol>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

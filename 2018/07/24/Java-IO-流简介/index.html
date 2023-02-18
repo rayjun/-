@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Java IO 流简介</h1>
+    <p>IO 在 Java 中占据了很重要的位置。在 Java 中，Java 可以分为以下几类:</p>
+<ul>
+<li>BIO</li>
+<li>NIO</li>
+<li>AIO</li>
+</ul>
+<p>上面的 IO 可以根据分类分成同步阻塞IO、同步非阻塞 IO 和异步非阻塞 IO。</p>
+<p>BIO 就是 Blocking IO，也就是同步阻塞 IO。java.io 中的所有 API 和 java.net 中的部分 API 都算是同步阻塞型 API。</p>
+<p>在 Java1.4 中添加了 NIO( Non-blocking IO)，也就是 同步非阻塞 IO，在 NIO 中添加了 Channel 等特性，通过这些可以构建多路复用的、同步非阻塞的 IO 程序。</p>
+<p>在 Java1.7 中添加了 NIO2，也被称之为 AIO(Asynchronous IO)，这就是异步非阻塞的方式。异步 IO 操作是基于事件和回调机制实现的。</p>
+<h3>BIO 基础</h3>
+<p>java.io 中的 API 使用起来简单、直观，但是 IO 的效率和扩展性有着局限性。下图是对 java.io 中的主要的 API 做的一个分类：</p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/Java/io/io-simple.png" alt=""></p>
+<p>java.io 中的 API 大体上可以分成两类，一类是<strong>字符流</strong>，一类是<strong>字节流</strong>。字节流类的 API 更适合操作整个文件，比如图片文件。字符流类的接口是直接操作字符的，这类的接口更适合从文件中读取或者写入文本信息。</p>
+<p>在 java.net 中，<strong>Socket</strong>通信等相关的 API 也都是 BIO 。</p>
+<h3>NIO 基础</h3>
+<p>对于一个传统基于 BIO的 CS（Client-Server） 应用程序，为了更高的并发量，那么就需要减少线程被创建的次数和数量。这个时候就需要使用线程池的机制来提高并发量，通过一个固定大小的线程池，来负责管理线程，避免线程被反复的创建和销毁。</p>
+<p>但是这种方案还是不能够彻底解决问题，用户数量不多时，这种模式可以很好的工作，如果并发量很高，那这样的方案还是有很大的问题的，因为线程的上下文切换的过程所耗费的时间在高并发的会非常的明显。这种 BIO 的程序可以表示如下：</p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/Java/io/bio.png" alt=""></p>
+<p>所以在依赖 java.io 相关的 API 本身已经没有办法可以解决这些问题了，这也是 NIO 被设计出来的目的。</p>
+<p>在 NIO 引入了多路复用的机制，一种与 BIO 完全不同的思路。在具体说明 NIO 的思路之前，NIO 中三个关键的概念需要先理解一下：</p>
+<ul>
+<li><strong>Buffer</strong>： NIO 中的数据容器，除了布尔类型，其他所有的原始数据都有相应的实现</li>
+<li><strong>Channel</strong>: NIO 中用来支持批量 IO 操作的一种抽象，相比于 <strong>File</strong> 和 <strong>Socket</strong> 的实现，Channel 的实现则更加接近操作系统的底层，这也就使得 NIO 能够充分使用操作系统的底层。</li>
+<li><strong>Selector</strong>: Selector 是 NIO 实现多路复用的基础，每一个 Channel 都需要注册在一个 Selector 上，Selector 可以实时监测 Channel 的状态，进而实现单线程对多个 Channel 的管理。</li>
+</ul>
+<p>在同样的一个 CS 应用程序来说，NIO 比 BIO 更有效率的地方就是利用单线程轮询的方式来确定需要处理的 Channel，整体上是同步非阻塞的，可以避免在大量客户端连接时频繁切换线程带来的问题。 使用 NIO 来实现这个应用程序可以设计如下：</p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/Java/io/NIO.png" alt=""></p>
+<h3>NIO2（AIO）</h3>
+<p>在 Java1.7 中，又添加了一种新的 IO，利用事件和回调来处理消息的接收和发送。AIO 是一种异步非阻塞的 IO 机制。</p>
+<p>AIO 的基本抽象与 NIO 非常相似。与 NIO 不同的地方在于不再是通过轮询的方式去确定是否继续后续的操作，而是通过事件机制来实现这一点。</p>
+<p>（完）</p>
+<p><strong>参考文献</strong>：</p>
+<ol>
+<li>极客时间专栏 <strong>Java 核心技术36讲</strong></li>
+<li>Java 官方文档</li>
+</ol>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

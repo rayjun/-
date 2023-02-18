@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>laravel单元测试</h1>
+    <h4>laravel单元测试</h4>
+<hr>
+<p><strong>laravel</strong>的单元测试是基于<strong>phpunit</strong>的。基本上将<strong>phpunit</strong>全部都集成到了<strong>laravel</strong>中。所以在使用<strong>laravel</strong>的单元测试的时候，还是比较简单的。单独使用 <strong>phpunit</strong> 也还是需要做大量的配置，特别是对          <strong>Model</strong>或者<strong>Repository</strong>层进行测试的时候。但是在laravel中，提供了一个 <strong>testing</strong> 的环境，在这个环境中进行单元测试，就可以省略掉大量的配置。让单元测试的速度大大的增加。</p>
+<h4>laravel环境</h4>
+<hr>
+<p>在 <strong>laravel</strong> 中，对于不同环境的设计是很不错的。大致上 <strong>laravel</strong>可以分为生产、开发、测试等环境。而我们在测试的时候就可以完全在这个测试环境中进行的。这个测试环境与生产和开发环境是完全独立开的，这样一来，在测试的时候就可以完全不去影响到其他的环境。我们的单元测试就可以在这个测试环境中完成。
+在测试开始之前，将<strong>database.php</strong> 拷贝一份到<strong>app\config\testing</strong> 文件夹。在这个文件里配置单元测试的数据库环境。有一点需要注意的是，<strong>laravel</strong> 默认的数据库是 <strong>Mysql</strong> 如果要更换测试的数据库，则需要在 <strong>app\config\testing\database.php</strong> 中配置 <strong>'default' =&gt; 'your databse type'</strong>。比如在测试环境中可以使用<strong>sqllite</strong> 等数据库。做完这个配置之后，那么单元测试的数据库到此就算是配置完成了。</p>
+<h4>单元测试</h4>
+<hr>
+<p><strong>laravel</strong> 对单元测试 有着很好的支持。基本上对<strong>phpunit</strong> 进行了一个很好的包装。但是在使用phpunit的时候，我们需要配置大量的环境。而在laravel中就不需要。只需要写一个个的测试用例。在laravel项目的test文件夹里面有一个例子来说名如何进行测试。写完测试用例之后直接在命令行运行<strong>vendor/bin/phpunit</strong>然后，所有的测试用例都可以执行。这样，一个简单但是功能完备的单元测试就配好了。</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

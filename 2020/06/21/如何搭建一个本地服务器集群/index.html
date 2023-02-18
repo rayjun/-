@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>如何搭建一个本地服务器集群</h1>
+    <p>如今，单机服务器的时代已经过去了，部署任何服务，如果不多加几台服务器，就没办法让人心安。</p>
+<p>而且在本地自己学习测试的时候，也经常需要用到服务器集群，比如搭建一个 MySQL 集群，一个 Redis 集群，一个 HDFS 集群，但是为了测试就买云服务器未免有些太奢侈了，所以搭建本地集群是一种既经济又实惠的方式。</p>
+<p>这篇文章介绍一种在本地搭建服务器集群的方法。</p>
+<p>软硬件要求：</p>
+<ul>
+<li>一台电脑（系统不限，配置高一点更好）</li>
+<li><a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener">VirtualBox</a></li>
+<li><a href="http://mirrors.aliyun.com/centos/" target="_blank" rel="noopener">Centos7</a></li>
+</ul>
+<p>VirtualBox 提供了各个系统的安装版本，下载完成后，直接点击软件包进行安装即可，不再赘述。</p>
+<p>Centos 可以选择自己需要的版本，或者 Linux 的其他发行版本也行，注意要选择 Minimal 版本，用作服务器，不需要桌面之类的，这样服务器镜像的体积就可以很小。</p>
+<p>本文搭建搭建 centos 集群的目标如下：</p>
+<ul>
+<li>使用虚拟机搭建一个拥有三台服务器的集群</li>
+<li>三台虚拟机都可以与宿主机互相访问</li>
+<li>三台虚拟机都可以访问外网</li>
+<li>三台机器之间可以不需要输入密码直接使用 ssh 连接</li>
+</ul>
+<blockquote>
+<p>本文基于 Mac os 10.15.5，VirtualBox6.1.8，centos7，另外阅读本文需要有一些基本的网络知识</p>
+</blockquote>
+<h2>安装服务器</h2>
+<p>在开始之前，需要在 VirtualBox 的全局配置上加一块网卡，如下图所示：</p>
+<p><img src="1.png" alt=""></p>
+<p>在这里需要注意的是 IPv4 的地址和网络掩码，IPv4 地址就会成为整个服务器集群的网关，通常情况下不需要修改（如果你对计算机网络如数家珍，那轻便，随便改），设置好网关和子网掩码之后，后续配置的虚拟机 IP 都需要在这个网段内。</p>
+<p>然后就可以创建一个虚拟机，名字随便设置，选择好目标文件夹，用来存储虚拟机的相关文件。</p>
+<p>我们要安装的 centos7 是 Linux，所以虚拟机类型选择 Linux，版本选择里面并没有 Centos 的选项，那么选择 Red Hat(64-bit) 就可以了：</p>
+<p><img src="2.png" alt=""></p>
+<p>配置完成后就要给虚拟机分配内存，按照自己的电脑配置就行选择，基本上 2G 左右就可以了：</p>
+<p><img src="3.png" alt=""></p>
+<p>然后就是创建虚拟硬盘，由于是无图形界面的 Centos系统，默认的配置也够用了：</p>
+<p><img src="4.png" alt=""></p>
+<p><img src="5.png" alt=""></p>
+<p><img src="6.png" alt=""></p>
+<p><img src="7.png" alt=""></p>
+<p>到这里，虚拟机就创建好了，接下来要为虚拟机提供系统的启动镜像，选中虚拟机，点击设置：</p>
+<p><img src="8.png" alt=""></p>
+<p>再点击存储：</p>
+<p><img src="9.png" alt=""></p>
+<p>选择下载好的镜像：</p>
+<p><img src="10.png" alt=""></p>
+<p>再选择网络，默认情况下只启用了一块网卡，为了满足后续的需求，我们需要再开启一块网卡：</p>
+<p><img src="11.png" alt=""></p>
+<p>选择 host-only 模式：</p>
+<p><img src="12.png" alt=""></p>
+<p>点击 ok 保存配置，然后就可以启动虚拟，第一次启动会安装系统，安装的过程中设置 root 密码，虚拟机的安装就完成了。</p>
+<p>为了组成一个服务器集群，我们需要三个虚拟机，另外两台的安装方式和上面一样。</p>
+<h2>网络配置</h2>
+<p>在本文中，我使用 NAT + host-only 的方式来完成虚拟机既能访问外部网络，宿主机也能访问虚拟机的网络配置，但这不是唯一的方式。</p>
+<p>刚安装好的虚拟机无法访问外部网络，这是因为虚拟机的网卡还没有开启，先进入到虚拟机开启网卡，让虚拟机可以通过 NAT 的方式访问外网，然后使用 host-only 的方式实现宿主机访问虚拟机。</p>
+<p>使用 root 身份登录进系统，进入到网络的配置目录:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/sysconfig/network-scripts/</span><br></pre></td></tr></table></figure></p>
+<p>如果前面配置没有出错的话，在这里可以看到两个网卡的配置的：</p>
+<p><img src="13.png" alt=""></p>
+<p><code>ifcfg-enp0s3</code> 就对应 NAT 配置的那张网卡，<code>ifcfg-enp0s8</code> 就对应 host-only 配置的网卡。</p>
+<p>先来配置 NAT 网络，使用 vi 打开 ifcfg-enpos3 配置:</p>
+<blockquote>
+<p>vi 是 Linux 系统自带的一个编辑器</p>
+</blockquote>
+<p><img src="14.png" alt=""></p>
+<p>把 ONBOOT 的值改成 yes 就可以，表示开机启用这个网卡，配置完 NAT 之后，就可以在虚拟机内访问互联网了。</p>
+<p>再来配置一下 host-only 网络：</p>
+<p><img src="15.png" alt=""></p>
+<p>首先要把网络从 dhcp 自动获取 ip 改成 static，再同样设置 ONBOOT 为 yes，IPADDR 指定这台虚拟机的固定 IP，IP 可以随意设置，但是要在这个网段内，NETMASK 配置的是这个网络的网络掩码。</p>
+<p>最后配置一下网关:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/sysconfig/networking</span><br></pre></td></tr></table></figure></p>
+<p>填入以下内容：</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NETWORKING=yes</span><br><span class="line">GATEWAY=192.168.56.2 # 这个值就是在配置 VirtualBox 全局网卡时的网关的 IP，不要配错了</span><br></pre></td></tr></table></figure></p>
+<p>这些都配置完成之后，重启网络服务:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service network restart</span><br></pre></td></tr></table></figure></p>
+<p>然后访问外网:</p>
+<p><img src="16.png" alt=""></p>
+<p>宿主机访问虚拟机:</p>
+<p><img src="17.png" alt=""></p>
+<p>单台的网络已经配置好了，另外两台按照同样的配置就行，但需要为虚拟机配置不同的 IP。</p>
+<blockquote>
+<p>在本文的例子中，三台虚拟机的 IP 为：
+192.168.56.3
+192.168.56.4
+192.168.56.5</p>
+</blockquote>
+<h2>服务器互联</h2>
+<p>到这里，三台服务器都能够连接互联网，宿主机也可以访问虚拟机了，虚拟机之间也可以通过 ssh 连接输入密码后进行访问。</p>
+<p>但是很多时候服务器之间需要能够直接传输文件，如果每次还需要输入密码，那就太不方便了。</p>
+<p>机器之间登录还是使用 ssh，但是可以改良一下，每台服务器把其他两台设置为信任的机器，这样就可以直接登录，而不用每次都输入密码。</p>
+<p>以 IP 为 192.168.56.3 的虚拟机为例，通过 ssh-keygen 生成公钥和密钥:</p>
+<p><img src="18.png" alt=""></p>
+<p>然后使用 ssh-copy-id 将公钥拷贝到像免密登录的机器：</p>
+<p><img src="19.png" alt=""></p>
+<p>然后就可以免密登录了：</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh root@192.168.56.4</span><br><span class="line">ssh root@192.168.56.5</span><br></pre></td></tr></table></figure></p>
+<p>另外两台机器进行同样的配置，然后三台虚拟机之间就可以相互免密访问。</p>
+<p>到这里，本地服务器集群就搭建完毕了。</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

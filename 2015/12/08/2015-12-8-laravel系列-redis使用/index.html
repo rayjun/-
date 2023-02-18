@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Laravel系列-redis使用</h1>
+    <h3>Redis</h3>
+<p><a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 是一个开源的 key-value 数据库。在某些场合上可以对关系型数据库进行很好的补充。<a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 的命令使用起来非常方便，例如对于字符串的存取</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;存入字符串</span><br><span class="line">127.0.0.1:6379&gt; set name key</span><br><span class="line">OK</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;取出存入的字符串</span><br><span class="line">127.0.0.1:6379&gt; get name</span><br><span class="line">&quot;key&quot;</span><br></pre></td></tr></table></figure></p>
+<p>更多的 <a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 相关的内容可以访问官网。</p>
+<h3>Laravel 中使用 Redis</h3>
+<p><a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 可以支持诸多语言。例如 Java，Php，Ruby，Python 等。在 Laravel 中可以很方便的集成 <a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a>，只需要通过 Composer 安装一个扩展包就行：</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&quot;require&quot;: &#123;</span><br><span class="line">        &quot;predis&#x2F;predis&quot;: &quot;~1.0&quot;,</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>好了，然后就可以在 <a href="http://www.golaravel.com/laravel/docs/5.1/" target="_blank" rel="noopener">Laravel</a> 中使用 <a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 了。可以将 <a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 当作队列来使用，也可以将 <a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 作为缓存来使用。</p>
+<p>这些简单的用法在 <a href="http://www.golaravel.com/laravel/docs/5.1/" target="_blank" rel="noopener">Laravel</a> 的官方文档中都可以找到很详细的文档。就不多说，今天要说的是使用过程当中的一个坑。</p>
+<h4>Redis 坑</h4>
+<p><a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 中的发布/订阅是一个很棒的工具，有着很广的用处。但是找个特性在使用的过程中却是有些坑存在，看下面的代码：</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> Redis::subscribe([&#39;test-channel&#39;], function($message) &#123;</span><br><span class="line">            echo $message;</span><br><span class="line"> &#125;);</span><br><span class="line"> </span><br><span class="line"> Route::get(&#39;publish&#39;, function () &#123;</span><br><span class="line">    &#x2F;&#x2F; Route logic...</span><br><span class="line"></span><br><span class="line">    Redis::publish(&#39;test-channel&#39;, json_encode([&#39;foo&#39; &#x3D;&gt; &#39;bar&#39;]));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>上面的代码就是 订阅模式在 <a href="http://www.golaravel.com/laravel/docs/5.1/" target="_blank" rel="noopener">Laravel</a> 中的使用，通过一个匿名的回调函数来接收发布的消息。这里要注意的是，<a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 的订阅的命令会在后台生成一个守护进程。而 <a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 连接服务器使用的是 Socket，所以如果按照 php 的默认配置，在60秒后就会自动断开连接，订阅就没有办法继续了。所以需要在这里加一个防止超时方法，例如下面:</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> ini_set(&#39;default_socket_timeout&#39;, -1); &#x2F;&#x2F; 防止连接超时</span><br><span class="line"> Redis::subscribe([&#39;test-channel&#39;], function($message) &#123;</span><br><span class="line">            echo $message;</span><br><span class="line"> &#125;);</span><br><span class="line"> </span><br><span class="line"> Route::get(&#39;publish&#39;, function () &#123;</span><br><span class="line">    &#x2F;&#x2F; Route logic...</span><br><span class="line"></span><br><span class="line">    Redis::publish(&#39;test-channel&#39;, json_encode([&#39;foo&#39; &#x3D;&gt; &#39;bar&#39;]));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+除了上面的坑之外还有一个坑，依然看上面的代码，我做如下的修改：</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> ini_set(&#39;default_socket_timeout&#39;, -1); &#x2F;&#x2F; 防止连接超时</span><br><span class="line"> Redis::subscribe([&#39;test-channel&#39;], function($message) &#123;</span><br><span class="line">            Redis::set(&#39;name&#39;, $message);</span><br><span class="line"> &#125;);</span><br><span class="line"> </span><br><span class="line"> Route::get(&#39;publish&#39;, function () &#123;</span><br><span class="line">    &#x2F;&#x2F; Route logic...</span><br><span class="line"></span><br><span class="line">    Redis::publish(&#39;test-channel&#39;, json_encode([&#39;foo&#39; &#x3D;&gt; &#39;bar&#39;]));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>如果按照上面的写法，则会报如下的错误:</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exception &#39;Predis\Response\ServerException&#39; with message &#39;ERR only (P)SUBSCRIBE &#x2F; (P)UNSUBSCRIBE &#x2F; QUIT allowed in this context&#39;</span><br></pre></td></tr></table></figure>
+找个错误的原因是在回调函数的范围内使用了 <code>Redis::set</code> 方法，通过看 <code>Github</code> 上的 issue，发现 <code>Redis::</code> 生成的是同一个客户端，而在同一个客户端内，只能使用上面错误里面列出的几个命令。上面的代码里面，我使用了 <code>Redis::set</code> 命令，于是就报了上面的错误。解决找个问题的方法就是生成一个不同的 <code>Redis</code> 客户端，如下代码:</p>
+<pre><code> ini_set('default_socket_timeout', -1); // 防止连接超时
+ Redis::subscribe(['test-channel'], function($message) {
+ 			  $redisClient = new Predis\Client();
+            $redisClient-&gt;set('name', $message);
+ });
+ 
+ Route::get('publish', function () {
+    // Route logic...
+
+    Redis::publish('test-channel', json_encode(['foo' =&gt; 'bar']));
+});
+</code></pre>
+<p>通过上面的代码就可以解决那些问题了。</p>
+<p>总之，<a href="http://www.golaravel.com/laravel/docs/5.1/" target="_blank" rel="noopener">Laravel</a> 还是一个不错的框架的。</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

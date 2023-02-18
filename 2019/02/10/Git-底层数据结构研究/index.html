@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Git 底层数据结构研究</h1>
+    <p>Git 作为当前最好用的版本管理工具，在之前的文章中，已经介绍了基本的用法，在这篇文章中，我们来探究一下 Git 的底层是如何构成的。</p>
+<p>任意一个使用 git 进行版本管理的目录都会有一个 .git 目录，在这个目录中存储了这个项目的所有的版本管理的信息。</p>
+<h3>.git 目录解析</h3>
+<p>使用 <strong>git init git-test</strong> 初始化一个 git 项目后，在项目目录底下的 .git 目录中发现有如下的内容:</p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/git/git-ls.png" alt=""></p>
+<p>在上面的图片中，有多个文件和文件夹，咱们现在只看最重要的那几个。</p>
+<ul>
+<li>HEAD</li>
+<li>branches</li>
+<li>config</li>
+<li>objects</li>
+<li>refs</li>
+</ul>
+<p>执行以下命令:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat HEAD</span></span><br><span class="line">ref: refs/heads/master</span><br></pre></td></tr></table></figure></p>
+<p>通过上面的操作我们发现 HEAD 的值是一个引用，指向了 <code>refs/heads/master</code>，而我们当前所在的分支就是 <strong>master</strong>，也就是说 HEAD 的值就是当前所处的分支。</p>
+<p>进入 refs 目录发现有如下内容:</p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/git/git-refs.png" alt=""></p>
+<p>再进入 <strong>heads</strong> 目录中，内容如下:</p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/git/git-refs-heads.png" alt=""></p>
+<p>heads 目录中有 <strong>dev</strong> 和 <strong>master</strong> 两个文件。也就是对应我们的 <strong>dev</strong> 和 <strong>master</strong> 两个分支。那么这两个文件中存储的到底是什么内容呢:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat master</span></span><br><span class="line">9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span><br></pre></td></tr></table></figure>
+可以看到 master 文件中储存的是一个哈希值。这个哈希值代表了什么呢？可以通过 Git 提供的接口进行查询:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -t 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span></span><br><span class="line">commit</span><br></pre></td></tr></table></figure>
+结果得到了一个叫做 commit 的东西，至于这个 commit 时什么我们稍后再说。</p>
+<p>在 <strong>heads</strong> 目录中，还有一个 <strong>tags</strong> 目录，这里面存储的就是而我们之前的创建的 tag。来看一下 tag 中存储的内容:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat v0.0.1</span></span><br><span class="line">9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span><br></pre></td></tr></table></figure>
+tag 本身也是一个哈希值。同样来看一下 tag 的类型:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -t 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span></span><br><span class="line">tag</span><br></pre></td></tr></table></figure>
+这里出现了一个 tag 类型（需要注意的是轻量级的标签指向的是一个 commit 而不是单独创建一个 tag 对象，所以在创建 tag 的使用建议带上 -m 参数）。</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span></span><br><span class="line">object 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span><br><span class="line">type commit</span><br><span class="line">tag v0.0.2</span><br><span class="line">tagger rayjun &lt;leijun19930412@sina.com&gt; 1549899267 +0800</span><br><span class="line"></span><br><span class="line">第二个标签</span><br></pre></td></tr></table></figure>
+通过将 <strong>git cat-file</strong> 的 -t 参数改成 -p，可以看到 tag 储存的其实就是一个 commit。</p>
+<p>那么 commit 中储存了什么呢？来看一下:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span></span><br><span class="line">tree 291f8d9c7f50c3ab750c2ef8dd182b3903d13292</span><br><span class="line">author rayjun &lt;leijun19930412@sina.com&gt; 1549894768 +0800</span><br><span class="line">committer rayjun &lt;leijun19930412@sina.com&gt; 1549894768 +0800</span><br><span class="line"></span><br><span class="line">Update</span><br></pre></td></tr></table></figure>
+通过 <strong>git cat-file</strong> 的 -p 参数，可以看到 commit 中储存了一个 tree 类型的对象。 继续往下看:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p 291f8d9c7f50c3ab750c2ef8dd182b3903d13292</span></span><br><span class="line">100644 blob d67064b5343698146a1d22c063f80b039020314a	readme.md</span><br></pre></td></tr></table></figure>
+然后发现这个 tree 中出现了一个 blob 的类型，并且指向一个文件名。再往下看:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p d67064b5343698146a1d22c063f80b039020314a</span></span><br><span class="line">Read me</span><br></pre></td></tr></table></figure>
+发现 blob 对象存储的就是文件的内容。看到这里，基本就明白了，git 的整个数据结构就是由tag、commit、tree 和 blob 等几类基础的数据结构构成。但 tag 其实也就是 commit，所以基础的数据结构也就是 commit、tree 和 blob。这些类型的对象都存储在 <strong>objects</strong> 文件夹中。也就是是说在 <strong>objects</strong> 存储了所有文件的版本信息。</p>
+<p>config 中保存着当前仓库的配置。</p>
+<h3>commit、tree 和 blob</h3>
+<p>Git 有着丰富的操作，那么底层的数据结构是如何支撑起这些复杂的操作的。其实 Git 底层的数据结构很简单，但是却足够灵活，所有的其他复杂的功能都是在这简单的数据结构上构建起来的。主要有 <strong>commit</strong> 和 <strong>tree</strong> 和 <strong>blob</strong> 三种数据结构组成。</p>
+<p>commit 的概念很简单，在每次执行 <strong>git commit</strong> 之后都会生成一个 commit 对象，每一个commit 对象都会对应一个仅一个 tree。而 blob 对象就是具体的文件了，每一个文件都是一个 blob 对象。</p>
+<p>这三者的关系如下图所示:</p>
+<p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/git/git-commit.png" alt=""></p>
+<p>在 Git 中，如果一个文件没有被改变，那么在每次提交 commit 时，Git 不会为这个文件生成新的对象，而是使用之前的对象。</p>
+<p>随着项目的进行，被添加进文件越来越多，那么 Git 需要管理的对象也就越来越多。那么势必会降低效率。所以 Git 使用了两个方式来提高效率:</p>
+<ul>
+<li>除了初始对象外，后续的对象存储的都是文件的差异，而不是全部的文件</li>
+<li>Git 自带 gc，随着需要管理的对象数量的增加，Git会将部分对象进行打包存储，提高效率</li>
+</ul>
+<p>Git 最创建一个新的对象时在磁盘中存储的称之为<strong>松散对象</strong>，随着对象数量的增加，Git 会自动将这些对象打包成二进制文件，当然也可以手动执行 <strong>git gc</strong> 来进行对象的打包。如果有远程服务器，每次推送到远程服务器时，都会触发打包过程。************</p>
+<p>(完)</p>
+<p><strong>参考文献:</strong></p>
+<ol>
+<li>https://github.com/progit/progit2</li>
+<li>https://git-scm.com/docs</li>
+</ol>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

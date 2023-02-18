@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>ServeMux 详解</h1>
+    <p>在 Go 语言中，创建一个 HTTP 服务很简单，只需要几行代码就可以创建一个可用的 HTTP 服务，这是因为 Go 原生帮我们实现了一个默认的 HTTP 服务，就是 ServeMux，在这篇文章中，我们来详细看一下 ServeMux 的具体实现。</p>
+<h2>1. 创建一个 HTTP 服务</h2>
+<p>在 Go 语言中，创建一个 HTTP 服务只需要写下面几行代码就可以了。</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	http.HandleFunc(<span class="string">"/index"</span>, <span class="function"><span class="keyword">func</span><span class="params">(writer http.ResponseWriter, request *http.Request)</span></span> &#123;</span><br><span class="line">		writer.Write([]<span class="keyword">byte</span>(<span class="string">"Hello go web"</span>))</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	http.ListenAndServe(<span class="string">":8080"</span>, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们定义了一个路由，然后启动 HTTP 服务，就可以在浏览器中通过 <a href="http://127.0.0.1:8080/inde" target="_blank" rel="noopener">http://127.0.0.1:8080/inde</a>x 来访问服务，服务端会返回 <code>Hello go web</code>。</p>
+<p>这样，一个简单的 HTTP 服务就创建完成了。</p>
+<h2>2. HTTP 服务如何运行</h2>
+<p>上面的代码有两部分，一部分是定义 HTTP 服务的路由，在服务启动之后，我们访问相应的路由，就能得到服务端的响应。</p>
+<p>在 http 包中，有一个接口 <code>http.Handler</code> ，这个接口是 HTTP 服务的核心：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Handler <span class="keyword">interface</span> &#123;</span><br><span class="line">	ServeHTTP(ResponseWriter, *Request)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对于 HTTP 服务来说，一定发起请求的客服端和处理请求的服务端，客户端发起一个请求，然后服务端给出相应的输出。这个 Handler 接口就把这个整个过程抽象为 ServeHTTP 方法。ResponseWriter 表示服务端的输出，Request 表示来自客户端的请求。</p>
+<p>在 http 包中提供了一个 Handler 的实现 ServeMux，这个Handler 做的事情也很简单，就是来维护 URL 和 Handler 之间的关系，根据 URL 判断应该把请求转发到哪个 Handler，没错这里的 Handler 也是 http.Handler，是同一个接口。用 http.Handler 来管理 http.Handler，我觉得这是一个非常优雅的设计。</p>
+<h3>2.1 定义路由</h3>
+<p>路由可以使用两种方式来定义，一种是实现 Handler，还有一种是使用 HandleFunc，这两个概念在上一篇文章中我们已经详细讨论过了，这里就不多说。</p>
+<p>示例代码中的路由使用 HandleFunc 来定义，这里我们来看一下路由具体是如何被定义的。我们进入 HandleFunc 的源码：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// server.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HandleFunc</span><span class="params">(pattern <span class="keyword">string</span>, handler <span class="keyword">func</span>(ResponseWriter, *Request)</span>)</span> &#123;</span><br><span class="line">	DefaultServeMux.HandleFunc(pattern, handler)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>发现实际上是调用了 <code>DefaultServerMux</code> 的 HandleFunc 方法，<code>DefaultServerMux</code> 实际上就是 ServeMux，是 Go 的 HTTP 服务的默认实现。然后 <code>DefaultServerMux</code> 调用 Handle 方法来处理路由：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// server.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mux *ServeMux)</span> <span class="title">Handle</span><span class="params">(pattern <span class="keyword">string</span>, handler Handler)</span></span> &#123;</span><br><span class="line">	mux.mu.Lock()</span><br><span class="line">	<span class="keyword">defer</span> mux.mu.Unlock()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> pattern == <span class="string">""</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"http: invalid pattern"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> handler == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"http: nil handler"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> _, exist := mux.m[pattern]; exist &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"http: multiple registrations for "</span> + pattern)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> mux.m == <span class="literal">nil</span> &#123;</span><br><span class="line">		mux.m = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]muxEntry)</span><br><span class="line">	&#125;</span><br><span class="line">	e := muxEntry&#123;h: handler, pattern: pattern&#125;</span><br><span class="line">	mux.m[pattern] = e</span><br><span class="line">	<span class="keyword">if</span> pattern[<span class="built_in">len</span>(pattern)<span class="number">-1</span>] == <span class="string">'/'</span> &#123;</span><br><span class="line">		mux.es = appendSorted(mux.es, e)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> pattern[<span class="number">0</span>] != <span class="string">'/'</span> &#123;</span><br><span class="line">		mux.hosts = <span class="literal">true</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>路由由两部分组成，一个是匹配 HTTP url 的 pattern，每个pattern 都代表着一类 HTTP 请求，都需要一个对应的 handler 来处理。</p>
+<p><code>DefaultServerMux</code> 的 Handle 方法其实就做了一件事，在判断路由和对应的 handler 实现都没问题，并且该路由没有重复定义之后，就把这些路由都存到  map 中。所以 HTTP 服务的路由表其实就是一个 map。</p>
+<p>完整流程如下，<code>DefaultServerMux</code> 简称为 DSM ：</p>
+<p><img src="0.png" alt=""></p>
+<h3>2.2 启动 HTTP 服务</h3>
+<p>路由定义完成之后，就需要启动服务了，就是下面这行代码:</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http.ListenAndServe(<span class="string">":8080"</span>, <span class="literal">nil</span>)</span><br></pre></td></tr></table></figure></p>
+<p>通常，第二个参数都会设置为 nil，设置为 nil 的时候，就会使用 Go 语言默认的 HTTP 服务实现。我们跟进代码的实现：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// server.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ListenAndServe</span><span class="params">(addr <span class="keyword">string</span>, handler Handler)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	server := &amp;Server&#123;Addr: addr, Handler: handler&#125;</span><br><span class="line">	<span class="keyword">return</span> server.ListenAndServe()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>默认情况下，会创建一个  Server，Server 就是表示一个服务端， 其中定义了运行一个 HTTP 服务所需要的全部参数以及必要的方法，如果不给 Server 传入参数 ，那么 Server 就使用默认的参数运行。</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Server <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// 服务端的 host 和 端口号</span></span><br><span class="line">	Addr <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">	Handler Handler <span class="comment">// 默认为 ServeMux</span></span><br><span class="line">  <span class="comment">// 省略其他参数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后 server 会调用 ListenAndServe 来启动端口监听和请求接收，使用 net.Listen 来启动监听端口：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// server.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(srv *Server)</span> <span class="title">ListenAndServe</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> srv.shuttingDown() &#123;</span><br><span class="line">		<span class="keyword">return</span> ErrServerClosed</span><br><span class="line">	&#125;</span><br><span class="line">	addr := srv.Addr</span><br><span class="line">	<span class="keyword">if</span> addr == <span class="string">""</span> &#123;</span><br><span class="line">		addr = <span class="string">":http"</span></span><br><span class="line">	&#125;</span><br><span class="line">	ln, err := net.Listen(<span class="string">"tcp"</span>, addr)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> srv.Serve(ln)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后调用 Server 的 Serve 方法来接收请求和处理请求。在 Serve 方法中，最关键的是下面这段代码，这里是一个 for 循环，没有结束条件，除非发生错误或者主动结束服务，否则会一直处在接收请求的状态。</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// server.go#Serve</span></span><br><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">		rw, err := l.Accept()</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">select</span> &#123;</span><br><span class="line">			<span class="keyword">case</span> &lt;-srv.getDoneChan():</span><br><span class="line">				<span class="keyword">return</span> ErrServerClosed</span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//......</span></span><br><span class="line">			<span class="keyword">return</span> err</span><br><span class="line">		&#125;</span><br><span class="line">		connCtx := ctx</span><br><span class="line">		<span class="keyword">if</span> cc := srv.ConnContext; cc != <span class="literal">nil</span> &#123;</span><br><span class="line">			connCtx = cc(connCtx, rw)</span><br><span class="line">			<span class="keyword">if</span> connCtx == <span class="literal">nil</span> &#123;</span><br><span class="line">				<span class="built_in">panic</span>(<span class="string">"ConnContext returned nil"</span>)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		tempDelay = <span class="number">0</span></span><br><span class="line">		c := srv.newConn(rw)</span><br><span class="line">		c.setState(c.rwc, StateNew) <span class="comment">// before Serve can return</span></span><br><span class="line">		<span class="keyword">go</span> c.serve(connCtx)</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接收到请之后，会为每一个请求创建一个 conn 实例，conn 表示服务端的一个 HTTP 连接，并启动一个新的 goroutine 来处理这个请求。</p>
+<p>然后就进入到 conn 的 serve 方法。</p>
+<p>因为在一个 HTTP 请求中，有可能会出现多次请求的收发，所以这里依然启动了 for 的循环来接收请求数据。</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">		w, err := c.readRequest(ctx)</span><br><span class="line">		<span class="keyword">if</span> c.r.remain != c.server.initialReadLimitSize() &#123;</span><br><span class="line">			<span class="comment">// If we read any bytes off the wire, we're active.</span></span><br><span class="line">			c.setState(c.rwc, StateActive)</span><br><span class="line">		&#125;</span><br><span class="line">    <span class="comment">// .. 去掉无关代码</span></span><br><span class="line">		serverHandler&#123;c.server&#125;.ServeHTTP(w, w.req)</span><br><span class="line">    <span class="comment">// .. 去掉无关代码	</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在 conn 的 serve 方法中，其实就只做了两件事，一件事读取请求中的数据。然后是调用 ServeHTTP 方法，进入到 ServeHTTP 方法中：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// server.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(sh serverHandler)</span> <span class="title">ServeHTTP</span><span class="params">(rw ResponseWriter, req *Request)</span></span> &#123;</span><br><span class="line">	handler := sh.srv.Handler</span><br><span class="line">	<span class="keyword">if</span> handler == <span class="literal">nil</span> &#123;</span><br><span class="line">		handler = DefaultServeMux</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> req.RequestURI == <span class="string">"*"</span> &amp;&amp; req.Method == <span class="string">"OPTIONS"</span> &#123;</span><br><span class="line">		handler = globalOptionsHandler&#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	handler.ServeHTTP(rw, req)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>判断 handler 是否为 nil，如果为 nil，然后就直接使用 DefaultServeMux 的 ServeHTTP 方法来处理 HTTP 请求。</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// server.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mux *ServeMux)</span> <span class="title">ServeHTTP</span><span class="params">(w ResponseWriter, r *Request)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> r.RequestURI == <span class="string">"*"</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> r.ProtoAtLeast(<span class="number">1</span>, <span class="number">1</span>) &#123;</span><br><span class="line">			w.Header().Set(<span class="string">"Connection"</span>, <span class="string">"close"</span>)</span><br><span class="line">		&#125;</span><br><span class="line">		w.WriteHeader(StatusBadRequest)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	h, _ := mux.Handler(r)</span><br><span class="line">	h.ServeHTTP(w, r)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们发现其实这个方法也只做了一件事，就是去上面路由表 muxEntry 中匹配路由，然后使用路由 的 Handler 调用 ServerHTTP 来真正的处理请求。</p>
+<p>完整的流程如下：</p>
+<p><img src="1.png" alt=""></p>
+<h2>3. 小结</h2>
+<p>Go 服务默认的 HTTP 处理流程其实不难理解，最难的地方在于满屏都是 Handler 接口和 ServeHTTP 方法，理解 Handler 接口是理解整个流程的关键。</p>
+<p>所有的 HTTP 请求都需要经过 ServeHTTP 方法处理。而 Go 语言中的 ServeMux 实现了 Handler 接口，通过 url 找到对应的路由，然后在 ServeHTTP 中调用路由实现的 ServeHTTP 方法去真正处理对应的请求。</p>
+<p>Go 语言对 HTTP 服务的抽象非常好，通过一个接口就把整个流程串起来了。</p>
+<p>文 / Rayjun</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

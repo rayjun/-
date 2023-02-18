@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>关于零知识证明</h1>
+    <ol>
+<li></li>
+</ol>
+<p>理解零知识证明其实不难，假设现在你有两个球，一个红色，一个绿色，这两个球除了颜色不同之外没有其他任何的区别。</p>
+<p>然后你跟你的红色色盲的朋友说这两个球的颜色是不同的，但是他不信，现在你需要用一种方式来证明这两个球的颜色不一样，但是又不能直接告诉他，即使直接告诉他，他也不信。所以有一个这样的方式来解决这个问题。</p>
+<p>首先色盲朋友将两个球都放到背后，可以随意调换球的位置，然后随机拿出一个球，然后说跟上次拿出来的颜色是不是一致（第一次除外）。</p>
+<p>假如这两个球是完全一样的，那么你第二次能猜中的比例就是 50%，第三次是 25 %，在这样进行了 20 次之后，你能全部猜中的概率就已经很低了，这个时候，色盲朋友就可以相信这两个球的颜色是真的不同不同了，而且最后他也分辨不出来到底哪个球是红色哪个球是绿色。</p>
+<p>上面的实验虽然简单，但是却满足了零知识证明的三大要素：</p>
+<ul>
+<li>完备性（Completeness）：证明者能够向验证者证明命题是真的，上面这个例子中，你是证明者，色盲朋友是验证者</li>
+<li>可靠性（Soundness）：如果命题是假的，那么验证者就无法证明命题是真的，在上面的例子中，如果两个球的颜色一样，只要进行足够的实验次数，那么你肯定会出错</li>
+<li>零知识（Zero-knowledge）：在实验的过程，验证者不会获取到任何额外的知识，色盲朋友最后还是无法分辨两个球的颜色</li>
+</ul>
+<p>所以上面的实验就是一次零知识证明，这个证明过程是一个数学过程，需要额外的计算量，而且为了保证最后的结果是可信的，计算量还不能太少。为了保证性能不受影响，计算量也不能太大，所以零知识证明的结果是性能和可靠性的平衡。</p>
+<p>从这个角度上来说，零知识证明的结果在概率上并不是 100% 可信的。</p>
+<ol start="2">
+<li></li>
+</ol>
+<p>上面这整个过程其实是一个交互的过程，证明者和交互者需要持续的交换信息，在正式的使用环境中，这种方式效率太低。</p>
+<p>而非交互的过程其实就是相当于把这个交互的过程缩短，因为频繁交互带来的通信成本很高，非交互零知识就是指信息只交换一次。</p>
+<p>那么怎么理解这个非交互过程呢，还看上面的例子，在上面的例子中，色盲朋友一口气列出了很多个球，组合，然后你每次看到之后，把答案写下来，但是并不是发出去，而是等到结束后，再以一次性把结果传递给色盲朋友。</p>
+<p>实际的过程会比这个复杂一点，要经过很多数学的计算。大体的原理就是证明者和验证者约定一种规则，验证者按照这种规则来提供数据，然后验证者则验证这些数据是否符合约定的规则，因为如果证明者提供的数据不正确，那么计算出来的结果就会对不上。</p>
+<p>通过这种非交互式的验证，那么验证者和证明者可以不用一直在线，现在能实际大规模使用的零知识证明基本都是非交互式的。</p>
+<p>ZK-SNARK 和 ZK-STARK 就是两种使用最广泛的非交互式零知识证明算法。</p>
+<ol start="3">
+<li></li>
+</ol>
+<p>这两个算法之间最大的区别在于 ZK-SNARK 依赖椭圆曲线算法，需要设置一个初始的密钥，而 ZK-STARK 不依赖椭圆曲线算法，只需要依赖哈希算法，也就不需要那个初始的密钥。</p>
+<p>对不同大小的数据输入，ZK-STARK 产出的结果变化不大，但是在小数据的结果上大于 ZK-SNARK 。</p>
+<p>另外 ZK-SNARK 验证结果耗费的时间随着数据的增长而线性增长，ZK-STARK 验证所需要的时间基本和数据的大小没有关系，处理大数据集更有效率，开销基本不变。</p>
+<p>所以在处理小数据集的时候，ZK-SNARK 效率更高，处理大数据集的时候，ZK-STARK 效率更高。</p>
+<ol start="4">
+<li></li>
+</ol>
+<p>目前 ZK 方案最典型的领域是匿名支付，区块链本身无法真正保证隐私，通过一些追踪手段，很容易将地址和现实生活中的人联系起来。ZK 已经在 ZCash、Tornado Cash 等项目中使用，在这些项目中，通过 ZK 将一些关键的信息进行隐藏，从而不泄露交易双方的信息。特别是 Tornado Cash，因为太火爆，成为洗钱圣地，甚至被拉入了黑名单。</p>
+<p>在目前以太坊的各种扩容方案中，ZK 是一个很重要的方向，ZK-rollup 是目前最被看到的方案。在这个方案中，链下的交易数据被 ZK 打包好上传到以太坊上，数据可以被立马验证，效率比其他的方案要更有效率，目前被作为主要的扩容方案在发展。</p>
+<p>在其他场景，比如身份认证，也可以通过 ZK 技术来保护隐私信息，这样既可以证明身份，又不用泄漏隐私信息。</p>
+<ol start="4">
+<li></li>
+</ol>
+<p>当然 ZK 算法并不完美，也有缺点：</p>
+<ul>
+<li>ZK 算法可以使用硬件来加速，而生成零知识证明的硬件很贵，最后这些成本都会被平摊到用户头上</li>
+<li>验证证明的开销（ZK-rollup 中的每次 ZK-SNARK 需要支付 50 万 gas，ZK-STARK 则更高）</li>
+<li>信任假设（在 ZK-SNARK 中， CRS 是一次性生成的，然后会重复使用，如果 CRS 泄漏，会对安全性造成很大的威胁，ZK-STARKS 则没有这样的问题）</li>
+<li>量子计算的威胁（对 ZK-SNARK 有威胁，ZK-STARK 目前来看对这个攻击是免疫的）</li>
+</ul>
+<p>参考链接</p>
+<p>[1] <a href="https://ethereum.org/en/zero-knowledge-proofs/" target="_blank" rel="noopener">https://ethereum.org/en/zero-knowledge-proofs/</a></p>
+<p>[2] <a href="https://en.wikipedia.org/wiki/Zero-knowledge_proof" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Zero-knowledge_proof</a></p>
+<p>[3] <a href="https://dl.acm.org/doi/pdf/10.1145/62212.62222" target="_blank" rel="noopener">https://dl.acm.org/doi/pdf/10.1145/62212.62222</a></p>
+<p>[4] <a href="https://learnblockchain.cn/article/347" target="_blank" rel="noopener">https://learnblockchain.cn/article/347</a></p>
+<p>[5] <a href="https://vitalik.ca/general/2017/11/09/starks_part_1.html" target="_blank" rel="noopener">https://vitalik.ca/general/2017/11/09/starks_part_1.html</a></p>
+<p>[6] <a href="https://vitalik.ca/general/2017/11/22/starks_part_2.html" target="_blank" rel="noopener">https://vitalik.ca/general/2017/11/22/starks_part_2.html</a></p>
+<p>[7] <a href="https://vitalik.ca/general/2018/07/21/starks_part_3.html" target="_blank" rel="noopener">https://vitalik.ca/general/2018/07/21/starks_part_3.html</a></p>
+<p>[8] <a href="https://learnblockchain.cn/article/269" target="_blank" rel="noopener">https://learnblockchain.cn/article/269</a></p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

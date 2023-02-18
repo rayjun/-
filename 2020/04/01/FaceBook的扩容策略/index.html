@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>FaceBook的扩容策略</h1>
+    <p>这是一篇<a href="http://highscalability.com/blog/2010/8/2/7-scaling-strategies-facebook-used-to-grow-to-500-million-us.html" target="_blank" rel="noopener">译文</a>，虽然写这篇文章时， Facebook 用户才增长到 5 亿，但是文章依然值得参考，毕竟即使在如今，用户能到 5 亿的应用依然凤毛麟角。</p>
+<hr>
+<p>在 2010 年，Facebook 达到了一个里程碑，用户数超过了 5 亿。</p>
+<blockquote>
+<p>PS: 这个时候微信估计才刚刚立项</p>
+</blockquote>
+<p>在这样的里程碑上，Facebok 分享了构建这样一个可扩展系统的 7 条策略。可能 5 亿用户这个数字很难让人直观的感受到这个系统的复杂性，那么可以来看看下面这些指标：</p>
+<ul>
+<li>一个工程师需要负责 100 万用户</li>
+<li>5 亿活跃用户</li>
+<li>每天 1 千亿的点击量</li>
+<li>50 亿照片</li>
+<li>2 万亿对象缓存，每秒需要处理几百万用户请求</li>
+<li>每天 130 TB 的日志</li>
+</ul>
+<p>Facebook 是如何处理这个情况的：</p>
+<ol>
+<li>
+<p>人最重要
+系统是通过人来构建和运行的，最好的扩容工具是工程和运维团队，他们可以处理一切事情。</p>
+</li>
+<li>
+<p>水平扩容
+处理指数级增长的流量需要在许多机器上任意分配负载。对帐户和用户信息等表使用不同的数据库只能使容量增加一倍。这种方法会影响效率，但是效率是与可伸缩性无关的，效率本身不会对可伸缩性产生实质性的影响。</p>
+</li>
+<li>
+<p>快速行动
+在扩容的每一个层面上都会有意外。对于这些意外的情况，需要一个可以处理任何问题的高度水平的、灵活的、足够熟练的跨项目团队。灵活性比任何单独的技术决策都重要。Facebook 通过快速行动也能快速试错，然后找出最好的方法。</p>
+</li>
+<li>
+<p>增量变更
+做出小的改变并且量化结果是快速行动的关键。大的事情需要分解成不同的部分，变更不能成批的出现。这些小变更可以通过少量机器向少量的用户推送。新的系统可以和旧系统并存，通过对新系统结果的量化，慢慢将流量向新系统迁移。整个系统的稳定性会通过增量变更来提高，因为你可以快速的知道一个特定的策略是否有效果。使用较小的增量变化，更容易找到出错的地方。</p>
+</li>
+<li>
+<p>量化一切
+线上环境时收集有用数据的好地方。量化系统和应用程序级别的数据就可以了解发生了什么。检查第95或第99百分位的情况，因为平均值隐藏了重要的问题。</p>
+</li>
+</ol>
+<blockquote>
+<p>PS: 要检查那些出现的次数不是很多的问题，因为在这个背后可能隐藏着更大的问题</p>
+</blockquote>
+<ol start="6">
+<li>
+<p>小而独立的团队
+小团队可以高效、快速、谨慎地完成工作。举例来说，在最大的照片网站上（<strong>指 Facebook</strong>），只有三个人在负责照片方面的工作。</p>
+</li>
+<li>
+<p>职责控制
+控制职责。如果一个团队为某事负责，他们必须能够控制它。举例来说，Facebook 每天都会向生产环境中发布代码。那么编写代码的人就需要负责修复任何出错的地方。如果写代码和发布代码的职责是分离的，那么写代码的人就无法感受到坏代码会对系统造成什么样的影响。罗伯特（Facebook 的工程主管）说的很好：我们所知道的为 5 亿人做一个好软件的最好方法是让工程师理解他们所做事情的重要性，从而让他们在可以控制的范围内做出好的决定。</p>
+</li>
+</ol>
+<p>这些原则并不是什么新点子，但是这些原则可以很轻易的组合在一起，然后形成一个自我强化的良性循环。如果没有小团队和清晰的职责，就无法快速行动。如果你不把这些变更提交到生产环境然后量化结果，你就无法知道这些变更是好是坏。除非工程师知道自己有责任去修改生产环境的代码，否则就很难向生产环境发布代码。如果你无法实现横向扩展，快速行动，然后量化结果，你就无法处理好系统的扩容。当然，做好这一切都需要优秀的人。</p>
+<p>这些原则可以支持再增长 5 亿用户吗？根据第一条原则，我认为答案时肯定的。世界正在快速变化，在未来将会有不可预见的挑战，但是优秀的人会根据环境来学习和进化。目前来说，Facebook 面临的挑战是如何持续的去实践这些原则，并且要避免组织的规模和复杂度达到临界点后出现组织腐败，然后影响其他组织。</p>
+<blockquote>
+<p>PS: 归根结底，人才是一个公司中最重要的部分，公司对人才的要求时不能放松的。</p>
+</blockquote>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

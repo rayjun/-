@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>在WSL中使用 emacs</h1>
+    <p><code>WSL</code> 是一个为在 <code>Windows 10</code> 上能够原生运行 Linux 二进制可执行文件（ELF格式）的兼容层。通俗点说就是可以直接在 Win10 上使用 linux。</p>
+<p>在使用了一段时间的钟vscode之后，我还是决定将主力编辑器从vscode上迁回到emacs上。</p>
+<p>其实vscode是一个很优秀的编辑器，当然是对于那些没有深度使用过emacs/vim的人来说。</p>
+<p>其实emacs和vim不是互相排斥的，emacs加上vim可以发挥出更大的威力，emacs虽然年代久远，但是更新的频率并不是很低，大概能保持一年一个大版本的更新。</p>
+<p>emacs/vim依然值得投资。</p>
+<p>之前在windows使用emacs很费劲，要额外的安装一大堆东西，而且使用的体验也很一般。但是自从wsl出来之后，情况就开始有很大的改观了。</p>
+<p>在wsl网络和端口与windows是共享的，这也就意味着可以直接在wsl中开发项目，然后在windows调试。windows就没有再被吐槽的点了。还有一个终端，wsl-terminal提供了不输linux终端的体验。</p>
+<p>在wsl-terminal中打开emacs的体验如下，简直就与直接打开emacs没有任何区别。所有在图形化的emacs能使用的功能一样可以在这种终端模式下使用。</p>
+<p>emacs确实有着不小的上手难度，所以在一开始的时候，可以考虑直接使用大神的配置，不推荐直接自己去配置插件。我在一开始使用的时候，花了很多的时间去自己配置插件，但是最后配置出来的效果不好。</p>
+<p>比如有开箱即用的 spacemacs，但是我觉得这个配置有点臃肿，打开的速度也有点慢，给人一种油腻的感觉。</p>
+<p>我现在使用的配置是从 陈斌（redguardtoo）fork 来的，加上了我自己需要的配置。陈斌的配置是我用过的诸多配置里最好的一个，插件很丰富，启动速度也还可以，而且没有spacemacs那么花哨，那么油腻的感觉，而且对自定义也比较友好。</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

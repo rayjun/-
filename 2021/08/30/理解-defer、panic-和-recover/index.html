@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>理解 defer、panic 和 recover</h1>
+    <p>在 Go 语言中，有很多流程控制的语句，if、else 等等，这些流程控制的关键字在其他语言中也存在的但 Go 中还有几个特殊的流程控制关键字，defer、panic 和 recover。</p>
+<h2>1. defer</h2>
+<p>defer 可以保证一些代码在函数或者方法返回之前被调用，即使方法没有正常执行完，发生了 panic，defer 后面的代码也会执行。这里需要注意，<strong>不是在退出某个作用域之前会被调用，而且函数或者方法</strong>。</p>
+<p>defer 通常用来回收一些资源，比如关闭文件，关闭数据库连接以及释放一些资源（释放锁）。在使用 defer 的时候，有一些需要注意的地方。</p>
+<ol>
+<li>参数预计算</li>
+</ol>
+<p>在定义 defer 的时候，引用的外部参数会立刻被拷贝，在 i++ 执行之前就已经确定了，下面的代码最后打印的值是 0， 而不是1：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">t1</span><span class="params">()</span></span> &#123;</span><br><span class="line">	i := <span class="number">0</span></span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(i)</span><br><span class="line">	i++</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果想要最后打印的值是 1，则做如下修改：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">t2</span><span class="params">()</span></span> &#123;</span><br><span class="line">	i := <span class="number">0</span></span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		fmt.Println(i)</span><br><span class="line">	&#125;()</span><br><span class="line">	i++</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>如果定义了多个 defer 语句，最后定义的最先执行</li>
+</ol>
+<p>下面的代码输出的结果是 4 3 2 1：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">t3</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="number">1</span>)</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="number">2</span>)</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="number">3</span>)</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="number">4</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>defer 可以对方法或者函数的命名返回值进行赋值</li>
+</ol>
+<p>在下面的代码中，正常情况下回返回 1，使用 defer 却可以对返回值继续赋值，所以最后的返回值是 2。</p>
+<h2>2. panic</h2>
+<p>panic 是 Go 的内置函数，可以打断当前的代码的正常执行流程，如果一个函数中出现 panic，该函数后续的代码都会停止执行。但是会执行 F 中的 defer 代码。然后其他调用 F 函数的地方也会出现 panic，层层向上传递，直到栈顶，最后程序会崩溃。</p>
+<p>panic 可以显示调用 panic 函数产生，也会通过一些运行时的错误产生，比如数组越界。</p>
+<p>panic 只会触发当前 goroutine 中的 defer 代码，而不会触发其他 goroutine 中的 defer 代码。</p>
+<h2>3. recover</h2>
+<p>recover 也是 Go 的内置函数，这个函数可以从 panic 中恢复程序的正常执行。recover 需要和 defer 定义在一起。</p>
+<p>在正常的流程中，recover 的执行不会产生任何影响。只有在 panic 发生的时候，recevoer 才会恢复应用，阻止程序崩溃。而 panic 发生的时候只会执行 defer 代码。所以 recover 只在和 defer 搭配的时候才会有意义。</p>
+<p><strong>recover 和 panic 需要在同一个 goroutine  使用，跨 goroutine 无法恢复应用</strong>。</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">		defer fmt.Println(<span class="string">"goroutine1 invoke"</span>)</span><br><span class="line">		go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">			defer fmt.Println(<span class="string">"goroutine2 invoke"</span>)</span><br><span class="line">			go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">				defer <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">					recover()</span><br><span class="line">				&#125;()</span><br><span class="line">				defer fmt.Println(<span class="string">"goroutine3 invoke"</span>)</span><br><span class="line">				panic(<span class="string">"panic"</span>)</span><br><span class="line"></span><br><span class="line">			&#125;()</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">time.Sleep(1 * time.Second)</span><br></pre></td></tr></table></figure></p>
+<p>下面的程序不会出现崩溃，但如果对 recover 的调用不在同一个 goroutine 中，就无法阻止程序的崩溃。</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">		defer fmt.Println(<span class="string">"goroutine1 invoke"</span>)</span><br><span class="line">		go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">			defer <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">				recover()</span><br><span class="line">			&#125;()</span><br><span class="line">			defer fmt.Println(<span class="string">"goroutine2 invoke"</span>)</span><br><span class="line"></span><br><span class="line">			go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">				defer fmt.Println(<span class="string">"goroutine3 invoke"</span>)</span><br><span class="line">				panic(<span class="string">"panic"</span>)</span><br><span class="line">			&#125;()</span><br><span class="line">			</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	time.Sleep(1 * time.Second)</span><br></pre></td></tr></table></figure></p>
+<h2>4. 小结</h2>
+<p>defer、panic、recover 是 Go 提供的流程控制方式，defer 可以用于正常的代码流程，用于关闭资源等操作，panic 则用来表示程序出现大问题，需要终止，可以自行触发，也可以被一些运行时的错误触发。但在一些情况下，我们不希望程序因为 panic 而终止，比如 web 服务，可以通过 recoever 来恢复程序。</p>
+<p><strong>本文基于 go1.14</strong></p>
+<p>文 / Rayjun</p>
+<p>[1] <a href="https://blog.golang.org/defer-panic-and-recover" target="_blank" rel="noopener">https://blog.golang.org/defer-panic-and-recover</a></p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

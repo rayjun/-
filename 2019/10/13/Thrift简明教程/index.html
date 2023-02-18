@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Thrift简明教程</h1>
+    <p>现如今对于任何一个大型的服务，都不太可能是一个单体的服务。而是由诸多的子服务构成，具体的业务逻辑通过子服务之间的相互调用来完成。这种相互的调用称之为远程调用，也就是通常所说的 RPC。</p>
+<h4>什么是 RPC</h4>
+<p>RPC(Remote Procedure Call)是指远程调用，这个和本地调用有很大的区别。下面在 <code>main</code> 方法中调用 <code>helloWorld</code> 就是本地调用。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="keyword">final</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        helloWorld(); <span class="comment">// 本地调用</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">helloWorld</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Hello World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>现在假设 <code>helloWorld</code> 这个方法不在本地，没法直接调用，那么就需要通过远程调用来访问这个方法，在进行远程调用的过程中，就产生了客户端-服务端（Server-Client）模式，服务的提供方就是服务端，服务的调用方就是客户端，客户端和服务端并不是绝对不变的，要看具体的服务的调用流程来认定服务端和客户端。</p>
+<p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/thrift/cilent-server.png" alt=""></p>
+<p>远程调用的方式有很多，比如 Java 中的 RMI(Remote Method Invocation) 就是典型的 RPC， 还有 Http 也可以认为是一种 RPC。</p>
+<p>Thrift 是 FaceBook 实现的一种支持多语言的 RPC 框架，对于主流的编程语言 <code>Java</code> ,<code>C++</code>, <code>Python</code> 等都有很好的支持。 Thrift 会通过自身的 <code>IDL(Interface Description Language)</code> 语言来对接口进行定义，然后 Thrift 通过定义好的 IDL 文件生成相应的接口脚手架，然后只需要分别实现接口脚手架的 Server 端和 Client 端。并将 Server 端进行部署，Client 就可以访问 Server端的服务。</p>
+<h4>Thrift 特性简介</h4>
+<p>下图是 Thrift 官方给出的架构图。Thrift 支持的语言多达 28 种，对于各类操作系统也都提供了支持，Thrift 将自身划为4层（不要和网络的四层协议混淆）,而且对于各个层已经做好干净的分层和实现。对于不同的业务场景就可以选择不同的协议进行组合。</p>
+<p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/thrift/thrift-arch.png" alt=""></p>
+<p>Thrift 整体上可以分成以下四层：</p>
+<p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/thrift/thrift-layer.png" alt=""></p>
+<ul>
+<li>传输层提供了面向网络 IO 的抽象，在传输层可以使用多种传输协议，TCP、Http 提供了支持</li>
+<li>协议层中定义了内存中数据到传输格式的映射机制</li>
+<li>处理层封装了从输入流读取数据和从输出流写数据的能力</li>
+<li>服务器层将上述的组件合并到一起并按照下列的流程工作：
+<ul>
+<li>创建一个 Transport 对象</li>
+<li>在 Transport 基础上创建输入\输出 Protocol 对象</li>
+<li>在输入\输出 Protocol 基础上创建 Processor 对象</li>
+<li>监听到来的连接并移交给 Processor 处理</li>
+</ul>
+</li>
+</ul>
+<h5>Thrift 的性能</h5>
+<p>Thrift 的性能在现有的 RPC 框架中属于前列，这里有详细的 <a href="http://szelei.me/rpc-benchmark-part1/" target="_blank" rel="noopener">Benchmark</a>，如果特别关注性能，那么 Thrift 是一个很好的选择。</p>
+<h5>Thrift 的网络模型</h5>
+<p>而且 Thrift 提供了多种网络模型，支持<strong>阻塞服务模型</strong>和<strong>非阻塞服务模型</strong>，所有的网络处理模型都继承自 <strong>TServer</strong>。</p>
+<p><strong>阻塞服务模型</strong>：</p>
+<ul>
+<li>TSimpleServer
+<ul>
+<li>最简单的阻塞 IO 模型</li>
+<li>一次只能接收和处理一个请求</li>
+<li>实际开发基本不会用到</li>
+</ul>
+</li>
+<li>TThreadPoolServer
+<ul>
+<li>采用阻塞 Socket 的方式工作</li>
+<li>主线程负责监听是否有新的 Socket 到达</li>
+<li>具体的业务处理交给线程池来处理</li>
+</ul>
+</li>
+</ul>
+<p><strong>非阻塞服务模型</strong>：</p>
+<ul>
+<li>TNonblockingServer
+<ul>
+<li>单线程模式，但是引入了 NIO 的机制，通过 Channel/Selector 机制来处理事件</li>
+</ul>
+</li>
+<li>THsHaServer
+<ul>
+<li>THsHaServer 继承自 TNonblockingServer</li>
+<li>引入了线程池提高了任务的并发处理能力</li>
+</ul>
+</li>
+<li>TThreadedSelectorServer
+<ul>
+<li>这个模型是对 THsHaServer 模型的一种补充</li>
+</ul>
+</li>
+</ul>
+<h4>Thrift的序列化机制</h4>
+<p>数据在网络的传输过程中，序列化和反序列化是一个很重要的过程，对于不同的系统，对序列化有着不同的要求，Thrift 提供了多种序列化的方式来满足不同的要求。传输协议总体上可以分成<strong>文本</strong>和<strong>二进制</strong>的两种协议。</p>
+<p>Thrift 有如下的传输协议：</p>
+<ul>
+<li>TBinaryProtocol：二进制编码格式进行数据传输</li>
+<li>TCompactProtocol：高效率、密集的二进制编码格式进行数据传输</li>
+<li>TJSONProtocol：使用 JSON 文本的数据编码协议进行数据传输</li>
+<li>TSimpleJSONProtocol：只提供 JSON 只写的协议，适用于通过脚本语言进行解析</li>
+</ul>
+<h4>Thrift demo 搭建</h4>
+<p>Thrift 的安装在<a href="https://thrift.apache.org/docs/install/" target="_blank" rel="noopener">官方文档</a>已经介绍的很清楚了。</p>
+<p>Thrift 使用 <strong>IDL</strong> 来定义（Client-Server）之间的接口。假如需要定义一个 <strong>hello</strong> 的接口，那么就可以定义一个 <code>hello.thrift</code>  文件，文件的内容如下：</p>
+<p><figure class="highlight thrift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">service</span> <span class="title">HelloWorldService</span> </span>&#123;</span><br><span class="line">    <span class="built_in">string</span> hello(<span class="number">1</span>: <span class="built_in">string</span> name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面定义了一个名为 <code>HelloWorldService</code> 的服务，在这个服务器中有一个叫 <code>hello</code> 的接口，这个接口接受一个 <code>string</code>  类型的参数。</p>
+<p><code>service</code>  和 <code>string</code> 都是 IDL 的关键字，IDL 中的关键字包括：</p>
+<ul>
+<li>基本数据类型</li>
+<li>容器类型</li>
+<li>结构体</li>
+<li>枚举</li>
+</ul>
+<p>这些都是 IDL 的基本数据结构，也还有命名空间、异常、常量等关键字。完整的 IDL文档看<a href="https://thrift.apache.org/docs/idl" target="_blank" rel="noopener">这里</a></p>
+<p>上面的 IDL 代码定义好了一个 Thrift 接口的规则，Thrift 就可以根据这个规则生成相应的接口文件。通过这些接口文件，就可以方便的实现相应的业务逻辑，相当于 Thrift 通过 IDL 文件搭出了服务脚手架。</p>
+<p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/thrift/thrift-code.png" alt=""></p>
+<p>在生成的脚手架文件中，有两个 interface 非常重要：</p>
+<ul>
+<li><strong>Iface</strong>: 这个 interface 由服务器来实现，向客户端提供服务的逻辑在这个接口内实现</li>
+<li><strong>Client</strong>: 这个 interface 由客户端来实现，访问服务端的逻辑在这个接口内实现</li>
+</ul>
+<p><code>AsyncIface</code>  和 <code>AsyncClient</code> 是这两个 interface 的异步版本。</p>
+<p>下面使用 <code>SimpleServer</code> 来实现这个服务：</p>
+<p><strong>Iface 实现</strong>:
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorldServiceImpl</span> <span class="keyword">implements</span> <span class="title">HelloWorldService</span>.<span class="title">Iface</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">say</span><span class="params">(String username)</span> <span class="keyword">throws</span> TException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello "</span> + username;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*创建一个服务器，向外暴露服务</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorldServer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> TTransportException </span>&#123;</span><br><span class="line">        TServerSocket serverSocket = <span class="keyword">new</span> TServerSocket(<span class="number">9090</span>);</span><br><span class="line">        HelloWorldService.Processor processor = <span class="keyword">new</span> HelloWorldService.Processor(<span class="keyword">new</span> HelloWorldServiceImpl());</span><br><span class="line">        TSimpleServer.Args tArgs = <span class="keyword">new</span> TSimpleServer.Args(serverSocket);</span><br><span class="line">        tArgs.processor(processor);</span><br><span class="line">        TServer server = <span class="keyword">new</span> TSimpleServer(tArgs);</span><br><span class="line">        server.serve();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<strong>Client实现</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 客户端，连接服务器，并且发送消息</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorldClient</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> TTransportException, TException </span>&#123;</span><br><span class="line">        TTransport transport = <span class="keyword">new</span> TSocket(<span class="string">"127.0.0.1"</span>, <span class="number">9090</span>, <span class="number">3000</span>);</span><br><span class="line">        TProtocol protocol = <span class="keyword">new</span> TBinaryProtocol(transport);</span><br><span class="line">        HelloWorldService.Client client = <span class="keyword">new</span> HelloWorldService.Client(protocol);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            transport.open();</span><br><span class="line">            String result = client.say(<span class="string">"Ray"</span>);</span><br><span class="line">            System.out.println(result);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">null</span> != transport) &#123;</span><br><span class="line">                transport.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+一个简单的 Thrift 的服务也就实现了。</p>
+<p>（完）</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

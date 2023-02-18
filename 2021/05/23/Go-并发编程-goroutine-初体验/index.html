@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Go 并发编程 -goroutine 初体验</h1>
+    <p>说到 Go 语言，被人讨论最多的就是 Go 很擅长做高并发，并且不需要依赖外部的库，语言本身就支持高并发。</p>
+<p>Go 中实现这一能力的秘密是 goroutine，也经常被称之为协程，goroutine 是 Go 对协程的实现。在这篇文章中，会介绍协程的基本概念，以及 goroutine 的基本使用。</p>
+<h2>1.什么是协程</h2>
+<p>协程（Coroutine），又被称之为微线程，这个概念出现的时间很早，在 1963 年就有相关的文献发表，但协程真正被用起来的时间很短。</p>
+<p>对于操作系统来说，线程是最小的调度单位，但对于一些高并发的环境，线程处理起来就比较吃力，一方面操作系统能够分配的线程数量有限，另外线程之间的切换相对来说也比较大。</p>
+<p>所以对于 Java 这类以线程为调度单位的语言，一般会依靠外部的类库来做到高并发，比如 Java 的Netty 就是一个开始高并发应用必不可少的库。</p>
+<p>协程和线程非常类似，只是比线程更加轻量级，具体表现在协程之间的切换不需要涉及系统调用，也不需要互斥锁或者信号量等同步手段，甚至都不需要操作系统的支持。</p>
+<p>协程与线程的行为基本一致，但是协程是在语言层面实现的，而线程是操作系统实现的。</p>
+<h2>2. Go 语言的协程</h2>
+<p>在 Go 语言中，支持两种并发编程的模式，一种就是以 goroutine 和 channel 为主，这种方式称之为 CSP 模式，这种方式的核心是在 goroutine 之间传递值来来实现并发。</p>
+<p>还有一种方式是传统的共享内存式的模式，通过一些同步机制，比如锁之类的机制来实现并发。</p>
+<p>Go 程序通过 main 函数来启动，main 函数启动的时候也会启动一个 goroutine，称之为<strong>主 goroutine</strong>。然后在主 goroutine 中通过 go 关键字创建新的 goroutine。go 语句是立马返回的，不会阻塞当前的 goroutine。</p>
+<p>一个 Go 程序中可以创建的 goroutine 数量可以比线程数量多很多，这也是 Go 程序可以做到高并发的原因，goroutine 的实现原理，我们后续的文章再详细聊，下面来看看看 goroutine 的使用。</p>
+<h2>3. goroutine 的基本使用</h2>
+<p>goroutine 的使用很简单，只需要在调用的函数前面添加 go 关键字，就会创建一个新的 goroutine：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">goroutine1</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	fmt.Println(<span class="string">"Hello goroutine"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> goroutine1()</span><br><span class="line">	fmt.Println(<span class="string">"Hello main"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但运行上面的代码之后，输出的结果为：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hello main</span><br></pre></td></tr></table></figure></p>
+<p>预想中的 <code>Hello goroutine</code> 并没有出现，因为 main 方法执行完成之后，main 方法 所在的 goroutine 就销毁了，其他的 goroutine 都没有机会执行完。</p>
+<p>可以通过设置一个休眠时间来阻止主 goroutine 执行完成。</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">goroutine1</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	fmt.Println(<span class="string">"Hello goroutine"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> goroutine1()</span><br><span class="line">	time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">	fmt.Println(<span class="string">"Hello main"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样，输出结果就和我们预想的一样了:</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Hello goroutine</span><br><span class="line">Hello main</span><br></pre></td></tr></table></figure></p>
+<p>但是这种方法也存在一些问题，这个休眠时间不太好设置，设置的过长，会浪费时间，设置的过短， goroutine 还没运行完成，所以最好的方式是让 goroutine 自己来决定。我们再改动一下代码：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">goroutine2</span><span class="params">(isDone <span class="keyword">chan</span> <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"child goroutine begin..."</span>)</span><br><span class="line">	time.Sleep(<span class="number">2</span> * time.Second)</span><br><span class="line">	fmt.Println(<span class="string">"child goroutine end..."</span>)</span><br><span class="line">	isDone &lt;- <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	isDone := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>)</span><br><span class="line">	<span class="keyword">go</span> goroutine2(isDone)</span><br><span class="line">	&lt;-isDone</span><br><span class="line">	<span class="built_in">close</span>(isDone)</span><br><span class="line">	fmt.Println(<span class="string">"main goroutine end.."</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在上面的代码中，我们使用了 <code>chan</code> 类型，这个类型我们后续会详细讲解，暂时只需要知道创建一个 chan 类型的变量，传入到一个子 goroutine 之后，它就会阻塞当前的 goroutine，直到子 goroutine 执行完成。这种方式比上面设置休眠时间的方式要优雅很多，也不会产生一些意料之外的结果。</p>
+<p>结果输出为：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">child goroutine begin...</span><br><span class="line">child goroutine end...</span><br><span class="line">main goroutine end..</span><br></pre></td></tr></table></figure></p>
+<p>但这种方式还是不完美，现在只启动了一个 goroutine，如果要启动多个 goroutine，这种方式就不管用了。当然，肯定还是有解决办法的，看下面的代码：</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">goroutine3</span><span class="params">(id <span class="keyword">int</span>, wg *sync.WaitGroup)</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> wg.Done()</span><br><span class="line">	fmt.Printf(<span class="string">"child goroutine %d begin...\n"</span>, id)</span><br><span class="line">	time.Sleep(time.Second)</span><br><span class="line">	fmt.Printf(<span class="string">"child goroutine %d end...\n"</span>, id)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">5</span>; i++ &#123;</span><br><span class="line">		wg.Add(<span class="number">1</span>)</span><br><span class="line">		<span class="keyword">go</span> goroutine3(i, &amp;wg)</span><br><span class="line">	&#125;</span><br><span class="line">	wg.Wait()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个代码看起来要复杂不少，其中 <code>sync</code> 包中包括了 Go 语言并发编程的所有工具，我们用到的 <code>WaitGroup</code> 就是其中的一个工具。</p>
+<p>首先创建一个 WaitGroup 类型的变量 wg，每创建一个 goroutine，就向 wg 中加 1，每个 goroutine 执行完成之后，就调用 wg.Done，这样 wg 就会减 1，wg.Wait() 会阻塞当前 goroutine，直到 wg 中的值清零。</p>
+<p>如果熟悉其他语言同步机制的人就会想到，这不就是信号量么，是的，这就是使用信号量来实现的。这个 WaitGroup 与 Java 语言中的 <code>CountDownLatch</code> 功能是一样的。</p>
+<p>输出的结果也很漂亮：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">child goroutine 4 begin...</span><br><span class="line">child goroutine 0 begin...</span><br><span class="line">child goroutine 3 begin...</span><br><span class="line">child goroutine 2 begin...</span><br><span class="line">child goroutine 1 begin...</span><br><span class="line">child goroutine 1 end...</span><br><span class="line">child goroutine 2 end...</span><br><span class="line">child goroutine 3 end...</span><br><span class="line">child goroutine 4 end...</span><br><span class="line">child goroutine 0 end...</span><br></pre></td></tr></table></figure></p>
+<p>到这里，我们了解了 goroutine 的基本使用，但很多情况下，goroutine 不是独立运行的，而经常需要与其他的 goroutine 通信，在下一篇文章中，我们将详细的聊一聊 goroutine 之间的通信方式。</p>
+<h2>4. 小结</h2>
+<p>在这篇文章中，我们了解了协程的概念，并且知道了 goroutine 是 Go 语言对协程的实现。也知道了如何通过启动一个新的 goroutine 并发的去做一些事情，同时也知道了如何让 main  goroutine 来等待其他 goroutine 工作完成再退出的几种方法。</p>
+<p>文 / Rayjun</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

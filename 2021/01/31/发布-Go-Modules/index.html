@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>发布 Go Modules</h1>
+    <p>每当完成一个 Go Modules 之后，如果想让更多的人使用你的代码，就需要把这个模块发布出去，这篇文章说明了如何发布一个新的模块。</p>
+<p>原文地址：<a href="https://blog.golang.org/publishing-go-modules" target="_blank" rel="noopener">https://blog.golang.org/publishing-go-modules</a></p>
+<hr>
+<h2>简介</h2>
+<p>这个系列的文章总共有五篇，这是第三篇：</p>
+<ul>
+<li><a href="https://rayjun.cn/2021/01/17/%E4%BD%BF%E7%94%A8Go-modules/" target="_blank" rel="noopener">使用 Go Modules</a></li>
+<li><a href="https://rayjun.cn/2021/01/23/%E8%BF%81%E7%A7%BB%E5%88%B0Go-modules/" target="_blank" rel="noopener">迁移到 Go Modules</a></li>
+<li><strong>发布 Go Modules</strong></li>
+<li>Go Modules：V2 及后续版本</li>
+<li>保持 Modules 的兼容性</li>
+</ul>
+<p>这篇文章讨论如何编写和发布模块，让其他模块可以使用它们。</p>
+<p>请注意：这篇文章只覆盖到 v1 版本的开发。如果你对 v2 版本感兴趣，请看 <a href="https://blog.golang.org/v2-go-modules" target="_blank" rel="noopener">Go Modules: v2 及后续版本</a>。</p>
+<p>这篇文章中使用 git 版本管理为例子。Mercurial、Bazaar 等其他的版本管理工具也是支持的。</p>
+<h2>创建项目</h2>
+<p>在这篇文章中，你需要用一个已经存在的项目作为例子。在这里，继续使用<a href="https://rayjun.cn/2021/01/17/%E4%BD%BF%E7%94%A8Go-modules/" target="_blank" rel="noopener">第一篇文章</a>的代码来演示：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">$ cat go.mod</span><br><span class="line">module example.com/hello</span><br><span class="line"></span><br><span class="line">go 1.12</span><br><span class="line"></span><br><span class="line">require rsc.io/quote/v3 v3.1.0</span><br><span class="line"></span><br><span class="line">$ cat go.sum</span><br><span class="line">golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c h1:qgOY6WgZOaTkIIMiVjBQcw93ERBE4m30iBm00nkL0i8=</span><br><span class="line">golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=</span><br><span class="line">rsc.io/quote/v3 v3.1.0 h1:9JKUTTIUgS6kzR9mK1YuGKv6Nl+DijDNIc0ghT58FaY=</span><br><span class="line">rsc.io/quote/v3 v3.1.0/go.mod h1:yEA65RcK8LyAZtP9Kv3t0HmxON59tX3rD+tICJqUlj0=</span><br><span class="line">rsc.io/sampler v1.3.0 h1:7uVkIFmeBqHfdjD+gZwtXXI+RODJ2Wc4O7MPEh/QiW4=</span><br><span class="line">rsc.io/sampler v1.3.0/go.mod h1:T1hPZKmBbMNahiBKFy5HrXp6adAjACjK9JXDnKaTXpA=</span><br><span class="line"></span><br><span class="line">$ cat hello.go</span><br><span class="line">package hello</span><br><span class="line"></span><br><span class="line">import <span class="string">"rsc.io/quote/v3"</span></span><br><span class="line"></span><br><span class="line">func Hello() string &#123;</span><br><span class="line">    <span class="built_in">return</span> quote.HelloV3()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func Proverb() string &#123;</span><br><span class="line">    <span class="built_in">return</span> quote.Concurrency()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$ cat hello_test.go</span><br><span class="line">package hello</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    <span class="string">"testing"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func TestHello(t *testing.T) &#123;</span><br><span class="line">    want := <span class="string">"Hello, world."</span></span><br><span class="line">    <span class="keyword">if</span> got := Hello(); got != want &#123;</span><br><span class="line">        t.Errorf(<span class="string">"Hello() = %q, want %q"</span>, got, want)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func TestProverb(t *testing.T) &#123;</span><br><span class="line">    want := <span class="string">"Concurrency is not parallelism."</span></span><br><span class="line">    <span class="keyword">if</span> got := Proverb(); got != want &#123;</span><br><span class="line">        t.Errorf(<span class="string">"Proverb() = %q, want %q"</span>, got, want)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<p>接下来，创建一个新的 git 仓库并添加一个初始的提交。如果你要发布自己的项目，记得添加一个 LICENSE 文件。切换到包含 go.mod 文件的目录，创建一个仓库：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git init</span><br><span class="line">$ git add LICENSE go.mod go.sum hello.go hello_test.go</span><br><span class="line">$ git commit -m <span class="string">"hello: initial commit"</span></span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<h2>语义化版本和模块</h2>
+<p>每模块都在 go.mod 文件中有一个<a href="https://semver.org/" target="_blank" rel="noopener">语义版本</a>，这是用于构建模块的依赖的最小版本。</p>
+<p>一个语义版本号的格式都是 vMAJOR.MINOR.PATCH：</p>
+<ul>
+<li>当对模块的公共 API 进行向后不兼容的更改时，才增加主版本。只有在必要的时候才这样做。</li>
+<li>当对API进行向后兼容更改时，如更改依赖项或添加新函数、方法、结构字段或类型，则增加次版本。</li>
+<li>在做了不影响模块的公共 API 或依赖项（如修复bug）的小更改后增加补丁版本。</li>
+</ul>
+<p>你可以通过附加连字符和点分隔的标识符来指定预发布版本（例如，v1.0.1-alpha或v2.2.2-beta.2）。go 命令优先使用普通版本而不是预发布版本，所以如果你的模块已经存在普通版本，用户如果要使用预发布版本，必须明确指定版本号（例如，去获取example.com/hello@v1.0.1-alpha）。</p>
+<p>v0 主版本和预发布版本不保证向后兼容。它们允许你对 API 进行优化，不需要向用户做出稳定版本承诺。然而，v1 主版本和其他版本需要在该主版本内向后兼容。</p>
+<p>在 go.mod 中引用的版本可能是在存储库中标记的显式发布（例如，v1.5.2），也可能是基于特定提交的 <a href="https://golang.org/cmd/go/#hdr-Pseudo_versions" target="_blank" rel="noopener">pseudo-version</a>（例如，v0.0.0-20170915032832-14c0d48ead0c）。pseudo-version 是一种特殊类型的预发布版本。当用户需要依赖一个没有发布任何语义版本标记的项目，或者针对一个还没有打标记的提交进行开发时，伪版本是有用的。但用户不应该假定 pseudo-version 提供了一个稳定的或经过良好测试的 API。用显式的版本号标记模块，向用户表明特定的版本已经经过了充分的测试，可以使用了。</p>
+<p>一旦你开始用版本号标记你的仓库，在后续模块的开发中，就应该继续标记新版本。当用户请求模块的新版本（使用 go get -u 或 go get example.com/hello）时，go命令将选择可用的最大语义版本，即使该版本已经存在好几年了，并且主分支后面有很多变化。继续标记新版本将使你的用户能够获得持续的改进。</p>
+<p>不要从你的仓库中删除版本标签。如果你发现了一个版本的 bug 或安全问题，那么就发布一个新版本。如果人们依赖于你已经删除的版本，那么他们的构建可能会失败。类似地，一旦你发布了一个版本，不要更改或覆盖它。<a href="https://blog.golang.org/module-mirror-launch" target="_blank" rel="noopener">模块镜像和校验和数据库</a>存储模块的版本和签名加密散列，以确保给定版本的构建在一段时间内是不变的。</p>
+<h2>v0：初始，不稳定版本</h2>
+<p>让我们用 v0 语义版本标记这个模块。v0 版本不做任何稳定性保证，所以几乎所有的项目都应该从v0 开始，以完善公共 API。</p>
+<p>标记一个新版本有如下步骤：</p>
+<ol>
+<li>运行 go mod tidy，删除可能不再使用的依赖项</li>
+<li>运行 go test ./..，最后再保证所有的功能都是正常的</li>
+<li>使用 git tag 命令标记一个新的版本</li>
+<li>推送标记到远程仓库</li>
+</ol>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ go mod tidy</span><br><span class="line">$ go <span class="built_in">test</span> ./...</span><br><span class="line">ok      example.com/hello       0.015s</span><br><span class="line">$ git add go.mod go.sum hello.go hello_test.go</span><br><span class="line">$ git commit -m <span class="string">"hello: changes for v0.1.0"</span></span><br><span class="line">$ git tag v0.1.0</span><br><span class="line">$ git push origin v0.1.0</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<p>现在其他项目可以依赖于 example.com/hello 的 v0.1.0 版本。对于你自己的模块，可以运行 go list -m example.com/hello@v0.1.0 来确认最新可用版本（该示例模块不存在，因此没有可用的版本）。如果你没有立即看到最新版本，并且正在使用 Go 模块代理（自 Go 1.13 以来的默认设置），可以在几分钟内再次尝试，给代理一点时间来加载新版本。</p>
+<p>如果向公共 API 添加内容，对 v0 版本的模块进行破坏性更改，或者升级某个依赖项的次版本，则为下一个发行版增加次要版本。例如，v0.1.0 之后的下一个版本将是 v0.2.0。</p>
+<p>如果修复了现有版本中的bug，则增加补丁版本。例如，v0.1.0之后的下一个版本将是v0.1.1。</p>
+<h2>v1：第一个稳定版本</h2>
+<p>一旦你确定你的模块 API 已经稳定了，你就可以发布 v1.0.0 了。v1 主版本告诉用户，不会对模块的API 进行不兼容的更改。他们可以升级到新的 v1 次要版本和补丁版本，他们的代码应该不会出错。函数和方法签名不会改变，导出的类型不会被删除等等。如果 API 发生了更改，它们将向后兼容(例如，向结构添加新字段)，并将包含在新的次版本中。如果修复了错误（例如，安全修复），它们将包含在补丁版本中（或者作为次版本的一部分）。</p>
+<p>有时，保持向后兼容性会导致 API 不优雅。但没关系，一个不完美的 API 总比破坏用户现有的代码要好。</p>
+<p>标准库的 strings 包就是一个以 API 一致性为代价来维护向后兼容性的典型例子。</p>
+<ul>
+<li>Split 函数将字符串分割成由分隔符分隔的子字符串，并返回一个由这些分隔符分割的子字符串 slice</li>
+<li>SplitN 函数可以用来控制要返回的子字符串的数量</li>
+</ul>
+<p>但是，Replace 函数从一开始就要确定需要替换的字符串数量（与 Split 函数不同）。</p>
+<p>因为有 Split 函数和 SplitN 函数，你会期望也有 Replace 函数和 ReplaceN 函数。我们无法在不做破坏性修改的情况下修改 Replace 函数。在 Go 1.12中，我们添加了一个新函数，ReplaceAll。因为 Split 和 Replace 的行为不同，结果产生的 API 有点奇怪，但这种不一致性比破坏性更改要好。</p>
+<p>假设你现在对 example.com/hello 的 API 很满意，并且希望发布 v1 作为第一个稳定版本。</p>
+<p>给 v1 加标签的过程和给 v0 版本加标签的过程是一样的：运行go mod tidy 和 go test ./.. ，标记版本，并将标记推送到远程仓库：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ go mod tidy</span><br><span class="line">$ go <span class="built_in">test</span> ./...</span><br><span class="line">ok      example.com/hello       0.015s</span><br><span class="line">$ git add go.mod go.sum hello.go hello_test.go</span><br><span class="line">$ git commit -m <span class="string">"hello: changes for v1.0.0"</span></span><br><span class="line">$ git tag v1.0.0</span><br><span class="line">$ git push origin v1.0.0</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<p>到现在， example.com/hello 的 v1 版本的 API 已经文档了。这就向每个人传达了我们的 API 是稳定的，他们应该会用的很舒服。</p>
+<h2>结论</h2>
+<p>本文介绍了用语义版本标记模块的过程以及何时发布 v1 版本。下面的一篇文章将涵盖如何维护和发布 v2 及后续版本的模块。</p>
+<p>请向我们发送<a href="https://github.com/golang/go/issues/new" target="_blank" rel="noopener">bug 报告</a>和<a href="https://github.com/golang/go/wiki/ExperienceReports" target="_blank" rel="noopener">体验报告</a>，帮助我们改善 Go 的依赖管理功能。</p>
+<p>感谢你所有的反馈和帮助改进模块的建议。</p>
+<hr>
+<p>另外，腾讯云区块链方向在大量招人，包括前端、后端、架构师、产品等诸多岗位，如果感兴趣，请把简历投过来 <a href="mailto:rayjun0412@gmail.com">rayjun0412@gmail.com</a>。</p>
+<p>译 / Rayjun</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

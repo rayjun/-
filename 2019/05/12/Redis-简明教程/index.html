@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Redis 简明教程</h1>
+    <p>Redis 是一个非常快的非关系型的数据库，通过 key-value 的形式保存数据。key 总是字符串，而 value 支持 5 种类型（字符串、列表、集合、哈希表、有序集合），单个 value 的大小不超过 512 M。Redis 的键值对是存储在内存中的，但是也能持久化到硬盘中。</p>
+<h3>5 种数据类型和基本操作</h3>
+<h4>字符串</h4>
+<p>字符串中可以存储的内容有字符串，数值等，针对不同的值，可以进行不同的操作，以下是字符串的值常用的操作。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>通过给定的 key 获取 value</td>
+</tr>
+<tr>
+<td>SET</td>
+<td>通过给定的 key 存储 value</td>
+</tr>
+<tr>
+<td>DEL</td>
+<td>通过给定的 key 删除 value</td>
+</tr>
+<tr>
+<td>INCR</td>
+<td>通过给定的 key 给 value 增加 1（value 必须为整数）</td>
+</tr>
+<tr>
+<td>DECR</td>
+<td>通过给定的 key 给 value 减 1（value 必须为整数）</td>
+</tr>
+<tr>
+<td>INCRBY</td>
+<td>通过给定的 key 给 value 增加特定的值（value 必须为整数）</td>
+</tr>
+<tr>
+<td>DECRBY</td>
+<td>通过给定的 key 给 value 减少特定的值（value 必须为整数）</td>
+</tr>
+<tr>
+<td>INCRBYFLOAT</td>
+<td>通过给定的 key 给 value 减少特定的值（value 必须为浮点数）</td>
+</tr>
+<tr>
+<td>APPEND</td>
+<td>通过给定的 key 在 value 上追加内容</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>除了上面那些命令外，还有其他的比如获取字符串的部分值，修改字符串的部分值等操作。</p>
+</blockquote>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; <span class="built_in">set</span> hello world</span></span><br><span class="line">OK</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; get hello</span></span><br><span class="line">"world"</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; del hello</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; get hello</span></span><br><span class="line">(nil)</span><br></pre></td></tr></table></figure></p>
+<h4>列表</h4>
+<p>列表实际上是一个双向链表，在插入数据的时候可以选择从头部插入，也可以选择从尾部插入。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LPUSH</td>
+<td>从列表的头部插入数据</td>
+</tr>
+<tr>
+<td>RPUSH</td>
+<td>从列表的尾部插入数据</td>
+</tr>
+<tr>
+<td>LPOP</td>
+<td>从列表的头部取出一个数据</td>
+</tr>
+<tr>
+<td>RPOP</td>
+<td>从列表的尾部取出一个数据</td>
+</tr>
+<tr>
+<td>LRANGE</td>
+<td>从列表种查询某个范围的数据</td>
+</tr>
+<tr>
+<td>LINDEX</td>
+<td>从列表种查询给定位置的数据</td>
+</tr>
+<tr>
+<td>LTRIM</td>
+<td>从列表种裁剪元素，只保留区间内的数据</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>列表还支持不同的列表之间进行数据的转移</p>
+</blockquote>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; rpush list-key item</span></span><br><span class="line">(integer) 5</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; lpush list-key item</span></span><br><span class="line">(integer) 6</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; lrange list-key 0 -1</span></span><br><span class="line">1) "item"</span><br><span class="line">2) "item"</span><br><span class="line">3) "item2"</span><br><span class="line">4) "item"</span><br><span class="line">5) "item"</span><br><span class="line">6) "item"</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; lindex list-key 1</span></span><br><span class="line">"item"</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; lpop list-key</span></span><br><span class="line">"item"</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; rpop list-key</span></span><br><span class="line">"item"</span><br></pre></td></tr></table></figure></p>
+<h4>集合</h4>
+<p>集合中存储的都是不重复的值，但是所有的值都不是有序的。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SADD</td>
+<td>在集合中添加一项</td>
+</tr>
+<tr>
+<td>SMEMBERS</td>
+<td>返回集合中所有的项</td>
+</tr>
+<tr>
+<td>SISMEMBER</td>
+<td>检查某一项是否在集合中</td>
+</tr>
+<tr>
+<td>SREM</td>
+<td>如果某项在集合中存在，就删除</td>
+</tr>
+<tr>
+<td>SCARD</td>
+<td>计算集合中数据的个数</td>
+</tr>
+<tr>
+<td>SRANDMEMBER</td>
+<td>从集合中随机取出几个数据</td>
+</tr>
+<tr>
+<td>SPOP</td>
+<td>从集合中随机取出一个数据</td>
+</tr>
+<tr>
+<td>SMOVE</td>
+<td>从集合中取出一个特定的数据并且转移到另一个集合中</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>集合中还支持集合的各种交并集的运算</p>
+</blockquote>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; sadd <span class="built_in">set</span>-key item3</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; smembers <span class="built_in">set</span>-key</span></span><br><span class="line">1) "item1"</span><br><span class="line">2) "item3"</span><br><span class="line">3) "item"</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; sismember <span class="built_in">set</span>-key item3</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; srem <span class="built_in">set</span>-key item1</span></span><br><span class="line">(integer) 1</span><br></pre></td></tr></table></figure></p>
+<h4>哈希</h4>
+<p>哈希对象的每个 key 都是不重复而且无序的。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HSET</td>
+<td>在 hash 种添加一个键值对</td>
+</tr>
+<tr>
+<td>HGET</td>
+<td>通过 key 在 hash 中获取一个键值对</td>
+</tr>
+<tr>
+<td>HGETALL</td>
+<td>查询 hash 中所有的键值对</td>
+</tr>
+<tr>
+<td>HDEL</td>
+<td>通过 key 在 hash 中删除一个键值对</td>
+</tr>
+<tr>
+<td>HLEN</td>
+<td>返回 hash 中键值对的个数</td>
+</tr>
+<tr>
+<td>HMGET</td>
+<td>通过多个 key 在 hash 中获取值</td>
+</tr>
+<tr>
+<td>HMSET</td>
+<td>批量在 hash 中添加键值对</td>
+</tr>
+<tr>
+<td>HEXISTS</td>
+<td>判断 hash 中某个键值对是否存在</td>
+</tr>
+<tr>
+<td>HKEYS</td>
+<td>返回 hash 中所有的 key</td>
+</tr>
+<tr>
+<td>HVALS</td>
+<td>返回 hash 中所有的 value</td>
+</tr>
+<tr>
+<td>HINCRBY</td>
+<td>为 hash 中键值对的值添加特定的整数（value 必须为整数）</td>
+</tr>
+<tr>
+<td>HINCRBYFLOAT</td>
+<td>为 hash 中键值对的值添加特定的浮点数 （value 必须为浮点数）</td>
+</tr>
+</tbody>
+</table>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; hset <span class="built_in">hash</span>-key sub-key3 value6</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; hgetall <span class="built_in">hash</span>-key</span></span><br><span class="line">1) "sub-key1"</span><br><span class="line">2) "value6"</span><br><span class="line">3) "sub-key3"</span><br><span class="line">4) "value6"</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; hget <span class="built_in">hash</span>-key sub-key1</span></span><br><span class="line">"value6"</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; hdel <span class="built_in">hash</span>-key subkey1</span></span><br><span class="line">(integer) 0</span><br></pre></td></tr></table></figure></p>
+<h4>有序集合</h4>
+<p>有序集合类似哈希，存储的是键值对，但是有序集合是按照 value 的顺序排列的，value 必须是浮点数。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZADD</td>
+<td>在有序集合中添加数据</td>
+</tr>
+<tr>
+<td>ZRANGE</td>
+<td>根据范围查询数据</td>
+</tr>
+<tr>
+<td>ZRANGEBYSCORE</td>
+<td>根据 value 的范围查询数据</td>
+</tr>
+<tr>
+<td>ZREM</td>
+<td>从有序集合中删除数据</td>
+</tr>
+<tr>
+<td>ZCARD</td>
+<td>获取集合中数据的条数</td>
+</tr>
+<tr>
+<td>ZINCRBY</td>
+<td>给某个数据添加特定的值</td>
+</tr>
+<tr>
+<td>ZCOUNT</td>
+<td>获取给定的范围内数据的个数</td>
+</tr>
+<tr>
+<td>ZSCORE</td>
+<td>返回某个数据的数值</td>
+</tr>
+<tr>
+<td>ZRANK</td>
+<td>返回某个数据的排名</td>
+</tr>
+</tbody>
+</table>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; zadd zset-key 666 memeber4</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; zrange zset-key 0 -1 withscores</span></span><br><span class="line"> 1) "member4"</span><br><span class="line"> 2) "123"</span><br><span class="line"> 3) "member2"</span><br><span class="line"> 4) "635"</span><br><span class="line"> 5) "memeber4"</span><br><span class="line"> 6) "666"</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; zrangebyscore zset-key 0 800 withscores</span></span><br><span class="line">1) "member4"</span><br><span class="line">2) "123"</span><br><span class="line">3) "member2"</span><br><span class="line">4) "635"</span><br><span class="line">5) "memeber4"</span><br><span class="line">6) "666"</span><br><span class="line"><span class="meta">$</span><span class="bash"> 127.0.0.1:6379&gt; zrem zset-key member2</span></span><br><span class="line">(integer) 1</span><br></pre></td></tr></table></figure></p>
+<p>Redis 中完整的命令可以在<a href="https://redis.io/commands" target="_blank" rel="noopener">这里</a>查找到。</p>
+<h3>Redis 中的数据结构</h3>
+<table>
+<thead>
+<tr>
+<th>数据结构</th>
+<th>用途</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>简单动态字符串</td>
+<td>Redis 默认字符串的表示</td>
+<td></td>
+</tr>
+<tr>
+<td>双向链表</td>
+<td>列表键、发布与订阅、慢查询、监视器</td>
+<td></td>
+</tr>
+<tr>
+<td>字典</td>
+<td>数据库</td>
+<td>数据库的增删改查也是在字典的基础上</td>
+</tr>
+<tr>
+<td>跳表</td>
+<td>有序集合键</td>
+<td></td>
+</tr>
+<tr>
+<td>整数集合</td>
+<td>集合键</td>
+<td></td>
+</tr>
+<tr>
+<td>压缩列表</td>
+<td>列表键、哈希键</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>上面的这些数据结构在 Redis 种都有用到，但是 Redis 并不是直接使用这些数据结构，而是在这些数据结构的基础上创建了一个<strong>对象系统</strong>、这个系统中有<strong>字符串对象</strong>、<strong>列表对象</strong>、<strong>哈希对象</strong>、<strong>集合对象</strong>以及<strong>有序集合对象</strong>这五种对象。每个对象都至少用到了一种表中的数据结构。</p>
+<h3>Redis 数据持久化</h3>
+<p>Redis 数据是基于内存进行存储的，为了保证数据在 Redis 服务退出后还可以存在，就得使用持久化的方法就数据保存下来。</p>
+<p>Redis 提供了两种持久化的方法，一种是 RDB，一种是 AOF。</p>
+<h4>RDB 持久化</h4>
+<p>RDB持久化锁生成的 RDB 文件实际上是一个经过了压缩的二进制文件。通过该文件可以还原生成 RDB 文件时候的数据库状态。</p>
+<p>RDB 文件的生成有两个命令，一个是 <strong>SAVE</strong>，一个是 <strong>BGSAVE</strong>。</p>
+<ul>
+<li>SAVE：阻塞 Redis 服务器进程，直到 RDB 文件创建完成</li>
+<li>BGSAVE: 不会阻塞 Redis 服务器进程，由子进程去创建 RDB 文件</li>
+</ul>
+<p>可以通过设置 save 选项，让服务器每隔一段时间自动执行一次 BGSAVE 命令:</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 900 秒内，对数据库至少进行了一次修改就执行 BGSAVE</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> save 900 1 </span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 300 秒内，对数据库至少进行了 10 次修改</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> save 300 10</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 60 秒内，对数据库至少进行了 10000 次修改</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> save 60 10000</span></span><br></pre></td></tr></table></figure></p>
+<h4>AOF 持久化</h4>
+<p>与 RDB 将整个 Redis 种的数据就行保存来记录数据库状态不同，AOF 持久化时通过保存 Redis 服务器锁执行的<strong>写</strong>命令来保存数据库。</p>
+<p>AOF 执行的策略有三种:</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>always</td>
+<td>每个写命令都同步</td>
+</tr>
+<tr>
+<td>everysec</td>
+<td>每秒同步一次</td>
+</tr>
+<tr>
+<td>no</td>
+<td>让操作系统来决定何时同步</td>
+</tr>
+</tbody>
+</table>
+<h3>Redis 其他特性</h3>
+<p>Redis 除了支持基本的存储之外，也提供了很多的工具，帮助应对更加复杂的业务场景。</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>使用方式</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>发布与订阅</td>
+<td>使用 PUBLISH 发布频道、SUBSCRIBE 订阅、UNSUBSCRIBE取消订阅、PSUBSCRIBE 支持正则模式订阅</td>
+<td></td>
+</tr>
+<tr>
+<td>事务</td>
+<td>如果一次想保证原子性支持多个写命令，就需要使用事务，事务通过 MULTI、EXEC、WATCH 命令来实现事务</td>
+<td></td>
+</tr>
+<tr>
+<td>排序</td>
+<td>通过 sort 命令可以对列表键、集合键或者有序集合键进行排序</td>
+<td></td>
+</tr>
+<tr>
+<td>慢查询日志</td>
+<td>用于记录执行时间超过给定时长的命令请求、可以通过这个来监视和优化查询速度</td>
+<td></td>
+</tr>
+<tr>
+<td>监视器</td>
+<td>通过 monitor 命令，客户端可以讲自身编程一个监视器，实时的接收并且打印服务器当前处理的命令</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3>Redis 分布式和高可用方案</h3>
+<p>Redis 对于分布式环境下的部署有着成熟的解决方案，常用的方式如下:</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>部署方式</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>复制</td>
+<td>通过 slaveof 去配置主从服务器</td>
+<td>主从服务器上的数据一致</td>
+</tr>
+<tr>
+<td>Sentinel</td>
+<td>高可用的解决方案，实际上是在 复制方案的上层添加了一个 sentilnel 系统，来监视所有 redis 服务器，一旦主服务器宕机之后，会把其中一台从服务器选择为主服务器</td>
+<td></td>
+</tr>
+<tr>
+<td>集群</td>
+<td>Redis 分布式数据库的方案，通过分片（sharding）来进行数据共享、并提供复制和故障转移功能</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>（完）</p>
+<ol>
+<li>Redis 设计与实现</li>
+<li>Redis In Action</li>
+</ol>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

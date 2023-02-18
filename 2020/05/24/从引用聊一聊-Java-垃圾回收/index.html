@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>从引用聊一聊 Java 垃圾回收</h1>
+    <p>对象是 Java 世界的一等公民，所有的对象都是引用类型。除了 8 种基本的数据类型之外，其他的都是对象。</p>
+<h2>JVM 和垃圾回收</h2>
+<p>在开始讨论引用之前，首先需要了解一下 JVM 和垃圾回收。Java 与 C 语言等不同，C 语言代码经过编译器编译之后，就可以直接在 CPU 上执行，而 Java 不同，Java 语言需要先编译生成字节码文件，再由 JVM 生成可以在 CPU 上运行的代码。</p>
+<p>而且 Java 在生成对象时，并不需要手动分配内存，而是由 JVM 自动进行分配，对于不再使用的对象，JVM 会对这些对象占用的内存进行回收，这个过程称之为垃圾回收（Garbage Collection，简称 GC）。</p>
+<p>JVM 负责对程序运行时的内存进行管理。为了提升管理效率，JVM 将运行时的内存划分成了不同的区域，总体上的划分如下：</p>
+<p><img src="jvm-memory.png" alt=""></p>
+<p>每个线程独占一个虚拟机栈，通过程序计数器记录当前代码执行的位置，本地方法栈与虚拟机栈类似。</p>
+<p>程序中创建的大多数对象都在堆中分配内存，然后栈中的变量通过引用来指向堆中的对象，所以堆是各个线程共享的一块内存区域。方法区中则存储 Java 的类型信息、常量、静态变量等等（常量，静态变量也有可能会引用对象）。</p>
+<p>栈内的变量通过引用来和堆内的对象建立联系，建立联系的方式有两种：使用句柄或者直接指针。</p>
+<p>使用句柄方式如下：</p>
+<p><img src="handler.png" alt=""></p>
+<p>使用直接指针如下：</p>
+<p><img src="point.png" alt=""></p>
+<p>使用句柄的好处是引用中存储的是稳定的句柄地址，在对象被移动时只会改变句柄中的数据，而不会修改引用中的数据。但是直接指针的速度会更快，在主流的 HotSpot 虚拟机中，使用的就是直接指针。</p>
+<h2>Java 引用</h2>
+<p>Java 中的引用类型总共有四种：强引用，软引用，弱引用，虚引用。</p>
+<p>强引用就是最普通的对象引用，每当 new 一个对象的时候，都是生成一个强引用。这种引用对垃圾回收免疫，即使发生 OOM，这种对象也不会被回收。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object o = <span class="keyword">new</span> Object();</span><br></pre></td></tr></table></figure></p>
+<p>软引用的强度相对弱一些，在发生 OOM 之前，JVM 会尝试去回收这些对象，软引用的实现类是 SoftReference。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Object o = <span class="keyword">new</span> Object();</span><br><span class="line">SoftReference srf = <span class="keyword">new</span> SoftReference(o);</span><br></pre></td></tr></table></figure></p>
+<p>弱引用就更弱了，如果碰上了垃圾回收，弱引用的对象肯定会被回收，弱引用的实现类是 WeakReference。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Object o = <span class="keyword">new</span> Object();</span><br><span class="line">WeakReference wrf = <span class="keyword">new</span> WeakReference(o);</span><br></pre></td></tr></table></figure></p>
+<p>虚引用无法引用对象，实际只是做一些垃圾清理之后的事情, 虚引用的实现类是 PhantomReference。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Object o = <span class="keyword">new</span> Object();</span><br><span class="line">ReferenceQueue rq = <span class="keyword">new</span> ReferenceQueue();</span><br><span class="line">PhantomReference prf = <span class="keyword">new</span> PhantomReference(o, rq);</span><br></pre></td></tr></table></figure></p>
+<p>上面的各种引用都继承了 Reference 类，Reference 类中有一个 get 方法，如果软引用和弱引用所指向的对象没有被回收，那么使用 get 方法就可以获取原对象的引用。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Object o = <span class="keyword">new</span> Object();</span><br><span class="line">SoftReference srf = <span class="keyword">new</span> SoftReference(o);</span><br><span class="line">o = <span class="keyword">null</span>; <span class="comment">// 断开强引用</span></span><br><span class="line">System.out.println(srf.get()); <span class="comment">// java.lang.Object@17579e0f</span></span><br></pre></td></tr></table></figure></p>
+<p>对软引用手动触发垃圾回收：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Object o = <span class="keyword">new</span> Object();</span><br><span class="line">SoftReference srf = <span class="keyword">new</span> SoftReference(o);</span><br><span class="line">o = <span class="keyword">null</span>;</span><br><span class="line">System.gc(); <span class="comment">// 手动触发垃圾回收</span></span><br><span class="line">System.out.println(srf.get()); <span class="comment">// java.lang.Object@17579e0f</span></span><br></pre></td></tr></table></figure></p>
+<p>由于内存充足，所以软引用指向的对象并没有被回收。对于弱引用来说，情况就不一样：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Object o = <span class="keyword">new</span> Object();</span><br><span class="line">WeakReference wrf = <span class="keyword">new</span> WeakReference(o);</span><br><span class="line">o = <span class="keyword">null</span>; <span class="comment">// 断开强引用</span></span><br><span class="line">System.out.println(wrf.get()); <span class="comment">// java.lang.Object@17579e0f</span></span><br></pre></td></tr></table></figure></p>
+<p>对弱引用手动触发垃圾回收：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Object o = <span class="keyword">new</span> Object();</span><br><span class="line">WeakReference wrf = <span class="keyword">new</span> WeakReference(o);</span><br><span class="line">o = <span class="keyword">null</span>;</span><br><span class="line">System.gc(); <span class="comment">// 手动触发垃圾回收</span></span><br><span class="line">System.out.println(wrf.get()); <span class="comment">// null</span></span><br></pre></td></tr></table></figure></p>
+<p>由上面的代码可知，弱引用一定会被垃圾回收。软引用和弱引用一个经典的应用场景就是作为缓存使用，这两种引用所指向的对象一定会在发生 OOM 之前被回收，所以不会导致内存泄露问题。</p>
+<p>虚引用 PhantomReference 的 get 方法会一直返回 null，所以无法通过虚引用获取到对象。虚引用的意义在于提供了一种在对象被回收之后做某些事情的机制，在这里就需要谈到引用队列。</p>
+<p>ReferenceQueue 称之为引用队列。如果我们为一个引用指定一个引用队列，那么这个引用所指向的队列在被垃圾回收后，该引用就会被加入到引用队列中。</p>
+<p>我们就可以根据引用队列中的引用来判断某个对象是否被回收，或者直接清除引用队列的引用对象，具体的逻辑要看具体的业务场景。</p>
+<h2>引用和对象的可达性</h2>
+<p>假设新生成了一个对象：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object o = <span class="keyword">new</span> Object();</span><br></pre></td></tr></table></figure></p>
+<p>这个时候 o 是一个强引用，所以这个对象无法被回收。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">o = <span class="keyword">null</span>;</span><br></pre></td></tr></table></figure></p>
+<p>这样一来，这个变量就不再指向这个对象了，假设也没有其他类型的引用来指向这个对象，那么这个对象就称之为不可达，就可以被回收了。</p>
+<p>Java 中使用可达性分析来判断对象是否要被回收。可达性的出发点是一些被称之为 GC Roots 的根对象，以下的对象可以作为 GC Roots:</p>
+<ul>
+<li>栈中引用的对象</li>
+<li>方法区中静态属性引用的对象</li>
+<li>方法区中常量引用的对象</li>
+<li>JVM 内部的引用，比如基本数据类型对应的 Class 对象</li>
+</ul>
+<p>判断一个对象是否存活其实就是通过引用的类型来进行判断，对于弱引用和虚引用来说，基本就可以认为是不可达了，在下次垃圾回收时就会被回收，而对于强引用，毫无疑问，肯定是可达的。</p>
+<p>最难处理的就是软引用。软引用在 JVM 中并没有明确把软引用判断为可达还是不可达，而是会根据当前系统的状态进行判断，如果当前系统内存充足，那么该对象就会被判断为可达，如果系统内存不足，那么该对象就会倾向被回收。</p>
+<p>文 / Rayjun</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

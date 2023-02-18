@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>命令行搜索神器fzf</h1>
+    <p>在日常工作中，命令行搜索是一个必不可少的功能，虽然 find 命令也挺强大，但是在模糊匹配做的就不是很好。</p>
+<p>而 fzf 刚好解决了这个问题，fzf 是对目前 Linux 系统搜索的一个补充，而且这个搜索工具是可以交互式搜索的，就是可以实时根据输入的参数不同，展示不同的搜索结果。</p>
+<p>本文基于 macOS Big Sur 11.0.1</p>
+<h2>1. 安装</h2>
+<p>fzf 目前支持 macOS，Linux 和 Windows，可以通过直接下载安装包安装，也可以通过包管理器进行安装。</p>
+<p>重点说一下通过包管理器来安装。</p>
+<h3>macOS</h3>
+<p>在 macOS 上，可以通过 Homebrew 进行安装:</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install fzf <span class="comment"># 安装 fzf</span></span><br><span class="line">brew update <span class="comment"># 更新 fzf</span></span><br></pre></td></tr></table></figure></p>
+<p>或者通过 MacPorts 进行安装:</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">port install fzf <span class="comment"># 安装 fzf</span></span><br><span class="line">port upgrade fzf <span class="comment"># 更新 fzf</span></span><br></pre></td></tr></table></figure></p>
+<h3>Linux</h3>
+<p>在 Linux 系统上，使用相应的包管理器进行安装就可以，比如在 Ubuntu 上：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install fzf <span class="comment"># 安装 fzf</span></span><br></pre></td></tr></table></figure></p>
+<h3>Windows</h3>
+<p>在 Windows 上，可以使用 Chocolatey 或者 Scoop 包管理器进行安装：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">choco install fzf</span><br><span class="line">scoop install fzf</span><br></pre></td></tr></table></figure></p>
+<h3>Git</h3>
+<p>fzf 还可以直接下载源码进行安装:</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth 1 https://github.com/junegunn/fzf.git ~/.fzf</span><br><span class="line">~/.fzf/install</span><br></pre></td></tr></table></figure></p>
+<h2>2. 使用</h2>
+<p>在安装完成之后，可以直接在命令行进行使用，使用的方式很简单，打开一个命令行，在任意一个目录下输入 <code>fzf</code> 或者使用快捷键 CTRL-T，就可以进入到 fzf 的交互式搜索。</p>
+<p><img src="1.png" alt=""></p>
+<p>该目录下，包括子目录的所有文件都可以被搜索，而且可以随意的输入关键字，关键字可以被拆分，分别匹配。</p>
+<p>fzf 不但可以独立使用，还是以通过管道与其他的命令进行配合使用。</p>
+<p>比如结合 find：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find *.go ./ | fzf</span><br></pre></td></tr></table></figure></p>
+<p>比如结合 cat：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat demo.go | fzf</span><br></pre></td></tr></table></figure></p>
+<p>基本上，上面的功能就足够使用了，但 fzf 还有更能更强大的地方，比如在命令行搜索文件时，只能看见文件名称。</p>
+<p>fzf 可以让你在命令行就对这些文件进行预览，很简单，使用下面的命令的就可以了：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fzf --preview <span class="string">'cat &#123;&#125;'</span></span><br></pre></td></tr></table></figure></p>
+<p>这个命令表示使用 cat 来作为预览时打开文件的工具，效果如下：</p>
+<p><img src="2.png" alt=""></p>
+<p>另外，可以使用 CTRL-J 和 CTRL-K 上下翻动文件，右侧就可以出现文件内容的预览。</p>
+<p>使用 CTRL-C 可以退出交互界面。</p>
+<p>上面的内容基本就够用了，但 fzf 还有一些高阶的用法，比如对查询界面进行定制，使用更复杂的查询语句，对于这些，可以直接查看文档。</p>
+<p>文 / Rayjun</p>
+<h2>REF</h2>
+<p>[1] <a href="https://github.com/junegunn/fzf" target="_blank" rel="noopener">https://github.com/junegunn/fzf</a></p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

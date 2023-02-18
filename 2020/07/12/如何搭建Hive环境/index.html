@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>如何搭建Hive环境</h1>
+    <p>Hive 是一个 Hadoop 平台的上的数据仓库工具，可以将结构化的的诗句映射成一张表，并提供了类似 SQL 的查询的功能。</p>
+<p>HIve 没有集群的概念，只需要将 Hive 部署在 Hadoop 平台上就可以使用。</p>
+<p>本文来介绍一种搭建 Hive 环境的方式。</p>
+<p>搭建 Hive 所需的软件和环境：</p>
+<ul>
+<li>搭建了 Hadoop 集群的环境</li>
+<li>Hive-1.2.2</li>
+</ul>
+<p>搭建 Hadoop 集群可以参照我之前的文章，本文继续在之前的环境中进行，具体的机器名称及 IP 以自己的实际环境为准。</p>
+<h2>软件安装</h2>
+<p>将 Hive 安装包解压到目标目录下：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tar -zxvf apache-hive-1.2.2-bin.tar.gz -C /opt/module/</span><br></pre></td></tr></table></figure></p>
+<p>然后将 hive 目录重命名：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mv apache-hive-1.2.2-bin/ hive-1.2.2</span><br></pre></td></tr></table></figure></p>
+<h2>软件配置</h2>
+<p>需要配置 hive 的环境参数：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> hive-1.2.2</span><br><span class="line">$ cp conf/hive-env.sh.template conf/hive-env.sh</span><br></pre></td></tr></table></figure></p>
+<p>配置 hadoop 的位置：</p>
+<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ vi conf/hive-env.sh</span><br><span class="line">export HADOOP_HOME=/opt/module/hadoop-2.9.2</span><br><span class="line">export HIVE_CONF_DIR=/opt/module/hive/conf</span><br></pre></td></tr></table></figure></p>
+<p>在启动 hive 之前，需要先启动 hdfs 和 yarn：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sbin/start-dfs.sh</span><br><span class="line">$ sbin/start-yarn.sh</span><br></pre></td></tr></table></figure></p>
+<p>在 hdfs 上创建 hive 的根目录，并赋予权限：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ bin/hadoop fs -mkdir /tmp</span><br><span class="line">$ bin/hadoop fs -mkdir -p /user/hive/warehouse</span><br><span class="line">$ bin/hadoop fs -chmod g+w /tmp</span><br><span class="line">$ bin/hadoop fs -chmod g+w /user/hive/warehouse</span><br></pre></td></tr></table></figure></p>
+<p>然后就可以启动 hive了：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/hive</span><br></pre></td></tr></table></figure></p>
+<p>hive 到这里就可用了，但是 hive 在开始使用之后，会将创建的表的元数据存储在自带的本地数据库中，这样不安全，所以一般都会将这些数据单独存储到 MySQL中。</p>
+<h2>metastore 配置</h2>
+<p>在这里我介绍一种安装 MySQL 的方式，但这不是唯一的方式，可以根据自己的情况自行选择安装方式。</p>
+<h3>安装 mysql</h3>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ wget -i -c http://dev.mysql.com/get/mysql57-community-release-el7-10.noarch.rpm</span><br><span class="line">$ yum -y install mysql57-community-release-el7-10.noarch.rpm</span><br><span class="line">$ yum -y install mysql-community-server</span><br></pre></td></tr></table></figure></p>
+<p>mysql 设置</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl start  mysqld.service</span><br></pre></td></tr></table></figure></p>
+<p>获取 MySQL 密码</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ grep <span class="string">"password"</span> /var/<span class="built_in">log</span>/mysqld.log</span><br><span class="line">2020-07-08T14:43:58.666069Z 1 [Note] A temporary password is generated <span class="keyword">for</span> root@localhost: SySy,a&lt;j5cBw</span><br></pre></td></tr></table></figure></p>
+<p>然后就可以登录 MySQL:</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot -p<span class="string">"SySy,a&lt;j5cBw"</span></span><br></pre></td></tr></table></figure></p>
+<p>修改密码，后续就可以使用 root进行登录了：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ALTER USER <span class="string">'root'</span>@<span class="string">'localhost'</span> IDENTIFIED BY <span class="string">'root'</span>;</span><br></pre></td></tr></table></figure></p>
+<h3>Hive 连接 MySQL</h3>
+<p>Hive 连接MySQL 需要添加一个 mysql 的 connector，拷贝到 hive 的 lib 目录下：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cp mysql-connector-java-5.1.49-bin.jar /opt/module/hive-1.2.2/lib/</span><br></pre></td></tr></table></figure></p>
+<p>然后创建一个 <code>hive-site.xml</code>的配置文件：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ touch conf/hive-site.xml</span><br><span class="line">$ vi conf/hive-site.xml</span><br></pre></td></tr></table></figure></p>
+<p>在配置文件中填充以下内容，就是连接 MySQL 所需的配置：</p>
+<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0"?&gt;</span></span><br><span class="line"><span class="meta">&lt;?xml-stylesheet type="text/xsl" href="configuration.xsl"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>jdbc:mysql://localhost:3306/metastore?createDatabaseIfNotExist=true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">description</span>&gt;</span>JDBC connect string for a JDBC metastore<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionDriverName<span class="tag">&lt;/<span class="name">name</span>&gt;</span> <span class="tag">&lt;<span class="name">value</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">description</span>&gt;</span>Driver class name for a JDBC metastore<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionUserName<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>root<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">description</span>&gt;</span>username to use against metastore database<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionPassword<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>root<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">description</span>&gt;</span>password to use against metastore database<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>然后重新启动 hive：</p>
+<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/hive</span><br></pre></td></tr></table></figure></p>
+<p>正常启动后可以发现 mysql 中多了一个 metastore 的数据库，这个数据库存储着 hive 的中数据表的元数据。</p>
+<p>文 / Rayjun</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

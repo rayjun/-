@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>数据结构简明教程</h1>
+    <p>数据结构的重要性无需多说，本文总结了常用的数据结构及其特点和适用场景，具体有：</p>
+<ul>
+<li>数组</li>
+<li>链表</li>
+<li>栈</li>
+<li>队列</li>
+<li>跳表</li>
+<li>散列表</li>
+<li>树</li>
+<li>图</li>
+</ul>
+<h3>数组</h3>
+<p>数组是一种<strong>线性表</strong>数据结构，它用一组连续的内存空间，来存储一组相同的类型的数据。</p>
+<p><strong>数组有两个特点：</strong></p>
+<ul>
+<li>数据线性排列，每个数据最多有前和后两个方向</li>
+<li>有着<strong>连续</strong>的内存空间和相同类型的数据</li>
+</ul>
+<p>这两个特点带来随机访问的特性，根据下标随机访问的时间复杂度为 $O(1)$，但是为了保持内存数据的连续性，会导致插入和删除这两个操作比较低效，因为需要不断去移动数据。</p>
+<p>随机访问实际上是通过<strong>寻址公式</strong>来实现的，为了让寻址公式可以正常运行，那么要求数据中存储的数据类型必须要一样。</p>
+<p><strong>寻址公式</strong>:
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[i]_address &#x3D; base_address + i * data_type_size</span><br></pre></td></tr></table></figure></p>
+<h3>链表</h3>
+<p>链表是通过<strong>引用（指针）<strong>将零碎的内存块串联起来。每一个内存块称之为</strong>结点</strong>。</p>
+<p>常见的链表类型有：</p>
+<ul>
+<li>单链表</li>
+<li>双向链表</li>
+<li>循环联表</li>
+</ul>
+<p>链表的第一个结点叫<strong>头结点</strong>，最后一个节点叫<strong>尾节点</strong>，尾节点的 next 指向 NULL。</p>
+<p>链表结点的结构如下：
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;        </span><br><span class="line">     Node next; <span class="comment">// 记录下一个结点</span></span><br><span class="line">     Node prev; <span class="comment">// 记录上一个结点，双向链表才会有</span></span><br><span class="line">     <span class="keyword">int</span> data; <span class="comment">// 存储数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>链表与数组的不同之处：</strong></p>
+<ul>
+<li>数组内存连续，链表内存不连续</li>
+<li>数组本身不支持动态扩容，链表本身支持动态扩容</li>
+</ul>
+<p><strong>链表和数组的性能对比：</strong></p>
+<table>
+<thead>
+<tr>
+<th>时间复杂度</th>
+<th>数组</th>
+<th>链表</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>插入、删除</td>
+<td>$O(N)$</td>
+<td>$O(1)$</td>
+</tr>
+<tr>
+<td>随机访问</td>
+<td>$O(1)$</td>
+<td>$O(n)$</td>
+</tr>
+</tbody>
+</table>
+<h3>栈</h3>
+<p>栈是一种操作受限的线性表，只允许在一段插入和删除数据，<strong>后进者先出，先进者后出</strong>。</p>
+<p><strong>栈的实现方式：</strong></p>
+<ul>
+<li>使用数组实现的栈称之为顺序栈</li>
+<li>使用链表实现的栈称之为链式栈</li>
+</ul>
+<p>栈的时间复杂度和空间复杂度都是 O(1)。<strong>顺序栈</strong> 本身是不支持扩容的，但是可以通过将其全部元素拷贝到另一个更大的数组中实现扩容。在扩容的过程中，使用摊还分析可以得出平均的时间复杂度为 O(1)。</p>
+<p><strong>栈的应用：</strong></p>
+<ul>
+<li>函数调用栈</li>
+<li>表达式求值</li>
+<li>括号匹配</li>
+</ul>
+<h3>队列</h3>
+<p>队列也是一种操作受限的线性表。特点是先进者先出</p>
+<p>队列和栈非常相似，只有两个操作，入队（enqueue）和出队（dequeue）两个操作。</p>
+<p><strong>队列的实现方式：</strong></p>
+<ul>
+<li>使用数组实现的<strong>顺序</strong>队列</li>
+<li>使用链表实现的<strong>链式</strong>队列</li>
+</ul>
+<p>数组实现队列的时候会有数据搬移的问题，如果为了彻底解决这个问题，可以通过实现 <strong>循环队列</strong> 的方式来解决问题。</p>
+<p><strong>队列的应用：</strong></p>
+<ul>
+<li>使用数组实现的循环队列</li>
+<li>阻塞队列（生产者-消费模型）</li>
+<li>并发队列</li>
+</ul>
+<h3>跳表</h3>
+<blockquote>
+<p>通过对链表添加索引，就可以支持“二分”查找</p>
+</blockquote>
+<p>跳表可以支持快速的插入、删除、查找操作，在一些场景下甚至可以替代红黑树。</p>
+<p><strong>跳表的实现：</strong></p>
+<p>跳表其实就是在有序链表的基础上，每隔 k 个节点提取一个节点到上一级，抽出来的那一层就是索引层。
+加了一层索引之后，查找一个节点需要遍历的节点就少了，查找效率也就提高了。而且这个索引可以添加多层。</p>
+<p><strong>链表的时间复杂度：</strong></p>
+<p>跳表的高度是logmn，每隔 m 节点建立一个索引，n 为节点总数，可以适当增大 m 来减小跳表的时间复杂度。 跳表查询的时间复杂度为 O(logn), 空间复杂度为 O(n)。</p>
+<p><strong>跳表索引的更新：</strong></p>
+<p>在往跳表中插入数据的过程中，需要更新索引，如果不更新，将会使跳表退化成链表，链表的更新是通过一个随机函数来更新的，比如随机函数生成 k，那么就将数据更新到 1 ~ k 级索引中。</p>
+<p><strong>跳表的应用：</strong></p>
+<ul>
+<li>redis</li>
+</ul>
+<h3>散列表</h3>
+<p>散列表也称之为<strong>哈希表</strong>。</p>
+<blockquote>
+<p>散列表是用<strong>数组</strong>支持按照下标随机访问数据的特性，所以散列表其实就是数组的一种扩展，由数组演化而来。</p>
+</blockquote>
+<h4>散列表的实现</h4>
+<p>散列表的结构与数组类似，访问元素的时间复杂度也是 O(1)。散列表通过<strong>散列函数（哈希函数）<strong>将散列表中每个元素的</strong>键（关键字）<strong>映射成</strong>散列值</strong>。在查询的过程中，使用相同的散列函数将键转化成散列值并且快速访问到数据。</p>
+<p>所以对于一个散列表来说，散列函数（hash(key)）是最为关键的一点，<strong>hash</strong>就是哈希函数，<strong>key</strong>是键或者关键字。构建哈希函数有三个要点：</p>
+<p><strong>1.</strong> 散列函数计算得到的散列是一个非负整数
+<strong>2.</strong> 如果 key1 == key2，那么 hash(key1) == hash(key2)
+<strong>3.</strong> 如果 key1 != key2，那么 hash(key1) != hash(key2)</p>
+<p>但是如果实现一个完全满足第三个条件的散列表基本是不可能的。这种情况称之为<strong>散列冲突</strong>。</p>
+<h4>散列冲突</h4>
+<p>解决散列冲突有两种方法：<strong>开放寻址法</strong> 和 <strong>链表法</strong></p>
+<p><strong>开放寻址法</strong>：
+开放寻址法的核心思想是如果出现了散列冲突么，那么我们就找一个新的空闲位置将数据插入。找到新的空闲位置有如下三种方法：</p>
+<ul>
+<li>线性探测</li>
+<li>二次探测</li>
+<li>双重散列</li>
+</ul>
+<p>线性探测就是沿着冲突的位置一直往下找，直到找到空闲的位置，查找的时候类似，如果找到空闲位置还灭有找到，说明元素在散列表中不存在。删除的时候要注意将元素标记为已删除标记，否则会影响查找。</p>
+<p>线性探测是每次将下标加1，而二次探测则是将下标每次都加当前下标的二次方（hash(key)+ 0, hash(key1) + 1^2， hash(key2) + 2^2）。而双重散列就是使用两个散列函数，第一个散列函数冲突的时候就会使用第二个散列函数。</p>
+<p>当链表中空闲位置很少的时候，冲突的概率就会增大不少。空位的多少使用装载因子来表示：</p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">装载因子 = 散列表中元素的个数 / 散列表的长度</span><br></pre></td></tr></table></figure>
+装载因子越大，说明空闲位置越少，冲突也就越多，散列表的性能就会下降。</p>
+<p><strong>链表法</strong>：</p>
+<p>链表法就是在每个下标的位置挂上一条链表，所有散列值相同的元素就会存储在这个链表中。查找删除的时间复杂度是 O(k)，其中 k = n/m。n 表示散列表中数据的个数，m 表示散列表中链表的条数。</p>
+<blockquote>
+<p>链表法更灵活，比如可以将链表换成红黑树等数据结构</p>
+</blockquote>
+<h4>工业级散列表的设计方法</h4>
+<p>如果哈希表的散列函数设计的不好或者装载因子过高，都有可能导致发生哈希碰撞的可能，使查询效率降低。</p>
+<p>所以设计散列表会考虑一下三个方面：</p>
+<p><strong>散列函数的设计</strong>:</p>
+<ul>
+<li>散列函数的设计不能太复杂</li>
+<li>散列函数生成的值要尽可能随机并且分部均匀</li>
+</ul>
+<p><strong>装载因子与扩容</strong>:</p>
+<ul>
+<li>装载因子需要控制在合理的范围内，如果装载因子过大，就需要动态扩容</li>
+<li>动态扩容需要视情况而定，不能简单的一次性扩容，可以新建一个散列表，直接插入数据到新的散列表，通过一点点将老散列表的数据迁移过去。</li>
+</ul>
+<p><strong>冲突解决方法</strong>：</p>
+<ul>
+<li>开放寻址法： 数据量小，装载因子小时适合</li>
+<li>链表法：比较适合存储大对象，大量数据的散列表</li>
+</ul>
+<p>散列表和链表经常在一起使用，这两者组合使用其实就是结合了数组和链表的优势，规避两者的不足。</p>
+<h3>树</h3>
+<p>树结构与现实生活中树的结构非常类似。树中的每个元素称之为<strong>节点</strong>，用连线连接的两个节点，我们称之为<strong>父子关系</strong>。连接同一个父节点的元素我们称之为<strong>兄弟节点</strong>，在树中，所有的兄弟节点是不能相互连接的。没有父子节点的元素称之为<strong>根节点</strong>。没有子节点的元素称之为<strong>叶子节点</strong>。</p>
+<p>树中还有几个关键的概念:</p>
+<ul>
+<li><strong>节点的高度</strong>：节点到叶子节点的最长路径（边数）</li>
+<li><strong>节点的深度</strong>：根节点到这个节点所经历的边的个数</li>
+<li><strong>节点的层数</strong>：节点的深度 + 1</li>
+<li><strong>树的高度</strong>：根节点的高度</li>
+</ul>
+<h4>二叉树</h4>
+<p>树的结构有多种，但是最常用的还是二叉树，二叉树的每个节点最多两个子节点。</p>
+<p><strong>满二叉树</strong>：</p>
+<p>叶子节点都在最底层，除了叶子节点外，每个节点都有左右两个节点，这种树称之为满二叉树</p>
+<p><strong>完全二叉树</strong>：
+叶子节点在最底下两层，最后一层的叶子节点都靠左排列，并且除了最后一层，其他层的节点个数都要达到最大，这种树称之为完全二叉树</p>
+<h4>树的存储方式</h4>
+<p><strong>链式存储法</strong>：</p>
+<p>节点使用链表节点表示，每个节点都有一个 left 指针和一个 right 指针，大部分二叉树都是这种结构来实现的</p>
+<p><strong>顺序存储法</strong>：</p>
+<p>节点 x 存储的位置为 i，那么左子节点的位置就是 2 * i，右子树的位置就是 2 * i + 1。一般为了计算方便，根节点存储的位置为 1。</p>
+<p>通过顺序存储的方式，一颗完全二叉树仅仅浪费一个下标为0的存储位置，如滚是非完全二叉树，就会浪费比较多的存储空间。</p>
+<p>一棵完全二叉树，使用数组存储是最省内存的方式。</p>
+<h4>二叉树的遍历</h4>
+<p>三种遍历方式的顺序是相对于根节点来说的，首先遍历根节点就叫前序，在中间顺序遍历根节点就叫中序，最后遍历根节点就叫后序。</p>
+<ul>
+<li><strong>前序遍历</strong>：对树中的任意节点来说，先打印这个节点，再打印它的左子树，然后打印它的右子树</li>
+<li><strong>中序遍历</strong>：对树中的任意节点来说，先打印它的左子树，然后打印这个节点，最后打印它的右子树</li>
+<li><strong>后序遍历</strong>：对树中的任意节点来说，先打印它的左子树，然后打印它的右子树，最后打印这个节点</li>
+</ul>
+<p>遍历树的时间复杂度为 O(n)。</p>
+<blockquote>
+<p>实际上这三种遍历方式就是一个递归的过程</p>
+</blockquote>
+<h4>二叉搜索树</h4>
+<blockquote>
+<p>支持动态数据聚合的快速插入、删除和查找操作。</p>
+</blockquote>
+<p>二叉搜索树中的任意一个节点的左子树的值又要小于这个节点的值，右子树的值都要大于这个节点的值。</p>
+<blockquote>
+<p>二叉搜索树中序遍历可以输出一个有序数据的序列，二叉搜索树也称之为二叉排序树。</p>
+</blockquote>
+<p>二叉搜索树的操作性能与树的高度是成正比的，左右子树高度相差不大时，时间复杂度为 O(logn)，如果左右子树的高度相差过大，那么时间复杂度就会退化为 O(n)。</p>
+<h4>平衡二叉搜索树</h4>
+<p>平衡二叉树是为了解决普通二叉树在频繁的插入、删除等动态操作中，出现时间复杂度退化的情况，从 $O(logN)$ 退化到 $O(N)$</p>
+<ul>
+<li>AVL 树</li>
+<li>R-B tree（红黑树）</li>
+<li>Splay Tree（伸展树）</li>
+<li>Treap（树堆）</li>
+</ul>
+<p>二叉树的严格定义是：二叉树中任意一个节点的左右子树的高度相差不能大于一（大多数情况下并不会严格遵守）</p>
+<p>平衡二叉搜索树中平衡是指左子树和右子树的高度相对来说相差不大，这样整棵树的查找、插入和删除的效率就要高一些。</p>
+<h4>递归树</h4>
+<p>递归树用于分析时间复杂度。</p>
+<h4>堆</h4>
+<blockquote>
+<p>堆是一种特殊的树，本质上就是一棵完全二叉树</p>
+</blockquote>
+<ul>
+<li>堆是一棵完全二叉树</li>
+<li>堆中的每一个节点的值都必须大于（或小于等于）其子树中每个节点的值</li>
+</ul>
+<p><strong>堆的应用：</strong></p>
+<ul>
+<li>优先级队列
+<ul>
+<li>合并有序小文件</li>
+<li>高性能定时器</li>
+</ul>
+</li>
+<li>求海量数据中求 Top K</li>
+<li>求中位数问题</li>
+</ul>
+<p><strong>堆排序：</strong></p>
+<p>堆排序可以分成两个步骤，<strong>建堆</strong>和<strong>排序</strong>。</p>
+<p>通过建立大顶堆，最大的元素就已经在堆顶了。然后每次都取堆顶的元素。依次取下来就排完序了。</p>
+<h3>图</h3>
+<p>图是一种比树更复杂的数据结构。</p>
+<p>图的相关概念：</p>
+<ul>
+<li>图中的元素称之为<strong>顶点</strong>，图的顶点可以与<strong>其他任意顶点</strong>相连</li>
+<li>顶点与定点相连的关系称之为<strong>边</strong></li>
+<li>边有方向的图称之为<strong>有向图</strong>，没有方向的图称之为<strong>无向图</strong>，还有一种边带权重的称之为<strong>带权图</strong></li>
+<li>与顶点相连的边数称之为<strong>度</strong>，度分为<strong>入度</strong>和<strong>出度</strong></li>
+</ul>
+<p><strong>图的存储方式：</strong></p>
+<ul>
+<li>邻接矩阵存储</li>
+<li>邻接表</li>
+</ul>
+<p><strong>图的搜索算法：</strong></p>
+<ul>
+<li>广度优先搜索</li>
+<li>深度优先搜索</li>
+</ul>
+<p>(完)</p>
+<ol>
+<li>极客时间数据结构与算法之美专栏</li>
+</ol>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

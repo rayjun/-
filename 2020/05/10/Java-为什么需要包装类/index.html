@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Java 为什么需要包装类</h1>
+    <p>在 Java 的世界中，对象是一等公民，但 Java 也还是做出了妥协，出于对性能的考虑而保留了 8 种基础数据类型。
+但是在某些场景下，无法直接使用基本数据类型，所以还是需要使用对象，Java 的包装类就是这样出现的。</p>
+<p>## 自动装箱和拆箱</p>
+<p>看下面的代码：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;Integer&gt;();</span><br><span class="line"><span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">list.add(i); <span class="comment">// 装箱;</span></span><br></pre></td></tr></table></figure></p>
+<p>Java 编译器会自动把基本数据类型转成对象，这个称之为<strong>装箱</strong>。 到底是怎么做到的呢？看下面的字节码：
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ...</span></span><br><span class="line">12: invokestatic  #3                  // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;</span><br><span class="line">15: invokevirtual #10                 // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z</span><br><span class="line"><span class="comment">// ...</span></span><br></pre></td></tr></table></figure>
+简单解释一下 <code>invokestatic</code> 和 <code>invokevirtual</code>，这两个都是 JVM 的指令，前者表示调用 Java 的
+静态方法，后者表示调用对象方法。</p>
+<p>invokestatic 调用了 Integer.valueOf() 方法，所以装箱实际上就是调用了 <code>Integer.valueOf()</code> 方法。</p>
+<p><strong>拆箱</strong>也很简单，看下面的代码：
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Integer i = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> i2 = <span class="number">1</span>; <span class="comment">// 拆箱;</span></span><br></pre></td></tr></table></figure>
+拆箱的字节码如下：
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  7: invokevirtual #2                  // Method java/lang/Integer.intValue:()I</span><br><span class="line">  <span class="comment">// ...</span></span><br></pre></td></tr></table></figure>
+同理，拆箱实际调用的是 Integer 对象方法 <code>i.intValue()</code>。</p>
+<p>从上文可以看出，Java 中基本类型的装箱和拆箱实际上是编译器提供的语法糖，是在编译器层面进行处理的，编译器会将装箱和拆箱编译成调用方法的字节码。在虚拟机层，通过调用方法来实现包装类的装箱和拆箱。</p>
+<p>Byte，Short，Long，Float，Double，Boolean，Character 与 Integer 类似。</p>
+<p>但是需要注意，还有一个特殊的包装类 Void。 Void 是 void 的包装类，Void 不能被继承，也不能被实例化，仅仅就是一个占位符。</p>
+<p>如果一个方法使用 void 修饰，说明方法没有返回值，如果使用 Void 修饰，则该方法只能返回 null。
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Void <span class="title">nullFunc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>; <span class="comment">// 返回其他值会编译不通过</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+Void 常用于反射中，判断一个方法的返回值是不是 void。
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (Method method : VoidDemo.class.getMethods()) &#123;</span><br><span class="line">    <span class="keyword">if</span> (method.getReturnType().equals(Void.TYPE)) &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+## 包装类的缓存
+先看下面的代码：
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Integer i1 = <span class="number">200</span>;</span><br><span class="line">Integer i2 = <span class="number">200</span>;</span><br><span class="line">System.out.println(i2 == i1); <span class="comment">// false</span></span><br><span class="line">Integer i3 = <span class="keyword">new</span> Integer(<span class="number">100</span>);</span><br><span class="line">Integer i4 = <span class="keyword">new</span> Integer(<span class="number">100</span>);</span><br><span class="line">System.out.println(i3 == i4); <span class="comment">// false</span></span><br><span class="line">Integer i5 = <span class="number">100</span>;</span><br><span class="line">Integer i6 = <span class="number">100</span>;</span><br><span class="line">System.out.println(i5 == i6); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+上面的代码应该算是一道经典的面试题了。通过上文可知，装箱操作使用的是 <code>Integer.valueOf()</code> 方法，源码如下：
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Integer <span class="title">valueOf</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (i &gt;= IntegerCache.low &amp;&amp; i &lt;= IntegerCache.high)</span><br><span class="line">        <span class="keyword">return</span> IntegerCache.cache[i + (-IntegerCache.low)];</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Integer(i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>关键实现在 IntegerCache 中，在某个范围内的数值可以直接使用已经创建好的对象。IntegerCache 是一个静态内部类，而且不能实例化，仅仅用来缓存 Integer 对象：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">IntegerCache</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> low = -<span class="number">128</span>; <span class="comment">// 缓存对象的最小值，不能配置</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> high;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> Integer cache[];</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">int</span> h = <span class="number">127</span>; <span class="comment">// 缓存对象的最大值可以配置，但是不能超过 Integer的最大值，不能小于 127</span></span><br><span class="line">        String integerCacheHighPropValue =</span><br><span class="line">            sun.misc.VM.getSavedProperty(<span class="string">"java.lang.Integer.IntegerCache.high"</span>);</span><br><span class="line">        <span class="keyword">if</span> (integerCacheHighPropValue != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">int</span> i = parseInt(integerCacheHighPropValue);</span><br><span class="line">                i = Math.max(i, <span class="number">127</span>);</span><br><span class="line">                h = Math.min(i, Integer.MAX_VALUE - (-low) -<span class="number">1</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span>( NumberFormatException nfe) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        high = h;</span><br><span class="line">        cache = <span class="keyword">new</span> Integer[(high - low) + <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">int</span> j = low;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; cache.length; k++)</span><br><span class="line">            cache[k] = <span class="keyword">new</span> Integer(j++);</span><br><span class="line">        <span class="keyword">assert</span> IntegerCache.high &gt;= <span class="number">127</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">IntegerCache</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>缓存对象的默认大小范围是 -128 ~ 127，正数范围可以根据自己的需要进行调整，负数最小就是 -128，不可以调整。如果不在这个范围内，就会创建新的对象。</p>
+<p>上面代码的结果就很清晰了，第一个结果为 false 是因为 200 超出了默认的缓存范围，因此会创建新的对象。第二个结果为 false 是因为直接使用 new 来创建对象，而没有使用缓存对象。第三个结果为 true 是因为刚好在缓存的范围内。</p>
+<p>所以在使用 Integer 等包装类生成对象时，不要使用 new 去新建对象，而应该尽可能使用缓存的对象，而且比较两个 Integer 对象时不要使用 ==，而应该使用 equals。</p>
+<p>其他的包装类的实现基本类似，只是在对象缓存上的实现有些不同：</p>
+<p>- Byte 的范围刚好是 -128~127，所以都可以直接从缓存中获取对象。
+- Short 缓存范围也是 -128 ~ 127，而且不可以调整。
+- Long 的实现与 Short 一致。
+- Character 因为没有负数，所以缓存范围是 0 ~ 127，也不可以调整范围。
+- Boolean 的值只有 true 和 false，在类加载的时候直接创建好。
+- Float，Double 则没有缓存机制，因为是浮点数，可以表示无穷无尽的数，缓存的意义不大。</p>
+<p>## 小心空指针
+此外还需要注意的一点就是，使用包装类生成的是对象，是对象就有可能出现空指针异常，在代码中需要进行处理。
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Integer integer = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">int</span> i = integer; <span class="comment">// NPE</span></span><br></pre></td></tr></table></figure></p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

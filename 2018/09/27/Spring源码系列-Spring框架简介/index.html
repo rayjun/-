@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Spring源码系列-Spring框架简介</h1>
+    <h4>Spring 整体架构</h4>
+<p>Spring 的架构图如下所示:</p>
+<p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/0AF05523-590D-4F6A-A1B0-ADA8CC4D5895.png" alt="spring基础架构"></p>
+<p>在 Spring 框架中，容器是核心部分，容器主要由以下几部分构成：spring-core spring-beans spring-context spring-context-support spring-expression 其中 spring-core 和 spring-brans 是构成Spring框架的基础，包括了IOC和DI的特性。 spring-context 负责容器中beans创建和管理。spring-context-support 负责集成第三方的包进入到框架中。spring-expression 是一组在运行时可以查询和操纵对象的表达式。</p>
+<h4>Spring 的依赖注入</h4>
+<p>提到Spring容器，就不得不提到IOC(控制反转) 和 DI(依赖注入)，其实 IOC 和 DI描述的是同一个概念。依赖注入是指一个对象定义的依赖只通过构造函数参数或者setter方法来设置，容器在创建这个对象的时候会将该对象依赖的对象都注入进来。这个过程也称之为控制反转。对象本身可以通过构造对象或者 Service Locator 模式来实例化依赖。</p>
+<p>这个概念这样看起来还是太过于抽象了，那么来看一个具体的例子。 原来的开发模式:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Foo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> SpringIoc springIoc;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.springIoc = <span class="keyword">new</span> SpringIoc();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>依赖注入的模式是这样的：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Foo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> SpringIoc springIoc;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.springIoc = <span class="keyword">new</span> SpringIoc();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>完了？完了。看起来这是在逗你吧。但是实际上，依赖注入干的就是这件事，依赖注入的核心是每个对象都不要去控制自己的依赖，所有的依赖都通过外部注入进来。那有人就说那这件事没有 Spring 也可以干这件事呀， 如下：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BarMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		SpringIoc springIoc = <span class="keyword">new</span> SpringIoc();</span><br><span class="line">		Bar bar = <span class="keyword">new</span> Bar(springIoc);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但是需要注意的是，在这个代码中。还是存在需要手动去新建对象的情况，也就是说，问题根本没有被解决。这个时候，Spring 容器的出现就是为了解决这个问题的。Spring容器的出现就是为了干掉这个手动生成对象的操作。</p>
+<p>Spring 容器的核心思想是所有的bean及其依赖都不需要手动去生成，都只需要通过Spring 容器来统一管理。需要实例化的时候直吴容器里面取就行了。Spring 容器这么强大，那么Spring容器到底是什么东西呢？</p>
+<p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/12A90F98-6146-4012-A83D-617E7AC84DA0.png" alt=""></p>
+<p>可以看出来，容器就是Spring框架提供用来生成和管理bean的机制。所有被容器管理的java对象都称之为 bean，bean之间的关系是通过配置的元数据来决定的，容器也是通过元数据来创建bean的。Spring容器与Java类和配置文件有很大的关系。一句话总结就是Spring容器可以根据提供的配置文件来维护bean及其依赖关系。</p>
+<p>容器的初始化需要加载一个配置，通过这个配置才能确定容器中bean的生成和管理方式。容器的配置方式可以有多种：</p>
+<ul>
+<li>xml配置</li>
+<li>基于注解的配置</li>
+<li>基于java的配置</li>
+</ul>
+<p>这些配置方式都不是独立的，都可以结合起来使用，比如xml配置就经常与基于注解的配置方式结合起来使用。示例代码如下:</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		BeanFactory beanFactory = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">"spring-ioc.xml"</span>).getBeanFactory();</span><br><span class="line">		ApplicationContext applicationContext = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">"spring-ioc.xml"</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		SpringIoc springIocFromBeanFactory = (SpringIoc) beanFactory.getBean(<span class="string">"springIoc"</span>);</span><br><span class="line">		SpringIoc springIocFromApplicationContext = (SpringIoc) applicationContext.getBean(<span class="string">"springIoc"</span>);</span><br><span class="line"></span><br><span class="line">		springIocFromBeanFactory.hellIoc();</span><br><span class="line">		springIocFromApplicationContext.hellIoc();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通常获取 ApplicationContext 对象来作为访问容器的接口。通过 ApplicationContext来获取 bean(当然实际的使用当中不会这么用)。 在容器初始化的过程中，容器会根据配置文件将大部分bean也实例化(设置了延迟加载的bean不会再启动阶段就初始化)。一个基于Spring的应用也算是启动起来了。 这些基本就是Spring框架最为核心的内容了，其他的Spring 模块都是在容器的基础之上构建出来的。</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

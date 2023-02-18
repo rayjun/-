@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Spring系列之如何优雅的构建Demo环境</h1>
+    <p>在最开始学习 Java 的时候，最常用的方式就是写一个 main 方法，然后在这个方法中不断写代码，然后跑起来。通常这样也不会有问题，但是这难免有点不优雅，毕竟一个类只能有一个 main 方法。</p>
+<h2>如何优雅的写 Demo</h2>
+<p>特别是要系统学习一些框架的时候，通常需要写大量的示例代码。使用 main 方法时，很多代码写过一遍后就得删除或者注释掉，回头想重新看这个例子的时候就得重新写。</p>
+<p>总的来是，直接在 main 中写 Demo 代码有如下的问题：</p>
+<ul>
+<li>一个类只能有一个 main 方法</li>
+<li>一次只能执行一个 main 方法</li>
+<li>每次改变 demo 逻辑都需要修改现有代码</li>
+</ul>
+<p>其实 Java 中已经提供了一个很好的工具来解决这个问题，没错，就是 JUnit。使用 JUnit 来写 Demo 代码有如下的好处：</p>
+<ul>
+<li>JUnint 配置简单，添加一个 jar 包，不需要添加额外配置</li>
+<li>一个类中可以写任意多个测试用例，每个测试用例可以单独运行或者组合运行</li>
+<li>每个测试用例都可以重新运行</li>
+</ul>
+<p>这样就可以很好的管理写过的 Demo，在必要的时候，都可以拿出来复习。更重要的是可以通过这种方式来培养写单元测试的意识，毕竟，写软件终究要回归到精雕细琢，那么单元测试就是一大利器。</p>
+<blockquote>
+<p>本文基于 JUnit5，Spring5，Maven3.6</p>
+</blockquote>
+<h2>使用 JUnit 写 Spring Demo</h2>
+<p>下面来看一下如何使用 JUnit 快速的搭建一个 Spring 的 Demo 环境。</p>
+<p>我们使用 Maven 作为构建工具，创建一个 maven 的普通项目后，需要引入相关的依赖。</p>
+<blockquote>
+<p>在这里我只引入了 Spring5 的核心依赖，如果有需要，可以自行引入其他的依赖</p>
+</blockquote>
+<h3>引入依赖</h3>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">&lt;properties&gt;</span><br><span class="line">    &lt;spring.version&gt;5.2.2.RELEASE&lt;/spring.version&gt;</span><br><span class="line">    &lt;junit5.version&gt;5.1.0-M2&lt;/junit5.version&gt;</span><br><span class="line">&lt;/properties&gt;</span><br><span class="line"></span><br><span class="line">&lt;dependencies&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;org.springframework&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;spring-core&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;$&#123;spring.version&#125;&lt;/version&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;org.springframework&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;spring-beans&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;$&#123;spring.version&#125;&lt;/version&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;org.springframework&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;spring-context&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;$&#123;spring.version&#125;&lt;/version&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;org.springframework&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;spring-test&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;$&#123;spring.version&#125;&lt;/version&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;org.junit.jupiter&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;junit-jupiter-engine&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;$&#123;junit5.version&#125;&lt;/version&gt;</span><br><span class="line">        &lt;scope&gt;test&lt;/scope&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line">&lt;/dependencies&gt;</span><br></pre></td></tr></table></figure></p>
+<p>除了引入 spring-test 之外，还需要引入 JUnit，因为 spring-test 依赖 Junit。</p>
+<p>然后项目的基本结构如图：</p>
+<p><img src="struct.png" alt=""></p>
+<p>在 test 目录下创建一个包，和源码码包名保持一致，然后就可以开始写测试代码了。</p>
+<h3>启动 Spring 容器</h3>
+<p>启动 Spring 项目的关键在于启动 Spring 容器，在单元测试从也一样，这里分别演示一下 XML 版本和 Java 配置版本。</p>
+<p><strong>XML版</strong>：</p>
+<p>首先在 <strong>resources 目录</strong>下创建一个 beans.xml 配置文件（文件名称可以随便起）：</p>
+<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:context</span>=<span class="string">"http://www.springframework.org/schema/context"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">       https://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">       http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"cn.rayjun.spring5demo"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>加了 <code>component-scan</code> 来扫描基本的包，该包下的 bean 会被 Spring 容器自动加载并初始化。</p>
+<p>容器的配置创建好了，然后就需要在测试类中用如下的方式加载了：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ContextConfiguration</span>(locations = <span class="string">"classpath:beans.xml"</span>)</span><br><span class="line"><span class="meta">@SpringJUnitConfig</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringTest1</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<code>@SpringJUnitConfig</code> 注解是 Spring 增强过了的，加上这个注解之后，就可以在单元测试中很方便的使用 Spring 的特性。</p>
+<p><code>@ContextConfiguration</code> 用来加载 Spring 容器的配置文件，除了可以加载 XML，还可以加载 Java 配置。</p>
+<p>这样就完成容器的初始化了。</p>
+<p><strong>Java 版</strong></p>
+<p>创建一个 Java 类来充当配置文件，位置放在哪里都行：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan</span>(basePackages = <span class="string">"cn.rayjun.spring5demo"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SoldierConfig</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>@Configuration</code> 表明这个类是一个配置类。<code>@ComponentScan</code> 与 XML 配置中的 <code>component-scan</code> 作用一样。</p>
+<p>然后同样在测试用例中启动容器：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ContextConfiguration</span>(classes = SoldierConfig.class)</span><br><span class="line"><span class="meta">@SpringJUnitConfig</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringTest2</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+这样，就算是配置好了。</p>
+<h3>编写第一个测试用例</h3>
+<p>容器相关的配置已经准备好了，接下来来编写第一条测试用例：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ContextConfiguration</span>(locations = <span class="string">"classpath:beans.xml"</span>)</span><br><span class="line"><span class="meta">@SpringJUnitConfig</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringTest1</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Gun gun;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Assertions.assertNotNull(gun);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过上面的代码我们发现，可以直接通过注入的方式来注入相关的依赖。比如 Gun 类，只要在配置中声明好，然后就可以在测试用用例使用。甚至可以通过这种方式获取到容器本身：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ContextConfiguration</span>(locations = <span class="string">"classpath:beans.xml"</span>)</span><br><span class="line"><span class="meta">@SpringJUnitConfig</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringTest1</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ApplicationContext context;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Gun gun = (Gun) context.getBean(<span class="string">"gun"</span>);</span><br><span class="line">        Assertions.assertNotNull(gun);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+这样，就可以很方便的测试容器中的任何代码，通过单元测试还可以判断代码质量。如果很难为一段代码写单元测试，那说明这段代码和某些依赖耦合的很紧。因为在 Spring 容器中，核心都是通过依赖注入的方式来管理依赖，如果某项依赖无法通过依赖注入，可能就要考虑一下代码是否有问题了。</p>
+<h3>高阶用法</h3>
+<p>除了这些之外，有时候还会有一些复杂的情况，比如涉及到 Web，数据库方面测试。</p>
+<p>spring-test 提供了 Web 测试的一样方法，来模拟接口或者 web 页面的访问。然后对于其他的一些异常情况的模拟，比如网速慢，真实环境难以搭建等等问题，就需要使用 Mock 的方式来模拟这些情况，就需要 再引入一些其他的依赖，这些回头再用新的文章来说明。</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

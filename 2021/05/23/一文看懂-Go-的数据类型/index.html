@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>一文看懂 Go 的数据类型</h1>
+    <p>每一门语言都有自己的数据结构，Go 语言也不例外，总共有四大类，<strong>基础类型、聚合类型、引用类型和接口类型</strong>。本文简单介绍一下这些类型。</p>
+<p><img src="0.png" alt=""></p>
+<h2>1. 基础类型</h2>
+<h3>整型</h3>
+<p>Go 的整型分为有符号和无符号整数。</p>
+<p>有符号整数会分成 int8、int16、int32、int64</p>
+<p>无符号整数会分成 uint8、uint16、uint32、uint64</p>
+<p>但通常会直接使用 int 和 uint，因为这两种类型会根据平台的特性，自动转成运算效率最高的类型，现在 32 位以下的计算机一级很少见了，所以 int 通常是 32 或者 64位，但具体要根据平台和编译器决定。</p>
+<p>int 是目前使用最广泛的数值类型，在需要明确指定数值位数的时候，直接使用 int 就可以。</p>
+<p>通常来说，有符号的整数就够用，无符号整数只有在位运算或者特定算数的时候才会使用。</p>
+<p>uintptr 和 rune 是两类特殊的数字类型，uintptr 大小不明确，用来存储指针，主要用于底层编程，比如用于 Go 语言与 C 语言的交互。</p>
+<p>如果两个值可以使用 == 和 != 进行比较，说明这个两个值是可比较的。</p>
+<p>整数是可比较的。</p>
+<h3>其他数字类型</h3>
+<p>除了整型数据之外，Go 语言中，还有两种数据类型：<strong>浮点数</strong>和<strong>复数</strong>。</p>
+<p>浮点数有 float32 和 float64 两种类型，浮点数一般使用指数表示法，使用 e 或者 E 来表示。</p>
+<p>float32 的正数范围是 1.4e-45 ~ 3.4e38</p>
+<p>float64 的正数范围是 4.9e-324 ~ 1.8e308</p>
+<p>在 10 进制下，float64 的有效数字是 15 位，远远超过了 float32 的 5 位，如果没有特殊的情况，应该优先使用 float64。</p>
+<p>复数也有两种 complex64 和 complex128，这两种类型分别由 float32 和 float64 构成。<code>math/cmplx</code> 库提供了复数运算所需要的函数。</p>
+<p>浮点数和复数都是可比较的。</p>
+<h3>字符串</h3>
+<p>字符串可是说是最常用的数据类型。字符串由不可变的字节序列（[]byte）构成，字符串的内容通常会用 UTF-8 的编码格式处理，这点在上一篇文章中已经详细的说明过了。</p>
+<p>Go 的字符串内容是不可变的，对当前字符串做的操作都会生成一个新的字符串。Go 字符串天然支持 UTF-8，而且习惯上也会优先使用这种编码方式，乱码的烦恼会少一些。</p>
+<p>Go 语言也为字符串提供了丰富的类库：</p>
+<ul>
+<li>bytes：用于操作字节slice（[]byte），如果需要对字符串进行频繁的修改， 使用 byte.Buffer 会高效</li>
+<li>strings：用于搜索、替换等等字符传操作</li>
+<li>strconv：主要用于字符串和其他基本数据类型之间的转换</li>
+<li>unicode：用来判断字符的特性，比如是否是数字、是否大写等等</li>
+</ul>
+<p>字符串是可比较的。</p>
+<h3>布尔值</h3>
+<p>布尔值相对来说比较简单，只有两个值： <code>true</code> 和 <code>false</code>。可以使用 ! 符号来进行取反运算，!true 就是 false。</p>
+<p>也可以使用 &amp;&amp; 和 || 来进行组合运算，在组合运算中，也会遵循短路行为，短路行为是指左边如果能直接确定最后的结果，那么后面的计算将不会进行，如下:</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> i = <span class="number">1</span></span><br><span class="line"><span class="comment">// i &lt; 100 代码就不会被执行</span></span><br><span class="line"><span class="keyword">if</span> i &gt; <span class="number">0</span> || i &lt; <span class="number">100</span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">"result %+v"</span>, i)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>布尔值是可比较的。</p>
+<h2>2. 聚合类型</h2>
+<p>聚合类型的值由内存中的一组变量构成。数组和结构体都是聚合类型，数组和结构体的长度都是固定的。数组中的的元素类型<strong>必须</strong>都<strong>相同</strong>，而结构体中的元素<strong>可以不同</strong>。</p>
+<h3>数组</h3>
+<p>数组是一个长度固定，拥有0 个或多个（不超过数组长度）相同数据类型的序列。数组在声明的时候必须指定长度，可以使用常量，但是不能使用变量。</p>
+<p>实际上，我们很少在代码中直接使用数组，数组在绝大部分的时候都是做为 slice 的底层存储，并不会直接使用。</p>
+<p>数组的可比较性取决于元素的可比较性，如果元素是可比较的，那么数组也是可比较的，反之亦然。</p>
+<h3>结构体</h3>
+<p>结构体是由任意个任意类型的变量组合在一起的数据类型，和其他语言中<strong>类</strong>的概念相似。</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Student <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name <span class="keyword">string</span></span><br><span class="line">    age  <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Go 语言是一个面向对象的语言，但却又抛弃了 Java 中类和对象的概念，结构体是 Go 语言实现面向对象的基础之一，还有一部分是接口，下面会聊到。</p>
+<p>在 Go 的面向对象中，已经摈弃了继承的概念，但在结构体中，通过结构体嵌套，也算是实现了部分继承的功能。</p>
+<p>结构体的可比较性也取决于其中变量的可比较性。</p>
+<h2>3. 引用类型</h2>
+<p>引用是另外一种数据类型，很多 Go 语言的高级功能都依赖引用。引用都间接指向变量或者状态，通过引用来操作数据会让该数据的全部引用都受影响。</p>
+<h3>指针</h3>
+<p>指针是一种数据类型，指针的值是一个变量的地址。对于一个变量来说，可以有多个指针，通过其中任意一个指针来修改数据，通过其他指针也会获取到最新修改的值。</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">i := <span class="number">1</span></span><br><span class="line">p1 := &amp;i</span><br><span class="line">p2 := &amp;i</span><br><span class="line"></span><br><span class="line">*p1 = <span class="number">2</span></span><br><span class="line"></span><br><span class="line">fmt.Println(*p2) <span class="comment">// 2</span></span><br></pre></td></tr></table></figure></p>
+<p>指针是可比较的。</p>
+<h3>slice</h3>
+<p>slice 是一个拥有相同元素的可变长度序列。 slice 看起来与数组很像，但本质上不同。</p>
+<p>slice 依赖数组，没有数组，就没有 slice。</p>
+<p>一个 slice 有三个属性，指针，长度和容量。其中指针指向数组中的某个元素（不一定是第一个），这是 slice 可以访问的第一个元素。</p>
+<p>长度是 slice 中元素的个数，不能超过容量，容量通常是指 slice 指针的位置，到底层数组的最后一个元素的位置的长度。</p>
+<p>slice 不可比较， 只能和 nil 比较。</p>
+<h3>map</h3>
+<p>map 是散列表的引用。</p>
+<p>map 的使用很简单，但是需要注意一点，map 的 key 必须是可比较的，如果 key 不可比较，那就无法通过 key 查询到响应的 value，value 的类型是没有限制的，可以是任意值。</p>
+<p>map 不可比较，只能和 nil 比较。</p>
+<h3>function</h3>
+<p>function 就是函数，在写 Go 的 helloworld 程序时，就会用到函数。 函数也是一种引用类型。</p>
+<p>function 本身不可比，只能和 nil 比较，但是可以通过反射获取函数指针进行比较。</p>
+<h3>channel</h3>
+<p>Go 语言天然支持搞并发。而 channel 就是其中关键一环，goroutine 用来并发执行任务。而 channel 则用来连接不同的 goroutine。channel 也是属于引用类型。</p>
+<p>channel 是可比较的。</p>
+<h2>4. 接口类型</h2>
+<p>Go 语言中还有一个类型是接口类型。</p>
+<p>接口是 Go 实现面向对象的关键。Go 的接口类型很特别，你不需要去显示的实现一个接口，只要把接口中的方法实现，就默认实现了这个接口。</p>
+<p>接口类型是可比较的。</p>
+<h2>5. 小结</h2>
+<p>Go 的数据类型设计简洁，但扩展性很好，开发者可以根据自己的需要动态的扩展数据，不只是对于结构体这种聚合数据类型，即使对于基础数据类型，也可以根据的需要进行扩展。另外 Go 自带对 JSON、xml 以及 Protocol Buffer 的支持，不需要引入外部的库，这就使得写程序时会很轻量级，可以尽可能少的引入依赖包。</p>
+<p>文 / Rayjun</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

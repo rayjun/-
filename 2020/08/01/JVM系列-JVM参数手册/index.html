@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>JVM系列-JVM参数手册</h1>
+    <p>有时候找到了一个JVM参数，以为找到了一份武林秘籍，就偷偷在服务器把参数加上，结果第二天就收获一个事故通报。</p>
+<p>本文对常用 JVM 常用参数做了一个整理，但是参数的使用很复杂，本文仅仅提供常用参数的查阅，具体的使用还是需要根据具体的情况。</p>
+<p>JVM 是一个开放的标准，谁可以来实现 JVM，这导致不同JVM 实现的参数有所不同，本文基于 Hotspot 虚拟机。</p>
+<p>JVM 参数很多，总体上可以分成三类：</p>
+<ul>
+<li><code>-</code>：标准参数，比如 <code>-verbose:gc</code> 这类表示标准实现，所有的虚拟机都需要实现这些参数的功能，且向后兼容</li>
+<li><code>-X</code>：非标准参数，默认 JVM 会实现这些参数的功能，但是不保证所有的 JVM 实现都满足，且不保证向后兼容</li>
+<li><code>-XX</code>：非 Stable 参数，这些参数在不同的 JVM 上会有不同的实现，这些参数不推荐在生成环境中使用，以后很有可能会被取消
+<ul>
+<li>对于布尔型参数：<code>-XX:+</code> 表示打开，<code>-XX:-</code> 表示关闭，比如: -XX:+PrintGCDetails</li>
+<li>对于其他的数字或者字符参数：<code>-XX:</code> 表示设定一个值</li>
+</ul>
+</li>
+</ul>
+<h2>通用参数</h2>
+<table>
+<thead>
+<tr>
+<th>JDK8</th>
+<th>JDk9 Or Later</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-verbose:class</td>
+<td>-verbose:class</td>
+<td>输出 jvm 载入类的相关信息， 可用于排查找不到类或者类冲突问题</td>
+</tr>
+<tr>
+<td>-verbose:gc</td>
+<td>-verbose:gc</td>
+<td>输出 GC 信息，当日志被保存为文件时，这个参数无效</td>
+</tr>
+<tr>
+<td>-verbose:jni</td>
+<td>-verbose:jni</td>
+<td>输出 native 方法的调用情况，用于排查 JNI 调用问题</td>
+</tr>
+<tr>
+<td>-Xms</td>
+<td>-Xms</td>
+<td>初始堆大小，默认物理内存的 1/64</td>
+</tr>
+<tr>
+<td>-Xmx</td>
+<td>-Xmx</td>
+<td>最大堆大小，默认为物理内存的 1/4</td>
+</tr>
+<tr>
+<td>-Xmn</td>
+<td>-Xmn</td>
+<td>新生代大小</td>
+</tr>
+<tr>
+<td>-Xss</td>
+<td>-Xss</td>
+<td>堆栈大小，JDK5 以后，每个线程的对接默认为 1 M</td>
+</tr>
+<tr>
+<td>-Xnoclassgc</td>
+<td>-Xnoclassgc</td>
+<td>关闭对类的回收</td>
+</tr>
+<tr>
+<td>-XX:MaxMetaspaceSize</td>
+<td>-XX:MaxMetaspaceSize</td>
+<td>元空间的最大值</td>
+</tr>
+<tr>
+<td>-XX:MetaspaceSize</td>
+<td>-XX:MetaspaceSize</td>
+<td>指定元空间触发 Full GC 的阈值，也就是默认元空间的大小</td>
+</tr>
+<tr>
+<td>-XX:SurvivorRatio</td>
+<td>-XX:SurvivorRatio</td>
+<td>新生代中 Eden 与 Survivor 的比值，默认为 8，Survivor 有两块空间， from 和 to，实际上，Eden 与 Survivor 的比值大小为 8 : 2</td>
+</tr>
+<tr>
+<td>-XX:NewRatio</td>
+<td>-XX:NewRatio</td>
+<td>新生代和老年代空间的比值</td>
+</tr>
+<tr>
+<td>-XX:LargePageSizeInBytes</td>
+<td>-XX:LargePageSizeInBytes</td>
+<td>设置用于Java堆的大页面尺寸</td>
+</tr>
+<tr>
+<td>-XX:+UseLargePages</td>
+<td>-XX:+UseLargePages</td>
+<td>使用大页面内存</td>
+</tr>
+<tr>
+<td>-XX:MaxHeapFreeRatio</td>
+<td>-XX:MaxHeapFreeRatio</td>
+<td>GC后java堆中空闲量空间的最大占比</td>
+</tr>
+<tr>
+<td>-XX:MinHeapFreeRatio</td>
+<td>-XX:MinHeapFreeRatio</td>
+<td>GC后java堆中空闲量空间的最小占比</td>
+</tr>
+<tr>
+<td>-XX:NewSize</td>
+<td>-XX:NewSize</td>
+<td>新生代对象生成时占用内存的默认值</td>
+</tr>
+<tr>
+<td>-XX:MaxNewSize</td>
+<td>-XX:MaxNewSize</td>
+<td>新生成对象能占用内存的最大值</td>
+</tr>
+<tr>
+<td>-XX:MaxPermSize</td>
+<td>-XX:MaxPermSize</td>
+<td>老生代对象能占用内存的最大值</td>
+</tr>
+<tr>
+<td>-XX:ThreadStackSize</td>
+<td>-XX:ThreadStackSize</td>
+<td>设置线程栈大小，若为0则使用系统默认值</td>
+</tr>
+</tbody>
+</table>
+<h2>GC 参数</h2>
+<p>在 JDK9 以后，日志相关的参数的都统一到了 <code>-Xlog</code> 中，注意，不仅仅 gc 的日志，是所有的日志，对于 -Xlog，配置方法如下：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xlog[:[selector][:output[:[decorators][:output-options]]]]</span><br></pre></td></tr></table></figure></p>
+<p>其中 selector 是 tag 和日志 level 的组合体，tag 就是日志类别，gc 只是其中的一种 tag，如果要输出 GC 日志，使用方式如下：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xlog:gc</span><br></pre></td></tr></table></figure></p>
+<p>level 的取值有：off，trace，debug，info，warning，error。</p>
+<p>output 就是日志的输出形式，可以使用的方式有:</p>
+<ul>
+<li>stdout</li>
+<li>stderr</li>
+<li>file=</li>
+</ul>
+<p>decorators 称之为装饰器，可以在 GC 日志中增加其他的信息，方便对问题进行定位，装饰器可以同时使用多个，下面是对装饰器的汇总：</p>
+<table>
+<thead>
+<tr>
+<th>全名</th>
+<th>缩写</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hostname</td>
+<td>hn</td>
+<td>机器名称</td>
+</tr>
+<tr>
+<td>level</td>
+<td>l</td>
+<td>日志等级</td>
+</tr>
+<tr>
+<td>pid</td>
+<td>p</td>
+<td>进程标识符</td>
+</tr>
+<tr>
+<td>tid</td>
+<td>ti</td>
+<td>线程标识符</td>
+</tr>
+<tr>
+<td>tags</td>
+<td>tg</td>
+<td>与消息相关联的所有标签</td>
+</tr>
+<tr>
+<td>time</td>
+<td>t</td>
+<td>当前时间和日期为ISO-8601格式（例如：2020-07-31T18：42：58.418 + 0000）</td>
+</tr>
+<tr>
+<td>timemillis</td>
+<td>tm</td>
+<td>当前时间以毫秒为单位，与System.currentTimeMillis()生成的值相同</td>
+</tr>
+<tr>
+<td>timenanos</td>
+<td>tn</td>
+<td>当前时间以纳秒为单位，与System.nanoTime()生成的值相同</td>
+</tr>
+<tr>
+<td>uptime</td>
+<td>u</td>
+<td>自JVM启动以来运行的时间，以秒为单位</td>
+</tr>
+<tr>
+<td>uptimemillis</td>
+<td>um</td>
+<td>自JVM启动以来运行的毫秒数</td>
+</tr>
+<tr>
+<td>uptimenanos</td>
+<td>un</td>
+<td>自JVM启动以来运行的纳秒数</td>
+</tr>
+<tr>
+<td>utctime</td>
+<td>utc</td>
+<td>当前时间和日期，UTC 格式，例如：2020-07-31T12：42：58.418-0600）</td>
+</tr>
+</tbody>
+</table>
+<p>在默认情况下，会使用 uptime，level 以及 tags 等装饰器，也可以使用 none 来关闭所有的装饰器。</p>
+<p>假如说现在要获取日志等级为info，需要打印机器名称、日志等级，JVM 的运行时间，所属 tag，并且要把这些日志保存为 gc.log 文件，配置如下：</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xlog:gc*=info:file=gc.log:hostname,level,uptime,tags</span><br></pre></td></tr></table></figure></p>
+<p>常用的 GC 日志参数如下：</p>
+<h3>GC日志参数</h3>
+<table>
+<thead>
+<tr>
+<th>JDK8</th>
+<th>JDk9 Or Later</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-XX:+PrintGC</td>
+<td>-Xlog:gc</td>
+<td>打印 GC 信息</td>
+</tr>
+<tr>
+<td>-XX:+PrintGCDeatils</td>
+<td>-Xlog:gc*</td>
+<td>打印 GC 详细信息</td>
+</tr>
+<tr>
+<td>-XX:+PrintGCTimeStamps</td>
+<td>uptime</td>
+<td>装饰器	打印 GC 过程中具体的时间戳</td>
+</tr>
+<tr>
+<td>-XX:+PrintHeapAtGC</td>
+<td>-Xlog:gc+heap=trace</td>
+<td>打印 GC 前后堆的详细信息</td>
+</tr>
+<tr>
+<td>-XX:+PrintGCApplicationStoppedTime</td>
+<td>-Xlog:safepoint</td>
+<td>打印 GC 期间程序暂停的时间</td>
+</tr>
+<tr>
+<td>-XX:+PrintGCApplicationConcurrentTime</td>
+<td>-Xlog:safepoint</td>
+<td>打印 GC 前，程序未中断的执行时间</td>
+</tr>
+<tr>
+<td>-Xloggc:filename</td>
+<td>-Xlog:gc:file=gc.log</td>
+<td>GC 日志的保存为文件，默认为项目根目录</td>
+</tr>
+<tr>
+<td>-XX:+PrintTenuringDistribution</td>
+<td>-Xlog:gc+age*=trace</td>
+<td>查看对象存在于新生代所经历 Minor GC 次数的阈值</td>
+</tr>
+<tr>
+<td>-XX:PrintReferenceGC</td>
+<td>-Xlog:gc+ref*=debug</td>
+<td>打印软引用、弱引用、虚引用和Finallize队列</td>
+</tr>
+<tr>
+<td>-XX:+PrintTLAB</td>
+<td>-XX:+PrintTLAB</td>
+<td>打印 TLAB 信息</td>
+</tr>
+</tbody>
+</table>
+<h3>其他GC参数</h3>
+<table>
+<thead>
+<tr>
+<th>JDK8</th>
+<th>JDk9 Or Later</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-XX:MaxTenuringThreshold</td>
+<td>-XX:MaxTenuringThreshold</td>
+<td>对象存在于新生代所能经历 Minor GC 的最大次数</td>
+</tr>
+<tr>
+<td>-XX:PretenureSizeThreshold</td>
+<td>-XX:PretenureSizeThreshold</td>
+<td>超出该大小的对象直接在老年代分配，单位字节</td>
+</tr>
+<tr>
+<td>-XX:+UseSerialGC</td>
+<td>-XX:+UseSerialGC</td>
+<td>使用 serial 和 serial old 收集器（client VM 的默认值）</td>
+</tr>
+<tr>
+<td>-XX:+UseParallelGC</td>
+<td>-XX:+UseParallelGC</td>
+<td>使用 parallel 和 parallel old 收集器（serverVM 的默认值）</td>
+</tr>
+<tr>
+<td>-XX:+UseConcMarkSweepGC</td>
+<td>-XX:+UseConcMarkSweepGC</td>
+<td>使用 ParNew 和 CMS 收集器</td>
+</tr>
+<tr>
+<td>-XX:+UseParNewGC</td>
+<td>-XX:+UseParNewGC</td>
+<td>使用 ParNew 和 serial old 收集器（已不推荐）</td>
+</tr>
+<tr>
+<td>-XX:ParallelGCThreads</td>
+<td>-XX:ParallelGCThreads</td>
+<td>并行收集的线程数，最好与 CPU 数量相同</td>
+</tr>
+<tr>
+<td>-XX:GCTimeRatio</td>
+<td>-XX:GCTimeRatio</td>
+<td>设置并行收集器的吞吐量，如 99 表示 1 /(1+99) = 1 %,表示 GC 只能占用 1 % 的时间，满足不了则会缩小 新生代空间</td>
+</tr>
+<tr>
+<td>-XX:MaxGCPauseMillis</td>
+<td>-XX:MaxGCPauseMillis</td>
+<td>每次年轻代垃圾回收的最长时间</td>
+</tr>
+<tr>
+<td>-XX:CMSFullGCsBeforeCompaction</td>
+<td>-XX:CMSFullGCsBeforeCompaction</td>
+<td>设置在 n 次 CMS 垃圾收集后，触发一次内存整理</td>
+</tr>
+<tr>
+<td>-XX:UseCMSCompactAtFullCollection</td>
+<td>-XX:UseCMSCompactAtFullCollection</td>
+<td>每次 FullGC 后都会触发内存整理</td>
+</tr>
+<tr>
+<td>-XX:CMSInitiatingOccupancyFraction</td>
+<td>-XX:CMSInitiatingOccupancyFraction</td>
+<td>触发CMS收集的内存比例</td>
+</tr>
+<tr>
+<td>-XX:+DisableExplicitGC</td>
+<td>-XX:+DisableExplicitGC</td>
+<td>禁用 System.gc()</td>
+</tr>
+<tr>
+<td>-XX:+CollectGen0First</td>
+<td>-XX:+CollectGen0First</td>
+<td>Full GC 前是否先进行 YGC</td>
+</tr>
+</tbody>
+</table>
+<h2>REF</h2>
+<p>[1] <a href="https://openjdk.java.net/jeps/158" target="_blank" rel="noopener">https://openjdk.java.net/jeps/158</a></p>
+<p>[2] <a href="https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE" target="_blank" rel="noopener">https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE</a></p>
+<p>[3] <a href="https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html" target="_blank" rel="noopener">https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html</a></p>
+<p>[4] <a href="https://segmentfault.com/a/1190000013475524" target="_blank" rel="noopener">https://segmentfault.com/a/1190000013475524</a></p>
+<p>文 / Rayjun</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

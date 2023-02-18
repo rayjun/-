@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>记一次连接池问题排查</h1>
+    <p>最近排查了一个问题，是关于连接池的，服务的整体情况如下：</p>
+<p><img src="pool1.png" alt=""></p>
+<p>A 服务是向外提供的 Http 服务，然后 A 服务中会调用 B 和 C，B 和 C 是两个 RPC 服务。 A 服务中通过 B 和 C 提供的 Client 来分别访问这两个服务。</p>
+<p>RPC 服务的 Client 创建会比较耗时间，因为需要从 ZK 上去获取服务的注册信息并初始化。所以一般会创建一个 Client 的连接池 ClientPool，所有的 Client 都从 ClientPool 中获取，类似在数据连接池中获取数据库连接。</p>
+<p>最近服务出现了一个问题，在正常访问下，服务运行正常，服务的响应时间基本在 50 ms上下，当整体 qps 在 20000 左右的时候，就开始出现大量的请求响应很慢甚至超时。</p>
+<p>分别检查的 B 和 C 的服务器资源，各机器服务都正常，日志里面也没有发现异常，IO 和网络也是正常的，说明问题不在服务端。</p>
+<p>然后检查 A 服务的日志，发现大量的请求卡在从 CilentPool 中获取 Client，在高峰情况下，甚至会耗费差不多 10 秒，很多的请求无法获取到 Client 连接，问题就出在这里。</p>
+<p>既然已经是从连接池中获取连接，为什么还是会出现这种情况？</p>
+<p>看了一下连接池的源码，发现默认情况下进程会共享一个连接池实例，也就是说 B 和 C 的 Client 都要从这个连接池中获取，连接池又是按照单个 RPC 服务来设置的，所以就会出现连接池中可用的 Clent 数量不足。也就是下图这样的：</p>
+<p><img src="pool2.png" alt=""></p>
+<p>解决的办法有两个，一个是调大整个进程 ClientPool 的大小，但是这样还是会发生抢占，而且连接池设置的太大也不合适。另外一种方式就是为每个 Client 创建单独的线程池，这样每个服务的 Client 的数量可以有保证，也不会发生抢占的情况。也就是下面这样：</p>
+<p><img src="pool3.png" alt=""></p>
+<p>那么如何来为每个 RPC 服务都维护一个 ClientPool 呢，其实就是通过 ConcurrentHashMap 来为每个 RPC 服务维护一个连接池，key 是 RPC 服务的名称。</p>
+<p>如果进程中共用一个连接池，在某些请求被阻塞的情况下，就会持续占据线程池的资源，而影响其他服务的访问。这也是造成这次问题的原因，单纯调大连接池的数量不能完全避免服务之间对连接的竞争。</p>
+<p>通过为每个服务创建单独的连接池，将每个服务访问都进行了隔离，即使单个服务的请求出现问题也不会影响到其他的服务请求，在高流量的情况下更稳定。</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

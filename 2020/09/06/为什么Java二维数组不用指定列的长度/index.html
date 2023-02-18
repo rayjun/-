@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>为什么Java二维数组不用指定列的长度</h1>
+    <p>在使用 Java 数组的时候，假如要新建一个二维数组，可以使用以下的方式来新建，只需要指定属数组第一维的长度：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] arr1 = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>][];</span><br></pre></td></tr></table></figure></p>
+<p>不用指定第二维的的长度，就可以创建完成。这与 Java 中数组内存分配的方式有关，这篇文章会详细分析 Java 数组的内存分配机制及原理。</p>
+<p>本文基于 JDK11</p>
+<h2>数组的定义和初始化</h2>
+<p>Java 中的数组与其他语言中的数组没有什么区别，内存都是连续分配，可以通过下标直接访问数组的内容，而且数组中存放的数据需要一致：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] arr1 = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>];</span><br><span class="line">arr1[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">arr1[<span class="number">1</span>] = <span class="number">1.1</span>; <span class="comment">// 报错</span></span><br></pre></td></tr></table></figure></p>
+<p>数组的长度在创建之后不能改变，如果访问超出长度范围外的位置就会报错。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] arr1 = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>];</span><br><span class="line">arr1[<span class="number">3</span>] = <span class="number">0</span>; <span class="comment">// 报错，超出数组长度范围，ArrayIndexOutOfBoundsException</span></span><br></pre></td></tr></table></figure></p>
+<p>定义数组有多种方式，据说第二种声明的方法是为了吸引 C 和 C++ 的程序员，但是第一种声明方法才是官方更加推荐的方式。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] arr1 = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>];</span><br><span class="line"><span class="keyword">int</span> arr1[] = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>];</span><br></pre></td></tr></table></figure></p>
+<p>再回到二维数组，如果按照下面的方式使用而且数组，就会报错，这与数组的内存分配有关，下文会详细说明。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] arr1 = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>][];</span><br><span class="line">arr1[<span class="number">1</span>][<span class="number">1</span>] = <span class="number">0</span>; <span class="comment">// 报错</span></span><br></pre></td></tr></table></figure></p>
+<p>如果要直接使用，需要指定列的长度，下文会再讲一种初始化的方式。</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] arr1 = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>][<span class="number">3</span>];</span><br><span class="line">arr1[<span class="number">1</span>][<span class="number">1</span>] = <span class="number">0</span>; <span class="comment">// 正常运行</span></span><br></pre></td></tr></table></figure></p>
+<p>如果要初始化一维数组：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] arr1 = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;;</span><br><span class="line"><span class="keyword">int</span>[] arr2 = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>初始化二维数组：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] arr1 = &#123;&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;,&#123;<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&#125;&#125;;</span><br><span class="line"><span class="keyword">int</span>[][] arr2 = <span class="keyword">new</span> <span class="keyword">int</span>[][]&#123;&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;,&#123;<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&#125;&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>二维数组每维的长度都可以不一样：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] arr1 = <span class="keyword">new</span> <span class="keyword">int</span>[][]&#123;&#123;<span class="number">1</span>,<span class="number">2</span>&#125;,&#123;<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>对于二维数组，可以被认为是数组的数组，其实二维数组的每一行都是一个单数的数组：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] arr1 = &#123;&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;, &#123;<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;&#125;;</span><br><span class="line"><span class="keyword">int</span>[] arr2 = arr1[<span class="number">0</span>];</span><br></pre></td></tr></table></figure></p>
+<p>二维数组在初始化的时候不需要指定行列的数量，其他多维数组的创建方式类似。</p>
+<p>数组最多可以到 255 维，超过 255 维在编译的时候就会出现错误。</p>
+<h2>数组的内存结构</h2>
+<p>为了能把上面二维数组的问题说清楚，需要先对数组的内存结构做一个说明。</p>
+<p>Java 程序在运行的过程中，会为每个线程分配单独的栈空间，如果声明一个数组变量，那么变量就在栈中分配。</p>
+<p>而 Java 中对象都是在堆上分配内存，Java 数组也是对象，所以数组也在堆上分配内存。</p>
+<p>所以对于一维数组来说，就是如下的结构，栈中变量保存指向数组实例的引用。</p>
+<p><img src="1.png" alt=""></p>
+<p>对于二维或者多维数组来说，情况就有所不同。二维数组可以被认为是数组的数组。</p>
+<p>数组中保存的是指向另一个数组的引用，如下图所示。</p>
+<p>也就是说，每个数组中的第二维的长度可以不同。所以如果声明一个新的二维数组，只需要指明第一维的长度，就可以创建好一个数组。但在正式使用之前，还是要将其他维度初始化。</p>
+<p><img src="2.png" alt=""></p>
+<p>上述例子中使用的都是原生数据类型，原生类型数组存的是值，对于对象数组来说，其中存储的是对象引用。</p>
+<p>文 / Rayjun</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>

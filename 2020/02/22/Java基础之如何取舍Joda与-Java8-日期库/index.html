@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun 的博客</title>
+    <meta name="description" content="发现自己 - https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
+
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+     </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+            <a class="blog-name" href="/">rayjun 的博客</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+                    <a class="menu" href="/archives">归档</a>
+                
+                    <a class="menu" href="/about">关于</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <article class="post">
+    <h1>Java基础之如何取舍Joda与 Java8 日期库</h1>
+    <p>在 Java8 以前，时间和日期的类库很难用，而且有线程安全等诸多问题。</p>
+<p>Joda time 弥补了 Java 在这方面的不足，但是在 Java8 时，增加了 <code>java.time</code> 包，对 Java 在日期 API 方面的进行了增强，这些代码实现了 JSR-310 的标准。Joda 的官方推荐迁移到 Java8 的时间类库上来。</p>
+<p>下面来详细对比对比一下两个类库，看看 Java8 的日期 API 是否能真正替代 Joda time。</p>
+<h2>基础概念对比</h2>
+<p>Joda Date 的核心概念，这些概念在 java time 中基本也能找到对应：</p>
+<h3>instant</h3>
+<p>表示一个时刻，使用从 1970-01-01 00:00:00 至今的毫秒数表示</p>
+<p><strong>Joda time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DateTime dt = <span class="keyword">new</span> DateTime();</span><br><span class="line">Instant instant = dt.toInstant();</span><br></pre></td></tr></table></figure>
+<strong>Java time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Clock clock = Clock.systemDefaultZone();</span><br><span class="line">Instant instant = clock.instant();</span><br></pre></td></tr></table></figure></p>
+<h3>interval</h3>
+<p>表示两个 instant 之间的间隔，左闭右开。</p>
+<p><strong>Joda time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DateTime dt = <span class="keyword">new</span> DateTime();</span><br><span class="line">DateTime dt1 = <span class="keyword">new</span> DateTime();</span><br><span class="line">Interval interval = <span class="keyword">new</span> Interval(dt.toInstant(), dt1.toInstant());</span><br></pre></td></tr></table></figure>
+java time 中没有提供类似的 API，因为 JSR-310 标准中没有这个概念。</p>
+<h3>duration</h3>
+<p>用毫秒表示的时间段，通常从 interval 获得
+<strong>Joda time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">DateTime dt = <span class="keyword">new</span> DateTime();</span><br><span class="line">DateTime dt1 = <span class="keyword">new</span> DateTime();</span><br><span class="line">Interval interval = <span class="keyword">new</span> Interval(dt.toInstant(), dt1.toInstant());</span><br><span class="line">Duration duration = interval.toInstant();</span><br></pre></td></tr></table></figure></p>
+<p><strong>Java time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LocalDateTime l1 = LocalDateTime.now();</span><br><span class="line">LocalDateTime l2 = LocalDateTime.now();</span><br><span class="line">Period period = Period.between(l1.toLocalDate(), l2.toLocalDate());</span><br></pre></td></tr></table></figure></p>
+<h3>period</h3>
+<p>同样表示时间段，比如 3年，5个月，而 duration 使用毫秒表示</p>
+<p><strong>Joda time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DateTime dt1 = <span class="keyword">new</span> DateTime();</span><br><span class="line">DateTime dt2 = <span class="keyword">new</span> DateTime();</span><br><span class="line">Period period = Period.fieldDifference(dt1.toLocalDateTime(), dt2.toLocalDateTime());</span><br></pre></td></tr></table></figure></p>
+<p><strong>Java time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LocalDateTime l1 = LocalDateTime.now();</span><br><span class="line">LocalDateTime l2 = LocalDateTime.now();</span><br><span class="line">Period period = Period.between(l1.toLocalDate(), l2.toLocalDate());</span><br></pre></td></tr></table></figure></p>
+<h3>chronology</h3>
+<p>年表，这是 joda-time 设计的基础</p>
+<p><strong>Joda time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DateTime dt = <span class="keyword">new</span> DateTime();</span><br><span class="line">Chronology chronology = dt.getChronology();</span><br></pre></td></tr></table></figure>
+<strong>Java time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LocalDateTime localDateTime = LocalDateTime.now();</span><br><span class="line">Chronology ch = localDateTime.getChronology();</span><br></pre></td></tr></table></figure></p>
+<h3>timezones</h3>
+<p>表示时区。</p>
+<p><strong>Joda time</strong>:
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DateTime dt = <span class="keyword">new</span> DateTime();</span><br><span class="line">DateTimeZone dateTimeZone = dt.getZone();</span><br><span class="line">Set&lt;String&gt; zones = DateTimeZone.getAvailableIDs();</span><br></pre></td></tr></table></figure></p>
+<p><strong>Java time</strong>:
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Clock clock = Clock.systemDefaultZone();</span><br><span class="line">ZoneId zoneId = clock.getZone();</span><br><span class="line">Set&lt;String&gt; zones = ZoneId.getAvailableZoneIds();</span><br></pre></td></tr></table></figure></p>
+<p>从上面可以看到，除了 JSR-310 中没有的 Interval 的定义之外，这两个库在基础概念方面的实现相差不大。</p>
+<blockquote>
+<p>因为 Unix 系统从 1970-01-01 00:00:00 开始计时，这个时间也称之为 Epoch Time，后续使用 Unix 的这种计时方式。</p>
+</blockquote>
+<h2>具体使用</h2>
+<p>Joda time 依赖 JDK5 及后续版本，没有额外的依赖。</p>
+<p>为了起到对比的效果，挑几个比较常用的场景进行对比：</p>
+<ul>
+<li>获取 1970 至今的毫秒数</li>
+<li>获取当前时间</li>
+<li>获取年、月、日、星期几</li>
+<li>日期的增减</li>
+<li>日期的格式化</li>
+</ul>
+<h3>获取时间戳</h3>
+<p>在代码中，经常会使用这个功能来表示唯一性：</p>
+<p><strong>Joda time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DateTime dt = <span class="keyword">new</span> DateTime();</span><br><span class="line"><span class="keyword">long</span> mills = dt.getMillis();</span><br></pre></td></tr></table></figure>
+<strong>Java time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Clock clock = Clock.systemDefaultZone();</span><br><span class="line"><span class="keyword">long</span> mills = clock.millis();</span><br></pre></td></tr></table></figure></p>
+<h3>获取当前时间</h3>
+<p>这块两个库没有太大的差异：</p>
+<p><strong>Joda time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DateTime dt = <span class="keyword">new</span> DateTime();</span><br><span class="line">LocalDateTime localDateTime = dt.toLocalDateTime();</span><br></pre></td></tr></table></figure>
+<strong>Java time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LocalDateTime localDateTime = LocalDateTime.now();</span><br></pre></td></tr></table></figure></p>
+<h3>获取年、月、日、星期几</h3>
+<p><strong>Joda time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DateTime dt = <span class="keyword">new</span> DateTime();</span><br><span class="line"><span class="keyword">int</span> dayOfYear = dt.getDayOfYear();</span><br><span class="line"><span class="keyword">int</span> dayOfMonth = dt.getDayOfMonth();</span><br><span class="line"><span class="keyword">int</span> dayOfWeek = dt.getDayOfWeek();</span><br><span class="line"><span class="keyword">int</span> hourOfDay = dt.getHourOfDay();</span><br></pre></td></tr></table></figure>
+<strong>Java time:</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Clock clock = Clock.systemDefaultZone();</span><br><span class="line">LocalDateTime localDateTime = LocalDateTime.now(clock);</span><br><span class="line"><span class="keyword">int</span> dayOfYear = localDateTime.getDayOfYear();</span><br><span class="line"><span class="keyword">int</span> dayOfMonth = localDateTime.getDayOfMonth();</span><br><span class="line"><span class="keyword">int</span> dayOfWeek = localDateTime.getDayOfWeek().getValue();</span><br><span class="line"><span class="keyword">int</span> hourOfDay = localDateTime.getHour();</span><br></pre></td></tr></table></figure>
+获取这些值两个库也没有太大的差异，但是对于一些场景，比如我想获得 &quot;星期四&quot; 这个字符串。
+在 Joda 库中，可以 <code>dt.dayOfWeek().getAsShortText(); // 星期四</code> 这样获得。在 Java 中，<code>localDateTime.getDayOfWeek().name(); //THURSDAY</code> 只能获取到英文。</p>
+<p>Joda time 在本地化方面比 Java time做的更好。</p>
+<h3>日期增减</h3>
+<p><strong>Joda time</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DateTime dt = <span class="keyword">new</span> DateTime();</span><br><span class="line">dt = dt.plusDays(<span class="number">2</span>); <span class="comment">//当前日期添加两天</span></span><br><span class="line">dt = dt.plusHours(<span class="number">5</span>); <span class="comment">// 当前时间加上两个小时</span></span><br><span class="line">dt = dt.minusDays(<span class="number">1</span>); <span class="comment">// 当前日期减一天</span></span><br><span class="line">dt = dt.minusHours(<span class="number">2</span>); <span class="comment">// 当前日期减两个小时</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>Java time</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LocalDateTime localDateTime = LocalDateTime.now();</span><br><span class="line">localDateTime = localDateTime.plusDays(<span class="number">2</span>); <span class="comment">// 增加两天</span></span><br><span class="line">localDateTime = localDateTime.plusHours(<span class="number">2</span>); <span class="comment">// 增加两个小时</span></span><br><span class="line">localDateTime = localDateTime.minusDays(<span class="number">1</span>); <span class="comment">//减少一天</span></span><br><span class="line">localDateTime = localDateTime.minusHours(<span class="number">1</span>); <span class="comment">// 减少一个小时</span></span><br></pre></td></tr></table></figure></p>
+<h3>日期的格式化</h3>
+<p>日期格式化是日常使用最频繁的功能，下面来对比一下这两者的区别。</p>
+<p><strong>Joda time</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方式一</span></span><br><span class="line">DateTimeFormatter formatter = DateTimeFormat.forPattern(<span class="string">"yyyy-MM-dd HH:mm:ss"</span>);</span><br><span class="line">DateTime dt = <span class="keyword">new</span> DateTime();</span><br><span class="line">System.out.println(dt.toString(formatter));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式二</span></span><br><span class="line">String dateFormat = <span class="string">"yyyy-MM-dd HH:mm:ss"</span>;</span><br><span class="line">System.out.println(dt.toString(dateFormat));</span><br></pre></td></tr></table></figure></p>
+<p><strong>Java time</strong>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DateTimeFormatter formatter = DateTimeFormatter.ofPattern(<span class="string">"yyyy-MM-dd HH:mm:ss"</span>);</span><br><span class="line">LocalDateTime localDateTime = LocalDateTime.now();   System.out.println(formatter.format(localDateTime));</span><br></pre></td></tr></table></figure></p>
+<p>通过上面的对比，可以发现这两个类库都可以完成相同的功能。虽然在细节上是有一些细微的差别。</p>
+<p>java.util.Date 是 Java 中最早的日期类，后来就不推荐使用这个类了，java.util.Calendar 用来替代 Date。Calendar 有 Date 的所有功能，并且提供了更加丰富的获取年月日的 API。</p>
+<p>Calendar 是一个虚拟类，GregorianCalendar 则是 Calendar 的实现类。</p>
+<p>Java time 与 java.util 下的时间类相互转化，可以将 Date 或者 Calendar 转化成 Java time 中的 LocalDateTime.</p>
+<p>java.util.Date 转 java.time.LocalDateTime:
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Date date = <span class="keyword">new</span> Date();</span><br><span class="line">LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());</span><br></pre></td></tr></table></figure></p>
+<p>java.util.Carlendar 转 java.time.LocalDateTime:
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Calendar calendar = Calendar.getInstance();</span><br><span class="line">LocalDateTime localDateTime = LocalDateTime.ofInstant(calendar.toInstant(), ZoneId.systemDefault());</span><br></pre></td></tr></table></figure></p>
+<p>Joda time 也可以与 java.util.Date 可以进行相互的转化：</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// from Joda to JDK</span></span><br><span class="line">DateTime dt = <span class="keyword">new</span> DateTime(); </span><br><span class="line">Date jdkDate = dt.toDate();</span><br><span class="line"><span class="comment">// from JDK to Joda</span></span><br><span class="line">dt = <span class="keyword">new</span> DateTime(jdkDate);</span><br><span class="line"></span><br><span class="line"><span class="comment">// from Joda to JDK</span></span><br><span class="line">DateTime dt = <span class="keyword">new</span> DateTime();</span><br><span class="line">Calendar jdkCal = dt.toCalendar(Locale.CHINESE);</span><br><span class="line"><span class="comment">// from JDK to Joda</span></span><br><span class="line">dt = <span class="keyword">new</span> DateTime(jdkCal);</span><br><span class="line"></span><br><span class="line"><span class="comment">// from Joda to JDK</span></span><br><span class="line">DateTime dt = <span class="keyword">new</span> DateTime();</span><br><span class="line">GregorianCalendar jdkGCal = dt.toGregorianCalendar();</span><br><span class="line"><span class="comment">// from JDK to Joda</span></span><br><span class="line">dt = <span class="keyword">new</span> DateTime(jdkGCal);</span><br></pre></td></tr></table></figure></p>
+<h2>设计思想</h2>
+<p>Joda time 与 Java time 在功能上已经相差不大，常用的功能这两个类库都可以完成，而且两个库都是线程安全的。</p>
+<p>但我认为 Joda time 的 API 更加简洁一些，Joda time 的使用可以直接从 DateTime 这个类开始。而 Java time 的使用则更加繁琐。</p>
+<p>从设计上来说 Java time 都不再使用 new 来创建实例，而是使用工厂方法来创建实例。这点上比 Joda time 的设计要更好，而且更加安全。</p>
+<p>既然 Joda time 都推荐迁移回 Java time 了，那么最终肯定是要迁移的。但是目前来说，我觉得 Joda time 用起来更加顺手一些，暂时还会继续使用这个。</p>
+
+</article>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>© 2022 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+        </div>
+    </div>
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+    
+</body>
+</html>
