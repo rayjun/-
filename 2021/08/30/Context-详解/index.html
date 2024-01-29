@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -68,7 +67,13 @@
 <p>在 Go 1.7 版本，引入了一个接口 context.Context。 Context 从字面意思来看，就是上下文的意思，可以理解为它就是某个请求的上下文。</p>
 <p>它主要的作用是在 Go 进程中<strong>传递信号</strong>。这里需要注意，虽然也可以传递参数，但主要传递信号，Context 不推荐用来传递大量的参数。</p>
 <p>Context 接口有四个方法：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Context <span class="keyword">interface</span> &#123;</span><br><span class="line">	Deadline() (deadline time.Time, ok <span class="keyword">bool</span>)</span><br><span class="line">	Done() &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">	Err() error</span><br><span class="line">	Value(key <span class="keyword">interface</span>&#123;&#125;) <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type Context interface {
+	Deadline() (deadline time.Time, ok bool)
+	Done() &lt;-chan struct{}
+	Err() error
+	Value(key interface{}) interface{}
+}
+</code></pre>
 <p>这四个方法看起来有点抽象：</p>
 <ul>
 <li>Deadline：这个方法返回 Context 被取消的时间，也就是 Context 生命周期结束的时间</li>
@@ -80,7 +85,23 @@
 <p>以服务端为例，服务端在接收一个请求之后，就需要启动新的 goroutine 来处理这个请求，有可能会启动多个 goroutine。</p>
 <p>多个 goroutine 启动之后，很难再去协调这些 goroutine，比如这个请求结束或者被终止，在这样的情况下，所有相关的 gouroutine 都应该被终止。</p>
 <p>下面是一个简单的 http 服务，访问 <code>[http://localhost:8080/index](http://localhost:8080/index)</code> 之后，请求很快就返回了，正常情况下，在代码中启动的 goroutine 都应该结束，但是实际上，里面的 goroutine 还是会执行，最后会打印 &quot;goroutine2 invoke&quot;。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">http.HandleFunc(<span class="string">"/index"</span>, <span class="function"><span class="keyword">func</span><span class="params">(writer http.ResponseWriter, request *http.Request)</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"goroutine1 invoke"</span>)</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">select</span> &#123;</span><br><span class="line">			<span class="comment">// 模拟费时操作</span></span><br><span class="line">			<span class="keyword">case</span> &lt;- time.After(<span class="number">2</span> * time.Second):</span><br><span class="line">				fmt.Println(<span class="string">"goroutine2 invoke"</span>)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;()</span><br><span class="line">	writer.Write([]<span class="keyword">byte</span>(<span class="string">"index"</span>))</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">fmt.Println(<span class="string">"server starting"</span>)</span><br><span class="line">http.ListenAndServe(<span class="string">":8080"</span>, <span class="literal">nil</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">http.HandleFunc(&quot;/index&quot;, func(writer http.ResponseWriter, request *http.Request) {
+	go func() {
+		fmt.Println(&quot;goroutine1 invoke&quot;)
+		go func() {
+			select {
+			// 模拟费时操作
+			case &lt;- time.After(2 * time.Second):
+				fmt.Println(&quot;goroutine2 invoke&quot;)
+			}
+		}()
+	}()
+	writer.Write([]byte(&quot;index&quot;))
+})
+
+fmt.Println(&quot;server starting&quot;)
+http.ListenAndServe(&quot;:8080&quot;, nil)
+</code></pre>
 <p>但这种情况不是我们希望看到的，理想的情况下一个请求的结束，那么这个请求启动的 goroutine 都应该结束。这里就需要通过 Context 来做到。</p>
 <h2>3. Context 能做什么</h2>
 <p>可以使用 Context 来解决上面的问题，简单来说就是通过 Context 来串联所有的 goroutine，所有的goroutine 根据 Context 的状态来决定是否还要继续执行。</p>
@@ -90,9 +111,33 @@
 <p><img src="1.png" alt=""></p>
 <h3>3.1 创建一个 Context</h3>
 <p>在使用 goroutine 之前，需要先创建 Context，Go 提供了两种创建 Context 的方法，使用 <code>context.Background()</code> 或者 <code>context.ToDo()</code> 方法：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Background</span><span class="params">()</span> <span class="title">Context</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> background</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TODO</span><span class="params">()</span> <span class="title">Context</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> todo</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func Background() Context {
+	return background
+}
+
+func TODO() Context {
+	return todo
+}
+</code></pre>
 <p>这两个方法生成的 Context 其实都是 emptyCtx，这是一个 Context 接口的空实现：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> emptyCtx <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(*emptyCtx)</span> <span class="title">Deadline</span><span class="params">()</span> <span class="params">(deadline time.Time, ok <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(*emptyCtx)</span> <span class="title">Done</span><span class="params">()</span> &lt;-<span class="title">chan</span> <span class="title">struct</span></span>&#123;&#125; &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(*emptyCtx)</span> <span class="title">Err</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(*emptyCtx)</span> <span class="title">Value</span><span class="params">(key <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type emptyCtx int
+
+func (*emptyCtx) Deadline() (deadline time.Time, ok bool) {
+	return
+}
+
+func (*emptyCtx) Done() &lt;-chan struct{} {
+	return nil
+}
+
+func (*emptyCtx) Err() error {
+	return nil
+}
+
+func (*emptyCtx) Value(key interface{}) interface{} {
+	return nil
+}
+</code></pre>
 <p>在功能的角度，context.Background 和 context.Todo 没有区别，只是用来表达不同的用途，Background 表示是最顶层的 Context，其他的 Context 都应该由 Background 衍生而来，关于衍生的概念我们下面会讲到。而 Todo 用于还不确定定使用哪个 Context。</p>
 <p>通常，如果没有通过参数接收到 Context，我们就会使用 Background 作为初始的 Context 向后传递。</p>
 <h3>3.2 衍生 Context</h3>
@@ -106,25 +151,170 @@
 <li>WithValue</li>
 </ul>
 <p>使用 WithCancel 来衍生新的 Context:</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">background := context.Background()</span><br><span class="line">child1, cancelFunc := context.WithCancel(background)</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 继续衍生 Context</span></span><br><span class="line">	child2, _ := context.WithCancel(child1)</span><br><span class="line">	<span class="comment">// 继续衍生 Context</span></span><br><span class="line">	child3, _ := context.WithCancel(child2)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="comment">// 接收到取消信号</span></span><br><span class="line">	<span class="keyword">case</span> &lt;- child3.Done():</span><br><span class="line">		fmt.Println(<span class="string">"context canceled"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用取消方法</span></span><br><span class="line">cancelFunc()</span><br><span class="line"></span><br><span class="line">time.Sleep(<span class="number">1</span> * time.Second)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">background := context.Background()
+child1, cancelFunc := context.WithCancel(background)
+
+go func() {
+	// 继续衍生 Context
+	child2, _ := context.WithCancel(child1)
+	// 继续衍生 Context
+	child3, _ := context.WithCancel(child2)
+
+	select {
+	// 接收到取消信号
+	case &lt;- child3.Done():
+		fmt.Println(&quot;context canceled&quot;)
+	}
+}()
+
+// 调用取消方法
+cancelFunc()
+
+time.Sleep(1 * time.Second)
+</code></pre>
 <p>使用 WithTimeout 来衍生新的 Context:</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">background := context.Background()</span><br><span class="line"></span><br><span class="line">child1, _ := context.WithTimeout(background, <span class="number">3</span> * time.Second)</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 继续衍生 Context</span></span><br><span class="line">	child2, _ := context.WithCancel(child1)</span><br><span class="line">	<span class="comment">// 继续衍生 Context</span></span><br><span class="line">	child3, _ := context.WithCancel(child2)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// context 超时的时间</span></span><br><span class="line">	timeout, _ := child3.Deadline()</span><br><span class="line">	fmt.Printf(<span class="string">"timeout is %+v\n"</span>, timeout)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="comment">// 接收到超时</span></span><br><span class="line">	<span class="keyword">case</span> &lt;- child3.Done():</span><br><span class="line">		fmt.Println(<span class="string">"context timeout"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;()</span><br><span class="line"></span><br><span class="line">time.Sleep(<span class="number">5</span> * time.Second)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">background := context.Background()
+
+child1, _ := context.WithTimeout(background, 3 * time.Second)
+
+go func() {
+	// 继续衍生 Context
+	child2, _ := context.WithCancel(child1)
+	// 继续衍生 Context
+	child3, _ := context.WithCancel(child2)
+
+	// context 超时的时间
+	timeout, _ := child3.Deadline()
+	fmt.Printf(&quot;timeout is %+v\n&quot;, timeout)
+
+	select {
+	// 接收到超时
+	case &lt;- child3.Done():
+		fmt.Println(&quot;context timeout&quot;)
+	}
+}()
+
+time.Sleep(5 * time.Second)
+</code></pre>
 <p>使用 WithDeadline 来衍生新的 Context:</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">background := context.Background()</span><br><span class="line">child1, _ := context.WithDeadline(background, &lt;-time.After(<span class="number">3</span> * time.Second))</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 继续衍生 Context</span></span><br><span class="line">	child2, _ := context.WithCancel(child1)</span><br><span class="line">	<span class="comment">// 继续衍生 Context</span></span><br><span class="line">	child3, _ := context.WithCancel(child2)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// context 超时的时间</span></span><br><span class="line">	timeout, _ := child3.Deadline()</span><br><span class="line">	fmt.Printf(<span class="string">"timeout is %+v\n"</span>, timeout)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="comment">// 接收到超时</span></span><br><span class="line">	<span class="keyword">case</span> &lt;- child3.Done():</span><br><span class="line">		fmt.Println(<span class="string">"context timeout"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;()</span><br><span class="line"></span><br><span class="line">time.Sleep(<span class="number">5</span> * time.Second)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">background := context.Background()
+child1, _ := context.WithDeadline(background, &lt;-time.After(3 * time.Second))
+
+go func() {
+	// 继续衍生 Context
+	child2, _ := context.WithCancel(child1)
+	// 继续衍生 Context
+	child3, _ := context.WithCancel(child2)
+
+	// context 超时的时间
+	timeout, _ := child3.Deadline()
+	fmt.Printf(&quot;timeout is %+v\n&quot;, timeout)
+
+	select {
+	// 接收到超时
+	case &lt;- child3.Done():
+		fmt.Println(&quot;context timeout&quot;)
+	}
+}()
+
+time.Sleep(5 * time.Second)
+</code></pre>
 <p>还有最后一个方法比较特殊，WithValue 在衍生 Context 的同时，可以放入键值对:</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">background := context.Background()</span><br><span class="line">child1 := context.WithValue(background, <span class="string">"ray"</span>,<span class="string">"jun"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">	v := child1.Value(<span class="string">"ray"</span>)</span><br><span class="line">	fmt.Printf(<span class="string">"values is %+v\n"</span>, v)</span><br><span class="line">&#125;()</span><br><span class="line"></span><br><span class="line">time.Sleep(<span class="number">5</span> * time.Second)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">background := context.Background()
+child1 := context.WithValue(background, &quot;ray&quot;,&quot;jun&quot;)
+
+go func() {
+	v := child1.Value(&quot;ray&quot;)
+	fmt.Printf(&quot;values is %+v\n&quot;, v)
+}()
+
+time.Sleep(5 * time.Second)
+</code></pre>
 <p>通过上面的代码可以看到，只要一个 Context 取消，或者设置了超时之后，后面衍生出来的所有 Context 都可以获取到这个状态，Context 是线程安全的，可以在多个 goroutine 之间使用。</p>
 <p>上面的 http 服务可以使用 Context 来结束内部的 goroutine 执行，每个 request 中都有一个 Context，可以直接使用：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">http.HandleFunc(<span class="string">"/index"</span>, <span class="function"><span class="keyword">func</span><span class="params">(writer http.ResponseWriter, request *http.Request)</span></span> &#123;</span><br><span class="line">	c := request.Context()</span><br><span class="line">	cancelContext, cancelFunc := context.WithCancel(c)</span><br><span class="line">	<span class="keyword">defer</span> cancelFunc()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"index goroutine1"</span>)</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">select</span> &#123;</span><br><span class="line">			    <span class="keyword">case</span> &lt;-cancelContext.Done():</span><br><span class="line">				    fmt.Println(<span class="string">"request is done"</span>)</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">				<span class="keyword">case</span> &lt;- time.After(<span class="number">2</span> * time.Second):</span><br><span class="line">					fmt.Println(<span class="string">"goroutine is invoke"</span>)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	writer.Write([]<span class="keyword">byte</span>(<span class="string">"index"</span>))</span><br><span class="line">&#125;)</span><br><span class="line">fmt.Println(<span class="string">"server starting"</span>)</span><br><span class="line">http.ListenAndServe(<span class="string">":8080"</span>, <span class="literal">nil</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">http.HandleFunc(&quot;/index&quot;, func(writer http.ResponseWriter, request *http.Request) {
+	c := request.Context()
+	cancelContext, cancelFunc := context.WithCancel(c)
+	defer cancelFunc()
+
+	go func() {
+		fmt.Println(&quot;index goroutine1&quot;)
+		go func() {
+			select {
+			    case &lt;-cancelContext.Done():
+				    fmt.Println(&quot;request is done&quot;)
+				return
+				case &lt;- time.After(2 * time.Second):
+					fmt.Println(&quot;goroutine is invoke&quot;)
+			}
+		}()
+	}()
+
+	writer.Write([]byte(&quot;index&quot;))
+})
+fmt.Println(&quot;server starting&quot;)
+http.ListenAndServe(&quot;:8080&quot;, nil)
+</code></pre>
 <p>请求结束之后，里面的 goroutine 就不会继续执行。</p>
 <h2>4. Context 内部实现</h2>
 <p>下面来看一下，Context 是如果实现的，使用 Background 生成的 Context 是一个空实现。而且 Background 生成的 Context 无法被取消，也不会过期。</p>
 <p>通常在都会使用 With 系列方法来衍生 Context 来使用，下面就来看一下几个 With 方法的实现，四个方法的实现都差不多，这里我们以 WithCancel 方法为例：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithCancel</span><span class="params">(parent Context)</span> <span class="params">(ctx Context, cancel CancelFunc)</span></span> &#123;</span><br><span class="line">	c := newCancelCtx(parent)</span><br><span class="line">	propagateCancel(parent, &amp;c)</span><br><span class="line">	<span class="keyword">return</span> &amp;c, <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; c.cancel(<span class="literal">true</span>, Canceled) &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func WithCancel(parent Context) (ctx Context, cancel CancelFunc) {
+	c := newCancelCtx(parent)
+	propagateCancel(parent, &amp;c)
+	return &amp;c, func() { c.cancel(true, Canceled) }
+}
+</code></pre>
 <p>进入到方法之后，首先会生成一个新的 cancelCtx，这是一个内部的结构体，另外 WithDeadline 会创建一个 timerCtx，WithTimeout 会直接调用 WithDeadline，WithValue 则会创建一个 valueCtx。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> cancelCtx <span class="keyword">struct</span> &#123;</span><br><span class="line">	Context                        <span class="comment">// 保存父 Context</span></span><br><span class="line">	mu       sync.Mutex            <span class="comment">// 这个锁用来保证下面变量的方式是安全的</span></span><br><span class="line">	done     <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;         <span class="comment">// 用来表示 Context 是否结束</span></span><br><span class="line">	children <span class="keyword">map</span>[canceler]<span class="keyword">struct</span>&#123;&#125; <span class="comment">// 保存衍生的 Context </span></span><br><span class="line">	err      error                 <span class="comment">// Context 结束时的错误信息</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type cancelCtx struct {
+	Context                        // 保存父 Context
+	mu       sync.Mutex            // 这个锁用来保证下面变量的方式是安全的
+	done     chan struct{}         // 用来表示 Context 是否结束
+	children map[canceler]struct{} // 保存衍生的 Context 
+	err      error                 // Context 结束时的错误信息
+}
+</code></pre>
 <p>然后会调用 propagateCancel 方法来构建子 Context 和父 Context 的关系：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">propagateCancel</span><span class="params">(parent Context, child canceler)</span></span> &#123;</span><br><span class="line">	done := parent.Done()</span><br><span class="line">	<span class="keyword">if</span> done == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="comment">// 空的 Context 无法被取消</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> &lt;-done:</span><br><span class="line">		<span class="comment">// 这里表示父 Context 已经结束，直接返回错误</span></span><br><span class="line">		child.cancel(<span class="literal">false</span>, parent.Err())</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 这里找出父 Context 是可取消的 Context</span></span><br><span class="line">	<span class="keyword">if</span> p, ok := parentCancelCtx(parent); ok &#123;</span><br><span class="line">		p.mu.Lock()</span><br><span class="line">		<span class="keyword">if</span> p.err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="comment">// 如果父 Context 已经结束，这里直接结束</span></span><br><span class="line">			child.cancel(<span class="literal">false</span>, p.err)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 否则就把这个当前的这个 Context 加入到 map 中</span></span><br><span class="line">			<span class="keyword">if</span> p.children == <span class="literal">nil</span> &#123;</span><br><span class="line">				p.children = <span class="built_in">make</span>(<span class="keyword">map</span>[canceler]<span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line">			&#125;</span><br><span class="line">			p.children[child] = <span class="keyword">struct</span>&#123;&#125;&#123;&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		p.mu.Unlock()</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 如果父类型不是可取消的类型，直接启动一个新的 goroutine 来监听父 Context 是否结束，以及监听当前 Context 是否已经结束</span></span><br><span class="line">		atomic.AddInt32(&amp;goroutines, +<span class="number">1</span>)</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">select</span> &#123;</span><br><span class="line">			<span class="keyword">case</span> &lt;-parent.Done():</span><br><span class="line">				child.cancel(<span class="literal">false</span>, parent.Err())</span><br><span class="line">			<span class="keyword">case</span> &lt;-child.Done():</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func propagateCancel(parent Context, child canceler) {
+	done := parent.Done()
+	if done == nil {
+		return // 空的 Context 无法被取消
+	}
+
+	select {
+	case &lt;-done:
+		// 这里表示父 Context 已经结束，直接返回错误
+		child.cancel(false, parent.Err())
+		return
+	default:
+	}
+    // 这里找出父 Context 是可取消的 Context
+	if p, ok := parentCancelCtx(parent); ok {
+		p.mu.Lock()
+		if p.err != nil {
+			// 如果父 Context 已经结束，这里直接结束
+			child.cancel(false, p.err)
+		} else {
+      // 否则就把这个当前的这个 Context 加入到 map 中
+			if p.children == nil {
+				p.children = make(map[canceler]struct{})
+			}
+			p.children[child] = struct{}{}
+		}
+		p.mu.Unlock()
+	} else {
+    // 如果父类型不是可取消的类型，直接启动一个新的 goroutine 来监听父 Context 是否结束，以及监听当前 Context 是否已经结束
+		atomic.AddInt32(&amp;goroutines, +1)
+		go func() {
+			select {
+			case &lt;-parent.Done():
+				child.cancel(false, parent.Err())
+			case &lt;-child.Done():
+			}
+		}()
+	}
+}
+</code></pre>
 <ol>
 <li>当父 Context 是不可取消的类型，直接返回，否则检查父 Context 是否已经结束，如果结束，直接返回错误信息</li>
 <li>然后找出父 Context 中是否有 Cancel 类型的 Context：
@@ -136,7 +326,32 @@
 <li>当父 Context 中没有可取消的 Context 时，直接监听父 Context 的状态，当父 Context 关闭时，直接取消当前的 Context</li>
 </ol>
 <p>与父 Context 建立联系后，会返回 Context 和一个 cancel 方法：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *cancelCtx)</span> <span class="title">cancel</span><span class="params">(removeFromParent <span class="keyword">bool</span>, err error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"context: internal error: missing cancel error"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	c.mu.Lock()</span><br><span class="line">	<span class="keyword">if</span> c.err != <span class="literal">nil</span> &#123;</span><br><span class="line">		c.mu.Unlock()</span><br><span class="line">		<span class="keyword">return</span> </span><br><span class="line">	&#125;</span><br><span class="line">	c.err = err</span><br><span class="line">	<span class="keyword">if</span> c.done == <span class="literal">nil</span> &#123;</span><br><span class="line">		c.done = closedchan</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="built_in">close</span>(c.done)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> child := <span class="keyword">range</span> c.children &#123;</span><br><span class="line">		child.cancel(<span class="literal">false</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	c.children = <span class="literal">nil</span></span><br><span class="line">	c.mu.Unlock()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> removeFromParent &#123;</span><br><span class="line">		removeChild(c.Context, c)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func (c *cancelCtx) cancel(removeFromParent bool, err error) {
+	if err == nil {
+		panic(&quot;context: internal error: missing cancel error&quot;)
+	}
+	c.mu.Lock()
+	if c.err != nil {
+		c.mu.Unlock()
+		return 
+	}
+	c.err = err
+	if c.done == nil {
+		c.done = closedchan
+	} else {
+		close(c.done)
+	}
+	for child := range c.children {
+		child.cancel(false, err)
+	}
+	c.children = nil
+	c.mu.Unlock()
+
+	if removeFromParent {
+		removeChild(c.Context, c)
+	}
+}
+</code></pre>
 <p>当在代码中主动调用 cancel 方法时，会关闭 Done 通道，同时会把由当前 Conetx 衍生出来的可取消的 Context 都关闭，同时将这个 Context 从父 Context 中移除。</p>
 <h2>5. 小结</h2>
 <p>Context 提供了一种协调多个 goroutine 的运行，可以在多个 goroutine 之间安全的传递，让那些没必要执行 goroutine 尽快停止，释放系统资源。Context 主要用来传递信号，虽然也提供了传递值的方法，但不推荐使用这个方法来传递大量的数据，通常只用来传递简单不可变的数据，比如用户的认证 token 和请求的 traceId。</p>
@@ -148,7 +363,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -156,7 +371,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

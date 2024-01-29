@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -67,14 +66,44 @@
 <h2>1. 为什么需要多路复用</h2>
 <p>Go 程序在并发处理一些任务的时，会为每一个任务创建一个 goroutine，然后需要根据不同的 goroutine 的返回的结果做不同的处理。</p>
 <p>如果按照通常的做法，分别获取每个 channel 的结果：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">taskCh1 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>)</span><br><span class="line">taskCh2 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>)</span><br><span class="line">taskCh3 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> run(taskCh1)</span><br><span class="line"><span class="keyword">go</span> run(taskCh2)</span><br><span class="line"><span class="keyword">go</span> run(taskCh3)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">    <span class="comment">// 接收通道 1 的结果</span></span><br><span class="line">    result1 := &lt;-taskCh1</span><br><span class="line">    <span class="comment">// 接收通道 2 的结果</span></span><br><span class="line">    result2 := &lt;-taskCh2</span><br><span class="line">    <span class="comment">// 接收通道 3 的结果</span></span><br><span class="line">    result3 := &lt;-taskCh3</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">taskCh1 := make(chan bool)
+taskCh2 := make(chan bool)
+taskCh3 := make(chan bool)
+
+go run(taskCh1)
+go run(taskCh2)
+go run(taskCh3)
+
+for {
+    // 接收通道 1 的结果
+    result1 := &lt;-taskCh1
+    // 接收通道 2 的结果
+    result2 := &lt;-taskCh2
+    // 接收通道 3 的结果
+    result3 := &lt;-taskCh3
+}
+</code></pre>
 <p>然后再根据不同 goroutine 返回的结果做后续的处理，这个代码有个问题，需要等待所有的 goroutine 都执行完成之后才能做出结果，这样实现的效率很低，因为每一个获取 channel 值的过程都是阻塞的。</p>
 <p>在处理多个通道时，想同时接收多个通道的数据将会变的很困难。</p>
 <p>而且在一些情况下，需要根据先返回通道的做出不同的处理，上面那种方式无法做到，这就<strong>需要使用多路复用</strong>。</p>
 <p>Go 提供了 select 机制来解决这个问题。</p>
 <h2>2. select 基本使用</h2>
 <p>select 语法形式和 switch 很相似，switch 接收一个变量，然后根据变量的值做不同的处理，select 操作接收的是通道操作：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">1</span>) <span class="comment">// 这个例子中，这里必须用缓冲通道</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> &lt;-ch:</span><br><span class="line">		time.Sleep(time.Second)</span><br><span class="line">		fmt.Println(<span class="string">"case 1 invoke"</span>)</span><br><span class="line">	<span class="keyword">case</span> data := &lt;-ch:</span><br><span class="line">		time.Sleep(time.Second)</span><br><span class="line">		fmt.Printf(<span class="string">"case 2 invoke %d\n"</span>, data)</span><br><span class="line">	<span class="keyword">case</span> ch &lt;- <span class="number">100</span>:</span><br><span class="line">		time.Sleep(time.Second)</span><br><span class="line">		fmt.Println(<span class="string">"case3 invoke"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">ch := make(chan int, 1) // 这个例子中，这里必须用缓冲通道
+
+for {
+	select {
+	case &lt;-ch:
+		time.Sleep(time.Second)
+		fmt.Println(&quot;case 1 invoke&quot;)
+	case data := &lt;-ch:
+		time.Sleep(time.Second)
+		fmt.Printf(&quot;case 2 invoke %d\n&quot;, data)
+	case ch &lt;- 100:
+		time.Sleep(time.Second)
+		fmt.Println(&quot;case3 invoke&quot;)
+}
+</code></pre>
 <p>在 select 的 case 中，可以执行三种操作：</p>
 <ol>
 <li>&lt;- ch：接收通道，但是对值不处理</li>
@@ -83,21 +112,80 @@
 </ol>
 <p>上面的程序运行起来之后，case 3 会首先执行，然后 case1 和 case2 会随机执行一个，程序就这样一直交替运行下去。</p>
 <p>如果用 select 改造上面第一个例子中的代码，就是下面这样：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="comment">// 接收通道 1 的结果</span></span><br><span class="line">		<span class="keyword">case</span> r := &lt;-taskCh1:</span><br><span class="line">			fmt.Printf(<span class="string">"task1 result %+v\n"</span>, r)</span><br><span class="line">		<span class="comment">// 接收通道 2 的结果</span></span><br><span class="line">		<span class="keyword">case</span> r := &lt;-taskCh2:</span><br><span class="line">			fmt.Printf(<span class="string">"task2 result %+v\n"</span>, r)</span><br><span class="line">		<span class="comment">// 接收通道 3 的结果</span></span><br><span class="line">		<span class="keyword">case</span> r := &lt;-taskCh3:</span><br><span class="line">			fmt.Printf(<span class="string">"task3 result %+v\n"</span>, r)</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">for {
+		select {
+		// 接收通道 1 的结果
+		case r := &lt;-taskCh1:
+			fmt.Printf(&quot;task1 result %+v\n&quot;, r)
+		// 接收通道 2 的结果
+		case r := &lt;-taskCh2:
+			fmt.Printf(&quot;task2 result %+v\n&quot;, r)
+		// 接收通道 3 的结果
+		case r := &lt;-taskCh3:
+			fmt.Printf(&quot;task3 result %+v\n&quot;, r)
+		}
+}
+</code></pre>
 <p>select 会及时响应每一个就绪的 channel，无论是发送数据还是接收数据。</p>
 <h2>3. 处理超时情况</h2>
 <p>select 除了用于同时处理多个通道之外，还可以用来处理一些通道超时的情况，通道在阻塞的时候，如果没有外界的干扰，会一直等下去，但是可以通过 select 设置一个超时时间，来打断阻塞：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> &#123;</span><br><span class="line"><span class="keyword">case</span> data := &lt;- ch:</span><br><span class="line">	fmt.Printf(<span class="string">"case invoke %+v\n"</span>, data)</span><br><span class="line"><span class="keyword">case</span> &lt;-time.After(<span class="number">3</span> * time.Second):</span><br><span class="line">	fmt.Println(<span class="string">"channel timeout"</span>)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">ch := make(chan int, 1)
+
+select {
+case data := &lt;- ch:
+	fmt.Printf(&quot;case invoke %+v\n&quot;, data)
+case &lt;-time.After(3 * time.Second):
+	fmt.Println(&quot;channel timeout&quot;)
+
+}
+</code></pre>
 <p>上面的代码在创建了一个通道，但没有向通道中发送数据，如果不用 select，程序就会死锁。</p>
 <p>select 中添加了两个 case，一个从通道中获取数据， 但肯定获取不到，所以在 3 秒钟之后，另一个 case 就会执行，返回通道超时的提示，这样就避免了程序会一直等待下去。</p>
 <p>还有一个情况是我们有时候需用通过键盘获取其他输入设备向程序发送信号，也可以通过这种方式来实现，把上面的程序再修改一下：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">quitCh := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(ch <span class="keyword">chan</span> <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> quit <span class="keyword">string</span></span><br><span class="line">	fmt.Printf(<span class="string">"quit? are you sure?: "</span>)</span><br><span class="line">	fmt.Scanln(&amp;quit)</span><br><span class="line">	quitCh &lt;- <span class="literal">true</span></span><br><span class="line">&#125;(quitCh)</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> &#123;</span><br><span class="line"><span class="keyword">case</span> data := &lt;- ch:</span><br><span class="line">	fmt.Printf(<span class="string">"case invoke %+v\n"</span>, data)</span><br><span class="line"><span class="keyword">case</span> &lt;-quitCh:</span><br><span class="line">	fmt.Println(<span class="string">"program quit"</span>)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">ch := make(chan int, 1)
+
+quitCh := make(chan bool, 1)
+
+go func(ch chan bool) {
+	var quit string
+	fmt.Printf(&quot;quit? are you sure?: &quot;)
+	fmt.Scanln(&amp;quit)
+	quitCh &lt;- true
+}(quitCh)
+
+select {
+case data := &lt;- ch:
+	fmt.Printf(&quot;case invoke %+v\n&quot;, data)
+case &lt;-quitCh:
+	fmt.Println(&quot;program quit&quot;)
+
+}
+</code></pre>
 <p>这次不再通过超时来控制，而是通过键盘来控制，新建了一个通道，只有在键盘输入之后，才会向通道中发送数据，这样就可以做到自由控制程序的退出。</p>
 <h2>4. 非阻塞的 select</h2>
 <p>在上面的示例代码中，其实还少写了一部分，看下面的代码：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> &lt;-ch:</span><br><span class="line">		fmt.Println(<span class="string">"case invoke"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">ch := make(chan int)
+
+for {
+	select {
+	case &lt;-ch:
+		fmt.Println(&quot;case invoke&quot;)
+	}
+}
+</code></pre>
 <p>上面的代码会出现死锁，因为这个 select 只有一个 case，而这个 case 永远都不会接收到数据，所以 select 本身也被阻塞了，程序无法继续运行，就会造成死锁，对于这种情况，我们设置一个可用的 case，让 select 变成非阻塞，就可以解决这个问题。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> &lt;-ch:</span><br><span class="line">		fmt.Println(<span class="string">"case invoke"</span>)</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		time.Sleep(time.Second)</span><br><span class="line">		fmt.Println(<span class="string">"default invoke"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">ch := make(chan int)
+
+for {
+	select {
+	case &lt;-ch:
+		fmt.Println(&quot;case invoke&quot;)
+	default:
+		time.Sleep(time.Second)
+		fmt.Println(&quot;default invoke&quot;)
+	}
+}
+</code></pre>
 <p>这样，程序就不会死锁，而是不断的执行 default 中的内容。</p>
 <h2>5. 小结</h2>
 <p>在这篇文章中，我们介绍了通道的多路复用，并说明了可以用到多路复用的场景。下篇文章中，我们来详细聊一下 Go 是如何实现传统的并发模型。</p>
@@ -109,7 +197,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -117,7 +205,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

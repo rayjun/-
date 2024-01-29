@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -77,15 +76,34 @@
 <p>通常是把一个字段创建为一个索引，但是同时也可以在一个索引中使用多个字段，这种索引称之为<strong>组合索引</strong>。</p>
 <h4>索引的创建与删除</h4>
 <p>索引可以在建表阶段或者表建立之后进行创建，在建表阶段，使用 <strong>CREATE INDEX</strong> 建立索引：</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">INDEX</span> index_name <span class="keyword">on</span> table_name (column_list)</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">UNIQUE</span> <span class="keyword">INDEX</span> index_name <span class="keyword">on</span> table_name (column_list)</span><br></pre></td></tr></table></figure>
-CREATE INDEX 只能创建<strong>普通索引</strong>和<strong>唯一索引</strong>这两种类型的索引。</p>
+<pre><code class="language-sql">CREATE INDEX index_name on table_name (column_list)
+CREATE UNIQUE INDEX index_name on table_name (column_list)
+</code></pre>
+<p>CREATE INDEX 只能创建<strong>普通索引</strong>和<strong>唯一索引</strong>这两种类型的索引。</p>
 <p>还有一种方式就是通过 <strong>ALTER TABLE</strong> 方式创建索引：</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 省略索引名称，索引名称和第一个列名一样</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> <span class="keyword">index</span> (column_list)</span><br><span class="line"></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> <span class="keyword">index</span> index_name (column_list)</span><br><span class="line"></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> uniuque (column_list)</span><br><span class="line"></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> primary <span class="keyword">key</span> (column_list)</span><br><span class="line"></span><br><span class="line">// 为索引指定长度</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> <span class="keyword">index</span> index_name (<span class="keyword">column</span>(<span class="keyword">length</span>))</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">    // 省略索引名称，索引名称和第一个列名一样
+    alter table table_name add index (column_list)
+    
+    alter table table_name add index index_name (column_list)
+    
+    alter table table_name add uniuque (column_list)
+    
+    alter table table_name add primary key (column_list)
+    
+    // 为索引指定长度
+    alter table table_name add index index_name (column(length))
+</code></pre>
 <p>删除索引可以通过 <strong>ALTER TABLE</strong> 和 <strong>DROP INDEX</strong> 来实现：</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">INDEX</span> index_name <span class="keyword">on</span> table_name</span><br><span class="line"></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">drop</span> <span class="keyword">index</span> index_name</span><br><span class="line"></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">drop</span> primary <span class="keyword">key</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">    DROP INDEX index_name on table_name
+    
+    alter table table_name drop index index_name
+    
+    alter table table_name drop primary key
+</code></pre>
 <h4>索引的使用</h4>
 <p>在创建完索引之后，并不需要手动去使用索引，而是由 MySQL 的引擎来决定是否使用索引，可以通过 <strong>EXPLAIN</strong> 关键字来查看 MySQL 是如何使用索引的，同时也可以通过这个关键词来分析 SQL 语句，使用起来很方便，只需要加在 SQL 前就可以：</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> username = <span class="string">'ray'</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">    explain select * from user where username = 'ray'
+</code></pre>
 <p>在 SQL 要避免以下的查询，以下的查询都不会使用索引：</p>
 <ul>
 <li>索引列参与了计算或者使用了函数运算</li>
@@ -110,7 +128,8 @@ CREATE INDEX 只能创建<strong>普通索引</strong>和<strong>唯一索引</s
 </ul>
 <h4>字符串索引优化</h4>
 <p>添加一个冗余字段，将字符串使用 hash 方法将字符串转化为整数，例如：username_key=hashToInt(username)，对username_key建立索引，查询时可以用如下查询</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> username_key = hashToInt(‘ray’) <span class="keyword">and</span> username = ‘ray</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">    select * from user where username_key = hashToInt(‘ray’) and username = ‘ray
+</code></pre>
 
 </article>
 
@@ -118,7 +137,7 @@ CREATE INDEX 只能创建<strong>普通索引</strong>和<strong>唯一索引</s
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -126,7 +145,7 @@ CREATE INDEX 只能创建<strong>普通索引</strong>和<strong>唯一索引</s
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

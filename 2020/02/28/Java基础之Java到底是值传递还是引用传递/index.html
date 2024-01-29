@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -74,9 +73,16 @@
 </blockquote>
 <h2>赋值操作</h2>
 <p>先看一下这段代码：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">56</span>;</span><br><span class="line"><span class="keyword">int</span> b = a;</span><br><span class="line">b = <span class="number">65</span>;</span><br><span class="line">System.out.println(<span class="string">"原变量的值："</span>+a);</span><br><span class="line">System.out.println(<span class="string">"新变量的值："</span>+b);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">int a = 56;
+int b = a;
+b = 65;
+System.out.println(&quot;原变量的值：&quot;+a);
+System.out.println(&quot;新变量的值：&quot;+b);
+</code></pre>
 <p>对于上面代码的执行结果，应该很简单：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">原变量的值：<span class="number">56</span></span><br><span class="line">新变量的值：<span class="number">65</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">原变量的值：56
+新变量的值：65
+</code></pre>
 <p>赋值操作其实就是新建了一个变量，把原变量中的值拷贝了一份到新变量中。如下图：</p>
 <p><img src="valueref1.png" alt=""></p>
 <p>也就是说修改 b 其实就是修改 b 变量中的值，与 a 变量完全没有关系。因为在把 a 的值赋值给 b 时，实际上是把 a 变量的<strong>值</strong>拷贝了一份给 b。拷贝完之后 a 和 b 就没有关系了。</p>
@@ -84,38 +90,88 @@
 <p>其实这里的说法不完全正确，与 JVM 的机制有关，但是大体上可以这样理解。</p>
 </blockquote>
 <p>再来看一个例子：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ParamObject paramA = <span class="keyword">new</span> ParamObject(<span class="string">"小明"</span>);</span><br><span class="line">ParamObject paramB = paramA;</span><br><span class="line">paramB.setName(<span class="string">"小红"</span>);</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">"原对象的值："</span>+paramA.getName());</span><br><span class="line">System.out.println(<span class="string">"新对象的值："</span>+paramB.getName());</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">ParamObject paramA = new ParamObject(&quot;小明&quot;);
+ParamObject paramB = paramA;
+paramB.setName(&quot;小红&quot;);
+
+System.out.println(&quot;原对象的值：&quot;+paramA.getName());
+System.out.println(&quot;新对象的值：&quot;+paramB.getName());
+</code></pre>
 <p>与上面的例子不同，这个例子的输出是：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">原对象的值：小红</span><br><span class="line">新对象的值：小红</span><br></pre></td></tr></table></figure>
-上面的例子执行的情况如下图：</p>
+<pre><code class="language-java">原对象的值：小红
+新对象的值：小红
+</code></pre>
+<p>上面的例子执行的情况如下图：</p>
 <p><img src="valueref4.png" alt=""></p>
 <p>在将 paramA 的值赋给 paramB 时，和上面的基本类型其实是一样，把 paramA 中的引用<strong>创建了一个副本</strong>，所以 paramB 中存储的也是指向同一个对象的引用。所以通过 paramB 也就可以修改对象。</p>
 <p>再看下面这个例子：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ParamObject paramA = <span class="keyword">new</span> ParamObject(<span class="string">"小明"</span>);</span><br><span class="line">ParamObject paramB = paramA;</span><br><span class="line">paramB = <span class="keyword">new</span> ParamObject(<span class="string">"小红"</span>);</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">"原对象的值："</span>+paramA.getName());</span><br><span class="line">System.out.println(<span class="string">"新对象的值："</span>+paramB.getName());</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">ParamObject paramA = new ParamObject(&quot;小明&quot;);
+ParamObject paramB = paramA;
+paramB = new ParamObject(&quot;小红&quot;);
+
+System.out.println(&quot;原对象的值：&quot;+paramA.getName());
+System.out.println(&quot;新对象的值：&quot;+paramB.getName());
+</code></pre>
 <p>这个例子输出的结果又不同：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">原对象的值：小明</span><br><span class="line">新对象的值：小红</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">原对象的值：小明
+新对象的值：小红
+</code></pre>
 <p>这个例子的执行情况是这样的：</p>
 <p><img src="valueref3.png" alt=""></p>
 <p>paramB 再进行 new 操作之后，paramB 中存储的<strong>引用</strong>就变成了新对象的地址了。所以修改新的对象并不会影响原来的对象。</p>
 <p>所以可以把 Java 中的赋值操作总结为：<strong>对原变量中存储的内容进行拷贝，把拷贝的内容放到新的变量中，不论变量中存储的是基本类型还是引用类型</strong></p>
 <h2>Java 中的参数传递</h2>
 <p>定义一个方法：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a)</span> </span>&#123;</span><br><span class="line">    a = <span class="number">5</span>;</span><br><span class="line">    System.out.println(a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public void func(int a) {
+    a = 5;
+    System.out.println(a);
+}
+</code></pre>
 <p>方法参数中的 a 称之为<strong>形参</strong>，在调用时传入的参数称之为<strong>实参</strong>。</p>
 <p>先说一下结论，Java 中参数的传递其实和<strong>赋值</strong>操作是一样的，相当于把实参赋值给形参。</p>
 <p>所以传参也是将实参的副本给形参，修改形参的内容并不会影响实参（<strong>注意：这里说的是修改形参，并不是修改形参引用的对象</strong>）。</p>
 <p>通过下面例子来证实一下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> b = <span class="number">5</span>;</span><br><span class="line">func(b);</span><br><span class="line">System.out.println(<span class="string">"执行方法后的值："</span>+b);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a)</span> </span>&#123;</span><br><span class="line">    a = <span class="number">5</span>;</span><br><span class="line">    System.out.println(<span class="string">"在方法中修改形参的值"</span>+a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">int b = 5;
+func(b);
+System.out.println(&quot;执行方法后的值：&quot;+b);
+
+public void func(int a) {
+    a = 5;
+    System.out.println(&quot;在方法中修改形参的值&quot;+a);
+}
+</code></pre>
 <p>例子的输出为：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在方法中修改形参的值: <span class="number">5</span></span><br><span class="line">执行方法后的值：<span class="number">5</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">在方法中修改形参的值: 5
+执行方法后的值：5
+</code></pre>
 <p>这个结果与上面基本类型的变量进行赋值的结果一直。再来看看引用类型参数的传递：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ParamObject b = <span class="keyword">new</span> ParamObject(<span class="string">"小红"</span>);</span><br><span class="line">func1(b);</span><br><span class="line">System.out.println(<span class="string">"执行方法后的值："</span>+b.getName());</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">func1</span><span class="params">(ParamObject a)</span> </span>&#123;</span><br><span class="line">    a.setName(<span class="string">"小明"</span>);</span><br><span class="line">    System.out.println(<span class="string">"在方法通过引用修改对象的值："</span>+a.getName());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">ParamObject b = new ParamObject(&quot;小红&quot;);
+func1(b);
+System.out.println(&quot;执行方法后的值：&quot;+b.getName());
+
+public void func1(ParamObject a) {
+    a.setName(&quot;小明&quot;);
+    System.out.println(&quot;在方法通过引用修改对象的值：&quot;+a.getName());
+}
+</code></pre>
 <p>这个例子的输出为：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在方法通过引用修改对象的值：小明</span><br><span class="line">执行方法后的值：小明</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">在方法通过引用修改对象的值：小明
+执行方法后的值：小明
+</code></pre>
 <p>这个例子与上面第二个例子的效果一致。再来看最后一个例子：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ParamObject b = <span class="keyword">new</span> ParamObject(<span class="string">"小红"</span>);</span><br><span class="line">func2(b);</span><br><span class="line">System.out.println(<span class="string">"执行方法后的值："</span>+b.getName());</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">func2</span><span class="params">(ParamObject a)</span> </span>&#123;</span><br><span class="line">    a = <span class="keyword">new</span> ParamObject(<span class="string">"小明"</span>);</span><br><span class="line">    System.out.println(<span class="string">"在方法新建对象后的值："</span>+a.getName());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">ParamObject b = new ParamObject(&quot;小红&quot;);
+func2(b);
+System.out.println(&quot;执行方法后的值：&quot;+b.getName());
+
+public void func2(ParamObject a) {
+    a = new ParamObject(&quot;小明&quot;);
+    System.out.println(&quot;在方法新建对象后的值：&quot;+a.getName());
+}
+</code></pre>
 <p>最后这个例子的输出为：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在方法新建对象后的值：小明</span><br><span class="line">执行方法后的值：小红</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">在方法新建对象后的值：小明
+执行方法后的值：小红
+</code></pre>
 <p>也与上面第三个例子的结果表现一致。所以在 Java 中参数传递的方式与赋值完全一样。都是拷贝原变量中的内容，这种方式就是<strong>值传递</strong>。如果在传递的过程中不是通过副本，而是直接传递变量本身，这种方式称之为<strong>引用传递</strong>。</p>
 <p>所以说 Java 中的参数传递是<strong>值传递</strong>。</p>
 
@@ -125,7 +181,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -133,7 +189,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

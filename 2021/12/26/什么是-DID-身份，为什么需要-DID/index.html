@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -89,9 +88,27 @@
 <p>DID 标识符其实就是一个字符串，在 W3C 的草案中，DID 参考的是 URN 的标准，格式如下:</p>
 <p><img src="1.png" alt=""></p>
 <p>开头永远是 did，did method 是实现这个 DID 系统的名称，最后是系统生产的一个字符串。腾讯云基于 DID 标准开发了一个<a href="https://cloud.tencent.com/product/tdid" target="_blank" rel="noopener">分布式身份系统 TDID</a>，那么 TDID 服务产生的 DID标识符格式如下：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">did:tdid:15:0xbd7345b2ff8d1dbf1e330a6c5dcf20c675b6c484</span><br></pre></td></tr></table></figure></p>
+<pre><code>did:tdid:15:0xbd7345b2ff8d1dbf1e330a6c5dcf20c675b6c484
+</code></pre>
 <p>DID 对外的字符串实际上会作为一个 key，对应的 value 就是 did document，具体的信息会在 document 中。document 是一个标准的 Json，其中会包括一些用户的公钥、所使用的 DID 协议以及 DID 的服务请求地址、时间戳、签名等信息，下面是一个示例信息：</p>
-<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"@context"</span>: <span class="string">"https://w3id.org/did/v1"</span>,</span><br><span class="line">  <span class="attr">"id"</span>: <span class="string">"did:example:123456789abcdefghi"</span>,</span><br><span class="line">  <span class="attr">"authentication"</span>: [&#123;</span><br><span class="line">    // used to authenticate as did:...fghi</span><br><span class="line">    "id": "did:example:123456789abcdefghi#keys-1",</span><br><span class="line">    "type": "RsaVerificationKey2018",</span><br><span class="line">    "controller": "did:example:123456789abcdefghi",</span><br><span class="line">    "publicKeyPem": "-----BEGIN PUBLIC KEY...END PUBLIC KEY-----\r\n"</span><br><span class="line">  &#125;],</span><br><span class="line">  "service": [&#123;</span><br><span class="line">    // used to retrieve Verifiable Credentials associated with the DID</span><br><span class="line">    "id":"did:example:123456789abcdefghi#vcs",</span><br><span class="line">    "type": "VerifiableCredentialService",</span><br><span class="line">    "serviceEndpoint": "https://example.com/vc/"</span><br><span class="line">  &#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-json">{
+  &quot;@context&quot;: &quot;https://w3id.org/did/v1&quot;,
+  &quot;id&quot;: &quot;did:example:123456789abcdefghi&quot;,
+  &quot;authentication&quot;: [{
+    // used to authenticate as did:...fghi
+    &quot;id&quot;: &quot;did:example:123456789abcdefghi#keys-1&quot;,
+    &quot;type&quot;: &quot;RsaVerificationKey2018&quot;,
+    &quot;controller&quot;: &quot;did:example:123456789abcdefghi&quot;,
+    &quot;publicKeyPem&quot;: &quot;-----BEGIN PUBLIC KEY...END PUBLIC KEY-----\r\n&quot;
+  }],
+  &quot;service&quot;: [{
+    // used to retrieve Verifiable Credentials associated with the DID
+    &quot;id&quot;:&quot;did:example:123456789abcdefghi#vcs&quot;,
+    &quot;type&quot;: &quot;VerifiableCredentialService&quot;,
+    &quot;serviceEndpoint&quot;: &quot;https://example.com/vc/&quot;
+  }]
+}
+</code></pre>
 <p>DID 标识符和 DID document 会被存储在区块链和去中心化存储上。在上面的图中，下面的两层都是为 DID 标识符和 DID document 服务的。</p>
 <p>区块链的选用很灵活，可以是公链、联盟链、甚至可以是私有链，都可以用来部署 DID。</p>
 <h3>3.2 DID 应用层</h3>
@@ -113,7 +130,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -121,7 +138,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

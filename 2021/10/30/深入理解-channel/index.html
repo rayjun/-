@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -82,16 +81,45 @@
 <li>buffered channel，在创建时候需要指定缓冲区的大小</li>
 <li>unbuffered channel，也被称之为<strong>同步 channel</strong>，这个可以看成是 buffered channel 的特殊情况，缓冲区的大小设置为 1</li>
 </ul>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">3</span>) <span class="comment">// 缓冲区大小为 3 的 buffered channel</span></span><br><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)    <span class="comment">// unbuffered channel</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">ch := make(chan int, 3) // 缓冲区大小为 3 的 buffered channel
+ch := make(chan int)    // unbuffered channel
+</code></pre>
 <p>chan 的底层数据结构叫 <code>hchan</code>，具体结构如下：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> hchan <span class="keyword">struct</span> &#123;</span><br><span class="line">  buf      unsafe.Pointer</span><br><span class="line">  lock     mutex</span><br><span class="line">  sendx    <span class="keyword">uint</span>   </span><br><span class="line">	recvx    <span class="keyword">uint</span></span><br><span class="line">  sendq    waitq   </span><br><span class="line">	recvq    waitq </span><br><span class="line">	qcount   <span class="keyword">uint</span>          </span><br><span class="line">	dataqsiz <span class="keyword">uint</span>          </span><br><span class="line">	elemsize <span class="keyword">uint16</span></span><br><span class="line">	closed   <span class="keyword">uint32</span></span><br><span class="line">	elemtype *_type</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type hchan struct {
+  buf      unsafe.Pointer
+  lock     mutex
+  sendx    uint   
+	recvx    uint
+  sendq    waitq   
+	recvq    waitq 
+	qcount   uint          
+	dataqsiz uint          
+	elemsize uint16
+	closed   uint32
+	elemtype *_type
+}
+</code></pre>
 <p>其中 buf 是一个循环队列，用来存储 channel 接收的数据，lock 用来保护数据安全，goroutine 来访问 channel 的 buf 之前，需要先获取锁。</p>
 <p>sendx 表示当前数据发送的的位置，recvx 表示当前数据接收的位置。sendq 和 recvq 是两个队列，这两个结构很重要，我们下面会讲到。</p>
 <p>qcount 表示当前 buf 中存储的数据个数，dataqsiz 表示 buf 可以接受的最大数据数量。elemtype 就表示数据的类型。</p>
 <p>channel 在使用 make 创建的时候，实际上会在堆上分配一块空间，初始化 hchan 结构，然后返回 hchan 的指针。这就是为什么在使用 channel 的时候，直接传递就可以，而不用获取 channel 的指针，这是因为 channel 本身就是指针。</p>
 <h2>2. 发送和接收</h2>
 <p>下面来详细看一下 channel 发送和接收数据的过程，现在假设有下面两个 goroutine: G1 和 G2，一个发送数据，一个接收数据：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// G1</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> _, task := <span class="keyword">range</span> tasks &#123;</span><br><span class="line">        taskCh &lt;- task</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// G2</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">()</span></span> &#123;</span><br><span class="line">   <span class="keyword">for</span> &#123;</span><br><span class="line">       task := &lt;- taskCh</span><br><span class="line">       process(task)</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">// G1
+func main() {
+    for _, task := range tasks {
+        taskCh &lt;- task
+    }
+}
+
+// G2
+func worker() {
+   for {
+       task := &lt;- taskCh
+       process(task)
+   }
+}
+</code></pre>
 <p>假设现在 G1 先执行，将数据发送到 channel中，会经过下面的三步：</p>
 <p><img src="0.png" alt=""></p>
 <p>在将数据放进 buf 之前，需要先获取锁，然后将数据拷贝一份放进去（注意这里是原数据的拷贝），然后再释放锁。</p>
@@ -129,7 +157,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -137,7 +165,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

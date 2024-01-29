@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -88,15 +87,19 @@
 <p><strong>SELECT</strong></p>
 <p>select 用于从数据库中查询数据。
 有两种使用方式，一种是将表中的<strong>列</strong>全部查询出来，一种只查询出来指定的列。
-查询全部列：
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name</span><br></pre></td></tr></table></figure></p>
-<p>查询指定列：
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c1, c2, c3 <span class="keyword">from</span> table_name</span><br></pre></td></tr></table></figure></p>
-<p>在返回的数据中，有些列的值是重复的，可以使用 <strong>distinct</strong> 来返回一列的唯一值：
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">distinct</span> c2 <span class="keyword">from</span> table_name</span><br></pre></td></tr></table></figure></p>
-<p>如果需要在查询的的过程中加入条件，那就需要使用 <strong>where</strong> 来指定查询条件:
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 = v1;</span><br></pre></td></tr></table></figure>
-where 支持的运算符如下：</p>
+查询全部列：</p>
+<pre><code class="language-sql">   select * from table_name
+</code></pre>
+<p>查询指定列：</p>
+<pre><code class="language-sql">    select c1, c2, c3 from table_name
+</code></pre>
+<p>在返回的数据中，有些列的值是重复的，可以使用 <strong>distinct</strong> 来返回一列的唯一值：</p>
+<pre><code class="language-sql">    select distinct c2 from table_name
+</code></pre>
+<p>如果需要在查询的的过程中加入条件，那就需要使用 <strong>where</strong> 来指定查询条件:</p>
+<pre><code class="language-sql">select * from table_name where c1 = v1;
+</code></pre>
+<p>where 支持的运算符如下：</p>
 <table>
 <thead>
 <tr>
@@ -139,39 +142,51 @@ where 支持的运算符如下：</p>
 </tr>
 </tbody>
 </table>
-<p>假如说不止一个条件，可以使用 <strong>AND</strong> 和 <strong>OR</strong> 来连接多个 条件，AND 和 OR 可以组合使用。
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 = v1 <span class="keyword">and</span>  c2 = v2 <span class="keyword">or</span>  c3 &lt;&gt; v3;</span><br></pre></td></tr></table></figure></p>
+<p>假如说不止一个条件，可以使用 <strong>AND</strong> 和 <strong>OR</strong> 来连接多个 条件，AND 和 OR 可以组合使用。</p>
+<pre><code class="language-sql">select * from table_name where c1 = v1 and  c2 = v2 or  c3 &lt;&gt; v3;
+</code></pre>
 <p>使用 select 查询出来的结果的顺序可能不是想要的，那么就可以使用 <strong>ORDER BY</strong> 来对结果进行排序，order by 默认使用的是升序排序。</p>
-<p>使用 <strong>desc</strong> 来进行降序排序：
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">form</span> table_name <span class="keyword">where</span> c1 = v1 <span class="keyword">order</span> <span class="keyword">by</span> c1 <span class="keyword">desc</span>;</span><br></pre></td></tr></table></figure>
-对多个字段使用 order by：
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 = v1 <span class="keyword">order</span> <span class="keyword">by</span> c1, c2;</span><br></pre></td></tr></table></figure>
-对不同的字段使用不同的排序规则:
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 = v1 <span class="keyword">order</span> <span class="keyword">by</span> c1 <span class="keyword">asc</span>, c2 <span class="keyword">desc</span>;</span><br></pre></td></tr></table></figure></p>
+<p>使用 <strong>desc</strong> 来进行降序排序：</p>
+<pre><code class="language-sql">select * form table_name where c1 = v1 order by c1 desc;
+</code></pre>
+<p>对多个字段使用 order by：</p>
+<pre><code class="language-sql">select * from table_name where c1 = v1 order by c1, c2;
+</code></pre>
+<p>对不同的字段使用不同的排序规则:</p>
+<pre><code class="language-sql">select * from table_name where c1 = v1 order by c1 asc, c2 desc;
+</code></pre>
 <p><strong>INSERT INTO</strong></p>
 <p>insert into 用于向数据库中插入数据。
-两种使用方式，一种是直接插入表中，不指定列，这样需要为每一列都填充数据，否则会报错:
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table_name <span class="keyword">values</span> (v1, v2, v3, v4);</span><br></pre></td></tr></table></figure></p>
-<p>也可以指定列:
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table_name (c2, c3, c4) <span class="keyword">values</span> (v2, v3, v4);</span><br></pre></td></tr></table></figure></p>
+两种使用方式，一种是直接插入表中，不指定列，这样需要为每一列都填充数据，否则会报错:</p>
+<pre><code class="language-sql">insert into table_name values (v1, v2, v3, v4);
+</code></pre>
+<p>也可以指定列:</p>
+<pre><code class="language-sql">insert into table_name (c2, c3, c4) values (v2, v3, v4);
+</code></pre>
 <p><strong>UPDATE</strong></p>
-<p>update 用于更新数据，在更新数据的时候也可以使用 where 来限定某些条件的数据可以被更新。
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> table_name <span class="keyword">set</span> c1 = v1 <span class="keyword">where</span> c1 = v;</span><br></pre></td></tr></table></figure></p>
+<p>update 用于更新数据，在更新数据的时候也可以使用 where 来限定某些条件的数据可以被更新。</p>
+<pre><code class="language-sql">update table_name set c1 = v1 where c1 = v;
+</code></pre>
 <p><strong>DELETE</strong></p>
 <p>delete 用于删除表中的数据，可以使用 where 删除限定的数据，也可以删除全部数据。</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 = v1;</span><br></pre></td></tr></table></figure></p>
-<p>删除全部数据：
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> table_name;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">delete from table_name where c1 = v1;
+</code></pre>
+<p>删除全部数据：</p>
+<pre><code class="language-sql">delete from table_name;
+</code></pre>
 <p><strong>SELECT TOP</strong></p>
 <p>用于返回指定的记录的条数：</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> top <span class="number">2</span> * <span class="keyword">from</span> table_name;</span><br></pre></td></tr></table></figure></p>
-<p>但是这个特性在有的数据库中不支持，但是有相应的替代方案可以选择，在 MySQL 中可以这样实现：
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">limit</span> <span class="number">2</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">    select top 2 * from table_name;
+</code></pre>
+<p>但是这个特性在有的数据库中不支持，但是有相应的替代方案可以选择，在 MySQL 中可以这样实现：</p>
+<pre><code class="language-sql">    select * from table_name limit 2
+</code></pre>
 <p><strong>LIKE</strong>
 like 用于 where 子句中进行模糊查询。</p>
-<p>表示查询 c1 列以 bar 开头的记录。
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 <span class="keyword">like</span> <span class="string">'bar%'</span>;</span><br></pre></td></tr></table></figure>
-like 支持如下的通配符:</p>
+<p>表示查询 c1 列以 bar 开头的记录。</p>
+<pre><code class="language-sql">   select * from table_name where c1 like 'bar%';
+</code></pre>
+<p>like 支持如下的通配符:</p>
 <table>
 <thead>
 <tr>
@@ -204,29 +219,36 @@ like 支持如下的通配符:</p>
 </blockquote>
 <p><strong>IN</strong>
 in 可以指定 where 子句中在固定范围的内进行查询:</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 <span class="keyword">in</span> (v1, v2, v3);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">select * from table_name where c1 in (v1, v2, v3);
+</code></pre>
 <p><strong>BETWEEN AND</strong></p>
 <p>between and 可以在 where 子句中指定查询的范围。</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 <span class="keyword">between</span> v1 <span class="keyword">and</span> v2;</span><br></pre></td></tr></table></figure>
-between and 同样可以使用 not 来表示查询不在这个范围内的数据，用法如下：</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">where</span> c1 <span class="keyword">not</span> <span class="keyword">between</span> v1 <span class="keyword">and</span> v2;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">select * from table_name where c1 between v1 and v2;
+</code></pre>
+<p>between and 同样可以使用 not 来表示查询不在这个范围内的数据，用法如下：</p>
+<pre><code class="language-sql">select * from table_name where c1 not between v1 and v2;
+</code></pre>
 <blockquote>
 <p>between and 在不同的数据库中有不同的表现</p>
 </blockquote>
 <p><strong>ALIAS</strong></p>
 <p>在 SQL 进行查询的过程中，可以为<strong>列名</strong>和<strong>表名</strong>都增加别名。</p>
 <p>为列增加别名：</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c1 <span class="keyword">as</span> c1_alias <span class="keyword">from</span> table_name;</span><br></pre></td></tr></table></figure>
-为表增加别名:
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table_name <span class="keyword">as</span> table_name_alias;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">select c1 as c1_alias from table_name;
+</code></pre>
+<p>为表增加别名:</p>
+<pre><code class="language-sql">select * from table_name as table_name_alias;
+</code></pre>
 <p><strong>多表查询</strong></p>
 <p>SQL 支持同时查询多个表。</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> a.c1,b.c2 <span class="keyword">from</span> table1 <span class="keyword">as</span> a, table2 <span class="keyword">as</span> b <span class="keyword">where</span> a.c1 = b.c2;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">select a.c1,b.c2 from table1 as a, table2 as b where a.c1 = b.c2;
+</code></pre>
 <p><strong>JOIN</strong></p>
 <p>SQL 在查询多个表中的数据时，除了可以使用多表查询，还可以使用 join 来进行查询。</p>
 <p>上面多表查询的 SQL 与这条 SQL 是等价的：</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> a.c1, b.c2  <span class="keyword">from</span> table1 <span class="keyword">as</span> a <span class="keyword">inner</span> <span class="keyword">join</span> table2 <span class="keyword">as</span> b <span class="keyword">on</span> a.c1 = b.c2;</span><br></pre></td></tr></table></figure>
-join 除了有 inner join 之外（inner join 与 join 等价），在上面的查询中，table1 称之为左表，table2 称之为右表。join 比多表关联查询功能强大的地方在于 join 可以根据需要，返回不同的结果。</p>
+<pre><code class="language-sql">select a.c1, b.c2  from table1 as a inner join table2 as b on a.c1 = b.c2;
+</code></pre>
+<p>join 除了有 inner join 之外（inner join 与 join 等价），在上面的查询中，table1 称之为左表，table2 称之为右表。join 比多表关联查询功能强大的地方在于 join 可以根据需要，返回不同的结果。</p>
 <table>
 <thead>
 <tr>
@@ -263,26 +285,38 @@ union 用于合并多个 select 的查询结果。使用 union 需要满足以�
 <blockquote>
 <p>列名不需要一致</p>
 </blockquote>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c1, c2 <span class="keyword">from</span> table1 </span><br><span class="line"><span class="keyword">union</span></span><br><span class="line"><span class="keyword">select</span> c3,c4 <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
-直接使用 union 返回的结果中不包含重复列，如果需要返回全部的结果，可以使用 <strong>UNION ALL</strong>。</p>
+<pre><code class="language-sql">select c1, c2 from table1 
+union
+select c3,c4 from table2;
+</code></pre>
+<p>直接使用 union 返回的结果中不包含重复列，如果需要返回全部的结果，可以使用 <strong>UNION ALL</strong>。</p>
 <h3>DDL 基础</h3>
 <p><strong>SELECT INTO</strong></p>
 <p>select into 可以用来创建表的备份，可以配合 where 、JOIN 等语句一起使用。</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">into</span> new_table <span class="keyword">from</span> lod_table <span class="keyword">where</span> c1 = v1;</span><br></pre></td></tr></table></figure>
-select into 直接使用是在同一个数据库操作，也可以通过 in 来实现跨数据库操作:
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">into</span> new_table <span class="keyword">in</span> new_datebase <span class="keyword">from</span> old_table <span class="keyword">where</span> c1 = v1;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">select * into new_table from lod_table where c1 = v1;
+</code></pre>
+<p>select into 直接使用是在同一个数据库操作，也可以通过 in 来实现跨数据库操作:</p>
+<pre><code class="language-sql">select * into new_table in new_datebase from old_table where c1 = v1;
+</code></pre>
 <blockquote>
 <p>MySQL 不支持 SELECT INTO</p>
 </blockquote>
 <p><strong>CREATE DATABASE</strong></p>
 <p>create database 用于创建数据库，使用起来很简单。</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">database</span> database_name;</span><br></pre></td></tr></table></figure></p>
-<p>删除数据库:
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">database</span> database_name;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">create database database_name;
+</code></pre>
+<p>删除数据库:</p>
+<pre><code class="language-sql">drop database database_name;
+</code></pre>
 <p><strong>CREATE TABLE</strong></p>
 <p>create table 用于创建数据库表。</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> table_name &#123;</span><br><span class="line">    c1 datatype,</span><br><span class="line">    c2 datatype,</span><br><span class="line">    c3 datatype</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-其中 datatype 是 SQL 支持的数据类型。</p>
+<pre><code class="language-sql">create table table_name {
+    c1 datatype,
+    c2 datatype,
+    c3 datatype
+}
+</code></pre>
+<p>其中 datatype 是 SQL 支持的数据类型。</p>
 <p>上面的 SQL 展示了如何创建一个基本的数据库表，但是实际使用的过程中，创建数据表的语句不会这么简单，通常来说会给数据库中的列加上各种各样的<strong>约束</strong>来满足需要，下表是 SQL 支持的几种约束。</p>
 <table>
 <thead>
@@ -323,45 +357,77 @@ select into 直接使用是在同一个数据库操作，也可以通过 in 来�
 </tbody>
 </table>
 <p>not null 就是标识一个字段不能为 null，通常在建表时指定:</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> table_name &#123;</span><br><span class="line">    c1 datatype <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    c2 datatype,</span><br><span class="line">    c3 datatype</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-unique 指定每条记录的唯一标识，每个表可以用多个 unique 标识。</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> table_name &#123;</span><br><span class="line">    c1 datatype <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    c2 datatype,</span><br><span class="line">    c3 datatype,</span><br><span class="line">    <span class="keyword">unique</span>(c1)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-也可以把多个字段组合成为唯一标识:
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> table_name &#123;</span><br><span class="line">    c1 datatype <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    c2 datatype,</span><br><span class="line">    c3 datatype,</span><br><span class="line">    <span class="keyword">constraint</span> uc_c1_c2 <span class="keyword">unique</span> (c1, c2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-对于已经创建的表添加 unique 约束以及删除现有的约束可以使用 <strong>alter table</strong> 来进行修改。</p>
+<pre><code class="language-sql">create table table_name {
+    c1 datatype not null,
+    c2 datatype,
+    c3 datatype
+}
+</code></pre>
+<p>unique 指定每条记录的唯一标识，每个表可以用多个 unique 标识。</p>
+<pre><code class="language-sql">create table table_name {
+    c1 datatype not null,
+    c2 datatype,
+    c3 datatype,
+    unique(c1)
+}
+</code></pre>
+<p>也可以把多个字段组合成为唯一标识:</p>
+<pre><code class="language-sql">create table table_name {
+    c1 datatype not null,
+    c2 datatype,
+    c3 datatype,
+    constraint uc_c1_c2 unique (c1, c2)
+}
+</code></pre>
+<p>对于已经创建的表添加 unique 约束以及删除现有的约束可以使用 <strong>alter table</strong> 来进行修改。</p>
 <p>删除表：</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> table_name;</span><br></pre></td></tr></table></figure>
-清除表中数据但是不删除表:</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">truncate</span> <span class="keyword">table</span> table_name;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">drop table table_name;
+</code></pre>
+<p>清除表中数据但是不删除表:</p>
+<pre><code class="language-sql">truncate table table_name;
+</code></pre>
 <p><strong>ALTER TBALE</strong></p>
 <p>使用 alter table 可以增加和删除表的字段，也可以修改字段的类型。</p>
-<p>增加字段：
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> c1 datatype;</span><br></pre></td></tr></table></figure>
-删除字段（有些数据库不允许这个操作）:
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">drop</span> <span class="keyword">column</span> c1;</span><br></pre></td></tr></table></figure>
-修改表中字段的数据类型:
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">column</span> c1 datatype;</span><br></pre></td></tr></table></figure></p>
+<p>增加字段：</p>
+<pre><code class="language-sql">alter table table_name add c1 datatype;
+</code></pre>
+<p>删除字段（有些数据库不允许这个操作）:</p>
+<pre><code class="language-sql">alter table table_name drop column c1;
+</code></pre>
+<p>修改表中字段的数据类型:</p>
+<pre><code class="language-sql">alter table table_name
+alter column c1 datatype;
+</code></pre>
 <p><strong>INDEX</strong></p>
 <p>在表中可以创建 index，以便更快更高效的查询数据。但是凡事都有代价，增加了索引的表在更新数据的时候会更慢。所以只会在经常被搜索的列和表上创建索引。</p>
 <p>创建一个索引，与 unique 一样，可以为一个字段创建一个索引，也可以为多个字段创建一个索引:</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> index_name <span class="keyword">on</span> table_name (c1);</span><br></pre></td></tr></table></figure>
-上面创建的这个索引的值是可以重复的，也可以创建唯一索引，唯一索引的值是不能重复的:</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">unique</span> <span class="keyword">index</span> index_name <span class="keyword">on</span> table_name (c1);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">create index index_name on table_name (c1);
+</code></pre>
+<p>上面创建的这个索引的值是可以重复的，也可以创建唯一索引，唯一索引的值是不能重复的:</p>
+<pre><code class="language-sql">create unique index index_name on table_name (c1);
+</code></pre>
 <p>删除索引（MySQL）:</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">drop</span> <span class="keyword">index</span> index_name;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">alter table table_name drop index index_name;
+</code></pre>
 <p><strong>VIEW</strong></p>
 <p>view 是基于 SQL 语句的结果集的可视化的表，也就是说，视图是一个 SQL 查询结果的集合，视图的结构和表一样，但是其中的字段数据一般来自于多个表。</p>
 <p>创建一个视图:</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">view</span> view_name <span class="keyword">as</span></span><br><span class="line"><span class="keyword">select</span>  a.c1, b.c2 <span class="keyword">from</span> table1 <span class="keyword">as</span> a, table2 <span class="keyword">as</span> b </span><br><span class="line"><span class="keyword">where</span> a.c1 = b.c2;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">create view view_name as
+select  a.c1, b.c2 from table1 as a, table2 as b 
+where a.c1 = b.c2;
+</code></pre>
 <p>然后可以在这个视图中进行查询:</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> view_name;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">select * from view_name;
+</code></pre>
 <p>删除视图:</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">view</span> view_name</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">drop view view_name
+</code></pre>
 <h3>DCL 基础</h3>
 <p>DCL 用于控制数据库中的授权和事务。</p>
 <p><strong>GRANT</strong></p>
-<p>给 user1 在 table1 上赋予 select 和 update 的权限。
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">grant</span> privilege [<span class="keyword">select</span>, <span class="keyword">update</span>] <span class="keyword">on</span> table1 [user1]</span><br></pre></td></tr></table></figure></p>
+<p>给 user1 在 table1 上赋予 select 和 update 的权限。</p>
+<pre><code class="language-sql">grant privilege [select, update] on table1 [user1]
+</code></pre>
 <p><strong>TRANSACTION</strong></p>
 <p>事务处理严格来说是 RDBMS 的功能，事务用来确保一组 SQL 要么全部执行，要么全部不执行。</p>
 <p>主要就是利用 <strong>COMMIT</strong> 来提交一个事务，利用 <strong>ROLLBACK</strong> 来回滚一个事务。</p>
@@ -372,14 +438,18 @@ unique 指定每条记录的唯一标识，每个表可以用多个 unique 标�
 <li><strong>聚合查询函数</strong>：操作一系列的值，然后返回单一的值</li>
 <li><strong>标量查询函数</strong>：操作一个单一的值，并且返回一个单独的值</li>
 </ul>
-<p>函数的使用方式：
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">function</span>(c1) <span class="keyword">form</span> table1;</span><br></pre></td></tr></table></figure></p>
-<p>基本上所有的函数都是这样使用的，但是有一点需要注意的是，如果聚合查询函数在和普通字段一起查询时，一定要加上 <strong>group by 关键字</strong>。
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c1 , <span class="keyword">max</span>(c2) <span class="keyword">from</span> table1 <span class="keyword">group</span> <span class="keyword">by</span> c1;</span><br></pre></td></tr></table></figure></p>
-<p>如果有时候我们需要把聚合查询函数作为一个条件来进行查询，但是聚合函数是不能和 where 一起配合使用的，这个时候就需要使用 having。
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c1, <span class="keyword">max</span>(c2) <span class="keyword">from</span> table1 <span class="keyword">having</span> <span class="keyword">max</span>(c2) &gt; v2;</span><br></pre></td></tr></table></figure></p>
-<p>也可以在函数查询上使用别名:
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c1, <span class="keyword">max</span>(c2) <span class="keyword">as</span> m1 <span class="keyword">from</span> table1 <span class="keyword">where</span> c1 &gt; v1;</span><br></pre></td></tr></table></figure></p>
+<p>函数的使用方式：</p>
+<pre><code class="language-sql">select function(c1) form table1;
+</code></pre>
+<p>基本上所有的函数都是这样使用的，但是有一点需要注意的是，如果聚合查询函数在和普通字段一起查询时，一定要加上 <strong>group by 关键字</strong>。</p>
+<pre><code class="language-sql">select c1 , max(c2) from table1 group by c1;
+</code></pre>
+<p>如果有时候我们需要把聚合查询函数作为一个条件来进行查询，但是聚合函数是不能和 where 一起配合使用的，这个时候就需要使用 having。</p>
+<pre><code class="language-sql">select c1, max(c2) from table1 having max(c2) &gt; v2;
+</code></pre>
+<p>也可以在函数查询上使用别名:</p>
+<pre><code class="language-sql">select c1, max(c2) as m1 from table1 where c1 &gt; v1;
+</code></pre>
 <p>常见聚合函数:</p>
 <table>
 <thead>
@@ -551,7 +621,7 @@ unique 指定每条记录的唯一标识，每个表可以用多个 unique 标�
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -559,7 +629,7 @@ unique 指定每条记录的唯一标识，每个表可以用多个 unique 标�
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

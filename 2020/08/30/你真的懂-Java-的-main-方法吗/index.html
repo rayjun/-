@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -67,25 +66,79 @@
 <p>这篇文章会讨论 Java 程序如何启动，以及其中经历的主要过程。</p>
 <p>本文基于 openJDK11</p>
 <p>先来看段代码：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main1</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String, String&gt; data = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        data.put(<span class="string">"name"</span>, <span class="string">"rayjun"</span>);</span><br><span class="line">        System.out.println(data.get(<span class="string">"name"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main2</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(Main1.data.get(<span class="string">"name"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class Main1 {
+    public static Map&lt;String, String&gt; data = new HashMap&lt;&gt;();
+
+    public static void main(String[] args) {
+        data.put(&quot;name&quot;, &quot;rayjun&quot;);
+        System.out.println(data.get(&quot;name&quot;));
+    }
+}
+</code></pre>
+<pre><code class="language-java">public class Main2 {
+
+    public static void main(String[] args) {
+        System.out.println(Main1.data.get(&quot;name&quot;));
+    }
+}
+</code></pre>
 <p>先执行 Main1.main()，再执行 Main2.main()，程序输出的结果是什么：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Main1.main(): rayjun</span><br><span class="line">Main2.main(): <span class="keyword">null</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Main1.main(): rayjun
+Main2.main(): null
+</code></pre>
 <p>上面程序运行的结果应该都在预料之中吧。</p>
 <p>然后把代码改成下面这样：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main1</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String, String&gt; data = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">invoke</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        data.put(<span class="string">"name"</span>, <span class="string">"rayjun"</span>);</span><br><span class="line">        System.out.println(data.get(<span class="string">"name"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main2</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Main1.invoke();</span><br><span class="line">        System.out.println(Main1.data.get(<span class="string">"name"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class Main1 {
+    public static Map&lt;String, String&gt; data = new HashMap&lt;&gt;();
+
+    public static void invoke() {
+        data.put(&quot;name&quot;, &quot;rayjun&quot;);
+        System.out.println(data.get(&quot;name&quot;));
+    }
+}
+</code></pre>
+<pre><code class="language-java">public class Main2 {
+
+    public static void main(String[] args) {
+        Main1.invoke();
+        System.out.println(Main1.data.get(&quot;name&quot;));
+    }
+}
+</code></pre>
 <p>这回输出的结果是:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Main1.invoke(): rayjun</span><br><span class="line">Main2.main(): rayjun</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Main1.invoke(): rayjun
+Main2.main(): rayjun
+</code></pre>
 <p>首先需要明确，main 方法是 Java 程序的入口，main 方法本身有着很严格的定义，不能随意更改。</p>
 <p>JVM 启动后会执行 main 方法，就会新建了一个进程，每个进程都会有自己的虚拟机实例。</p>
 <p>在第一个例子中，启动了两个 mian 方法，也就是启动了两个进程，那么说明他们运行在不同的虚拟机实例上，那么数据自然就不是共享的，所以在第二个 main 方法中无法获取到第一个 mian 方法中设置的数据。</p>
 <p>第二个例子中，两个类在同一个 main 方法中启动，那么就是在同一个进程中，也就是在同一个虚拟机实例上，同一个虚拟机实例上，public 类型的静态变量，在整个进程中都是共享的。</p>
 <p>如果代码按照如下的形式再次进行修改：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main1</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String, String&gt; data = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        invoke();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">invoke</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        data.put(<span class="string">"name"</span>, <span class="string">"rayjun"</span>);</span><br><span class="line">        System.out.println(data.get(<span class="string">"name"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main2</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Main1.main(args);</span><br><span class="line">        System.out.println(Main1.data.get(<span class="string">"name"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class Main1 {
+    public static Map&lt;String, String&gt; data = new HashMap&lt;&gt;();
+
+    public static void main(String[] args) {
+        invoke();
+    }
+
+    public static void invoke() {
+        data.put(&quot;name&quot;, &quot;rayjun&quot;);
+        System.out.println(data.get(&quot;name&quot;));
+    }
+}
+</code></pre>
+<pre><code class="language-java">public class Main2 {
+
+    public static void main(String[] args) {
+        Main1.main(args);
+        System.out.println(Main1.data.get(&quot;name&quot;));
+    }
+}
+</code></pre>
 <p>执行结果如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Main1.main(): rayjun</span><br><span class="line">Main2.main(): rayjun</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Main1.main(): rayjun
+Main2.main(): rayjun
+</code></pre>
 <p>从上面的结果可以知道，main 方法其实就是一个普通的方法，可以被其他类调用，所以 main 方法是程序的入口，同时也是一个普通的方法。</p>
 <p>那么 main 方法在执行的过程中到底发生了什么？</p>
 <p>下面是 Java 代码到执行结束的完成流程：</p>
@@ -109,9 +162,26 @@
 <p>在 Java 中，如果要把一个线程编程守护线程，只需要调用 <code>Thread.setDaemon()</code>，判断一个线程是否是守护线程，只需要调用 <code>Thread.isDeamon()</code>。</p>
 <p>执行 Java 程序的时候，除了需要为运行的代码创建一个线程之外，还需要创建一个处理后台任务的守护线程。</p>
 <p>执行以下代码：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main3</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">      ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();</span><br><span class="line">      ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(<span class="keyword">false</span>, <span class="keyword">false</span>);</span><br><span class="line">      <span class="keyword">for</span> (ThreadInfo threadInfo : threadInfos) &#123;</span><br><span class="line">          System.out.println(<span class="string">"Thread id: "</span>+threadInfo.getThreadId() + <span class="string">", thread name: "</span> + threadInfo.getThreadName() + <span class="string">", isDaemon: "</span>+threadInfo.isDaemon());</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class Main3 {
+
+   public static void main(String[] args) {
+      ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+      ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(false, false);
+      for (ThreadInfo threadInfo : threadInfos) {
+          System.out.println(&quot;Thread id: &quot;+threadInfo.getThreadId() + &quot;, thread name: &quot; + threadInfo.getThreadName() + &quot;, isDaemon: &quot;+threadInfo.isDaemon());
+      }
+   }
+}
+</code></pre>
 <p>执行结果如下：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Thread id: 1, thread name: **main**, isDaemon: <span class="literal">false</span></span><br><span class="line">Thread id: 2, thread name: **Reference Handler**, isDaemon: <span class="literal">true</span></span><br><span class="line">Thread id: 3, thread name: **Finalizer**, isDaemon: <span class="literal">true</span></span><br><span class="line">Thread id: 4, thread name: **Signal Dispatcher**, isDaemon: <span class="literal">true</span></span><br><span class="line">Thread id: 9, thread name: **Common-Cleaner**, isDaemon: <span class="literal">true</span></span><br><span class="line">Thread id: 10, thread name: **Monitor Ctrl-Break**, isDaemon: <span class="literal">true</span></span><br><span class="line">Thread id: 12, thread name: **Attach Listener**, isDaemon: <span class="literal">true</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">Thread id: 1, thread name: **main**, isDaemon: false
+Thread id: 2, thread name: **Reference Handler**, isDaemon: true
+Thread id: 3, thread name: **Finalizer**, isDaemon: true
+Thread id: 4, thread name: **Signal Dispatcher**, isDaemon: true
+Thread id: 9, thread name: **Common-Cleaner**, isDaemon: true
+Thread id: 10, thread name: **Monitor Ctrl-Break**, isDaemon: true
+Thread id: 12, thread name: **Attach Listener**, isDaemon: true
+</code></pre>
 <p>通过上面的代码可以发现，只有 main 线程不是守护线程，其他的线程都是<strong>守护线程</strong>。</p>
 <ul>
 <li>Reference Handler：该线程负责将待回收的对象管理起来，等待回收</li>
@@ -128,9 +198,18 @@
 <p>exit 方法接收一个整型的参数，如果传入的值为 0，那么就表示程序是正常退出的，如果是任何非零的值，那么就表示是异常退出。</p>
 <p>其实在代码中，非常不推荐调用这个方法，因为这个方法会造成一些意向不到的情况。</p>
 <p>看下面这段代码：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">"App invoking"</span>);</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> Exception();</span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    System.exit(<span class="number">2</span>);</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">"App existing"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">try {
+    System.out.println(&quot;App invoking&quot;);
+    throw new Exception();
+} catch (Exception e) {
+    System.exit(2);
+} finally {
+    System.out.println(&quot;App existing&quot;);
+}
+</code></pre>
 <p>上面的代码会输出：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">App invoking</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">App invoking
+</code></pre>
 <p><code>finally</code> 中的代码并不会执行，这样会出现异常的情况，会破坏程序原本的正常逻辑，所以不要去调用这个方法。</p>
 <p>Java 运行程序的整体流程就是上面那些过程，当然省略了不少的细节，这些细节我们再通过后续的文章慢慢补充。</p>
 <p>文 / Rayjun</p>
@@ -141,7 +220,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -149,7 +228,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

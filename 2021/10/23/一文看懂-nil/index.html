@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -64,7 +63,10 @@
                     <article class="post">
     <h1>一文看懂 nil</h1>
     <p>写过 Go 代码的人，肯定对下面的代码不陌生：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">if err != nil {
+    //...
+}
+</code></pre>
 <p>Go 项目中这行代码会大量存在，这里可能隐藏着陷阱。</p>
 <h2>1. Go 中的 nil</h2>
 <p>Go 中 nil 代表零值，表示什么都没有，其他语言中也有类似的设计，比如 Java 中的 null。</p>
@@ -74,10 +76,12 @@
 <p>基本类型的零值都不同，有的是数字，有的是空字符串，对于复合类型， 零值都是 nil。</p>
 <p>零值在有些情况下会让程序崩溃，比如指针的零值，因为指针是指向一块内存地址，如果指针为 nil，那么就表示不指向任何地址，那么使用这个指针内存操作就会出现 panic。</p>
 <p>还有一点需要注意，nil 并不是关键字，nil 在 Go 中是这样定义的：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="literal">nil</span> Type <span class="comment">// Type must be a pointer, channel, func, interface, map, or slice type</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var nil Type // Type must be a pointer, channel, func, interface, map, or slice type
+</code></pre>
 <p>nil 的类型只能是指针，channel、函数、接口和 slice。</p>
 <p>也就是说这样写代码是完全合法的：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="literal">nil</span> = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var nil = make(map[string]string)
+</code></pre>
 <p>但永远不要这么做，否则程序就完蛋了。</p>
 <h2>2. nil 中的陷阱</h2>
 <p>从 nil 的定义可以知道，nil 只能和指针等几种类型一起使用。</p>
@@ -88,25 +92,76 @@
 <p>inteface 的接口与上面的类型都不一样，interface 由两部分组成，一部分是接口的类型，另一部分是接口的值:</p>
 <p><img src="2.png" alt=""></p>
 <p>先看下面代码的输出：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> in io.Writer</span><br><span class="line">fmt.Printf(<span class="string">"%T\n"</span>, in)  <span class="comment">// nil</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> inP *io.Writer</span><br><span class="line">fmt.Printf(<span class="string">"%T\n"</span>, inP) <span class="comment">// *io.Writer</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var in io.Writer
+fmt.Printf(&quot;%T\n&quot;, in)  // nil
+
+var inP *io.Writer
+fmt.Printf(&quot;%T\n&quot;, inP) // *io.Writer
+</code></pre>
 <p>%T 表示输出这个值的类型。</p>
 <p>声明上面的变量之后，此时 in 和 inP 的结构是下面这样的：</p>
 <p><img src="3.png" alt=""></p>
 <p>如果再接着写下面的代码：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> in io.Writer</span><br><span class="line"><span class="keyword">if</span> in != <span class="literal">nil</span> &#123;</span><br><span class="line">	  in.Write([]<span class="keyword">byte</span>(<span class="string">"logs"</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> inP *io.Writer</span><br><span class="line"><span class="keyword">if</span> inP != <span class="literal">nil</span> &#123;</span><br><span class="line">		inP.Write([]<span class="keyword">byte</span>(<span class="string">"logs"</span>)) <span class="comment">// 这里会发生 panic</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var in io.Writer
+if in != nil {
+	  in.Write([]byte(&quot;logs&quot;))
+}
+
+var inP *io.Writer
+if inP != nil {
+		inP.Write([]byte(&quot;logs&quot;)) // 这里会发生 panic
+}
+</code></pre>
 <p>inP 的 type 不是 nil，那么 inP 就不等于 nil。在使用接口时要注意，只有接口的类型和值都是 nil 时，这个接口才等于 nil，否则不相等。</p>
 <p>错误处理是 Go 程序的重要组成部分，但是这里也容易出现陷阱，看如下的代码：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	err := Do()       <span class="comment">// nil</span></span><br><span class="line">	fmt.Printf(<span class="string">"result: %+v\n"</span>, (err == <span class="literal">nil</span>)) <span class="comment">// true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Do</span><span class="params">()</span> *<span class="title">DoError</span></span> &#123; <span class="comment">// nil</span></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> DoError <span class="keyword">struct</span> &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(d *DoError)</span> <span class="title">Error</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"doError"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func main() {
+	err := Do()       // nil
+	fmt.Printf(&quot;result: %+v\n&quot;, (err == nil)) // true
+}
+
+func Do() *DoError { // nil
+	return nil
+}
+
+type DoError struct {
+
+}
+
+func (d *DoError) Error() string {
+	return &quot;doError&quot;
+}
+</code></pre>
 <p>上面的代码返回的不是接口，而是 DoError 类型的指针，所以判断是否为 nil 没问题。</p>
 <p>如果换种形式，看下面的代码，返回的是  error 的接口类型，但是这个接口的类型是 *DoError，值是 nil，这样一来，就和预期的结果不符合。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    err := Do()       <span class="comment">// error(*DoError, nil)</span></span><br><span class="line">    fmt.Printf(<span class="string">"result: %+v\n"</span>, (err == <span class="literal">nil</span>)) <span class="comment">// false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Do</span><span class="params">()</span> <span class="title">error</span></span> &#123;    <span class="comment">// error(*DoError, nil)</span></span><br><span class="line">   <span class="keyword">var</span> err *DoError</span><br><span class="line">   <span class="keyword">return</span> err      <span class="comment">// nil </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func main() {
+    err := Do()       // error(*DoError, nil)
+    fmt.Printf(&quot;result: %+v\n&quot;, (err == nil)) // false
+}
+
+func Do() error {    // error(*DoError, nil)
+   var err *DoError
+   return err      // nil 
+}
+</code></pre>
 <p>判断 err 是不是 nil 是非常高频的使用场景，在处理这些错误时，要非常小心。</p>
 <h2>3. nil 的其他作用</h2>
 <p>nil 除了作为零值之外，还有其他的用途。</p>
 <p>nil 作为方法的接受者是完全合法的，这里 p 是一个 *Person 类型的 nil：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> p *Person <span class="comment">// nil</span></span><br><span class="line">	p.SayHi()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Person)</span> <span class="title">SayHi</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"hi"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func main() {
+	var p *Person // nil
+	p.SayHi()
+}
+
+type Person struct {
+}
+
+func (p *Person) SayHi() {
+	fmt.Println(&quot;hi&quot;)
+}
+</code></pre>
 <p>nil 还可以作为默认值，下面的代码应该也看的不少了，通常情况下，第二个参数我们都会直接传入 nil，这里 nil 的含义是使用默认的配置，我们在自己的代码中也可以这样使用。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http.HandleFunc(<span class="string">"localhost:8080"</span>, <span class="literal">nil</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">http.HandleFunc(&quot;localhost:8080&quot;, nil)
+</code></pre>
 <h2>4. 小结</h2>
 <p>nil 是指针，channel、函数、接口和 slice 等类型的零值，其中 interface 的零值有点特殊，只有在类型和值都是 nil 的时候，这个接口才是 nil。</p>
 <p>nil 除了作为零值使用之外，还有很多其他的用途，比如作为方法的接受者，表示默认值。</p>
@@ -119,7 +174,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -127,7 +182,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

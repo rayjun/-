@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -74,29 +73,74 @@
 </ul>
 <p>testing.TB 和 testing.PB 平时用的不多，在这里就不展开说，感兴趣的可以自行去搜索。上面的三类代表了三种不同的测试，分别是单元测试、基准测试和 TestMain 测试，对于不同的测试，在测试方法的入参中，必须带上这个类型。</p>
 <p>有一类测试例外，那就是 Example 测试，这个测试主要用来在文档中输出一些测试案例，Example 测试必须以 Example 开头，方法不需要任何参数，同时要指明这个实例的输出，像下面这样：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ExampleTest</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"run example test"</span>)</span><br><span class="line">	<span class="comment">// Output:</span></span><br><span class="line">	<span class="comment">// run example test</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func ExampleTest() {
+	fmt.Println(&quot;run example test&quot;)
+	// Output:
+	// run example test
+}
+</code></pre>
 <p>所有的测试都可以通过 <code>go test</code> 来发起，例如，在当前包下发起测试 <code>go test -v ./</code> ，-v 参数表示打印测试的过程，会把测试过程中的标准输出都打印出来。</p>
 <h2>2. 单元测试</h2>
 <p>单元测试的编写需要按照一定的规则来，所有的单元测试都需要以 Test 开头，后面加上测试的方法名称，就像下面这样：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"testing"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestDemo</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">" run test demo"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">import (
+	&quot;fmt&quot;
+	&quot;testing&quot;
+)
+
+func TestDemo(t *testing.T) {
+	fmt.Println(&quot; run test demo&quot;)
+}
+</code></pre>
 <p>这就是一个最简单的单元测试，在实际使用中，一组测试可能会有多个单元测试，而且要同时运行，这时我们就需要一个方法将这些测试串联起来，那就需要用到 TestMain 了，这个方法名称和签名是统一的，只能是下面的写法：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestMain</span><span class="params">(m *testing.M)</span></span>  &#123;</span><br><span class="line">	fmt.Println(<span class="string">"begin test"</span>)</span><br><span class="line">	m.Run()</span><br><span class="line">	fmt.Println(<span class="string">"end test"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func TestMain(m *testing.M)  {
+	fmt.Println(&quot;begin test&quot;)
+	m.Run()
+	fmt.Println(&quot;end test&quot;)
+}
+</code></pre>
 <p>TestMain(m *testing.M) 在一个包下只能有一个，测试执行的时候，会先执行这个方法，然后再去执行这个包下的所有 Test 测试和 Example 测试，基准测试则不会执行。</p>
 <p>而且这个方法可以用来初始化和回收资源，有些测试在运行之前需要初始化一些配置，连接数据库、释放数据库连接等操作，就可以在这个测试中完成。</p>
 <p>写完上面的测试之后，就可以运行测试了，这样会从 TestMain 开始，运行所有的 Test 和 Example 测试：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go <span class="built_in">test</span> -v ./</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go test -v ./
+</code></pre>
 <p>但有时候我们也会关心单元测试的覆盖率，只要加上一个参数就可以看到测试的覆盖率：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go <span class="built_in">test</span> -cover -v ./</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go test -cover -v ./
+</code></pre>
 <h2>3. 基准测试</h2>
 <p>基准测试通常用来测试某个程序的性能，基准测试必须要用 Benchmark 开头，同时方法的入参必须是 testing.B，就像下面这样：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkDemo</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"run benchmark demo"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func BenchmarkDemo(b *testing.B) {
+	fmt.Println(&quot;run benchmark demo&quot;)
+}
+</code></pre>
 <p>为了更好的说明基准测试的功能，我用之前测试字符串拼接的基准测试的例子来说明：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkPlus</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">	str := <span class="string">"this is just a string"</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; b.N; i++ &#123;</span><br><span class="line">		stringPlus(str)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stringPlus</span><span class="params">(str <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	s := <span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++ &#123;</span><br><span class="line">		s += str</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func BenchmarkPlus(b *testing.B) {
+	str := &quot;this is just a string&quot;
+
+	for i := 0; i &lt; b.N; i++ {
+		stringPlus(str)
+	}
+}
+
+func stringPlus(str string) string {
+	s := &quot;&quot;
+	for i := 0; i &lt; 10000; i++ {
+		s += str
+	}
+	return s
+}
+</code></pre>
 <p>其中 b.N 不是一个固定的值，这个值的大小由框架自己来决定，上面这侧测试的内容是对于一个要拼接一万次字符传的函数进行性能测试，至于这个测试运行多少次，由框架自己决定。</p>
 <p>运行基准测试的命令如下：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go <span class="built_in">test</span> -bench=. -benchmem .</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go test -bench=. -benchmem .
+</code></pre>
 <p>输出结果如下：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">goos: darwin</span><br><span class="line">goarch: amd64</span><br><span class="line">pkg: zxin.com/zx-demo/string_benchmark</span><br><span class="line">**BenchmarkPlus-12                      12          96586447 ns/op        1086401355 B/op    10057 allocs/op**</span><br><span class="line">PASS</span><br><span class="line">ok      zxin.com/zx-demo/string_benchmark       6.186s</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">goos: darwin
+goarch: amd64
+pkg: zxin.com/zx-demo/string_benchmark
+**BenchmarkPlus-12                      12          96586447 ns/op        1086401355 B/op    10057 allocs/op**
+PASS
+ok      zxin.com/zx-demo/string_benchmark       6.186s
+</code></pre>
 <p>加粗的那行是基准测试的输出，每列信息的具体含义如下：</p>
 <ul>
 <li>第一列表示基准测试的方法名称和所用的 GOMAXPROCS 的值</li>
@@ -108,23 +152,86 @@
 <h2>4. 测试加强</h2>
 <p>但原生的测试包不够完美，比如在单元测试中，就缺少断言机制，使得在判断测试结果的时候，非常不方便，有一个外部的包可以帮助完善测试的功能。</p>
 <p>安装也很方便：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go get github.com/stretchr/testify</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go get github.com/stretchr/testify
+</code></pre>
 <p>这个包从三个方面扩展了 Go 原生测试框架的能力：</p>
 <ul>
 <li><strong>断言</strong></li>
 </ul>
 <p>原生测试框架里面缺失断言功能，在很多场景下都不方便，testify 提供的断言功能开箱即用，与原生测试框架完美契合：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestAssert</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	assert := assert.New(t)</span><br><span class="line"></span><br><span class="line">	assert.Equal(<span class="number">123</span>, <span class="number">123</span>, <span class="string">"they should be equal"</span>)</span><br><span class="line"></span><br><span class="line">	assert.NotEqual(<span class="number">123</span>, <span class="number">456</span>, <span class="string">"they should not be equal"</span>)</span><br><span class="line"></span><br><span class="line">	o := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>)</span><br><span class="line">	o[<span class="string">"ray"</span>] = <span class="string">"jun"</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> assert.NotNil(o) &#123;</span><br><span class="line">		assert.Equal(<span class="string">"jun"</span>, o[<span class="string">"ray"</span>])</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		assert.Nil(o)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func TestAssert(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal(123, 123, &quot;they should be equal&quot;)
+
+	assert.NotEqual(123, 456, &quot;they should not be equal&quot;)
+
+	o := make(map[string]string)
+	o[&quot;ray&quot;] = &quot;jun&quot;
+
+	if assert.NotNil(o) {
+		assert.Equal(&quot;jun&quot;, o[&quot;ray&quot;])
+	} else {
+		assert.Nil(o)
+	}
+}
+</code></pre>
 <ul>
 <li>Mock 能力</li>
 </ul>
 <p>testify 提供了Mock 的能力，可以很好的模拟测试需要的数据，对于一些需要复杂数据的测试很有帮助：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> MyMockedObject <span class="keyword">struct</span>&#123;</span><br><span class="line">	mock.Mock</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *MyMockedObject)</span> <span class="title">DoSomething</span><span class="params">(number <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">	args := m.Called(number)</span><br><span class="line">	<span class="keyword">return</span> args.Bool(<span class="number">0</span>), args.Error(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestSomething</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	testObj := <span class="built_in">new</span>(MyMockedObject)</span><br><span class="line"></span><br><span class="line">	testObj.On(<span class="string">"DoSomething"</span>, <span class="number">123</span>).Return(<span class="literal">true</span>, <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">	testMockObj(testObj)</span><br><span class="line"></span><br><span class="line">	testObj.AssertExpectations(t)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testMockObj</span><span class="params">(mcObj *MyMockedObject)</span></span> &#123;</span><br><span class="line">	fmt.Println(mcObj.DoSomething(<span class="number">123</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type MyMockedObject struct{
+	mock.Mock
+}
+
+func (m *MyMockedObject) DoSomething(number int) (bool, error) {
+	args := m.Called(number)
+	return args.Bool(0), args.Error(1)
+
+}
+
+func TestSomething(t *testing.T) {
+	testObj := new(MyMockedObject)
+
+	testObj.On(&quot;DoSomething&quot;, 123).Return(true, nil)
+
+	testMockObj(testObj)
+
+	testObj.AssertExpectations(t)
+}
+
+func testMockObj(mcObj *MyMockedObject) {
+	fmt.Println(mcObj.DoSomething(123))
+}
+</code></pre>
 <ul>
 <li><strong>构建更完善的测试</strong></li>
 </ul>
 <p>即使有了 TestMain 来初始化配置，但也还是不够灵活，比如在一个包下，我需要包含多组测试，而且每组测试的初始化都不一样，而 testify 提供的 suite  包提供了更加面向对象的测试方式，并且也提供了 setup/teardown 等方法来初始化和回收资源，可以直接使用 <code>go test</code> 进行测试，不会对现有的测试框架有侵入性修改：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ExampleTestSuite <span class="keyword">struct</span> &#123;</span><br><span class="line">	suite.Suite</span><br><span class="line">	VariableThatShouldStartAtFive <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(suite *ExampleTestSuite)</span> <span class="title">SetupTest</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"run setup method"</span>)</span><br><span class="line">	suite.VariableThatShouldStartAtFive = <span class="number">5</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(suite *ExampleTestSuite)</span> <span class="title">TearDownTest</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"run tear down method"</span>)</span><br><span class="line">	suite.VariableThatShouldStartAtFive = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(suite *ExampleTestSuite)</span> <span class="title">TestExample</span><span class="params">()</span></span> &#123;</span><br><span class="line">	assert.Equal(suite.T(), <span class="number">5</span>, suite.VariableThatShouldStartAtFive)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestExampleTestSuite</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	suite.Run(t, <span class="built_in">new</span>(ExampleTestSuite))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type ExampleTestSuite struct {
+	suite.Suite
+	VariableThatShouldStartAtFive int
+}
+
+func (suite *ExampleTestSuite) SetupTest() {
+	fmt.Println(&quot;run setup method&quot;)
+	suite.VariableThatShouldStartAtFive = 5
+}
+
+func (suite *ExampleTestSuite) TearDownTest() {
+	fmt.Println(&quot;run tear down method&quot;)
+	suite.VariableThatShouldStartAtFive = 0
+
+}
+
+func (suite *ExampleTestSuite) TestExample() {
+	assert.Equal(suite.T(), 5, suite.VariableThatShouldStartAtFive)
+}
+
+func TestExampleTestSuite(t *testing.T) {
+	suite.Run(t, new(ExampleTestSuite))
+}
+</code></pre>
 <h2>5. 小结</h2>
 <p>虽然 Go 原生测试框架已经支持编写很复杂的测试，但很多场景下还不是很方便，这时候就有必要引入新的测试加强包 testify，这个包基本做到了开箱即用，而且不会破坏现有的测试流程。</p>
 <p>文 / Rayjun</p>
@@ -135,7 +242,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -143,7 +250,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

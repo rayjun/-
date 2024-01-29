@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -72,46 +71,214 @@
 <p>一旦出现 Error，程序也就没有恢复的必要了，比如 OutOfMemoryError，说明是机器上的内存不够用了，这个时候任何处理都来不不及，只能停止服务。</p>
 <p>对于 Exception 就需要看情况。上面说到 Exception 可以分为 CheckedException 和 RuntimeException。</p>
 <p>在 Java 中，抛出一个异常很简单，通过 <code>throw</code> 关键字就可以，同时也需要方法后面通过关键字 <code>throws</code> 来表明这个方法会抛出那些异常。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">throwException</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> Exception();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public void throwException() throws Exception {
+    throw new Exception();
+}
+</code></pre>
 <p>在调用这个方法时，就要对这个方法有可能抛出的异常进行处理，有两种处理方法，即可以将异常 通过 <code>try-catch</code> 进行处理，也可以通过 <code>throws</code> 将异常抛向更上层。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//方法1：使用 try-catch 来处理异常</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">callFunction</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        throwException();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//方法2：使用 throws 将异常抛向上层</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">callFunction</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    throwException();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">//方法1：使用 try-catch 来处理异常
+public void callFunction() {
+    try {
+        throwException();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+//方法2：使用 throws 将异常抛向上层
+public void callFunction() throws Exception {
+    throwException();
+}
+</code></pre>
 <p>上面提到的异常就是<strong>CheckedException</strong>，需要通过 try-catch 或者 throws 进行处理，否则就无法通过编译。</p>
 <p>下面的代码用于获取一个文件的输入流，在文件不存在的情况下，会抛出 <code>FileNotFoundException</code>。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FileInputStream fis = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    fis = <span class="keyword">new</span> FileInputStream(<span class="string">"data.txt"</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">FileInputStream fis = null;
+try {
+    fis = new FileInputStream(&quot;data.txt&quot;);
+} catch (FileNotFoundException e) {
+    e.printStackTrace();
+}
+</code></pre>
 <p>这也是 CheckedException 的通用处理方式。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> result = <span class="number">10</span> / i;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">int i = 0;
+int result = 10 / i;
+</code></pre>
 <p>很明显，上面的代码肯定会出现异常。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread <span class="string">"main"</span> java.lang.ArithmeticException: / by zero</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Exception in thread &quot;main&quot; java.lang.ArithmeticException: / by zero
+</code></pre>
 <p>这类异常就是通常所说的　RuntimeException，这类的异常由 JVM 抛出，不需要通过 try-catch 等机制来处理。如果出现这类异常，说明程序的逻辑有问题，可以通过修改代码来防止这类异常发生。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span> (i != <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">int</span> result = <span class="number">10</span> / i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">int i = 0;
+if (i != 0) {
+    int result = 10 / i;
+}
+</code></pre>
 <p>类似的 RuntimeException 还有 NullPointerException 以及 ArrayIndexOutOfBoundsException。</p>
 <h2>异常处理</h2>
 <p>通常，Error 和 RuntimeException 不需要进行处理。</p>
 <p>需要进行处理的是 CheckedException，最常用的方式就是使用 try-catch。</p>
 <p>下面的代码表示读取一个文件的内容，如果在读取的过程中发生异常，就会跳转到 catch 模块进行异常处理，而不执行 return 语句。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">FileInputStream fis = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    StringBuilder data = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">    fis = <span class="keyword">new</span> FileInputStream(<span class="string">"data.txt"</span>);</span><br><span class="line">    <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">int</span> length = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> ((length = fis.read(buffer)) != -<span class="number">1</span>) &#123;</span><br><span class="line">        data.append(<span class="keyword">new</span> String(buffer, <span class="number">0</span>, length));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> data.toString(); <span class="comment">// 如果发生异常，那么这里的 return 语句不会执行</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">null</span>;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">FileInputStream fis = null;
+try {
+    StringBuilder data = new StringBuilder();
+    fis = new FileInputStream(&quot;data.txt&quot;);
+    byte[] buffer = new byte[1024];
+    int length = 0;
+    while ((length = fis.read(buffer)) != -1) {
+        data.append(new String(buffer, 0, length));
+    }
+    return data.toString(); // 如果发生异常，那么这里的 return 语句不会执行
+} catch (IOException e) {
+    e.printStackTrace();
+}
+return null;
+</code></pre>
 <p>这是如何实现的呢？这个方法完整的字节码如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> java.lang.<span class="function">String <span class="title">readData</span><span class="params">()</span></span>;</span><br><span class="line">    Code:</span><br><span class="line">       <span class="number">0</span>: aconst_null</span><br><span class="line">       <span class="number">1</span>: astore_1</span><br><span class="line">       2: new           #5                  // class java/lang/StringBuilder</span><br><span class="line">       <span class="number">5</span>: dup</span><br><span class="line">       6: invokespecial #6                  // Method java/lang/StringBuilder."&lt;init&gt;":()V</span><br><span class="line">       <span class="number">9</span>: astore_2</span><br><span class="line">      10: new           #7                  // class java/io/FileInputStream</span><br><span class="line">      <span class="number">13</span>: dup</span><br><span class="line">      14: ldc           #8                  // String data.txt</span><br><span class="line">      16: invokespecial #9                  // Method java/io/FileInputStream."&lt;init&gt;":(Ljava/lang/String;)V</span><br><span class="line">      <span class="number">19</span>: astore_1</span><br><span class="line">      <span class="number">20</span>: sipush        <span class="number">1024</span></span><br><span class="line">      <span class="number">23</span>: newarray       <span class="keyword">byte</span></span><br><span class="line">      <span class="number">25</span>: astore_3</span><br><span class="line">      <span class="number">26</span>: iconst_0</span><br><span class="line">      <span class="number">27</span>: istore        <span class="number">4</span></span><br><span class="line">      <span class="number">29</span>: aload_1</span><br><span class="line">      <span class="number">30</span>: aload_3</span><br><span class="line">      31: invokevirtual #10                 // Method java/io/FileInputStream.read:([B)I</span><br><span class="line">      <span class="number">34</span>: dup</span><br><span class="line">      <span class="number">35</span>: istore        <span class="number">4</span></span><br><span class="line">      <span class="number">37</span>: iconst_m1</span><br><span class="line">      <span class="number">38</span>: if_icmpeq     <span class="number">60</span></span><br><span class="line">      <span class="number">41</span>: aload_2</span><br><span class="line">      42: new           #11                 // class java/lang/String</span><br><span class="line">      <span class="number">45</span>: dup</span><br><span class="line">      <span class="number">46</span>: aload_3</span><br><span class="line">      <span class="number">47</span>: iconst_0</span><br><span class="line">      <span class="number">48</span>: iload         <span class="number">4</span></span><br><span class="line">      50: invokespecial #12                 // Method java/lang/String."&lt;init&gt;":([BII)V</span><br><span class="line">      53: invokevirtual #13                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span><br><span class="line">      <span class="number">56</span>: pop</span><br><span class="line">      <span class="number">57</span>: goto          <span class="number">29</span></span><br><span class="line">      <span class="number">60</span>: aload_2</span><br><span class="line">      61: invokevirtual #14                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;</span><br><span class="line">      <span class="number">64</span>: areturn</span><br><span class="line">      <span class="number">65</span>: astore_2</span><br><span class="line">      <span class="number">66</span>: aload_2</span><br><span class="line">      67: invokevirtual #16                 // Method java/io/IOException.printStackTrace:()V</span><br><span class="line">      <span class="number">70</span>: aconst_null</span><br><span class="line">      <span class="number">71</span>: areturn</span><br><span class="line">    Exception table:</span><br><span class="line">       from    to  target type</span><br><span class="line">           <span class="number">2</span>    <span class="number">64</span>    <span class="number">65</span>   Class java/io/IOException</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public java.lang.String readData();
+    Code:
+       0: aconst_null
+       1: astore_1
+       2: new           #5                  // class java/lang/StringBuilder
+       5: dup
+       6: invokespecial #6                  // Method java/lang/StringBuilder.&quot;&lt;init&gt;&quot;:()V
+       9: astore_2
+      10: new           #7                  // class java/io/FileInputStream
+      13: dup
+      14: ldc           #8                  // String data.txt
+      16: invokespecial #9                  // Method java/io/FileInputStream.&quot;&lt;init&gt;&quot;:(Ljava/lang/String;)V
+      19: astore_1
+      20: sipush        1024
+      23: newarray       byte
+      25: astore_3
+      26: iconst_0
+      27: istore        4
+      29: aload_1
+      30: aload_3
+      31: invokevirtual #10                 // Method java/io/FileInputStream.read:([B)I
+      34: dup
+      35: istore        4
+      37: iconst_m1
+      38: if_icmpeq     60
+      41: aload_2
+      42: new           #11                 // class java/lang/String
+      45: dup
+      46: aload_3
+      47: iconst_0
+      48: iload         4
+      50: invokespecial #12                 // Method java/lang/String.&quot;&lt;init&gt;&quot;:([BII)V
+      53: invokevirtual #13                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      56: pop
+      57: goto          29
+      60: aload_2
+      61: invokevirtual #14                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+      64: areturn
+      65: astore_2
+      66: aload_2
+      67: invokevirtual #16                 // Method java/io/IOException.printStackTrace:()V
+      70: aconst_null
+      71: areturn
+    Exception table:
+       from    to  target type
+           2    64    65   Class java/io/IOException
+</code></pre>
 <p>看底部的 <code>Exception table</code>，这个也称之为异常表，其他的字节码可以先不用管。这个异常表就是 Java 处理异常的关键，其中 from 和 to 表示的 try-catch 包裹的代码范围，target 则表示异常处理的开始。</p>
 <p>如果在 form 到 to 之间发生了异常，接会直接跳转到 target 的位置开始执行。</p>
 <p>对于文件流，使用过后需要对其进行关闭，否则可能会出现内存泄漏等问题，所以上面的代码还不完善。try-catch-finally 则可以解决这个问题，finallly 中的代码无论是否出现异常都会执行，确保文件流会关闭。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">FileInputStream fis = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    StringBuilder data = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">    fis = <span class="keyword">new</span> FileInputStream(<span class="string">"data.txt"</span>);</span><br><span class="line">    <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">int</span> length = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> ((length = fis.read(buffer)) != -<span class="number">1</span>) &#123;</span><br><span class="line">        data.append(<span class="keyword">new</span> String(buffer, <span class="number">0</span>, length));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> data.toString();</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (fis != <span class="keyword">null</span>) &#123;</span><br><span class="line">            fis.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">FileInputStream fis = null;
+try {
+    StringBuilder data = new StringBuilder();
+    fis = new FileInputStream(&quot;data.txt&quot;);
+    byte[] buffer = new byte[1024];
+    int length = 0;
+    while ((length = fis.read(buffer)) != -1) {
+        data.append(new String(buffer, 0, length));
+    }
+    return data.toString();
+} catch (IOException e) {
+    e.printStackTrace();
+} finally {
+    try {
+        if (fis != null) {
+            fis.close();
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
 <p>如何确保 finally 中的代码一定会执行呢？为了看的更清楚，我将 finally 中的异常改成了 Exception，并且删除了一些无关的字节码：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> java.lang.<span class="function">String <span class="title">readData</span><span class="params">()</span></span>;</span><br><span class="line">Code:</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    71: invokevirtual #15                 // Method java/io/FileInputStream.close:()V</span><br><span class="line">    <span class="number">74</span>: goto          <span class="number">84</span></span><br><span class="line">    <span class="number">77</span>: astore        <span class="number">6</span></span><br><span class="line">    <span class="number">79</span>: aload         <span class="number">6</span></span><br><span class="line">    81: invokevirtual #17                 // Method java/lang/Exception.printStackTrace:()V</span><br><span class="line">    <span class="comment">//....</span></span><br><span class="line">    97: invokevirtual #15                 // Method java/io/FileInputStream.close:()V</span><br><span class="line">    <span class="number">100</span>: goto          <span class="number">134</span></span><br><span class="line">    <span class="number">103</span>: astore_2</span><br><span class="line">    <span class="number">104</span>: aload_2</span><br><span class="line">    105: invokevirtual #17                 // Method java/lang/Exception.printStackTrace:()V</span><br><span class="line">    <span class="comment">//....</span></span><br><span class="line">    118: invokevirtual #15                 // Method java/io/FileInputStream.close:()V</span><br><span class="line">    <span class="number">121</span>: goto          <span class="number">131</span></span><br><span class="line">    <span class="number">124</span>: astore        <span class="number">8</span></span><br><span class="line">    <span class="number">126</span>: aload         <span class="number">8</span></span><br><span class="line">    128: invokevirtual #17                 // Method java/lang/Exception.printStackTrace:()V</span><br><span class="line">    <span class="number">131</span>: aload         <span class="number">7</span></span><br><span class="line">    <span class="number">133</span>: athrow</span><br><span class="line">    <span class="number">134</span>: aconst_null</span><br><span class="line">    <span class="number">135</span>: areturn</span><br><span class="line">Exception table:</span><br><span class="line">    from    to  target type</span><br><span class="line">        <span class="number">66</span>    <span class="number">74</span>    <span class="number">77</span>   Class java/lang/Exception</span><br><span class="line">        <span class="number">2</span>    <span class="number">66</span>    <span class="number">87</span>   Class java/io/IOException</span><br><span class="line">        <span class="number">92</span>   <span class="number">100</span>   <span class="number">103</span>   Class java/lang/Exception</span><br><span class="line">        <span class="number">2</span>    <span class="number">66</span>   <span class="number">111</span>   any</span><br><span class="line">        <span class="number">87</span>    <span class="number">92</span>   <span class="number">111</span>   any</span><br><span class="line">        <span class="number">113</span>   <span class="number">121</span>   <span class="number">124</span>   Class java/lang/Exception</span><br><span class="line">        <span class="number">111</span>   <span class="number">113</span>   <span class="number">111</span>   any</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public java.lang.String readData();
+Code:
+    // ...
+    71: invokevirtual #15                 // Method java/io/FileInputStream.close:()V
+    74: goto          84
+    77: astore        6
+    79: aload         6
+    81: invokevirtual #17                 // Method java/lang/Exception.printStackTrace:()V
+    //....
+    97: invokevirtual #15                 // Method java/io/FileInputStream.close:()V
+    100: goto          134
+    103: astore_2
+    104: aload_2
+    105: invokevirtual #17                 // Method java/lang/Exception.printStackTrace:()V
+    //....
+    118: invokevirtual #15                 // Method java/io/FileInputStream.close:()V
+    121: goto          131
+    124: astore        8
+    126: aload         8
+    128: invokevirtual #17                 // Method java/lang/Exception.printStackTrace:()V
+    131: aload         7
+    133: athrow
+    134: aconst_null
+    135: areturn
+Exception table:
+    from    to  target type
+        66    74    77   Class java/lang/Exception
+        2    66    87   Class java/io/IOException
+        92   100   103   Class java/lang/Exception
+        2    66   111   any
+        87    92   111   any
+        113   121   124   Class java/lang/Exception
+        111   113   111   any
+</code></pre>
 <p>加了 finally 之后，发现异常表中增加了很多内容（any 先忽略），在 finally 中抛出的 Exception 出现了 3 次，再看上面的字节码，发现调用文件流的 close 方法也出现 3 次。</p>
 <p>所以 finally的实现就不难理解，编译器会将 finally 中的代码拷贝到所有可能的路径上，包括正常执行的流程以及 catch 中的流程。</p>
 <p>finally 中也有可能会抛出异常，如果 finally 中抛出异常会怎么样呢？</p>
 <p>在 Java7 以前，finally 中的异常会覆盖前面所抛出的异常，这种情况当然不是我们所想看到的。在 Java7 以后，引入了 Suppressed 异常来解决这个问题，这个特性允许将一个异常附在另一个异常上面，因此抛出的异常中可以附带多个异常信息。</p>
 <p>try-catch 除了可以用来处理异常之外，也可以专门用来处理资源关闭之类的问题。在一些情况下，catch 块也可以省略，直接使用 try-finally:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">FileInputStream fis = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    StringBuilder data = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">    fis = <span class="keyword">new</span> FileInputStream(<span class="string">"data.txt"</span>);</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (fis != <span class="keyword">null</span>) &#123;</span><br><span class="line">        fis.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">FileInputStream fis = null;
+try {
+    StringBuilder data = new StringBuilder();
+    fis = new FileInputStream(&quot;data.txt&quot;);
+} finally {
+    if (fis != null) {
+        fis.close();
+    }
+} 
+</code></pre>
 <p>代码上面的每次都需要手动的去写 finally 中的代码，这样的样本代码其实毫无意义，无端增加了代码的复杂度。在 Java 7 以后，增加了 try-with-resources 语法糖，上面的代码可以这么写：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>(FileInputStream fis = <span class="keyword">new</span> FileInputStream(<span class="string">"data.txt"</span>);) &#123;</span><br><span class="line"></span><br><span class="line">    StringBuilder data = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">    <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">int</span> length = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> ((length = fis.read(buffer)) != -<span class="number">1</span>) &#123;</span><br><span class="line">        data.append(<span class="keyword">new</span> String(buffer, <span class="number">0</span>, length));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> data.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">try(FileInputStream fis = new FileInputStream(&quot;data.txt&quot;);) {
+
+    StringBuilder data = new StringBuilder();
+    byte[] buffer = new byte[1024];
+    int length = 0;
+    while ((length = fis.read(buffer)) != -1) {
+        data.append(new String(buffer, 0, length));
+    }
+    return data.toString();
+}
+</code></pre>
 <p>这样就可以少写很多的样本代码，需要注意的是，使用 try-with-resource 必须确保这个类实现了 AutoCloseable 接口。</p>
 <p>Java 7 中还提供了一些其他的语法糖，比如使用 catch 来处理多种异常：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception1 | Exception2 e) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">try {
+  // ...
+} catch (Exception1 | Exception2 e) {
+  // ...
+}
+</code></pre>
 <h2>断言</h2>
 <p>Java 中还有一个特性叫<strong>断言</strong>，也可以用来进项异常情况的处理，使用很简单，如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">assert</span> i &gt; <span class="number">0</span>;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">int i = 1;
+assert i &gt; 0;
+</code></pre>
 <p>Java 默认是不打开断言的，也就是说即使你在代码中写上断言代码也是不起作用的，
 如果要启用断言，要加上虚拟机参数 <code>-ea</code> 来启用断言。</p>
 <p>使用断言有一个问题，如果断言的结果与预期不符合，那么整个程序就会终止运行。</p>
@@ -119,7 +286,14 @@
 禁用，这样就不用反复修改代码了。</p>
 <h2>日志</h2>
 <p>日志是 Java 中不可缺少的部分。在大型系统中，日志是最重要的排查工具。JDK 中自带了 <code>java.util.logging.Logger</code>，使用起来很方便：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoggerTest</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = Logger.getLogger(String.valueOf(LoggerTest.class));</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        logger.info(<span class="string">"Logger"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class LoggerTest {
+    private static final Logger logger = Logger.getLogger(String.valueOf(LoggerTest.class));
+
+    public static void main(String[] args) {
+        logger.info(&quot;Logger&quot;);
+    }
+}
+</code></pre>
 <p>但这个框架在扩展性和性能上都不是很理想，所以出现了很多第三方的日志框架，比如 Log4j，Logback 等。</p>
 
 </article>
@@ -128,7 +302,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -136,7 +310,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

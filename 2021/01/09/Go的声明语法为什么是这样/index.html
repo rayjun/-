@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -71,67 +70,105 @@
 <p>很多 Go 语言的初学者都会奇怪，为什么声明语法与 C 语言族（Rayjun注：C++，Java 等语言）的差异这么大。在这篇文章中，我们会对比这两种方式，并且解释为什么 Go 语言要这样来实现。</p>
 <h2>C 语法</h2>
 <p>首先，让我们来讨论一下 C 语言的语法。C 语言选择了一种不寻常而且巧妙的方式来声明语法。不用特殊的语法来描述类型，而是写一个包含被声明项的表达式，并声明该表达式将具有什么类型，就像下面这样：</p>
-<p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> x</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-c">int x
+</code></pre>
 <p>把 x 声明为一个 int 意味着表达式 x 的类型是 int。通常，要写一个某种类型的变量，只需要将类型放在左边，将表达式放在右边。因此，声明的形式如下：</p>
-<p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> *p</span><br><span class="line"><span class="keyword">int</span> a[<span class="number">3</span>];</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-c">int *p
+int a[3];
+</code></pre>
 <p>因为 *p 的类型是 int，所以 p 是一个指向 int 的指针，因为 a[3] 的类型是 int，所以 a 是一个 int 数组（忽略中括号中的这个数字，这个表示数组的长度）。</p>
 <p>那么函数呢？本来，C 语言是把参数的类型写在括号之外，如下所示（看起来很奇怪）：</p>
-<p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(argc, argv)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">int</span> argc</span>;</span><br><span class="line">    <span class="keyword">char</span> *argv[];</span><br><span class="line">&#123; <span class="comment">/* ... */</span> &#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-c">int main(argc, argv)
+    int argc;
+    char *argv[];
+{ /* ... */ }
+</code></pre>
 <p>我们再看一个方法，现在 C 语言的方法声明就是用的这种方式，因为这个表达式 main(argc, argv) 返回 int，所以最后会写成下面的形式：</p>
-<p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span> </span>&#123; <span class="comment">/* ... */</span> &#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-c">int main(int argc, char *argv[]) { /* ... */ }
+</code></pre>
 <p>这与上面第一个方法的基本结构是相同的。</p>
 <p>对于简单类型，这是一个很好的方法，如果对于那些复杂类型，很容易让人迷惑。最有名的例子就是<strong>方法指针</strong>。如果按照这个结构来，就会得到下面的结果：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> (*fp)(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">int (*fp)(int a, int b)
+</code></pre>
 <p>在这里，fp 是一个指向函数的指针，编写表达式 (*fp)(a, b)，就会调用这个方法并返回一个 int。这样看起来也没有问题，但如果这里 fp 的参数本身也是一个方法呢？</p>
-<p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> (*fp)(<span class="keyword">int</span> (*ff)(<span class="keyword">int</span> x, <span class="keyword">int</span> y), <span class="keyword">int</span> b)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-c">int (*fp)(int (*ff)(int x, int y), int b)
+</code></pre>
 <p>可读性就不好了。</p>
 <p>当然，我们在声明一个方法的时候可以不用写参数的名称，所以 main 方法就可以被声明成：</p>
-<p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">char</span> *[])</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-c">int main(int, char *[])
+</code></pre>
 <p>回想一下， argv 参数是这样声明的：</p>
-<p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> *argv[]</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-c">char *argv[]
+</code></pre>
 <p>你可以删除中间的命名来构造它的类型，尽管你把这个命名放在中间并不明显。</p>
 <p>看一下如果把所有参数的名称都删除会变成什么样子：</p>
-<p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> (*fp)(<span class="keyword">int</span> (*)(<span class="keyword">int</span>, <span class="keyword">int</span>), <span class="keyword">int</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-c">int (*fp)(int (*)(int, int), int)
+</code></pre>
 <p>不仅不清楚把名字放在哪里：</p>
-<p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> (*)(<span class="keyword">int</span>, <span class="keyword">int</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-c">int (*)(int, int)
+</code></pre>
 <p>而且所有方法指针的声明都会变的不清晰，特别是在返回类型也是函数指针的时候：</p>
-<p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> (*(*fp)(<span class="keyword">int</span> (*)(<span class="keyword">int</span>, <span class="keyword">int</span>), <span class="keyword">int</span>))(<span class="keyword">int</span>, <span class="keyword">int</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-c">int (*(*fp)(int (*)(int, int), int))(int, int)
+</code></pre>
 <p>甚至很难看清楚关于 fp 的声明了。</p>
 <p>你当然可以用一些很好的例子来反驳我，但上面的这些例子也说明了 C 语法中不好的一些地方。</p>
 <p>还有一点需要说明。因为类型和声明语法是相同的，所以很难解析中间有类型的表达式。这就是为什么 C 语言中类型转换总是用括号括起来的原因，如下：</p>
-<p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="keyword">int</span>)M_PI</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-c">(int)M_PI
+</code></pre>
 <h2>Go 语法</h2>
 <p>C 语言族以外的语法通常有不同的声明语法。名字通常放在前面，后面通常有一个冒号。因此，我们上面的例子就变成了(用一种虚构但具有说明性的语言)：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x: <span class="keyword">int</span></span><br><span class="line">p: pointer to <span class="keyword">int</span></span><br><span class="line">a: array[<span class="number">3</span>] of <span class="keyword">int</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">x: int
+p: pointer to int
+a: array[3] of int
+</code></pre>
 <p>这些声明是清晰的，只需从左到右读取即可，但有些冗长。Go从这里得到提示，但为了简洁起见，它去掉了冒号并删除了一些关键字：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x <span class="keyword">int</span></span><br><span class="line">p *<span class="keyword">int</span></span><br><span class="line">a [<span class="number">3</span>]<span class="keyword">int</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">x int
+p *int
+a [3]int
+</code></pre>
 <p>这里看不出来 [3]int 的外观以及如何在表达式中使用 a（在下一节中我们会回到指针上）。为了获得清晰将付出一些语法的代价。</p>
 <p>现在来看看方法。我们把 main 方法用 Go 语言来转写，尽管实际在 Go 语言中 main 方法是没有参数的：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">(argc <span class="keyword">int</span>, argv []<span class="keyword">string</span>)</span> <span class="title">int</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func main(argc int, argv []string) int
+</code></pre>
 <p>表面上看起来和 C 语言没有太多的不同，无非是从 char 数组到 string 数组的转变，但是它可以从左读到右：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">方法 main 有 <span class="keyword">int</span> 和 <span class="keyword">string</span> slice 参数，并且返回一个 <span class="keyword">int</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">方法 main 有 int 和 string slice 参数，并且返回一个 int
+</code></pre>
 <p>它们总是排在第一个，去掉参数名也一样清楚，这样就不会混淆了。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span>, []<span class="keyword">string</span>)</span> <span class="title">int</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func main(int, []string) int
+</code></pre>
 <p>这种从左读到右的风格在参数很复杂的时候也不会变得混乱。下面声明了一个方法变量（类似于 C 语言中的方法指针）：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f <span class="function"><span class="keyword">func</span><span class="params">(<span class="keyword">func</span>(<span class="keyword">int</span>,<span class="keyword">int</span>)</span> <span class="title">int</span>, <span class="title">int</span>) <span class="title">int</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">f func(func(int,int) int, int) int
+</code></pre>
 <p>或者返回一个方法：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f <span class="function"><span class="keyword">func</span><span class="params">(<span class="keyword">func</span>(<span class="keyword">int</span>,<span class="keyword">int</span>)</span> <span class="title">int</span>, <span class="title">int</span>) <span class="title">func</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span> <span class="title">int</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">f func(func(int,int) int, int) func(int, int) int
+</code></pre>
 <p>从左到右读起来依然很清晰，声明的名字总是排在前面，很直观。</p>
 <p>类型和表达式语法之间的区别使得 Go 在编写和调用闭包很简单：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sum := <span class="function"><span class="keyword">func</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> a+b &#125; (<span class="number">3</span>, <span class="number">4</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">sum := func(a, b int) int { return a+b } (3, 4)
+</code></pre>
 <h2>指针</h2>
 <p>指针是一个意外情况。看下面的例子，注意在组数和 slice 中，Go 的声明语法把中括号放在类型的左边，而表达式语法把中括号放在了右边：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a []<span class="keyword">int</span></span><br><span class="line">x = a[<span class="number">1</span>]</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var a []int
+x = a[1]
+</code></pre>
 <p>Go 的指针使用了 C语言中的 * 符号，但是我们不能对指针类型进行类似的转换。所以指针是这样声明的：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p *<span class="keyword">int</span></span><br><span class="line">x = *p</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var p *int
+x = *p
+</code></pre>
 <p>但不能这样用：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p *<span class="keyword">int</span></span><br><span class="line">x = p*</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var p *int
+x = p*
+</code></pre>
 <p>因为后缀 * 会和乘法的语法冲突。如果不用 * ，我们可以用 Pascal 语言中 ^ 符号，就像下面这样：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p ^<span class="keyword">int</span></span><br><span class="line">x = p^</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var p ^int
+x = p^
+</code></pre>
 <p>也许我们应该为指针换一个操作符( 并为异或操作选择另一个操作符)，因为类型和表达式上的前缀星号在许多方面把事情变得复杂。例如，有人可能会这样写：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[]<span class="keyword">int</span>(<span class="string">"hi"</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">[]int(&quot;hi&quot;)
+</code></pre>
 <p>相反，如果类型以 * 开头，则必须将其括起来：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(*<span class="keyword">int</span>)(<span class="literal">nil</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">(*int)(nil)
+</code></pre>
 <p>如果我们愿意放弃 * 作为指针语法，那么这些括号就没有必要了。</p>
 <p>因此，Go 的指针语法与 C语言的指针形式绑定在一起，这种绑定意味着我们还需要使用圆括号来消除类型和表达式的歧义。</p>
 <p>尽管如此，我们还是相信 Go 的类型语法比 C 语言更容易理解，特别是当声明变得复杂的时候。</p>
@@ -147,7 +184,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -155,7 +192,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

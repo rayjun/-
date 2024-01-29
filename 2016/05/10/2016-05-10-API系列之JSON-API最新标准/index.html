@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -116,9 +115,28 @@
 <li>资源对象数组，资源标识对象的数组或者一个 null 的数组，为了请求目标资源集合</li>
 </ul>
 <p>举个例子，下面的数据就是一个单独的资源对象:</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;data&quot;: &#123;</span><br><span class="line">    &quot;type&quot;: &quot;articles&quot;,</span><br><span class="line">    &quot;id&quot;: &quot;1&quot;,</span><br><span class="line">    &quot;attributes&quot;: &#123;</span><br><span class="line">      &#x2F;&#x2F; ... this article&#39;s attributes</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;relationships&quot;: &#123;</span><br><span class="line">      &#x2F;&#x2F; ... this article&#39;s relationships</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code>{
+  &quot;data&quot;: {
+    &quot;type&quot;: &quot;articles&quot;,
+    &quot;id&quot;: &quot;1&quot;,
+    &quot;attributes&quot;: {
+      // ... this article's attributes
+    },
+    &quot;relationships&quot;: {
+      // ... this article's relationships
+    }
+  }
+}
+</code></pre>
 <p>下面就是一个资源的标识对象，指代一些资源:</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;data&quot;: &#123;</span><br><span class="line">    &quot;type&quot;: &quot;articles&quot;,</span><br><span class="line">    &quot;id&quot;: &quot;1&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code>{
+  &quot;data&quot;: {
+    &quot;type&quot;: &quot;articles&quot;,
+    &quot;id&quot;: &quot;1&quot;
+  }
+}
+
+</code></pre>
 <p>一个资源的集合必须用一个数组来表现，即使只有一项内容或者为空。</p>
 <h4>资源对象</h4>
 <p><code>资源对象</code> 在 JSON API 的文档中代表资源。</p>
@@ -136,7 +154,24 @@
 <li><code>meta</code>: 包含对象非属性数据的 <code>meta 对象</code></li>
 </ul>
 <p>一个 <code>article</code> 对象可能是如下的表示:</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;articles&quot;,</span><br><span class="line">  &quot;id&quot;: &quot;1&quot;,</span><br><span class="line">  &quot;attributes&quot;: &#123;</span><br><span class="line">    &quot;title&quot;: &quot;Rails is Omakase&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;relationships&quot;: &#123;</span><br><span class="line">    &quot;author&quot;: &#123;</span><br><span class="line">      &quot;links&quot;: &#123;</span><br><span class="line">        &quot;self&quot;: &quot;&#x2F;articles&#x2F;1&#x2F;relationships&#x2F;author&quot;,</span><br><span class="line">        &quot;related&quot;: &quot;&#x2F;articles&#x2F;1&#x2F;author&quot;</span><br><span class="line">      &#125;,</span><br><span class="line">      &quot;data&quot;: &#123; &quot;type&quot;: &quot;people&quot;, &quot;id&quot;: &quot;9&quot; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code>{
+  &quot;type&quot;: &quot;articles&quot;,
+  &quot;id&quot;: &quot;1&quot;,
+  &quot;attributes&quot;: {
+    &quot;title&quot;: &quot;Rails is Omakase&quot;
+  },
+  &quot;relationships&quot;: {
+    &quot;author&quot;: {
+      &quot;links&quot;: {
+        &quot;self&quot;: &quot;/articles/1/relationships/author&quot;,
+        &quot;related&quot;: &quot;/articles/1/author&quot;
+      },
+      &quot;data&quot;: { &quot;type&quot;: &quot;people&quot;, &quot;id&quot;: &quot;9&quot; }
+    }
+  }
+}
+
+</code></pre>
 <h5>唯一标识</h5>
 
 </article>
@@ -145,7 +180,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -153,7 +188,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

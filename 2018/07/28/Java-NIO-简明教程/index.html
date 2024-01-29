@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -120,7 +119,17 @@
 </blockquote>
 <p>在 FileChannel 中，有两个很有用的方法，一个是 <strong>transferFrom()</strong>，一个是 <strong>transferTo()</strong>，
 可以用来拷贝文件，两个方法的用法大致相同。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">RandomAccessFile fromFile = <span class="keyword">new</span> RandomAccessFile(<span class="string">"from.txt"</span>, <span class="string">"rw"</span>);</span><br><span class="line">FileChannel      fromChannel = fromFile.getChannel();</span><br><span class="line"></span><br><span class="line">RandomAccessFile toFile = <span class="keyword">new</span> RandomAccessFile(<span class="string">"to.txt"</span>, <span class="string">"rw"</span>);</span><br><span class="line">FileChannel      toChannel = toFile.getChannel();</span><br><span class="line"></span><br><span class="line"><span class="keyword">long</span> position = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">long</span> count    = fromChannel.size();</span><br><span class="line"></span><br><span class="line">toChannel.transferFrom(fromChannel, position, count);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-Java">RandomAccessFile fromFile = new RandomAccessFile(&quot;from.txt&quot;, &quot;rw&quot;);
+FileChannel      fromChannel = fromFile.getChannel();
+
+RandomAccessFile toFile = new RandomAccessFile(&quot;to.txt&quot;, &quot;rw&quot;);
+FileChannel      toChannel = toFile.getChannel();
+
+long position = 0;
+long count    = fromChannel.size();
+
+toChannel.transferFrom(fromChannel, position, count);
+</code></pre>
 <h3>Buffer 详解</h3>
 <p>Buffer 用于和 Channel 进行交互，Channel 从 BUffer 中读取数据和写入数据，Buffer 的本质是一块内存区域，Buffer 提供了一系列的接口来操作这块内存的数据。</p>
 <p>Buffer 有两种不同的模式，一种是<strong>读</strong>模式，这种模式下只能从 Buffer 中读取数据，一种是<strong>写</strong>模式，这个时候只能往 Buffer 中写数据。</p>
@@ -131,7 +140,20 @@
 <li>limit：在<strong>写</strong>模式下，limit 的含义就是我们能写入的最大数据量，等于 capacity；在<strong>读</strong>模式下，limit 表示我们所能读取的最大数据量，等同于<strong>写</strong>模式下 position 的值。</li>
 </ul>
 <p>下面的代码简单展示了如何操作 Buffer，以及如何向 Channel 中读取和写 Buff：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ByteBuffer buff = ByteBuffer.allocate(<span class="number">8</span>);</span><br><span class="line"></span><br><span class="line">SocketChannel socketChannel = SocketChannel.open();</span><br><span class="line"></span><br><span class="line">socketChannel.read(buff);</span><br><span class="line"></span><br><span class="line">IntBuffer intBuff = buff.asIntBuffer();</span><br><span class="line"></span><br><span class="line">buff.clear();</span><br><span class="line">intBuff.put(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">intBuff.put(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">socketChannel.write(buff);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">ByteBuffer buff = ByteBuffer.allocate(8);
+
+SocketChannel socketChannel = SocketChannel.open();
+
+socketChannel.read(buff);
+
+IntBuffer intBuff = buff.asIntBuffer();
+
+buff.clear();
+intBuff.put(0, 1);
+intBuff.put(1, 2);
+
+socketChannel.write(buff);
+</code></pre>
 <p>当 Channel 开始写入数据到 Buffer 中时，Buffer 会记录已经写入的数据的大小。当需要读取数据时，Buffer 会通过 flip() 方法将 Buffer 从写的模式调整为读的模式，然后就可以读取 Buffer 中所有已经写入的数据。</p>
 <p>在将数据读取完成后，需要清除已经读取过的数据，有两种方式，一个方法是 clear() 方法，一个是 compact() 方法。clear 方法会清空 Buffer 中所有的数据， 而 compact 只会清空已经读取的数据，然后会把未读取的数据移到 Buffer 开始的位置，新写入的数据的开始位置则在未读取的数据之后。</p>
 <h3>Selector 详解</h3>
@@ -146,8 +168,14 @@
 <li>SelectionKey.OP_WRITE</li>
 </ul>
 <p>在将一个 Channel 注册到一个 Selector 时，我们可以设置我们对哪个状态感兴趣：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Selector operation</span></span><br><span class="line">SocketChannel channel = SocketChannel.open();</span><br><span class="line">Selector selector = Selector.open();</span><br><span class="line">channel.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">channel.register(selector, SelectionKey.OP_CONNECT);</span><br></pre></td></tr></table></figure>
-register 方法中的第二个参数就是我们希望处理的状态，Selector 会把这些状态收集起来作为一个我们关注的<strong>兴趣集</strong>。</p>
+<pre><code class="language-Java">// Selector operation
+SocketChannel channel = SocketChannel.open();
+Selector selector = Selector.open();
+channel.configureBlocking(false);
+
+channel.register(selector, SelectionKey.OP_CONNECT);
+</code></pre>
+<p>register 方法中的第二个参数就是我们希望处理的状态，Selector 会把这些状态收集起来作为一个我们关注的<strong>兴趣集</strong>。</p>
 <p>如果底层操作系统通知 Selector 一个 Channel已经处于就绪状态，那么 Selector 就会把这个 Channel 的key 放入到它<strong>就绪集</strong>中。</p>
 <p>Selector 可以在单线程中处理多个 Channel，就是是说可以用少量的线程就可以处理更多的连接，可以减少线程之前的切换，从而提升系统的并发能力。</p>
 <p>在 Selector 中会维护 SelectionKey 的集合来完成对 Channel 的调度。</p>
@@ -187,7 +215,7 @@ register 方法中的第二个参数就是我们希望处理的状态，Selector
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -195,7 +223,7 @@ register 方法中的第二个参数就是我们希望处理的状态，Selector
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

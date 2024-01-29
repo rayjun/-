@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -68,16 +67,71 @@
 <h3>中间件组</h3>
 <p>在 app\Http\Kernel.php 文件中，出现一个新的配置选项 $middlewareGroups,该数组的键是中间件组的名称，值则是多个中间件
 的集合。默认提供了 web 和 api 中间件组的配置:</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">protected $middlewareGroups &#x3D; [</span><br><span class="line">    &#39;web&#39; &#x3D;&gt; [</span><br><span class="line">        \App\Http\Middleware\EncryptCookies::class,</span><br><span class="line">        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,</span><br><span class="line">        \Illuminate\Session\Middleware\StartSession::class,</span><br><span class="line">        \Illuminate\View\Middleware\ShareErrorsFromSession::class,</span><br><span class="line">        \App\Http\Middleware\VerifyCsrfToken::class,</span><br><span class="line">    ],</span><br><span class="line"></span><br><span class="line">    &#39;api&#39; &#x3D;&gt; [</span><br><span class="line">        &#39;throttle:60,1&#39;,</span><br><span class="line">    ],</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
-我们当然也可以在其中增加自己的中间件配置：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">protected $middlewareGroups &#x3D; [</span><br><span class="line">    &#39;web&#39; &#x3D;&gt; [</span><br><span class="line">        \App\Http\Middleware\EncryptCookies::class,</span><br><span class="line">        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,</span><br><span class="line">        \Illuminate\Session\Middleware\StartSession::class,</span><br><span class="line">        \Illuminate\View\Middleware\ShareErrorsFromSession::class,</span><br><span class="line">        \App\Http\Middleware\VerifyCsrfToken::class,</span><br><span class="line">    ],</span><br><span class="line"></span><br><span class="line">    &#39;api&#39; &#x3D;&gt; [</span><br><span class="line">        &#39;throttle:60,1&#39;,</span><br><span class="line">    ],</span><br><span class="line">    &#39;admin&#39; &#x3D;&gt; [...]</span><br><span class="line">];</span><br></pre></td></tr></table></figure></p>
+<pre><code>protected $middlewareGroups = [
+    'web' =&gt; [
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+    ],
+
+    'api' =&gt; [
+        'throttle:60,1',
+    ],
+];
+
+</code></pre>
+<p>我们当然也可以在其中增加自己的中间件配置：</p>
+<pre><code>protected $middlewareGroups = [
+    'web' =&gt; [
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+    ],
+
+    'api' =&gt; [
+        'throttle:60,1',
+    ],
+    'admin' =&gt; [...]
+];
+</code></pre>
 <p>中间件组的使用：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Route::group([&#39;middleware&#39; &#x3D;&gt; [&#39;web&#39;]], function () &#123;</span><br><span class="line">    &#x2F;&#x2F;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<pre><code>Route::group(['middleware' =&gt; ['web']], function () {
+    //
+});
+</code></pre>
 <h3>需要注意的地方</h3>
 <p>在之前的版本中，app\Http\Kernel.php 文件中默认的中间件配置如下：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">protected $middleware &#x3D; [</span><br><span class="line">       \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,</span><br><span class="line">       \App\Http\Middleware\EncryptCookies::class,</span><br><span class="line">       \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,</span><br><span class="line">       \Illuminate\Session\Middleware\StartSession::class,</span><br><span class="line">       \Illuminate\View\Middleware\ShareErrorsFromSession::class,</span><br><span class="line">       \App\Http\Middleware\VerifyCsrfToken::class,</span><br><span class="line">   ];</span><br></pre></td></tr></table></figure></p>
+<pre><code> protected $middleware = [
+        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+    ];
+</code></pre>
 <p>但是在 5.2 的版本中，配置是这样的:</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">protected $middleware &#x3D; [</span><br><span class="line">    \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,</span><br><span class="line">   ];</span><br><span class="line">protected $middlewareGroups &#x3D; [</span><br><span class="line">    &#39;web&#39; &#x3D;&gt; [</span><br><span class="line">        \App\Http\Middleware\EncryptCookies::class,</span><br><span class="line">        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,</span><br><span class="line">        \Illuminate\Session\Middleware\StartSession::class,</span><br><span class="line">        \Illuminate\View\Middleware\ShareErrorsFromSession::class,</span><br><span class="line">        \App\Http\Middleware\VerifyCsrfToken::class,</span><br><span class="line">    ],</span><br><span class="line"></span><br><span class="line">    &#39;api&#39; &#x3D;&gt; [</span><br><span class="line">        &#39;throttle:60,1&#39;,</span><br><span class="line">    ],</span><br><span class="line">];</span><br></pre></td></tr></table></figure></p>
+<pre><code>    protected $middleware = [
+        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+       ];
+    protected $middlewareGroups = [
+        'web' =&gt; [
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ],
+
+        'api' =&gt; [
+            'throttle:60,1',
+        ],
+    ];
+</code></pre>
 <p>对比可以发现，cookies,sessions, CSRF的功能，都从默认中间件中被移除了，加入到了 web 中间件组中了。也就是说，没有
 使用 web 中间件组的路由将没有 cookies，sessions，CSRF 的功能了，这也是为什么在 Laravel5.2 中使用默认的登录验证方式，在
 没有使用 web 中间件的情况下，登录状态是没有办法保持的。这是 Larvel 在设计思想上的一个重大的提升。</p>
@@ -88,7 +142,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -96,7 +150,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

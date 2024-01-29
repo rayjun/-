@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -74,7 +73,18 @@
 <p>在实现调度器时，需要解决的一个核心问题就是，<strong>怎么让大量的 goroutine 运行在内核线程上</strong>。</p>
 <p>在开始实现之前，需要做一些准备工作，在堆上分配一个先进先出（FIFO）队列，用来存放待运行的 goroutine（调度器的实际实现中，会有多个队列来存放待运行的 goroutine）。</p>
 <p>我们以下面的这段代码为例，g0 中需要处理一些图片，启动了一些 goroutine 去处理，在 g1 到 gn 中,图片处理完成之后，需要把图片写入磁盘：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// g0</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> _, i := <span class="keyword">range</span> images &#123;</span><br><span class="line">        <span class="keyword">go</span> process(i)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// g1...gn</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(i image)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 写入磁盘，这里会发生系统调用</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">// g0
+func main() {
+    for _, i := range images {
+        go process(i)
+    }
+}
+
+// g1...gn
+func process(i image) {
+    // 写入磁盘，这里会发生系统调用
+}
+</code></pre>
 <p>那么接下来有几种思路：</p>
 <p><strong>思路一：所有的 goroutine 运行在一个线程上</strong></p>
 <p>很明显，这样是行不通的，这样 goroutine 没办法并行，如果有一个 goroutine 发生了阻塞，那么其他的 goroutine 也只能等着。虽然有多个 CPU 核心，也只会用到其中的一个。</p>
@@ -118,7 +128,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -126,7 +136,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

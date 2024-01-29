@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -73,10 +72,17 @@
 <p>在开始说 Java8 的函数式编程之前，我们需要说明一下，在 Java8 中新增加的一个概念，叫<strong>函数式接口</strong>。</p>
 <p>这个函数式接口是 Java8 实现函数式编程的基础，正是这类接口的存在，才能把函数（方法）当做参数进行传递，至少表面上看起来是这样的，但是实际上传递的还是对象，这个问题我们下面再讨论，先回到函数式接口。</p>
 <p>下面就是一个函数式接口：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Action</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">action</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public interface Action {
+    public void action();
+}
+</code></pre>
 <p>这个函数式看起来和普通的接口没有什么区别，唯一的区别是函数式接口只能有<strong>一个抽象方法</strong>。</p>
 <p>如果你想让别人立马理解这个接口是函数式接口，可以加上 <code>@FunctionalInterface</code> 注解，这个注解不会提供任何额外的功能，仅仅用来表示这个接口是一个函数式接口。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Action</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">action</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">@FunctionalInterface
+public interface Action {
+    public void action();
+}
+</code></pre>
 <p>只能有一个抽象方法是为了更方便的把函数作为参数来传递，这个后面再细说。</p>
 <p>我们可以根据自己的需要来定义函数式接口，JDK 为了使用方便，内置了很多函数式接口，日常使用完全够了。</p>
 <p>常用的函数接口有：</p>
@@ -89,13 +95,21 @@
 <h2>Lambda 表达式</h2>
 <p>说起 Java8 的函数式编程，很多人都知道 lambda 表达式，这也是 Java8 中最容易被人记住的地方。</p>
 <p>先来通过一个直观的例子来了解一下 lambda，在操作 ArrayList 等数据结构时，我们有可能要对其中的数据进行排序，比如：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Comparator&lt;Integer&gt; comparator = <span class="keyword">new</span> Comparator&lt;Integer&gt;() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(Integer i1, Integer i2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> i1.comparaTo(i2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Comparator&lt;Integer&gt; comparator = new Comparator&lt;Integer&gt;() {
+    public int compare(Integer i1, Integer i2) {
+        return i1.comparaTo(i2);
+    }
+};
+</code></pre>
 <p>在上面的代码中，真正有用的代码也有比较大小的那行，其他的都是样板代码。在这样的情况下，lambda 就很有用。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Comparator&lt;Integer&gt; comparator = (Integer i1, Integer i2) -&gt; &#123;<span class="keyword">return</span> i1.compareTo(i2);&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Comparator&lt;Integer&gt; comparator = (Integer i1, Integer i2) -&gt; {return i1.compareTo(i2);}
+</code></pre>
 <p>这样看起来是不是很简单了，但是还是继续优化，可以把返回参数的部分也省略：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Comparator&lt;Integer&gt; comparator = (Integer i1, Integer i2) -&gt; i1.compareTo(i2)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Comparator&lt;Integer&gt; comparator = (Integer i1, Integer i2) -&gt; i1.compareTo(i2)
+</code></pre>
 <p>既然两个参数都是 Integer 那是不是也可以省略，最后就得到了下面这样的形式：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Comparator&lt;Integer&gt; comparator = (i1, i2) -&gt; i1.compareTo(i2)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Comparator&lt;Integer&gt; comparator = (i1, i2) -&gt; i1.compareTo(i2)
+</code></pre>
 <p>这就是 lambda 的力量，可以把上面那么多的代码浓缩成一行。</p>
 <p>lambda 其实就是一段代码，但也不仅仅是一段代码，再简单的 lambda 也会有三部分，参数列表，箭头和 lambda 主体，上面的 <code>(i1, i2)</code> 就是参数列表， <code>i1.compareTo(i2)</code> 就是 lambda 主体，箭头把这两部分隔开了。</p>
 <p>lambda 是匿名的，这点和 Java 中的匿名实现类有点像（本质上一样），而且它是一种函数，不属于任何类（属于类的函数称之为方法），并且可以作为参数进行传递，而且还很简洁。</p>
@@ -109,17 +123,33 @@
 </ul>
 <p>最关键的地方来了，<strong>只要 lambda 和函数式接口方法的签名一致，lambda 表达式就可以作为参数传入到以该函数式接口为参数类型的方法中</strong>。</p>
 <p>来看个详细的例子， <code>Comparator</code> 接口的定义如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Comparator</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">compare</span><span class="params">(T o1, T o2)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">@FunctionalInterface
+public interface Comparator&lt;T&gt; {
+    int compare(T o1, T o2);
+}
+</code></pre>
 <p>虽然 Comparator 中方法不止一个，但是抽象方法只有 <code>compare</code> 一个，上面的 lambda 完全可以作为 compare 方法的实现，实际上，<strong>lambda 表达式确实是作为函数式接口抽象方法的实现，而且，lambda 表达式为作为整个函数接口的实例</strong>。</p>
 <p>到这里，真相大白，Java 8 的虽然支持了函数式编程，这不代表函数就是 Java中的一等公民了，每一个函数其实还是被包裹成一个对象，对象依然是 Java 中的一等公民。</p>
 <p>所以简单来说，只要 lambda 的表达式的参数和返回类型可以与函数式接口中的抽象方法对的上，lambda 就可以作为该函数式接口的实现进行传递。</p>
 <p>比如上面列举的几种函数式接口，其实就是对一些通用函数的抽象，比如 Function 函数式接口如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Function</span>&lt;<span class="title">T</span>,<span class="title">R</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">R <span class="title">apply</span><span class="params">(T t)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">@FunctionalInterface
+public interface Function&lt;T,R&gt; {
+    R apply(T t);
+}
+</code></pre>
 <p>这种就代表接受一个参数，返回另一个值的函数，只要满足这个要求的 lambda 表达式都可以作为 它的实现。</p>
 <p>再比如 Predicate 接口，代表接受一个参数返回一个布尔值的函数：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Predicate</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">test</span><span class="params">(T t)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">@FunctionalInterface
+public interface Predicate&lt;T&gt; {
+    boolean test(T t);
+}
+</code></pre>
 <p>Comsumer 接口表示接受一个参数，什么都不返回的函数：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Predicate</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">test</span><span class="params">(T t)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">@FunctionalInterface
+public interface Predicate&lt;T&gt; {
+    boolean test(T t);
+}
+</code></pre>
 <p>如果这样理解起来还是有点困难，那就把这些函数式接口理解为 lambda 表达式的类型。</p>
 <h2>类型检查和类型推断</h2>
 <p>在上面我们说到了只要函数式接口抽象方法的函数签名与 lambda 一致，那么就可以把 lambda 表达式作为该函数式接口的实现。</p>
@@ -129,32 +159,56 @@
 <h2>方法引用</h2>
 <p>本来到这里应该就很完美了，lambda 够简洁，用它写代码，可以省略很多无用的样本代码，但是 lambda 也不完美，因为 lambda 表达式的代码很难复用，而且很多的 lambda 表达式仅仅就是调用了其他的方法。</p>
 <p>这个时候，方法引用就可以派上用场了，比如上面的例子，其实仅仅就是调用了 <code>Integer.compareTo()</code> 方法：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Comparator&lt;Integer&gt; comparator = (i1, i2) -&gt; i1.compareTo(i2)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Comparator&lt;Integer&gt; comparator = (i1, i2) -&gt; i1.compareTo(i2)
+</code></pre>
 <p>还可以简化成下面的样子：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Comparator&lt;Integer&gt; comparator = Integer::compareTo</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Comparator&lt;Integer&gt; comparator = Integer::compareTo
+</code></pre>
 <p>使用方法引用的时候，要使用 <code>::</code> ，而且任何方法都可以这样被引用，无论是静态方法还是实例方法。</p>
 <p>方法引用可以被认为是 lambda 的语法糖，使用方法引用可以让代码更加简洁，更直观，看到方法引用的名称就能大概知道代码的逻辑，并且还可以对一些代码进行复用。</p>
 <h2>写出Java8 风格的代码</h2>
 <p>在 Java8 之后，很多代码的写法应该摒弃，下面列举一些常见的例子。</p>
 <h3>遍历 List</h3>
 <p>Java8 以前：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(Integer i : list) &#123;</span><br><span class="line">    System.out.println(i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">for(Integer i : list) {
+    System.out.println(i);
+}
+</code></pre>
 <p>Java8 及以后：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list.forEach(System.out::println);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">list.forEach(System.out::println);
+</code></pre>
 <p>forEach 接收 Consumer 类型的函数，而 System.out.println() 刚好就符合要求。</p>
 <h3>遍历 Map</h3>
 <p>Java8 以前：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (Map.Entry&lt;Integer, Integer&gt; entry : map.entrySet()) &#123;</span><br><span class="line"> </span><br><span class="line">    System.out.println(<span class="string">"Key: "</span> + entry.getKey() + <span class="string">", Value:"</span> + entry.getValue());</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">for (Map.Entry&lt;Integer, Integer&gt; entry : map.entrySet()) {
+ 
+    System.out.println(&quot;Key: &quot; + entry.getKey() + &quot;, Value:&quot; + entry.getValue());
+ 
+}
+</code></pre>
 <p>Java8 及以后：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">map.forEach((k, v) -&gt; &#123;System.out.println(<span class="string">"Key: "</span>+ k +<span class="string">", Value: "</span>+ v)&#125;);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">map.forEach((k, v) -&gt; {System.out.println(&quot;Key: &quot;+ k +&quot;, Value: &quot;+ v)});
+</code></pre>
 <p>这里的 forEach 不是接收 Consumer 类型的函数，而是接收 BiConsumer 类的函数，可以用来处理 map 这种包含 key-value 类型的数据，在大多数场景下，内置的函数式接口以及足够我们使用，只有在一些特殊的场景下才需要自己定制。</p>
 <p>这里也没有现成的方法引用，所以就可以使用 lambda 表达式来实现。</p>
 <h3>执行异步任务</h3>
 <p>假如要使用线程池来执行任务。</p>
 <p>Java8 以前：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ThreadPoolExecutor executor = <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">10</span>, <span class="number">10</span>, <span class="number">0</span>, TimeUnit.SECONDS, <span class="keyword">new</span> ArrayBlockingQueue&lt;Runnable&gt;(<span class="number">2000</span>));</span><br><span class="line"></span><br><span class="line">executor.submit(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Thread pool execute"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, 0, TimeUnit.SECONDS, new ArrayBlockingQueue&lt;Runnable&gt;(2000));
+
+executor.submit(new Runnable() {
+    public void run() {
+        System.out.println(&quot;Thread pool execute&quot;);
+    }
+}); 
+</code></pre>
 <p>Java8 以后：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ThreadPoolExecutor executor = <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">10</span>, <span class="number">10</span>, <span class="number">0</span>, TimeUnit.SECONDS, <span class="keyword">new</span> ArrayBlockingQueue&lt;Runnable&gt;(<span class="number">2000</span>));</span><br><span class="line"></span><br><span class="line">executor.submit(() -&gt;&#123;</span><br><span class="line">    System.out.println(<span class="string">"Thread pool execute"</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, 0, TimeUnit.SECONDS, new ArrayBlockingQueue&lt;Runnable&gt;(2000));
+
+executor.submit(() -&gt;{
+    System.out.println(&quot;Thread pool execute&quot;);
+});
+</code></pre>
 <p>也可以使用 lambda 来解决这个问题，Runnable 也是一个函数式接口。</p>
 <p>文 / Rayjun</p>
 
@@ -164,7 +218,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -172,7 +226,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

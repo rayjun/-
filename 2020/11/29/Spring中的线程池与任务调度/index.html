@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -86,19 +85,82 @@
 <h3>TaskExecutor 的使用</h3>
 <p>下面以最常见的 ThreadPoolTaskExecutor 为例来演示 TaskExecutor 的使用。</p>
 <p>创建一个待执行的任务：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TaskDemo</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String message;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TaskDemo</span><span class="params">(String message)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.message = message;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class TaskDemo implements Runnable{
+
+    private String message;
+
+    public TaskDemo(String message) {
+        this.message = message;
+    }
+
+    @Override
+    public void run() {
+        System.out.println(message);
+    }
+}
+</code></pre>
 <p>再创建一个执行任务的执行器：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringTaskDemo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> ThreadPoolTaskExecutor threadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            threadPoolTaskExecutor.execute(<span class="keyword">new</span> TaskDemo(<span class="string">"Hello rayjun "</span> + i));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setThreadPoolTaskExecutor</span><span class="params">(ThreadPoolTaskExecutor threadPoolTaskExecutor)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.threadPoolTaskExecutor = threadPoolTaskExecutor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class SpringTaskDemo {
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    public void printMessage() {
+        for(int i = 0; i &lt; 10; i++) {
+            threadPoolTaskExecutor.execute(new TaskDemo(&quot;Hello rayjun &quot; + i));
+        }
+    }
+
+    public void setThreadPoolTaskExecutor(ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+        this.threadPoolTaskExecutor = threadPoolTaskExecutor;
+    }
+}
+</code></pre>
 <p>然后在容器中注入这两个类：</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"taskExecutor"</span></span></span><br><span class="line"><span class="tag">      <span class="attr">class</span>=<span class="string">"org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"corePoolSize"</span> <span class="attr">value</span>=<span class="string">"5"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxPoolSize"</span> <span class="attr">value</span>=<span class="string">"10"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"queueCapacity"</span> <span class="attr">value</span>=<span class="string">"25"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"springTaskDemo"</span> <span class="attr">class</span>=<span class="string">"cn.rayjun.spring.SpringTaskDemo"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"threadPoolTaskExecutor"</span> <span class="attr">ref</span>=<span class="string">"taskExecutor"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-xml">&lt;bean id=&quot;taskExecutor&quot;
+      class=&quot;org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor&quot;&gt;
+    &lt;property name=&quot;corePoolSize&quot; value=&quot;5&quot;/&gt;
+    &lt;property name=&quot;maxPoolSize&quot; value=&quot;10&quot;/&gt;
+    &lt;property name=&quot;queueCapacity&quot; value=&quot;25&quot;/&gt;
+&lt;/bean&gt;
+&lt;bean id=&quot;springTaskDemo&quot; class=&quot;cn.rayjun.spring.SpringTaskDemo&quot;&gt;
+    &lt;property name=&quot;threadPoolTaskExecutor&quot; ref=&quot;taskExecutor&quot;/&gt;
+&lt;/bean&gt;
+</code></pre>
 <p>再通过单元测试来执行代码：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ExtendWith</span>(SpringExtension.class)</span><br><span class="line"><span class="meta">@ContextConfiguration</span>(<span class="string">"classpath:applicationContext.xml"</span>)</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpringTaskDemoTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ApplicationContext context;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        SpringTaskDemo springTaskDemo = (SpringTaskDemo) context.getBean(<span class="string">"springTaskDemo"</span>);</span><br><span class="line">        springTaskDemo.printMessage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">@ExtendWith(SpringExtension.class)
+@ContextConfiguration(&quot;classpath:applicationContext.xml&quot;)
+class SpringTaskDemoTest {
+
+    @Autowired
+    private ApplicationContext context;
+
+    @Test
+    public void test1() {
+        SpringTaskDemo springTaskDemo = (SpringTaskDemo) context.getBean(&quot;springTaskDemo&quot;);
+        springTaskDemo.printMessage();
+    }
+}
+</code></pre>
 <p>控制台中会输出10条消息。</p>
 <h2>3. TaskScheduler</h2>
 <p>TaskScheduler 用来执行定时任务，与 TaskExecutor 接口只提供了一个方法不同，TaskScheduler 接口提供了很多方法。</p>
 <p>这些方法都接收一个 Runnable 实例，以及表示时间或者频率的参数。定时任务可以配置为执行一次，也可以配置为重复执行。</p>
 <p>TaskSchduler 提供的方法如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TaskScheduler</span> </span>&#123;</span><br><span class="line">      <span class="function">ScheduledFuture <span class="title">schedule</span><span class="params">(Runnable task, Trigger trigger)</span></span>;</span><br><span class="line">      <span class="function">ScheduledFuture <span class="title">schedule</span><span class="params">(Runnable task, Instant startTime)</span></span>;</span><br><span class="line">      <span class="function">ScheduledFuture <span class="title">schedule</span><span class="params">(Runnable task, Date startTime)</span></span>;</span><br><span class="line">      <span class="function">ScheduledFuture <span class="title">scheduleAtFixedRate</span><span class="params">(Runnable task, Instant startTime, Duration</span></span></span><br><span class="line"><span class="function"><span class="params">  period)</span></span>;</span><br><span class="line">      <span class="function">ScheduledFuture <span class="title">scheduleAtFixedRate</span><span class="params">(Runnable task, Date startTime, <span class="keyword">long</span> period)</span></span>;</span><br><span class="line">      <span class="function">ScheduledFuture <span class="title">scheduleAtFixedRate</span><span class="params">(Runnable task, Duration period)</span></span>;</span><br><span class="line">      <span class="function">ScheduledFuture <span class="title">scheduleAtFixedRate</span><span class="params">(Runnable task, <span class="keyword">long</span> period)</span></span>;</span><br><span class="line">      <span class="function">ScheduledFuture <span class="title">scheduleWithFixedDelay</span><span class="params">(Runnable task, Instant startTime, Duration</span></span></span><br><span class="line"><span class="function"><span class="params">  delay)</span></span>;</span><br><span class="line">      <span class="function">ScheduledFuture <span class="title">scheduleWithFixedDelay</span><span class="params">(Runnable task, Date startTime, <span class="keyword">long</span> delay)</span></span>;</span><br><span class="line">      <span class="function">ScheduledFuture <span class="title">scheduleWithFixedDelay</span><span class="params">(Runnable task, Duration delay)</span></span>;</span><br><span class="line">      <span class="function">ScheduledFuture <span class="title">scheduleWithFixedDelay</span><span class="params">(Runnable task, <span class="keyword">long</span> delay)</span></span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public interface TaskScheduler {
+      ScheduledFuture schedule(Runnable task, Trigger trigger);
+      ScheduledFuture schedule(Runnable task, Instant startTime);
+      ScheduledFuture schedule(Runnable task, Date startTime);
+      ScheduledFuture scheduleAtFixedRate(Runnable task, Instant startTime, Duration
+  period);
+      ScheduledFuture scheduleAtFixedRate(Runnable task, Date startTime, long period);
+      ScheduledFuture scheduleAtFixedRate(Runnable task, Duration period);
+      ScheduledFuture scheduleAtFixedRate(Runnable task, long period);
+      ScheduledFuture scheduleWithFixedDelay(Runnable task, Instant startTime, Duration
+  delay);
+      ScheduledFuture scheduleWithFixedDelay(Runnable task, Date startTime, long delay);
+      ScheduledFuture scheduleWithFixedDelay(Runnable task, Duration delay);
+      ScheduledFuture scheduleWithFixedDelay(Runnable task, long delay);
+  }
+</code></pre>
 <h3>TaskScheduler 实现</h3>
 <p>TaskScheduler 有三个实现：</p>
 <ul>
@@ -108,18 +170,42 @@
 </ul>
 <h3>TaskScheduler 的使用</h3>
 <p>TaskScheduler 的使用和 TaskScheduler 类似。</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"taskSchedulerExecutor"</span></span></span><br><span class="line"><span class="tag">      <span class="attr">class</span>=<span class="string">"org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"poolSize"</span> <span class="attr">value</span>=<span class="string">"1"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"springSchedulerTaskDemo"</span> <span class="attr">class</span>=<span class="string">"cn.rayjun.spring.SpringSchedulerTaskDemo"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"threadPoolTaskScheduler"</span> <span class="attr">ref</span>=<span class="string">"taskSchedulerExecutor"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringSchedulerTaskDemo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> ThreadPoolTaskScheduler threadPoolTaskScheduler;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        threadPoolTaskScheduler.schedule(<span class="keyword">new</span> TaskDemo(<span class="string">"Ray"</span>), <span class="keyword">new</span> CronTrigger(<span class="string">"0/5 * * * * ?"</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setThreadPoolTaskScheduler</span><span class="params">(ThreadPoolTaskScheduler threadPoolTaskScheduler)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.threadPoolTaskScheduler = threadPoolTaskScheduler;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SpringSchedulerTaskDemo springTaskDemo = (SpringSchedulerTaskDemo) context.getBean(<span class="string">"springSchedulerTaskDemo"</span>);</span><br><span class="line">springTaskDemo.printMessage();</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-xml">&lt;bean id=&quot;taskSchedulerExecutor&quot;
+      class=&quot;org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler&quot;&gt;
+    &lt;property name=&quot;poolSize&quot; value=&quot;1&quot;/&gt;
+&lt;/bean&gt;
+&lt;bean id=&quot;springSchedulerTaskDemo&quot; class=&quot;cn.rayjun.spring.SpringSchedulerTaskDemo&quot;&gt;
+    &lt;property name=&quot;threadPoolTaskScheduler&quot; ref=&quot;taskSchedulerExecutor&quot;/&gt;
+&lt;/bean&gt;
+</code></pre>
+<pre><code class="language-java">public class SpringSchedulerTaskDemo {
+    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
+
+    public void printMessage() {
+        threadPoolTaskScheduler.schedule(new TaskDemo(&quot;Ray&quot;), new CronTrigger(&quot;0/5 * * * * ?&quot;));
+    }
+
+    public void setThreadPoolTaskScheduler(ThreadPoolTaskScheduler threadPoolTaskScheduler) {
+        this.threadPoolTaskScheduler = threadPoolTaskScheduler;
+    }
+}
+</code></pre>
+<pre><code class="language-java">SpringSchedulerTaskDemo springTaskDemo = (SpringSchedulerTaskDemo) context.getBean(&quot;springSchedulerTaskDemo&quot;);
+springTaskDemo.printMessage();
+</code></pre>
 <p>执行上面的代码之后，每隔5 秒钟就会打印一次消息。</p>
 <h2>4. task namespace</h2>
 <p>在 Spring 中，提供了 task 的 namespace，这样就可以少写很多代码。</p>
 <p>在 xml 中假如如下 namespace:</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xmlns:task="http://www.springframework.org/schema/task"</span><br><span class="line">xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd"</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-xml">xmlns:task=&quot;http://www.springframework.org/schema/task&quot;
+xsi:schemaLocation=&quot;http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd&quot;
+</code></pre>
 <p>然后上面创建 TaskExecutor 如下：</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">task:executor</span> <span class="attr">id</span>=<span class="string">"taskExecutor2"</span> <span class="attr">pool-size</span>=<span class="string">"5-10"</span> <span class="attr">queue-capacity</span>=<span class="string">"25"</span> /&gt;</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-xml">&lt;task:executor id=&quot;taskExecutor2&quot; pool-size=&quot;5-10&quot; queue-capacity=&quot;25&quot; /&gt;
+</code></pre>
 <p>创建 TaskScheduler 如下：</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">task:scheduler</span> <span class="attr">id</span>=<span class="string">"threadPoolTaskScheduler"</span> <span class="attr">pool-size</span>=<span class="string">"1"</span>/&gt;</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-xml">&lt;task:scheduler id=&quot;threadPoolTaskScheduler&quot; pool-size=&quot;1&quot;/&gt;
+</code></pre>
 <p>文 / Rayjun</p>
 
 </article>
@@ -128,7 +214,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -136,7 +222,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

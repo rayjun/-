@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -79,10 +78,14 @@
 <p><img src="1.png" alt=""></p>
 <p>Log4j2 主要由三个组件组成，Logger、Layout、Appender。</p>
 <p>Logger 就是在程序中用来记录日志的对象：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LogManager.getLogger(Log4j2HelloWorld.class);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">private static final Logger logger = LogManager.getLogger(Log4j2HelloWorld.class);
+</code></pre>
 <p>Layout 则用来对日志信息进行格式化：</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>%d %p %c&#123;1.&#125; [%t] %m%n<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
-Appender 用来配置日志的展现形式，可以将日志在控制台打印，也可以将存储到文件，数据库，或者外部的消息队列等等。</p>
+<pre><code class="language-xml">&lt;PatternLayout&gt;
+    &lt;Pattern&gt;%d %p %c{1.} [%t] %m%n&lt;/Pattern&gt;
+&lt;/PatternLayout&gt;
+</code></pre>
+<p>Appender 用来配置日志的展现形式，可以将日志在控制台打印，也可以将存储到文件，数据库，或者外部的消息队列等等。</p>
 <p>默认情况下，一条日志信息需要被 Appender 处理完成之后才算是记录完成，在记录日志的过程中，程序不会往下执行，如果日志很大，就会对程序的性能造成影响，整个过程是同步的，所以优化的思路是把日志记录的过程变成异步，让日志记录不会影响程序的执行。</p>
 <p>所以 Logger 在获取到日志信息之后，不会立马进行日志格式化和存储，会先把日志信息放到一个队列中，如下图所示：</p>
 <p><img src="2.png" alt=""></p>
@@ -97,7 +100,25 @@ Appender 用来配置日志的展现形式，可以将日志在控制台打印�
 <p><img src="4.png" alt=""></p>
 <p>AsyncLogger 中调用了 AsyncLoggerDisruptor，这个类才真正了完成异步日志处理。</p>
 <p>一个 Disruptor 官方 Demo 如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">LongEventFactory factory = <span class="keyword">new</span> LongEventFactory();</span><br><span class="line"><span class="keyword">int</span> bufferSize = <span class="number">1024</span>;</span><br><span class="line"></span><br><span class="line">Disruptor&lt;LongEvent&gt; disruptor = <span class="keyword">new</span> Disruptor&lt;LongEvent&gt;(factory, bufferSize, DaemonThreadFactory.INSTANCE);</span><br><span class="line">disruptor.handleEventsWith(<span class="keyword">new</span> LongEventHandler());</span><br><span class="line">disruptor.start();</span><br><span class="line"></span><br><span class="line">RingBuffer&lt;LongEvent&gt; ringBuffer = disruptor.getRingBuffer();</span><br><span class="line"></span><br><span class="line">LongEventProducerWithTranslator producer = <span class="keyword">new</span> LongEventProducerWithTranslator(ringBuffer);</span><br><span class="line"></span><br><span class="line">ByteBuffer bb = ByteBuffer.allocate(<span class="number">8</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">long</span> l = <span class="number">0</span>; <span class="keyword">true</span>; l++) &#123;</span><br><span class="line">    bb.putLong(<span class="number">0</span>, l);</span><br><span class="line">    producer.onData(bb);</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">LongEventFactory factory = new LongEventFactory();
+int bufferSize = 1024;
+
+Disruptor&lt;LongEvent&gt; disruptor = new Disruptor&lt;LongEvent&gt;(factory, bufferSize, DaemonThreadFactory.INSTANCE);
+disruptor.handleEventsWith(new LongEventHandler());
+disruptor.start();
+
+RingBuffer&lt;LongEvent&gt; ringBuffer = disruptor.getRingBuffer();
+
+LongEventProducerWithTranslator producer = new LongEventProducerWithTranslator(ringBuffer);
+
+ByteBuffer bb = ByteBuffer.allocate(8);
+
+for (long l = 0; true; l++) {
+    bb.putLong(0, l);
+    producer.onData(bb);
+    Thread.sleep(1000);
+}
+</code></pre>
 <p>上面是官方的一个例子，从上面可以发现，使用 Disruptor 时，需要以下这些组件：</p>
 <ul>
 <li>Factory: 用户创建消息对象</li>
@@ -107,12 +128,33 @@ Appender 用来配置日志的展现形式，可以将日志在控制台打印�
 <li>EventHandler: 消费者，处理消息</li>
 </ul>
 <p>同样，在 Log4j2 中，也是同样的使用方式，AsyncLoggerDisruptor 中有一个 start 方法，在这个方法中，同样也是完成了对这些组件的初始化：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">disruptor = <span class="keyword">new</span> Disruptor&lt;&gt;(RingBufferLogEvent.FACTORY, ringBufferSize, threadFactory, ProducerType.MULTI, waitStrategy);</span><br></pre></td></tr></table></figure>
-生成对象的工厂使用的是 <code>RingBufferLogEvent.FACTORY</code>，这是 RingBufferLogEvent 中的工厂单例，主要用来生成日志对象实例。</p>
+<pre><code class="language-java">disruptor = new Disruptor&lt;&gt;(RingBufferLogEvent.FACTORY, ringBufferSize, threadFactory, ProducerType.MULTI, waitStrategy);
+</code></pre>
+<p>生成对象的工厂使用的是 <code>RingBufferLogEvent.FACTORY</code>，这是 RingBufferLogEvent 中的工厂单例，主要用来生成日志对象实例。</p>
 <p><code>RingBufferLogEventHandler</code> 是日志的消费者，用来处理日志信息，这里的实现很有意思，在 Handler 中，还是调用了 RingBufferLogEvent 的 execute 方法来进行日志的处理，而实际日志会被怎么处理，还是要看具体的配置，这在程序运行的时候才能决定。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(<span class="keyword">final</span> RingBufferLogEvent event, <span class="keyword">final</span> <span class="keyword">long</span> sequence,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">final</span> <span class="keyword">boolean</span> endOfBatch)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        event.execute(endOfBatch);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">finally</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public void onEvent(final RingBufferLogEvent event, final long sequence,
+            final boolean endOfBatch) throws Exception {
+    try {
+        event.execute(endOfBatch);
+    }
+    finally {
+    }
+}
+</code></pre>
 <p>使用过日志就知道，日志有很多的重载方法，这是为了应对更多的场景，所以对应 Disruptor 中的生产者也有很多的实现，生产者都在 <code>AsyncLogger</code> 中实现，</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> TranslatorType threadLocalTranslatorType = <span class="keyword">new</span> TranslatorType() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">log</span><span class="params">(String fqcn, StackTraceElement location, Level level, Marker marker, Message message,</span></span></span><br><span class="line"><span class="function"><span class="params">        Throwable thrown)</span> </span>&#123;</span><br><span class="line">        logWithThreadLocalTranslator(fqcn, location, level, marker, message, thrown);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">log</span><span class="params">(String fqcn, Level level, Marker marker, Message message, Throwable thrown)</span> </span>&#123;</span><br><span class="line">        logWithThreadLocalTranslator(fqcn, level, marker, message, thrown);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">private final TranslatorType threadLocalTranslatorType = new TranslatorType() {
+    @Override
+    void log(String fqcn, StackTraceElement location, Level level, Marker marker, Message message,
+        Throwable thrown) {
+        logWithThreadLocalTranslator(fqcn, location, level, marker, message, thrown);
+    }
+
+    @Override
+    void log(String fqcn, Level level, Marker marker, Message message, Throwable thrown) {
+        logWithThreadLocalTranslator(fqcn, level, marker, message, thrown);
+    }
+};
+</code></pre>
 <p>上面的代码就是生产者的一种实现。</p>
 <p>其实 Log4j2 中使用 Disruptor 也没有什么特别的地方，但是却把同步记录日志的机制换成了高性能的异步记录方式。</p>
 
@@ -122,7 +164,7 @@ Appender 用来配置日志的展现形式，可以将日志在控制台打印�
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -130,7 +172,7 @@ Appender 用来配置日志的展现形式，可以将日志在控制台打印�
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

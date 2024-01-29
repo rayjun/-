@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -72,97 +71,143 @@
 <h2>HBase 单机版安装</h2>
 <p>本文基于单机版的 HBase 进行操作，单机版的 HBase 使用起来非常方便，不要配置 HDFS，直接就可以使用，在这里下载 <a href="https://hbase.apache.org/downloads.html" target="_blank" rel="noopener">HBase</a>。</p>
 <p>下载完成之后，直接解压：</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar xzvf hbase-2.2.5-bin.tar.gz</span><br><span class="line">cd hbase-2.2.5</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">tar xzvf hbase-2.2.5-bin.tar.gz
+cd hbase-2.2.5
+</code></pre>
 <p>然后进入 conf 目录，编辑 hbase-env.sh，找到下面这行，配置上 JDK 的目录（HBase 2.2.5 需要 JDK1.8 以上）：</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">export</span> JAVA_HOME=/usr/java/jdk1.8.0/</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 改成你的 jdk 目录</span></span><br><span class="line">export JAVA_HOME=your jdk dir</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell"># export JAVA_HOME=/usr/java/jdk1.8.0/
+# 改成你的 jdk 目录
+export JAVA_HOME=your jdk dir
+</code></pre>
 <p>然后启动 HBase：</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/start-habse.sh</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">./bin/start-habse.sh
+</code></pre>
 <p>然后通过命令行连接 HBase：</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/hbase shell</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">./bin/hbase shell
+</code></pre>
 <p>到这里，就完成了单机版 HBase 的安装和启动。</p>
 <blockquote>
 <p>HBase 虽然经常和 HDFS 一起出现，但并不是非得使用 HDFS 作为底层文件系统，也可以选择其他的文件系统，比如电脑的本地文件系统。</p>
 </blockquote>
 <h2>基本操作</h2>
 <p>连上 HBase 之后，就可以对 HBase 进行操作了，HBase 有一些基本的命令来查看 HBase 当前的状态和属性。</p>
-<p>连接上 HBase 之后，查看当前连接的用户是谁：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">whoami</span><br></pre></td></tr></table></figure></p>
-<p>查看有哪些表：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list</span><br></pre></td></tr></table></figure></p>
-<p>查看 HBase 服务器状态：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">status</span><br></pre></td></tr></table></figure></p>
+<p>连接上 HBase 之后，查看当前连接的用户是谁：</p>
+<pre><code class="language-shell">whoami
+</code></pre>
+<p>查看有哪些表：</p>
+<pre><code class="language-shell">list
+</code></pre>
+<p>查看 HBase 服务器状态：</p>
+<pre><code class="language-shell">status
+</code></pre>
 <p>查看 HBase 版本：</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">version</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">version
+</code></pre>
 <p>查看其他命令使用，比如查看 list 命令的详细信息（注意要加引号）：</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">help 'list'</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">help 'list'
+</code></pre>
 <h2>表操作</h2>
 <p>HBase 的建表和 MySQL 等关系型数据库不一样，需要提前创建表结构，对于 HBase 来说，建表很简单，下面全程使用 students 表为例，students 表有两个列族 <code>NO</code> 和 <code>Info</code>，分别表示学生的学号和详细信息。</p>
-<p>创建 namespace：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create_namespace 's_school'</span><br></pre></td></tr></table></figure></p>
-<p>修改 namespace：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter_namespace 's_school', &#123;METHOD=&gt;'set', NAME =&gt; 'school'&#125;</span><br></pre></td></tr></table></figure></p>
-<p>删除 namespace，只有在 namespce 为空时才能删除：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">drop_namespace 's_school'</span><br></pre></td></tr></table></figure></p>
-<p>创建 students 表，如果创建表的时候不指定 namespace，name表都会放到默认的 default namespace：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cereate 's_school:students', 'No', 'Info'</span><br></pre></td></tr></table></figure></p>
+<p>创建 namespace：</p>
+<pre><code class="language-shell">create_namespace 's_school'
+</code></pre>
+<p>修改 namespace：</p>
+<pre><code class="language-shell">alter_namespace 's_school', {METHOD=&gt;'set', NAME =&gt; 'school'}
+</code></pre>
+<p>删除 namespace，只有在 namespce 为空时才能删除：</p>
+<pre><code class="language-shell">drop_namespace 's_school'
+</code></pre>
+<p>创建 students 表，如果创建表的时候不指定 namespace，name表都会放到默认的 default namespace：</p>
+<pre><code class="language-shell">cereate 's_school:students', 'No', 'Info'
+</code></pre>
 <p>下面的演示都没有使用 namespace。</p>
-<p>查看表的详细信息：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">describe 'students'</span><br></pre></td></tr></table></figure></p>
-<p>查看表是否存在：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exists 'students'</span><br></pre></td></tr></table></figure></p>
-<p>禁用表：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">disable 'students'</span><br></pre></td></tr></table></figure></p>
-<p>启用表：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">enable 'students'</span><br></pre></td></tr></table></figure></p>
-<p>查看表是否被禁用/启用：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">is_enabled 'students' # 表是否启用</span><br><span class="line">is_disabled 'students' # 表是否禁用</span><br></pre></td></tr></table></figure></p>
-<p>为表增加列族：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter 'students', 'Extra'</span><br></pre></td></tr></table></figure></p>
-<p>删除一个列族：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter 'students', &#123;NAME=&gt;'Extra', METHOD=&gt;'delete'&#125;</span><br></pre></td></tr></table></figure></p>
-<p>删除表，需要注意，删除表之前要先禁用表:
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">disable 'students'</span><br><span class="line">drop 'students'</span><br></pre></td></tr></table></figure></p>
+<p>查看表的详细信息：</p>
+<pre><code class="language-shell">describe 'students'
+</code></pre>
+<p>查看表是否存在：</p>
+<pre><code class="language-shell">exists 'students'
+</code></pre>
+<p>禁用表：</p>
+<pre><code class="language-shell">disable 'students'
+</code></pre>
+<p>启用表：</p>
+<pre><code class="language-shell">enable 'students'
+</code></pre>
+<p>查看表是否被禁用/启用：</p>
+<pre><code class="language-shell">is_enabled 'students' # 表是否启用
+is_disabled 'students' # 表是否禁用
+</code></pre>
+<p>为表增加列族：</p>
+<pre><code class="language-shell">alter 'students', 'Extra'
+</code></pre>
+<p>删除一个列族：</p>
+<pre><code class="language-shell">alter 'students', {NAME=&gt;'Extra', METHOD=&gt;'delete'}
+</code></pre>
+<p>删除表，需要注意，删除表之前要先禁用表:</p>
+<pre><code class="language-shell">disable 'students'
+drop 'students'
+</code></pre>
 <h2>增</h2>
 <p>表创建好了就可以往表里面写数据了，添加数据使用 put 命令。</p>
-<p>插入学生 ID：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">put 'students', '100001', 'No', '100001'</span><br></pre></td></tr></table></figure>
-在上面的语句中，直接向 No 这个列族中插入了一条数据。</p>
-<p>插入学生姓名，在 Info 列族下，多加了一个 name 列：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">put 'students', '100001', 'Info:name', 'Tom'</span><br></pre></td></tr></table></figure></p>
-<p>还可以插入年龄:
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">put 'students', '100001', 'Info:age', '18'</span><br></pre></td></tr></table></figure></p>
+<p>插入学生 ID：</p>
+<pre><code class="language-shell">put 'students', '100001', 'No', '100001'
+</code></pre>
+<p>在上面的语句中，直接向 No 这个列族中插入了一条数据。</p>
+<p>插入学生姓名，在 Info 列族下，多加了一个 name 列：</p>
+<pre><code class="language-shell">put 'students', '100001', 'Info:name', 'Tom'
+</code></pre>
+<p>还可以插入年龄:</p>
+<pre><code class="language-shell">put 'students', '100001', 'Info:age', '18'
+</code></pre>
 <p>只要你愿意，可以增加任意多的列（qualifier）。</p>
 <p>HBase 中更新数据使用的也是 put 命令：</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">put 'students', '100001', 'Info:age', '24'</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">put 'students', '100001', 'Info:age', '24'
+</code></pre>
 <h2>查</h2>
 <p>HBase 中查询数据有两种方式 get 和 scan，get 直接通过 rowkey 获取数据，因为有索引的加持，速度非常快，而 scan 则需要通过扫描区间来获取数据，性能会低很多。</p>
-<p>通过 get 获取数据:
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get 'students', '100001'</span><br></pre></td></tr></table></figure></p>
-<p>结果如下：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">COLUMN                                        CELL</span><br><span class="line"> Info:age                                     timestamp=1591224539219, value=24</span><br><span class="line"> Info:name                                    timestamp=1591224215833, value=Tom</span><br><span class="line"> No:                                          timestamp=1591224003381, value=100001</span><br><span class="line">1 row(s)</span><br></pre></td></tr></table></figure></p>
+<p>通过 get 获取数据:</p>
+<pre><code class="language-shell">get 'students', '100001'
+</code></pre>
+<p>结果如下：</p>
+<pre><code class="language-shell">COLUMN                                        CELL
+ Info:age                                     timestamp=1591224539219, value=24
+ Info:name                                    timestamp=1591224215833, value=Tom
+ No:                                          timestamp=1591224003381, value=100001
+1 row(s)
+</code></pre>
 <p>使用 scan 方式如下:</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scan 'students'</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">scan 'students'
+</code></pre>
 <p>也可以指定返回结果的行数：</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scan 'students', &#123;LIMIT=&gt;10&#125;</span><br></pre></td></tr></table></figure></p>
-<p>还可以获得指定列族或者列的数据:
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scan 'students', &#123;COLUMNS=&gt;'Info:age'&#125;</span><br></pre></td></tr></table></figure></p>
-<p>如果获取多个列族，或者多个列：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scan 'students', &#123;COLUMNS=&gt;['Info:age', 'No']&#125;</span><br></pre></td></tr></table></figure></p>
-<p>还可以通过制定 rowkey 的前缀查询，这个功能很常用，这样查询的速度会快很多：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scan 'students', &#123;STARTROW =&gt; '100'&#125;</span><br></pre></td></tr></table></figure></p>
-<p>如果要统计整个表中数据的行数:
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">count 'students'</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">scan 'students', {LIMIT=&gt;10}
+</code></pre>
+<p>还可以获得指定列族或者列的数据:</p>
+<pre><code class="language-shell">scan 'students', {COLUMNS=&gt;'Info:age'}
+</code></pre>
+<p>如果获取多个列族，或者多个列：</p>
+<pre><code class="language-shell">scan 'students', {COLUMNS=&gt;['Info:age', 'No']}
+</code></pre>
+<p>还可以通过制定 rowkey 的前缀查询，这个功能很常用，这样查询的速度会快很多：</p>
+<pre><code class="language-shell">scan 'students', {STARTROW =&gt; '100'}
+</code></pre>
+<p>如果要统计整个表中数据的行数:</p>
+<pre><code class="language-shell">count 'students'
+</code></pre>
 <h2>删</h2>
 <p>删除数据也很简单，可以删除一个列或者一个列族或者一行：</p>
-<p>删除一个列族的最新数据：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete 'students', '100001', 'No'</span><br></pre></td></tr></table></figure></p>
-<p>删除一个列的最新数据:
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete 'students', '100001', 'Info:age'</span><br></pre></td></tr></table></figure></p>
+<p>删除一个列族的最新数据：</p>
+<pre><code class="language-shell">delete 'students', '100001', 'No'
+</code></pre>
+<p>删除一个列的最新数据:</p>
+<pre><code class="language-shell">delete 'students', '100001', 'Info:age'
+</code></pre>
 <p>delete 只能删除一个版本的数据，如果要删除所有版本的数据，需要使用 deleteall:</p>
-<p>删除一个列的所有:
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deleteall 'students', '100001', 'Info:age'</span><br></pre></td></tr></table></figure></p>
-<p>删除一行数据：
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deleteall 'students', '100001'</span><br></pre></td></tr></table></figure></p>
+<p>删除一个列的所有:</p>
+<pre><code class="language-shell">deleteall 'students', '100001', 'Info:age'
+</code></pre>
+<p>删除一行数据：</p>
+<pre><code class="language-shell">deleteall 'students', '100001'
+</code></pre>
 <p>文 / 王二不二</p>
 
 </article>
@@ -171,7 +216,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -179,7 +224,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

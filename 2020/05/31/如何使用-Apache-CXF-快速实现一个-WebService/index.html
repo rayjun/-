@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -75,30 +74,175 @@
 <p>使用 CXF 实现 Web Services 非常简单。</p>
 <p>一个完整的 Web Services 服务分为服务器端和服务端，先来看服务器端的代码实现。</p>
 <p>首先创建一个 Maven 项目，在 pom.xml 中引入如下的依赖：</p>
-<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;cxf-rt-frontend-jaxws&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;3.4.0-SNAPSHOT&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;cxf-rt-transports-http&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;3.4.0-SNAPSHOT&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;cxf-rt-transports-http-jetty&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;3.4.0-SNAPSHOT&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;
+  &lt;artifactId&gt;cxf-rt-frontend-jaxws&lt;/artifactId&gt;
+  &lt;version&gt;3.4.0-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;
+  &lt;artifactId&gt;cxf-rt-transports-http&lt;/artifactId&gt;
+  &lt;version&gt;3.4.0-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;
+  &lt;artifactId&gt;cxf-rt-transports-http-jetty&lt;/artifactId&gt;
+  &lt;version&gt;3.4.0-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
 <p>然后就可以开始写代码了，首先需要定义一个可以暴露出去的 API 接口：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.jws.WebService;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebService</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CxfDemoService</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">hello</span><span class="params">(String name)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">import javax.jws.WebService;
+
+@WebService
+public interface CxfDemoService {
+    String hello(String name);
+}
+</code></pre>
 <p><code>@WebService</code> 注解表明这是一个对外的接口。然后需要实现具体的业务逻辑：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CxfDemoServiceImpl</span> <span class="keyword">implements</span> <span class="title">CxfDemoService</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"hello "</span> + name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class CxfDemoServiceImpl implements CxfDemoService{
+    @Override
+    public String hello(String name) {
+        return &quot;hello &quot; + name;
+    }
+}
+</code></pre>
 <p>就像实现一个普通的类一样，没有任何特殊的地方。然后创建一个服务：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CxfDemoServiceImpl implementor = <span class="keyword">new</span> CxfDemoServiceImpl();</span><br><span class="line">JaxWsServerFactoryBean svrFactory = <span class="keyword">new</span> JaxWsServerFactoryBean();</span><br><span class="line">svrFactory.setServiceClass(CxfDemoService.class);</span><br><span class="line">svrFactory.setAddress(<span class="string">"http://localhost:9000/cxfDemoService"</span>);</span><br><span class="line">svrFactory.setServiceBean(implementor);</span><br><span class="line">svrFactory.create();</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">CxfDemoServiceImpl implementor = new CxfDemoServiceImpl();
+JaxWsServerFactoryBean svrFactory = new JaxWsServerFactoryBean();
+svrFactory.setServiceClass(CxfDemoService.class);
+svrFactory.setAddress(&quot;http://localhost:9000/cxfDemoService&quot;);
+svrFactory.setServiceBean(implementor);
+svrFactory.create();
+</code></pre>
 <p>代码也很简单，我们把服务的地址设置为 <code>http://localhost:9000/cxfDemoService</code>，只要端口号不冲突，这个地址可以根据需要定义。服务端的代码就这些了，只需要把这段代码放到一个 main 方法中，启动就可以。</p>
 <p>上面我们说到 Web Servces 使用 WSDL 来作为服务描述语言，这个怎么理解呢？写好的服务是要提供给其他人调用的，那么别人需要知道这个接口需要什么参数，返回的结果是什么，这个时候，只需要访问 <code>http://localhost:9000/cxfDemoService?wsdl</code>，在服务地址的后面加上 ?wsdl 就可以，返回的结果如下：</p>
-<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">&lt;wsdl:definitions xmlns:xsd=<span class="string">"http://www.w3.org/2001/XMLSchema"</span> xmlns:wsdl=<span class="string">"http://schemas.xmlsoap.org/wsdl/"</span> xmlns:tns=<span class="string">"http://cxf.rayjun.cn/"</span> xmlns:soap=<span class="string">"http://schemas.xmlsoap.org/wsdl/soap/"</span> xmlns:ns1=<span class="string">"http://schemas.xmlsoap.org/soap/http"</span> name=<span class="string">"CxfDemoServiceService"</span> targetNamespace=<span class="string">"http://cxf.rayjun.cn/"</span>&gt;</span><br><span class="line">    &lt;wsdl:types&gt;</span><br><span class="line">        &lt;xs:schema xmlns:xs=<span class="string">"http://www.w3.org/2001/XMLSchema"</span> xmlns:tns=<span class="string">"http://cxf.rayjun.cn/"</span> elementFormDefault=<span class="string">"unqualified"</span> targetNamespace=<span class="string">"http://cxf.rayjun.cn/"</span> version=<span class="string">"1.0"</span>&gt;</span><br><span class="line">            &lt;xs:element name=<span class="string">"hello"</span> type=<span class="string">"tns:hello"</span>/&gt;</span><br><span class="line">            &lt;xs:element name=<span class="string">"helloResponse"</span> type=<span class="string">"tns:helloResponse"</span>/&gt;</span><br><span class="line">            &lt;xs:complexType name=<span class="string">"hello"</span>&gt;</span><br><span class="line">                &lt;xs:sequence&gt;</span><br><span class="line">                    &lt;xs:element minOccurs=<span class="string">"0"</span> name=<span class="string">"arg0"</span> type=<span class="string">"xs:string"</span>/&gt;</span><br><span class="line">                &lt;/xs:sequence&gt;</span><br><span class="line">            &lt;/xs:complexType&gt;</span><br><span class="line">            &lt;xs:complexType name=<span class="string">"helloResponse"</span>&gt;</span><br><span class="line">                &lt;xs:sequence&gt;</span><br><span class="line">                    &lt;xs:element minOccurs=<span class="string">"0"</span> name=<span class="string">"return"</span> type=<span class="string">"xs:string"</span>/&gt;</span><br><span class="line">                &lt;/xs:sequence&gt;</span><br><span class="line">            &lt;/xs:complexType&gt;</span><br><span class="line">        &lt;/xs:schema&gt;</span><br><span class="line">    &lt;/wsdl:types&gt;</span><br><span class="line">    &lt;wsdl:message name=<span class="string">"helloResponse"</span>&gt;</span><br><span class="line">        &lt;wsdl:part element="tns:helloResponse" name="parameters"&gt; &lt;/wsdl:part&gt;</span><br><span class="line">    &lt;/wsdl:message&gt;</span><br><span class="line">    &lt;wsdl:message name=<span class="string">"hello"</span>&gt;</span><br><span class="line">        &lt;wsdl:part element="tns:hello" name="parameters"&gt; &lt;/wsdl:part&gt;</span><br><span class="line">    &lt;/wsdl:message&gt;</span><br><span class="line">    &lt;wsdl:portType name=<span class="string">"CxfDemoService"</span>&gt;</span><br><span class="line">        &lt;wsdl:operation name=<span class="string">"hello"</span>&gt;</span><br><span class="line">            &lt;wsdl:input message="tns:hello" name="hello"&gt; &lt;/wsdl:input&gt;</span><br><span class="line">            &lt;wsdl:output message="tns:helloResponse" name="helloResponse"&gt; &lt;/wsdl:output&gt;</span><br><span class="line">        &lt;/wsdl:operation&gt;</span><br><span class="line">    &lt;/wsdl:portType&gt;</span><br><span class="line">    &lt;wsdl:binding name=<span class="string">"CxfDemoServiceServiceSoapBinding"</span> type=<span class="string">"tns:CxfDemoService"</span>&gt;</span><br><span class="line">        &lt;soap:binding style=<span class="string">"document"</span> transport=<span class="string">"http://schemas.xmlsoap.org/soap/http"</span>/&gt;</span><br><span class="line">        &lt;wsdl:operation name=<span class="string">"hello"</span>&gt;</span><br><span class="line">            &lt;soap:operation soapAction=<span class="string">""</span> style=<span class="string">"document"</span>/&gt;</span><br><span class="line">            &lt;wsdl:input name=<span class="string">"hello"</span>&gt;</span><br><span class="line">                &lt;soap:body use=<span class="string">"literal"</span>/&gt;</span><br><span class="line">            &lt;/wsdl:input&gt;</span><br><span class="line">            &lt;wsdl:output name=<span class="string">"helloResponse"</span>&gt;</span><br><span class="line">                &lt;soap:body use=<span class="string">"literal"</span>/&gt;</span><br><span class="line">            &lt;/wsdl:output&gt;</span><br><span class="line">        &lt;/wsdl:operation&gt;</span><br><span class="line">    &lt;/wsdl:binding&gt;</span><br><span class="line">    &lt;wsdl:service name=<span class="string">"CxfDemoServiceService"</span>&gt;</span><br><span class="line">        &lt;wsdl:port binding=<span class="string">"tns:CxfDemoServiceServiceSoapBinding"</span> name=<span class="string">"CxfDemoServicePort"</span>&gt;</span><br><span class="line">            &lt;soap:address location=<span class="string">"http://localhost:9000/cxfDemoService"</span>/&gt;</span><br><span class="line">        &lt;/wsdl:port&gt;</span><br><span class="line">    &lt;/wsdl:service&gt;</span><br><span class="line">&lt;/wsdl:definitions&gt;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">&lt;wsdl:definitions xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:wsdl=&quot;http://schemas.xmlsoap.org/wsdl/&quot; xmlns:tns=&quot;http://cxf.rayjun.cn/&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/wsdl/soap/&quot; xmlns:ns1=&quot;http://schemas.xmlsoap.org/soap/http&quot; name=&quot;CxfDemoServiceService&quot; targetNamespace=&quot;http://cxf.rayjun.cn/&quot;&gt;
+    &lt;wsdl:types&gt;
+        &lt;xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:tns=&quot;http://cxf.rayjun.cn/&quot; elementFormDefault=&quot;unqualified&quot; targetNamespace=&quot;http://cxf.rayjun.cn/&quot; version=&quot;1.0&quot;&gt;
+            &lt;xs:element name=&quot;hello&quot; type=&quot;tns:hello&quot;/&gt;
+            &lt;xs:element name=&quot;helloResponse&quot; type=&quot;tns:helloResponse&quot;/&gt;
+            &lt;xs:complexType name=&quot;hello&quot;&gt;
+                &lt;xs:sequence&gt;
+                    &lt;xs:element minOccurs=&quot;0&quot; name=&quot;arg0&quot; type=&quot;xs:string&quot;/&gt;
+                &lt;/xs:sequence&gt;
+            &lt;/xs:complexType&gt;
+            &lt;xs:complexType name=&quot;helloResponse&quot;&gt;
+                &lt;xs:sequence&gt;
+                    &lt;xs:element minOccurs=&quot;0&quot; name=&quot;return&quot; type=&quot;xs:string&quot;/&gt;
+                &lt;/xs:sequence&gt;
+            &lt;/xs:complexType&gt;
+        &lt;/xs:schema&gt;
+    &lt;/wsdl:types&gt;
+    &lt;wsdl:message name=&quot;helloResponse&quot;&gt;
+        &lt;wsdl:part element=&quot;tns:helloResponse&quot; name=&quot;parameters&quot;&gt; &lt;/wsdl:part&gt;
+    &lt;/wsdl:message&gt;
+    &lt;wsdl:message name=&quot;hello&quot;&gt;
+        &lt;wsdl:part element=&quot;tns:hello&quot; name=&quot;parameters&quot;&gt; &lt;/wsdl:part&gt;
+    &lt;/wsdl:message&gt;
+    &lt;wsdl:portType name=&quot;CxfDemoService&quot;&gt;
+        &lt;wsdl:operation name=&quot;hello&quot;&gt;
+            &lt;wsdl:input message=&quot;tns:hello&quot; name=&quot;hello&quot;&gt; &lt;/wsdl:input&gt;
+            &lt;wsdl:output message=&quot;tns:helloResponse&quot; name=&quot;helloResponse&quot;&gt; &lt;/wsdl:output&gt;
+        &lt;/wsdl:operation&gt;
+    &lt;/wsdl:portType&gt;
+    &lt;wsdl:binding name=&quot;CxfDemoServiceServiceSoapBinding&quot; type=&quot;tns:CxfDemoService&quot;&gt;
+        &lt;soap:binding style=&quot;document&quot; transport=&quot;http://schemas.xmlsoap.org/soap/http&quot;/&gt;
+        &lt;wsdl:operation name=&quot;hello&quot;&gt;
+            &lt;soap:operation soapAction=&quot;&quot; style=&quot;document&quot;/&gt;
+            &lt;wsdl:input name=&quot;hello&quot;&gt;
+                &lt;soap:body use=&quot;literal&quot;/&gt;
+            &lt;/wsdl:input&gt;
+            &lt;wsdl:output name=&quot;helloResponse&quot;&gt;
+                &lt;soap:body use=&quot;literal&quot;/&gt;
+            &lt;/wsdl:output&gt;
+        &lt;/wsdl:operation&gt;
+    &lt;/wsdl:binding&gt;
+    &lt;wsdl:service name=&quot;CxfDemoServiceService&quot;&gt;
+        &lt;wsdl:port binding=&quot;tns:CxfDemoServiceServiceSoapBinding&quot; name=&quot;CxfDemoServicePort&quot;&gt;
+            &lt;soap:address location=&quot;http://localhost:9000/cxfDemoService&quot;/&gt;
+        &lt;/wsdl:port&gt;
+    &lt;/wsdl:service&gt;
+&lt;/wsdl:definitions&gt;
+</code></pre>
 <p>返回的结果是一个 xml 文档，这个就是通过 WSDL 来描述服务的全部信息，可以从这个文档中找到调用这个服务所需要的参数及返回的结果等详细信息。</p>
 <p>到这里为止，服务端的代码就写好了，那么接下来就需要写客户端的代码，客户端的代码也很简单：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">JaxWsProxyFactoryBean factory = <span class="keyword">new</span> JaxWsProxyFactoryBean();</span><br><span class="line">factory.setServiceClass(CxfDemoService.class);</span><br><span class="line">factory.setAddress(<span class="string">"http://localhost:8080/CxfDemoService"</span>);</span><br><span class="line">CxfDemoService client = (CxfDemoService) factory.create();</span><br><span class="line">String reply = client.hello(<span class="string">"Rayjun"</span>);</span><br><span class="line">System.out.println(<span class="string">"Server : "</span> + reply); <span class="comment">// Server: hello rayjun</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
+factory.setServiceClass(CxfDemoService.class);
+factory.setAddress(&quot;http://localhost:8080/CxfDemoService&quot;);
+CxfDemoService client = (CxfDemoService) factory.create();
+String reply = client.hello(&quot;Rayjun&quot;);
+System.out.println(&quot;Server : &quot; + reply); // Server: hello rayjun
+</code></pre>
 <p>上面的代码简单粗暴，如果直接这样进行开发，代码很容易就会变得难以维护，使用 Spring 来组织代码则可以很轻易的解决这个问题。</p>
 <h2>CXF 与 Spring 集成</h2>
 <p>CXF 可以与 Spring 无缝连接，只需要引入下面的 Spring 依赖：</p>
-<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.springframework&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;spring-web&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;5.2.5.RELEASE&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.springframework&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;spring-context&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;5.2.5.RELEASE&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">&lt;dependency&gt;
+  &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+  &lt;artifactId&gt;spring-web&lt;/artifactId&gt;
+  &lt;version&gt;5.2.5.RELEASE&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+  &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+  &lt;version&gt;5.2.5.RELEASE&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
 <p>然后创建Spring容器的配置文件：</p>
-<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;</span><br><span class="line">&lt;beans xmlns=<span class="string">"http://www.springframework.org/schema/beans"</span> xmlns:xsi=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span><br><span class="line">       xmlns:jaxws=<span class="string">"http://cxf.apache.org/jaxws"</span></span><br><span class="line">       xsi:schemaLocation=<span class="string">" http://www.springframework.org/schema/beans</span></span><br><span class="line"><span class="string">       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd</span></span><br><span class="line"><span class="string">       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd"</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;<span class="keyword">import</span> resource=<span class="string">"classpath:META-INF/cxf/cxf.xml"</span>/&gt;</span><br><span class="line">    &lt;<span class="keyword">import</span> resource=<span class="string">"classpath:META-INF/cxf/cxf-servlet.xml"</span>/&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;jaxws:endpoint id=<span class="string">"rmsEngineService"</span> implementor=<span class="string">"cn.rayjun.cxf.CxfDemoServiceImpl"</span> address=<span class="string">"/CxfDemoService"</span>/&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
-在配置文件中直接使用 CXF 默认的配置文件，并且使用 <code>jaxws</code> 来定义服务的接口。JAX-WS 是 J2EE 中对 Web Services 的实现，JAX-RS 同样也是 J2EE WEB Services 的一部分，是 RESTful 风格的 API，在这里我们使用的是 JAX-WS。</p>
+<pre><code class="language-java">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:jaxws=&quot;http://cxf.apache.org/jaxws&quot;
+       xsi:schemaLocation=&quot; http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd&quot;&gt;
+
+    &lt;import resource=&quot;classpath:META-INF/cxf/cxf.xml&quot;/&gt;
+    &lt;import resource=&quot;classpath:META-INF/cxf/cxf-servlet.xml&quot;/&gt;
+    
+    &lt;jaxws:endpoint id=&quot;rmsEngineService&quot; implementor=&quot;cn.rayjun.cxf.CxfDemoServiceImpl&quot; address=&quot;/CxfDemoService&quot;/&gt;
+&lt;/beans&gt;
+</code></pre>
+<p>在配置文件中直接使用 CXF 默认的配置文件，并且使用 <code>jaxws</code> 来定义服务的接口。JAX-WS 是 J2EE 中对 Web Services 的实现，JAX-RS 同样也是 J2EE WEB Services 的一部分，是 RESTful 风格的 API，在这里我们使用的是 JAX-WS。</p>
 <p>并将配置文件加入到 web.xml 中：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE web-app PUBLIC</span><br><span class="line"> <span class="string">"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"</span></span><br><span class="line"> <span class="string">"http://java.sun.com/dtd/web-app_2_3.dtd"</span> &gt;</span><br><span class="line"></span><br><span class="line">&lt;web-app&gt;</span><br><span class="line">    &lt;context-param&gt;</span><br><span class="line">        &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;</span><br><span class="line">        &lt;param-value&gt;classpath:applicationContext.xml&lt;/param-value&gt;</span><br><span class="line">    &lt;/context-param&gt;</span><br><span class="line">    &lt;listener&gt;</span><br><span class="line">        &lt;listener-<span class="class"><span class="keyword">class</span>&gt;<span class="title">org</span>.<span class="title">springframework</span>.<span class="title">web</span>.<span class="title">context</span>.<span class="title">ContextLoaderListener</span>&lt;/<span class="title">listener</span>-<span class="title">class</span>&gt;</span></span><br><span class="line"><span class="class">    &lt;/<span class="title">listener</span>&gt;</span></span><br><span class="line"><span class="class">    &lt;<span class="title">servlet</span>&gt;</span></span><br><span class="line"><span class="class">        &lt;<span class="title">servlet</span>-<span class="title">name</span>&gt;<span class="title">CXFServlet</span>&lt;/<span class="title">servlet</span>-<span class="title">name</span>&gt;</span></span><br><span class="line"><span class="class">        &lt;<span class="title">servlet</span>-<span class="title">class</span>&gt;<span class="title">org</span>.<span class="title">apache</span>.<span class="title">cxf</span>.<span class="title">transport</span>.<span class="title">servlet</span>.<span class="title">CXFServlet</span>&lt;/<span class="title">servlet</span>-<span class="title">class</span>&gt;</span></span><br><span class="line"><span class="class">        &lt;<span class="title">load</span>-<span class="title">on</span>-<span class="title">startup</span>&gt;2&lt;/<span class="title">load</span>-<span class="title">on</span>-<span class="title">startup</span>&gt;</span></span><br><span class="line"><span class="class">    &lt;/<span class="title">servlet</span>&gt;</span></span><br><span class="line"><span class="class">    &lt;<span class="title">servlet</span>-<span class="title">mapping</span>&gt;</span></span><br><span class="line"><span class="class">        &lt;<span class="title">servlet</span>-<span class="title">name</span>&gt;<span class="title">CXFServlet</span>&lt;/<span class="title">servlet</span>-<span class="title">name</span>&gt;</span></span><br><span class="line"><span class="class">        &lt;<span class="title">url</span>-<span class="title">pattern</span>&gt;/*&lt;/<span class="title">url</span>-<span class="title">pattern</span>&gt;</span></span><br><span class="line"><span class="class">    &lt;/<span class="title">servlet</span>-<span class="title">mapping</span>&gt;</span></span><br><span class="line"><span class="class">&lt;/<span class="title">web</span>-<span class="title">app</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">&lt;!DOCTYPE web-app PUBLIC
+ &quot;-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN&quot;
+ &quot;http://java.sun.com/dtd/web-app_2_3.dtd&quot; &gt;
+
+&lt;web-app&gt;
+    &lt;context-param&gt;
+        &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+        &lt;param-value&gt;classpath:applicationContext.xml&lt;/param-value&gt;
+    &lt;/context-param&gt;
+    &lt;listener&gt;
+        &lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;
+    &lt;/listener&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;CXFServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;org.apache.cxf.transport.servlet.CXFServlet&lt;/servlet-class&gt;
+        &lt;load-on-startup&gt;2&lt;/load-on-startup&gt;
+    &lt;/servlet&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;CXFServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre>
 <p>然后就可以将程序打包放到 web 容器中，如果为了测试方便，也可以直接使用 maven 的 jetty 插件直接运行项目，jetty 插件配置如下：</p>
-<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line">  &lt;groupId&gt;org.eclipse.jetty&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;jetty-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;9.4.29.v20200521&lt;/version&gt;</span><br><span class="line">  &lt;configuration&gt;</span><br><span class="line">    &lt;scanIntervalSeconds&gt;10&lt;/scanIntervalSeconds&gt;</span><br><span class="line">    &lt;war&gt;$&#123;project.basedir&#125;/target/cxfdemo.war&lt;/war&gt;</span><br><span class="line">    &lt;webApp&gt;</span><br><span class="line">      &lt;contextPath&gt;/&lt;/contextPath&gt;</span><br><span class="line">    &lt;/webApp&gt;</span><br><span class="line">    &lt;httpConnector&gt;</span><br><span class="line">      &lt;port&gt;8080&lt;/port&gt;</span><br><span class="line">    &lt;/httpConnector&gt;</span><br><span class="line">  &lt;/configuration&gt;</span><br><span class="line">&lt;/plugin&gt;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">&lt;plugin&gt;
+  &lt;groupId&gt;org.eclipse.jetty&lt;/groupId&gt;
+  &lt;artifactId&gt;jetty-maven-plugin&lt;/artifactId&gt;
+  &lt;version&gt;9.4.29.v20200521&lt;/version&gt;
+  &lt;configuration&gt;
+    &lt;scanIntervalSeconds&gt;10&lt;/scanIntervalSeconds&gt;
+    &lt;war&gt;${project.basedir}/target/cxfdemo.war&lt;/war&gt;
+    &lt;webApp&gt;
+      &lt;contextPath&gt;/&lt;/contextPath&gt;
+    &lt;/webApp&gt;
+    &lt;httpConnector&gt;
+      &lt;port&gt;8080&lt;/port&gt;
+    &lt;/httpConnector&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;
+</code></pre>
 <p>然后使用 <code>mvn jetty:run-war</code>，服务端就运行起来了，客户端的代码不需要变，就可以很轻松的访问服务了。</p>
 <p>到这里，利用 CXF 就把服务的脚手架搭建起来了，就可以根据自己的需要加上其他的配置或者开始业务逻辑的开发。</p>
 
@@ -108,7 +252,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -116,7 +260,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -80,7 +79,32 @@
 <p>目前在 Jenkins 上使用的最多的是 Pipline 流程。</p>
 <h4>Jenkins Pipline 工作流程</h4>
 <p>Jenkins Pipline 是运行在 Jenkins 上的一个工作流框架，并且支持将原来运行的一个个单独的工作串联起来构建一个复杂的工作流程。而且这个工作流程是非侵入式的，也就是说，对于不同的项目可以灵活的构建不同的工作流程，而不需要去对 Jenkins进行二次开发。而定义一个 Pipline 的工作流程，只需要一个简单的 <strong>Groovy</strong> 脚本：</p>
-<p><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">'Build'</span>) &#123;</span><br><span class="line">        steps &#123;</span><br><span class="line">            sh <span class="string">'~/shell/jenkins_check_build.sh'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    stage(<span class="string">'Test'</span>) &#123;</span><br><span class="line">        steps &#123;</span><br><span class="line">            echo <span class="string">'Testing'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    stage(<span class="string">'Deploy - Staging'</span>) &#123;</span><br><span class="line">        steps &#123;</span><br><span class="line">            echo <span class="string">'./deploy staging'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    stage(<span class="string">'Deploy - Production'</span>) &#123;</span><br><span class="line">        steps &#123;</span><br><span class="line">            sh <span class="string">'~/shell/jenkins_check_deploy.sh'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-Groovy">
+pipeline {
+   agent any
+   stages {
+       stage('Build') {
+       steps {
+           sh '~/shell/jenkins_check_build.sh'
+       }
+   }
+   stage('Test') {
+       steps {
+           echo 'Testing'
+       }
+   }
+   stage('Deploy - Staging') {
+       steps {
+           echo './deploy staging'
+       }
+   }
+   stage('Deploy - Production') {
+       steps {
+           sh '~/shell/jenkins_check_deploy.sh'
+       }
+   }
+}
+</code></pre>
 <p>一个完成的 Pipline 中有多个 <strong>stage</strong>，对于不同的 stage 可以执行的不同的任务，这些任务都是可以通过自定义脚本来实现的。</p>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/pipline.png" alt=""></p>
 <p>这些脚本甚至都不用部署到 Jenkins 平台上，只需要在源代码的目录底下新建一个 Jenkinsfile 的文件，把这段脚本放进去。然后将代码提交，Jenkins 就会根据 Jenkinsfile 中的配置自动去进行工作了。</p>
@@ -96,7 +120,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -104,7 +128,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

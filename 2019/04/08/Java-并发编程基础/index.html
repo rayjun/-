@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -75,8 +74,20 @@
 <p>但是在多颗 CPU 的环境下，每个 CPU 有自己的缓存，而且对其他的 CPU 是不可见的，看起的情况就如下所示:</p>
 <p>由于现代操作系统都是通过分时来使用 CPU 的，一个正在运行的线程随时有可能被抢夺 CPU 资源，对编写 Java 程序来说，我们通常感觉 <strong>i++</strong> 已经是一个原子操作了，但是对于 CPU 来说，完成这个操作任然需要 3 步。所以这条语句在执行的过程中就有可能被其他线程抢断，其他线程也有可能访问 <strong>i</strong>，两个线程同时对 <strong>i</strong> 进行了操作，然后导致结果不正确，这个问题就是 <strong>原子性</strong>被破坏了。</p>
 <p>有时候编译器会调整语句的执行顺序。因为顺序的改变也会出现bug。有一个经典的例子就是使用双重检查来创建单例对象。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> Singleton instance;</span><br><span class="line">  <span class="function"><span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">synchronized</span>(Singleton.class) &#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>)</span><br><span class="line">          instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> instance;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-首先检查单例对象是不是存在，如果不存在，就用 <strong>synchronized</strong> 锁住 Class 对象，获得锁之后，再判断一次这个单例对象存不存在，如果不存在，那就创建一个新的单例对象。</p>
+<pre><code class="language-java">public class Singleton {
+  static Singleton instance;
+  static Singleton getInstance(){
+    if (instance == null) {
+      synchronized(Singleton.class) {
+        if (instance == null)
+          instance = new Singleton();
+        }
+    }
+    return instance;
+  }
+}
+</code></pre>
+<p>首先检查单例对象是不是存在，如果不存在，就用 <strong>synchronized</strong> 锁住 Class 对象，获得锁之后，再判断一次这个单例对象存不存在，如果不存在，那就创建一个新的单例对象。</p>
 <p>一切看起来都很完美。但是编译器这个时候要出来搞事情，本来实例化一个对象的步骤如下:</p>
 <ol>
 <li>分配一块内存 M</li>
@@ -142,7 +153,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -150,7 +161,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -73,9 +72,31 @@
 <img src="https://rayjun.oss-cn-beijing.aliyuncs.com/Java/log4j2/log4j2.jpg" alt=""></p>
 <h3>Log4j2 使用</h3>
 <p>Log4j2 使用很简单，以 Maven 为例，只需要在 <code>pom.xml</code> 中添加:</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.12.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.12.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-xml">&lt;dependencies&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.apache.logging.log4j&lt;/groupId&gt;
+    &lt;artifactId&gt;log4j-api&lt;/artifactId&gt;
+    &lt;version&gt;2.12.1&lt;/version&gt;
+  &lt;/dependency&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.apache.logging.log4j&lt;/groupId&gt;
+    &lt;artifactId&gt;log4j-core&lt;/artifactId&gt;
+    &lt;version&gt;2.12.1&lt;/version&gt;
+  &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
 <p>然后就可以在 Java 代码中直接使用:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.logging.log4j.LogManager;</span><br><span class="line"><span class="keyword">import</span> org.apache.logging.log4j.Logger;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Log4j2HelloWorld</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LogManager.getLogger(Log4j2HelloWorld.class);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        logger.error(<span class="string">"Hello world"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+public class Log4j2HelloWorld {
+
+    private static final Logger logger = LogManager.getLogger(Log4j2HelloWorld.class);
+
+    public static void main(String[] args) {
+        logger.error(&quot;Hello world&quot;);
+    }
+}
+</code></pre>
 <blockquote>
 <p>如果不加配置文件，默认的输出级别是 <code>ERROR</code></p>
 </blockquote>
@@ -86,7 +107,18 @@
 <li>通过配置文件配置，支持 <code>XML</code> 、<code>JSON</code> 、<code>YAML</code> 和 <code>properties</code> 等文件类型</li>
 </ul>
 <p>通过编程实现的方式如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Plugin</span>(name = <span class="string">"CustomerConfigurationFactory"</span>, category = ConfigurationFactory.CATEGORY)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomerConfigurationFactory</span> <span class="keyword">extends</span> <span class="title">ConfigurationFactory</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> String[] getSupportedTypes() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> String[<span class="number">0</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Configuration <span class="title">getConfiguration</span><span class="params">(LoggerContext loggerContext, ConfigurationSource configurationSource)</span> </span>&#123;</span><br><span class="line">        ConfigurationBuilder&lt;BuiltConfiguration&gt; builder = newConfigurationBuilder();</span><br><span class="line">        builder.setStatusLevel(Level.INFO);</span><br><span class="line">        <span class="keyword">return</span> builder.build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">@Plugin(name = &quot;CustomerConfigurationFactory&quot;, category = ConfigurationFactory.CATEGORY)
+public class CustomerConfigurationFactory extends ConfigurationFactory {
+    protected String[] getSupportedTypes() {
+        return new String[0];
+    }
+    public Configuration getConfiguration(LoggerContext loggerContext, ConfigurationSource configurationSource) {
+        ConfigurationBuilder&lt;BuiltConfiguration&gt; builder = newConfigurationBuilder();
+        builder.setStatusLevel(Level.INFO);
+        return builder.build();
+    }
+}
+</code></pre>
 <p><code>Log4j2</code> 在找不到配置文件的情况下会使用一个默认的配置，默认的配置只会在控制台打印日志，并且默认级别是 <code>Level.ERROR</code>。</p>
 <p>在 <code>Log4j2</code> 中，默认实现了四种 <code>ConfigurationFactory</code>，分别用来加载 <code>JSON</code> <code>YAML</code> <code>properties</code> <code>XML</code> 格式的配置文件。</p>
 <p>默认的配置文件名称为 <code>log4j2</code>，会根据 <code>log4j2</code> 的文件类型匹配相应的 <code>ConfigurationFactory</code> 的具体实现。比如 <code>log4j2.xml</code> 会使用 <code>XmlConfigurationFactory</code> 来读取配置文件，其它类型的配置文件同理。</p>
@@ -98,42 +130,124 @@
 <p>XML 有两种配置模式，<strong>简约模式</strong> 和 <strong>严格模式</strong></p>
 </blockquote>
 <h4>Configuration</h4>
-<p>Confirguration 是配置文件根元素，每个配置文件有且仅有一个。如果不使用配置文件使用<strong>默认配置</strong>，以下配置与默认配置等价:
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Configuration</span> <span class="attr">status</span>=<span class="string">"WARN"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">Appenders</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Console</span> <span class="attr">name</span>=<span class="string">"Console"</span> <span class="attr">target</span>=<span class="string">"SYSTEM_OUT"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">PatternLayout</span> <span class="attr">pattern</span>=<span class="string">"%d&#123;HH:mm:ss.SSS&#125; [%t] %-5level %logger&#123;36&#125; - %msg%n"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Console</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">Appenders</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">Loggers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Root</span> <span class="attr">level</span>=<span class="string">"error"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">"Console"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Root</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">Loggers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
-每一个配置都至少包含一个 <code>Appender</code> 和 <code>Logger</code>。<code>status</code> 属性用于配置 Log4j2 内部的的日志级别。</p>
-<p>Log4j2 可以自动检测配置文件的变化，<code>monitorInterval</code> 属性可以配置自动检测配置文件的时间，这个属性最小的值为 5，代表 5 秒检测一次。
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Configuration</span> <span class="attr">monitorInterval</span>=<span class="string">"30"</span>&gt;</span></span><br><span class="line">....</span><br><span class="line"><span class="tag">&lt;/<span class="name">Configuration</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>Confirguration 是配置文件根元素，每个配置文件有且仅有一个。如果不使用配置文件使用<strong>默认配置</strong>，以下配置与默认配置等价:</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;Configuration status=&quot;WARN&quot;&gt;
+  &lt;Appenders&gt;
+    &lt;Console name=&quot;Console&quot; target=&quot;SYSTEM_OUT&quot;&gt;
+      &lt;PatternLayout pattern=&quot;%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n&quot;/&gt;
+    &lt;/Console&gt;
+  &lt;/Appenders&gt;
+  &lt;Loggers&gt;
+    &lt;Root level=&quot;error&quot;&gt;
+      &lt;AppenderRef ref=&quot;Console&quot;/&gt;
+    &lt;/Root&gt;
+  &lt;/Loggers&gt;
+&lt;/Configuration&gt;
+</code></pre>
+<p>每一个配置都至少包含一个 <code>Appender</code> 和 <code>Logger</code>。<code>status</code> 属性用于配置 Log4j2 内部的的日志级别。</p>
+<p>Log4j2 可以自动检测配置文件的变化，<code>monitorInterval</code> 属性可以配置自动检测配置文件的时间，这个属性最小的值为 5，代表 5 秒检测一次。</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;Configuration monitorInterval=&quot;30&quot;&gt;
+....
+&lt;/Configuration&gt;
+</code></pre>
 <h4>Logger</h4>
 <p>Logger 元素用于配置日志记录器。Logger 有两种形式，<code>Logger</code> 和 <code>Root</code>，两个区别在于 Root 没有 <code>name</code> 属性并且不支持 <code>additivity</code> 属性。</p>
 <p>假如我们要获取一个特定类的的某个级别的日志。调高日志的级别无法完成这样的需求。一种可行的方式是在 Loggers 中添加一个 Logger，配置方式如下:</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Loggers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Logger</span> <span class="attr">name</span>=<span class="string">"cn.rayjun.Log4j2HelloWorld"</span> <span class="attr">level</span>=<span class="string">"trace"</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">"Console"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Logger</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Root</span> <span class="attr">level</span>=<span class="string">"error"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">"Console"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Root</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">Loggers</span>&gt;</span></span><br></pre></td></tr></table></figure>
-这样配置，除了 <code>cn.rayjun.Log4j2HelloWorld</code> 类会打印出 <code>trace</code> 级别的日志，其他就只会打印出 <code>error</code> 级别的日志，打印结果如下:</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">19:59:06.957 [main] TRACE cn.rayjun.Log4j2HelloWorld - Enter</span><br><span class="line">19:59:06.957 [main] TRACE cn.rayjun.Log4j2HelloWorld - Enter</span><br><span class="line">19:59:06.959 [main] ERROR cn.rayjun.Log4j2HelloWorld - Hello world</span><br><span class="line">19:59:06.959 [main] ERROR cn.rayjun.Log4j2HelloWorld - Hello world</span><br></pre></td></tr></table></figure>
-但是上面打印的日志有个问题，信息都被打印了两遍，为了解决这个问题，需要添加 <code>additivity</code> 参数并且置为 false，如下配置：</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Loggers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Logger</span> <span class="attr">name</span>=<span class="string">"cn.rayjun.Log4j2HelloWorld"</span> <span class="attr">level</span>=<span class="string">"trace"</span> <span class="attr">additivity</span>=<span class="string">"false"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">"Console"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Logger</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Root</span> <span class="attr">level</span>=<span class="string">"error"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">"Console"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Loggers</span>&gt;</span></span><br></pre></td></tr></table></figure>
-默认情况下 Logger 都是同步的，但是也有异步的实现，Root 的异步版本是 <code>AsyncRoot</code>，Logger 的异步版本是 <code>AsyncLogger</code>，异步 Logger 依赖外部队列 <a href="http://lmax-exchange.github.io/disruptor/" target="_blank" rel="noopener">LMAX Disruptor</a>。</p>
-<p>使用异步 Logger 需要加上外部依赖:
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.lmax<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>disruptor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.4.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-使用异步 Logger:
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">AsyncRoot</span> <span class="attr">level</span>=<span class="string">"error"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">"Console"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">AsyncRoot</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>Logger 在具体使用中需要声明一个 Logger 对象，官方推荐将 Logger 声明为一个静态变量，可以提高日志记录的性能:
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LogManager.getLogger(Log4j2HelloWorld.class);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-xml">&lt;Loggers&gt;
+    &lt;Logger name=&quot;cn.rayjun.Log4j2HelloWorld&quot; level=&quot;trace&quot;&gt;
+       &lt;AppenderRef ref=&quot;Console&quot;/&gt;
+    &lt;/Logger&gt;
+    &lt;Root level=&quot;error&quot;&gt;
+        &lt;AppenderRef ref=&quot;Console&quot;/&gt;
+    &lt;/Root&gt;
+ &lt;/Loggers&gt;
+</code></pre>
+<p>这样配置，除了 <code>cn.rayjun.Log4j2HelloWorld</code> 类会打印出 <code>trace</code> 级别的日志，其他就只会打印出 <code>error</code> 级别的日志，打印结果如下:</p>
+<pre><code class="language-shell">19:59:06.957 [main] TRACE cn.rayjun.Log4j2HelloWorld - Enter
+19:59:06.957 [main] TRACE cn.rayjun.Log4j2HelloWorld - Enter
+19:59:06.959 [main] ERROR cn.rayjun.Log4j2HelloWorld - Hello world
+19:59:06.959 [main] ERROR cn.rayjun.Log4j2HelloWorld - Hello world
+</code></pre>
+<p>但是上面打印的日志有个问题，信息都被打印了两遍，为了解决这个问题，需要添加 <code>additivity</code> 参数并且置为 false，如下配置：</p>
+<pre><code class="language-xml">&lt;Loggers&gt;
+    &lt;Logger name=&quot;cn.rayjun.Log4j2HelloWorld&quot; level=&quot;trace&quot; additivity=&quot;false&quot;&gt;
+        &lt;AppenderRef ref=&quot;Console&quot;/&gt;
+    &lt;/Logger&gt;
+    &lt;Root level=&quot;error&quot;&gt;
+        &lt;AppenderRef ref=&quot;Console&quot;/&gt;
+    &lt;/Root&gt;
+&lt;/Loggers&gt;
+</code></pre>
+<p>默认情况下 Logger 都是同步的，但是也有异步的实现，Root 的异步版本是 <code>AsyncRoot</code>，Logger 的异步版本是 <code>AsyncLogger</code>，异步 Logger 依赖外部队列 <a href="http://lmax-exchange.github.io/disruptor/" target="_blank" rel="noopener">LMAX Disruptor</a>。</p>
+<p>使用异步 Logger 需要加上外部依赖:</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.lmax&lt;/groupId&gt;
+    &lt;artifactId&gt;disruptor&lt;/artifactId&gt;
+    &lt;version&gt;3.4.2&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>使用异步 Logger:</p>
+<pre><code class="language-xml">&lt;AsyncRoot level=&quot;error&quot;&gt;
+    &lt;AppenderRef ref=&quot;Console&quot;/&gt;
+&lt;/AsyncRoot&gt;
+</code></pre>
+<p>Logger 在具体使用中需要声明一个 Logger 对象，官方推荐将 Logger 声明为一个静态变量，可以提高日志记录的性能:</p>
+<pre><code class="language-java"> private static final Logger logger = LogManager.getLogger(Log4j2HelloWorld.class);
+</code></pre>
 <h4>Appender 配置</h4>
 <p><code>Appender</code> 负责将日志分发到相应的目的地。也就是说 <code>Appender</code> 决定日志以何种方式展示，上面使用到的就是 <code>ConsoleAppender</code>，这个 Appender 会将日志直接打印到控制台。同时还支持将日志输出到<code>文件</code>、<code>数据库</code>、<code>消息队列</code> 。</p>
 <p><code>FileAppender</code> 基本配置如下：</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">File</span> <span class="attr">name</span>=<span class="string">"MyFile"</span> <span class="attr">fileName</span>=<span class="string">"logs/app.log"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>%d %p %c&#123;1.&#125; [%t] %m%n<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">File</span>&gt;</span></span><br></pre></td></tr></table></figure>
-如果想要把日志记录到数据库中，那就使用<code>JDBCAppender</code>， 基本配置如下：
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">JDBC</span> <span class="attr">name</span>=<span class="string">"databaseAppender"</span> <span class="attr">tableName</span>=<span class="string">"dbo.application_log"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">DataSource</span> <span class="attr">jndiName</span>=<span class="string">"java:/comp/env/jdbc/LoggingDataSource"</span> /&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">Column</span> <span class="attr">name</span>=<span class="string">"eventDate"</span> <span class="attr">isEventTimestamp</span>=<span class="string">"true"</span> /&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">Column</span> <span class="attr">name</span>=<span class="string">"level"</span> <span class="attr">pattern</span>=<span class="string">"%level"</span> /&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">Column</span> <span class="attr">name</span>=<span class="string">"logger"</span> <span class="attr">pattern</span>=<span class="string">"%logger"</span> /&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">Column</span> <span class="attr">name</span>=<span class="string">"message"</span> <span class="attr">pattern</span>=<span class="string">"%message"</span> /&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">Column</span> <span class="attr">name</span>=<span class="string">"exception"</span> <span class="attr">pattern</span>=<span class="string">"%ex&#123;full&#125;"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">JDBC</span>&gt;</span></span><br></pre></td></tr></table></figure>
-默认情况下 Appender 都是同步的，就是说日志产生的时候就会进行处理。但是有时候会从程序性能的角度进行考虑，生成的日志不会立即进行刷盘或者进行传输，而是在一个合适的时间集中进行处理，配置方式如下，异步 Appender 使用 <code>ArrayBlockingQueue</code> 作为队列，与异步 Logger 不同，异步 Appender 不需要外部依赖，但是官方推荐使用异步 Logger 而不是异步 Appender：</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Appenders</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">File</span> <span class="attr">name</span>=<span class="string">"MyFile"</span> <span class="attr">fileName</span>=<span class="string">"logs/app.log"</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>%d %p %c&#123;1.&#125; [%t] %m%n<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">File</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Async</span> <span class="attr">name</span>=<span class="string">"Async"</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">"MyFile"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Async</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Appenders</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-xml">&lt;File name=&quot;MyFile&quot; fileName=&quot;logs/app.log&quot;&gt;
+   &lt;PatternLayout&gt;
+     &lt;Pattern&gt;%d %p %c{1.} [%t] %m%n&lt;/Pattern&gt;
+   &lt;/PatternLayout&gt;
+&lt;/File&gt;
+</code></pre>
+<p>如果想要把日志记录到数据库中，那就使用<code>JDBCAppender</code>， 基本配置如下：</p>
+<pre><code class="language-xml">&lt;JDBC name=&quot;databaseAppender&quot; tableName=&quot;dbo.application_log&quot;&gt;
+   &lt;DataSource jndiName=&quot;java:/comp/env/jdbc/LoggingDataSource&quot; /&gt;
+   &lt;Column name=&quot;eventDate&quot; isEventTimestamp=&quot;true&quot; /&gt;
+   &lt;Column name=&quot;level&quot; pattern=&quot;%level&quot; /&gt;
+   &lt;Column name=&quot;logger&quot; pattern=&quot;%logger&quot; /&gt;
+   &lt;Column name=&quot;message&quot; pattern=&quot;%message&quot; /&gt;
+   &lt;Column name=&quot;exception&quot; pattern=&quot;%ex{full}&quot; /&gt;
+&lt;/JDBC&gt;
+</code></pre>
+<p>默认情况下 Appender 都是同步的，就是说日志产生的时候就会进行处理。但是有时候会从程序性能的角度进行考虑，生成的日志不会立即进行刷盘或者进行传输，而是在一个合适的时间集中进行处理，配置方式如下，异步 Appender 使用 <code>ArrayBlockingQueue</code> 作为队列，与异步 Logger 不同，异步 Appender 不需要外部依赖，但是官方推荐使用异步 Logger 而不是异步 Appender：</p>
+<pre><code class="language-xml">&lt;Appenders&gt;
+    &lt;File name=&quot;MyFile&quot; fileName=&quot;logs/app.log&quot;&gt;
+       &lt;PatternLayout&gt;
+         &lt;Pattern&gt;%d %p %c{1.} [%t] %m%n&lt;/Pattern&gt;
+       &lt;/PatternLayout&gt;
+    &lt;/File&gt;
+    &lt;Async name=&quot;Async&quot;&gt;
+       &lt;AppenderRef ref=&quot;MyFile&quot;/&gt;
+    &lt;/Async&gt;
+&lt;/Appenders&gt;
+</code></pre>
 <p>把日志保存为文件是一个常用的操作，保存在文件中的日志以追加方式写入，但是单个文件不可能无限增大，也不可能手工来分割日志文件，所以需要通过自动的方式来分割日志。这就需要使用 <code>RollingFileAppender</code>，通过设定日志分割的条件。分割的条件可以从两个方面进行设定，以时间频率或者日志文件的大小来触发日志的分割。</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">RollingFile</span> <span class="attr">name</span>=<span class="string">"RollingFile"</span> <span class="attr">fileName</span>=<span class="string">"logs/app.log"</span></span></span><br><span class="line"><span class="tag">                 <span class="attr">filePattern</span>=<span class="string">"logs/$$&#123;date:yyyy-MM&#125;/app-%d&#123;MM-dd-yyyy&#125;-%i.log.gz"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>%d %p %c&#123;1.&#125; [%t] %m%n<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Policies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">TimeBasedTriggeringPolicy</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">SizeBasedTriggeringPolicy</span> <span class="attr">size</span>=<span class="string">"250 MB"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Policies</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">RollingFile</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<code>TimeBasedTriggeringPolicy</code> 会与 filePattern 的配置相匹配，如果 filePattern 是 <code>{yyyy-MM-dd HH-mm}</code> ，最小的时间粒度是分钟，那么就会每隔一分钟生成一个文件，如果改成 <code>{yy-MM-dd HH}</code>，最小时间粒度是小时，那么就会每隔一个小时生成一个文件。<code>SizeBasedTriggeringPolicy</code> 表示设定日志的大小，上面的配置是指日志大小到 250M 后开始生成新的日志文件。</p>
+<pre><code class="language-xml">&lt;RollingFile name=&quot;RollingFile&quot; fileName=&quot;logs/app.log&quot;
+                 filePattern=&quot;logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz&quot;&gt;
+    &lt;PatternLayout&gt;
+        &lt;Pattern&gt;%d %p %c{1.} [%t] %m%n&lt;/Pattern&gt;
+    &lt;/PatternLayout&gt;
+    &lt;Policies&gt;
+        &lt;TimeBasedTriggeringPolicy /&gt;
+        &lt;SizeBasedTriggeringPolicy size=&quot;250 MB&quot;/&gt;
+    &lt;/Policies&gt;
+&lt;/RollingFile&gt;
+</code></pre>
+<p><code>TimeBasedTriggeringPolicy</code> 会与 filePattern 的配置相匹配，如果 filePattern 是 <code>{yyyy-MM-dd HH-mm}</code> ，最小的时间粒度是分钟，那么就会每隔一分钟生成一个文件，如果改成 <code>{yy-MM-dd HH}</code>，最小时间粒度是小时，那么就会每隔一个小时生成一个文件。<code>SizeBasedTriggeringPolicy</code> 表示设定日志的大小，上面的配置是指日志大小到 250M 后开始生成新的日志文件。</p>
 <p><code>RollingRandomAccessFileAppender</code> 与 <code>RollingFileAppender</code> 在功能上基本一致，但是底层的实现有所区别，RollingFileAppender 底层是 <code>BufferedOutputStream</code>，RollingRandomAccessFileAppender 底层是使用 <code>ByteBuffer</code> + <code>RandomAccessFile</code> ，性能上有了很大的提升。</p>
 <h4>Layouts</h4>
 <p>Appender 会使用 <code>Layout</code> 来对日志进行格式化。Lo4j1 和 Logback 中的 Layout 会把日志转成 String，而在 Log4j2 中使用的则是 byte 数组，这是从性能的角度进行的优化。</p>
 <p>Layout 配置支持多种方式。用的最多的方式就是 <code>PatternLayout</code>，就是通过正则表达式来格式化日志，应用的也最多，基本配置如下：</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>%d %p %c&#123;1.&#125; [%t] %m%n<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-xml">&lt;PatternLayout&gt;
+    &lt;Pattern&gt;%d %p %c{1.} [%t] %m%n&lt;/Pattern&gt;
+&lt;/PatternLayout&gt;
+</code></pre>
 <ul>
 <li>%d 表示时间，默认情况下表示打印完整时间戳 <code>2012-11-02 14:34:02,123</code>，可以调整 %d 后面的参数来调整输出的时间格式</li>
 <li>%p 表示输出日志的等级，可以使用 %highlight 来高亮显示日志级别</li>
@@ -148,7 +262,31 @@
 <p>不同的 Filter 的有不同的用处，<code>BrustFilter</code> 用于防止日志流量过大，还可以使用 <code>DynamicThresholdFilter</code> 根据属性来过滤特定级别的日志。可以根据具体的需要选择相应的 Filter</p>
 <h4>完整配置示例</h4>
 <p>假设现在有一个日志需求：日志以文件的形式进行保存，需要保存完整的日志信息，包括日志对应的类代码行数等，并且需要根据时间和日志文件的大小生成新的日志文件。</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Configuration</span> <span class="attr">status</span>=<span class="string">"warn"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Appenders</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Console</span> <span class="attr">name</span>=<span class="string">"Console"</span> <span class="attr">target</span>=<span class="string">"SYSTEM_OUT"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">PatternLayout</span> <span class="attr">pattern</span>=<span class="string">"[%-5p %d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125;] [%t] [%C.%M] [%m]%n"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">Console</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">RollingRandomAccessFile</span> <span class="attr">name</span>=<span class="string">"$&#123;service_name&#125;-log"</span></span></span><br><span class="line"><span class="tag">                                 <span class="attr">fileName</span>=<span class="string">"~/$&#123;service_name&#125;/$&#123;service_name&#125;.log"</span></span></span><br><span class="line"><span class="tag">                                 <span class="attr">filePattern</span>=<span class="string">"~/$&#123;service_name&#125;/$&#123;service_name&#125;.log.%d&#123;yyyyMMddHH&#125;"</span></span></span><br><span class="line"><span class="tag">                                 <span class="attr">append</span>=<span class="string">"true"</span> <span class="attr">immediateFlush</span>=<span class="string">"false"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">PatternLayout</span></span></span><br><span class="line"><span class="tag">                    <span class="attr">pattern</span>=<span class="string">"[%-5p %d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125;] [%t] [%C.%M] [%m]%n"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">Policies</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">TimeBasedTriggeringPolicy</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">SizeBasedTriggeringPolicy</span> <span class="attr">size</span>=<span class="string">"250 MB"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">Policies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">RollingRandomAccessFile</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Appenders</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Loggers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">AsyncRoot</span> <span class="attr">level</span>=<span class="string">"$&#123;log_level&#125;"</span> <span class="attr">includeLocation</span>=<span class="string">"true"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">"Console"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">"$&#123;service_name&#125;-log"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">AsyncRoot</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Loggers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Configuration</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-xml">&lt;Configuration status=&quot;warn&quot;&gt;
+    &lt;Appenders&gt;
+        &lt;Console name=&quot;Console&quot; target=&quot;SYSTEM_OUT&quot;&gt;
+            &lt;PatternLayout pattern=&quot;[%-5p %d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] [%C.%M] [%m]%n&quot;/&gt;
+        &lt;/Console&gt;
+        &lt;RollingRandomAccessFile name=&quot;${service_name}-log&quot;
+                                 fileName=&quot;~/${service_name}/${service_name}.log&quot;
+                                 filePattern=&quot;~/${service_name}/${service_name}.log.%d{yyyyMMddHH}&quot;
+                                 append=&quot;true&quot; immediateFlush=&quot;false&quot;&gt;
+            &lt;PatternLayout
+                    pattern=&quot;[%-5p %d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] [%C.%M] [%m]%n&quot;/&gt;
+            &lt;Policies&gt;
+                &lt;TimeBasedTriggeringPolicy/&gt;
+                &lt;SizeBasedTriggeringPolicy size=&quot;250 MB&quot;/&gt;
+            &lt;/Policies&gt;
+        &lt;/RollingRandomAccessFile&gt;
+    &lt;/Appenders&gt;
+    &lt;Loggers&gt;
+        &lt;AsyncRoot level=&quot;${log_level}&quot; includeLocation=&quot;true&quot;&gt;
+            &lt;AppenderRef ref=&quot;Console&quot;/&gt;
+            &lt;AppenderRef ref=&quot;${service_name}-log&quot; /&gt;
+        &lt;/AsyncRoot&gt;
+    &lt;/Loggers&gt;
+&lt;/Configuration&gt;
+</code></pre>
 <blockquote>
 <p>Logger 上如果加上了 includeLocation 后，日志性能会下降的很厉害，如果日志的位置信息不是必要的，就不需要加上</p>
 </blockquote>
@@ -197,15 +335,42 @@
 </tbody>
 </table>
 <p>如果这些日志还不满足需求，可以自定义日志的级别，可以在配置文件当中定义，也可以在代码中直接定义。每一个自定义的日志都由两部分组成，<strong>级别名称</strong>和<strong>级别的值</strong>，可以根据自己的需要进行定义。</p>
-<p>在 <code>Confguration</code> 节点下加上以下自定义级别，就可以在 <code>Logger</code> 中使用
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">CustomLevels</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomLevel</span> <span class="attr">name</span>=<span class="string">"DIAG"</span> <span class="attr">intLevel</span>=<span class="string">"350"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomLevel</span> <span class="attr">name</span>=<span class="string">"NOTICE"</span> <span class="attr">intLevel</span>=<span class="string">"450"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomLevel</span> <span class="attr">name</span>=<span class="string">"VERBOSE"</span> <span class="attr">intLevel</span>=<span class="string">"550"</span> /&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">CustomLevels</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> <span class="tag">&lt;<span class="name">Loggers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Root</span> <span class="attr">level</span>=<span class="string">"trace"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">"Console"</span> <span class="attr">level</span>=<span class="string">"diag"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Root</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">Loggers</span>&gt;</span></span><br></pre></td></tr></table></figure>
-在代码中使用就更加方便:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logger.log(Level.forName(<span class="string">"CUSTOMER_LEVEL"</span>, <span class="number">350</span>), <span class="string">"customer level"</span>);</span><br></pre></td></tr></table></figure></p>
+<p>在 <code>Confguration</code> 节点下加上以下自定义级别，就可以在 <code>Logger</code> 中使用</p>
+<pre><code class="language-xml">&lt;CustomLevels&gt;
+    &lt;CustomLevel name=&quot;DIAG&quot; intLevel=&quot;350&quot; /&gt;
+    &lt;CustomLevel name=&quot;NOTICE&quot; intLevel=&quot;450&quot; /&gt;
+    &lt;CustomLevel name=&quot;VERBOSE&quot; intLevel=&quot;550&quot; /&gt;
+ &lt;/CustomLevels&gt;
+ 
+ &lt;Loggers&gt;
+    &lt;Root level=&quot;trace&quot;&gt;
+      &lt;AppenderRef ref=&quot;Console&quot; level=&quot;diag&quot; /&gt;
+    &lt;/Root&gt;
+ &lt;/Loggers&gt;
+</code></pre>
+<p>在代码中使用就更加方便:</p>
+<pre><code class="language-java">logger.log(Level.forName(&quot;CUSTOMER_LEVEL&quot;, 350), &quot;customer level&quot;);
+</code></pre>
 <h3>配合 Slf4j 使用</h3>
 <p>使用 <code>Slf4j</code> 非常简单，只需要在项目中加入以下依赖：</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-slf4j-impl<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.12.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-然后就可以在代码中使用了：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.slf4j.Logger;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Slf4jDemo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Logger logger = LoggerFactory.getLogger(Slf4jDemo.class);</span><br><span class="line"></span><br><span class="line">        logger.info(<span class="string">"Slf4j log info"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-xml">&lt;dependency&gt;
+     &lt;groupId&gt;org.apache.logging.log4j&lt;/groupId&gt;
+     &lt;artifactId&gt;log4j-slf4j-impl&lt;/artifactId&gt;
+     &lt;version&gt;2.12.1&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>然后就可以在代码中使用了：</p>
+<pre><code class="language-java">import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+public class Slf4jDemo {
+
+    public static void main(String[] args) {
+        Logger logger = LoggerFactory.getLogger(Slf4jDemo.class);
+
+        logger.info(&quot;Slf4j log info&quot;);
+    }
+}
+</code></pre>
 <p>（完）</p>
 <ul>
 <li>https://logging.apache.org/log4j/2.x/manual/index.html</li>
@@ -217,7 +382,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -225,7 +390,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

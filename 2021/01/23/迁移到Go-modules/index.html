@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -88,26 +87,135 @@
 <p>第一种情况直接使用上篇<a href="https://rayjun.cn/2021/01/17/%E4%BD%BF%E7%94%A8Go-modules/" target="_blank" rel="noopener">文章</a>中所说的方法来使用 Go Modules。下面来讨论后面的两种情况。</p>
 <h2>已经有依赖管理时</h2>
 <p>转化一个已经使用了依赖管理工具的项目时，运行以下的命令:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/my/project</span><br><span class="line">[...]</span><br><span class="line">$ <span class="built_in">cd</span> project</span><br><span class="line">$ cat Godeps/Godeps.json</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"ImportPath"</span>: <span class="string">"github.com/my/project"</span>,</span><br><span class="line">    <span class="string">"GoVersion"</span>: <span class="string">"go1.12"</span>,</span><br><span class="line">    <span class="string">"GodepVersion"</span>: <span class="string">"v80"</span>,</span><br><span class="line">    <span class="string">"Deps"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"ImportPath"</span>: <span class="string">"rsc.io/binaryregexp"</span>,</span><br><span class="line">            <span class="string">"Comment"</span>: <span class="string">"v0.2.0-1-g545cabd"</span>,</span><br><span class="line">            <span class="string">"Rev"</span>: <span class="string">"545cabda89ca36b48b8e681a30d9d769a30b3074"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"ImportPath"</span>: <span class="string">"rsc.io/binaryregexp/syntax"</span>,</span><br><span class="line">            <span class="string">"Comment"</span>: <span class="string">"v0.2.0-1-g545cabd"</span>,</span><br><span class="line">            <span class="string">"Rev"</span>: <span class="string">"545cabda89ca36b48b8e681a30d9d769a30b3074"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line">$ go mod init github.com/my/project</span><br><span class="line">go: creating new go.mod: module github.com/my/project</span><br><span class="line">go: copying requirements from Godeps/Godeps.json</span><br><span class="line">$ cat go.mod</span><br><span class="line">module github.com/my/project</span><br><span class="line"></span><br><span class="line">go 1.12</span><br><span class="line"></span><br><span class="line">require rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ git clone https://github.com/my/project
+[...]
+$ cd project
+$ cat Godeps/Godeps.json
+{
+    &quot;ImportPath&quot;: &quot;github.com/my/project&quot;,
+    &quot;GoVersion&quot;: &quot;go1.12&quot;,
+    &quot;GodepVersion&quot;: &quot;v80&quot;,
+    &quot;Deps&quot;: [
+        {
+            &quot;ImportPath&quot;: &quot;rsc.io/binaryregexp&quot;,
+            &quot;Comment&quot;: &quot;v0.2.0-1-g545cabd&quot;,
+            &quot;Rev&quot;: &quot;545cabda89ca36b48b8e681a30d9d769a30b3074&quot;
+        },
+        {
+            &quot;ImportPath&quot;: &quot;rsc.io/binaryregexp/syntax&quot;,
+            &quot;Comment&quot;: &quot;v0.2.0-1-g545cabd&quot;,
+            &quot;Rev&quot;: &quot;545cabda89ca36b48b8e681a30d9d769a30b3074&quot;
+        }
+    ]
+}
+$ go mod init github.com/my/project
+go: creating new go.mod: module github.com/my/project
+go: copying requirements from Godeps/Godeps.json
+$ cat go.mod
+module github.com/my/project
+
+go 1.12
+
+require rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca
+$
+</code></pre>
 <p>go mod init 会创建一个新的 go.mod 文件并且会自动从 <code>Godeps.json</code> 、<code>Gopkg.lock</code>中导入依赖（或者其他<a href="https://go.googlesource.com/go/+/362625209b6cd2bc059b6b0a67712ddebab312d9/src/cmd/go/internal/modconv/modconv.go#9" target="_blank" rel="noopener">支持的格式</a>）。go mod init 的参数是可能找到模块位置的模块路径。</p>
 <p>这是在继续后续步骤之前运行 <code>go build ./..</code> 和 <code>go test ./..</code> 的好时机。接下来可能需要修改你的 go.mod 文件，如果你更喜欢采用迭代方法，最好把 go.mod 文件作为你的预模块依赖规范。</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ go mod tidy</span><br><span class="line">go: downloading rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca</span><br><span class="line">go: extracting rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca</span><br><span class="line">$ cat go.sum</span><br><span class="line">rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca h1:FKXXXJ6G2bFoVe7hX3kEX6Izxw5ZKRH57DFBJmHCbkU=</span><br><span class="line">rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go mod tidy
+go: downloading rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca
+go: extracting rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca
+$ cat go.sum
+rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca h1:FKXXXJ6G2bFoVe7hX3kEX6Izxw5ZKRH57DFBJmHCbkU=
+rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=
+$
+</code></pre>
 <p>go mod tidy 可以找到模块中被包间接引入的所有包。它会帮助现有的包补齐所有依赖，并且将那些没有使用的包删除。对于那些还没有迁移到 Go Modules 的包，在 go.mod 文件中将会被添加上 <code>// indirect</code> 标识。在将代码提交之前，最好运行一次 go mod tidy 命令。</p>
 <p>然后确认代码的构建和测试都能通过：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ go build ./...</span><br><span class="line">$ go <span class="built_in">test</span> ./...</span><br><span class="line">[...]</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go build ./...
+$ go test ./...
+[...]
+$
+</code></pre>
 <p>请注意，其他依赖项管理器可能在单个包或整个存储库（而不是模块）级别指定依赖项。而一般不能识别 go.mod 文件中的依赖。因此，可能有些包不会得到与以前完全相同的版本，而且还存在破坏性升级的风险。所以，遵循上面命令并对产生的依赖项进行检查很重要。要做到这一点，需要运行下面的命令：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ go list -m all</span><br><span class="line">go: finding rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca</span><br><span class="line">github.com/my/project</span><br><span class="line">rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go list -m all
+go: finding rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca
+github.com/my/project
+rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca
+$
+</code></pre>
 <p>并且与老版本的依赖文件进行比较，确保选择了合适的版本。如果你发现了不合适的版本，可以通过go mod why -m 和 go mod graph 来查找原因，并使用 go get 命令升级或降级到正确的版本。（如果你需要的版本比之前选择的版本更旧，go get 将降低其他依赖版本，以维护兼容性。）举个例子：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ go mod why -m rsc.io/binaryregexp</span><br><span class="line">[...]</span><br><span class="line">$ go mod graph | grep rsc.io/binaryregexp</span><br><span class="line">[...]</span><br><span class="line">$ go get rsc.io/binaryregexp@v0.2.0</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go mod why -m rsc.io/binaryregexp
+[...]
+$ go mod graph | grep rsc.io/binaryregexp
+[...]
+$ go get rsc.io/binaryregexp@v0.2.0
+$
+</code></pre>
 <h2>没有依赖管理时</h2>
 <p>对于一个没有依赖管理的项目，首先需要创建一个 go.mod 文件：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://go.googlesource.com/blog</span><br><span class="line">[...]</span><br><span class="line">$ <span class="built_in">cd</span> blog</span><br><span class="line">$ go mod init golang.org/x/blog</span><br><span class="line">go: creating new go.mod: module golang.org/x/blog</span><br><span class="line">$ cat go.mod</span><br><span class="line">module golang.org/x/blog</span><br><span class="line"></span><br><span class="line">go 1.12</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ git clone https://go.googlesource.com/blog
+[...]
+$ cd blog
+$ go mod init golang.org/x/blog
+go: creating new go.mod: module golang.org/x/blog
+$ cat go.mod
+module golang.org/x/blog
+
+go 1.12
+$
+</code></pre>
 <p>由于没有之前版本管理工具的配置文件，go mod init 会创建一个 go.mod 文件，其中只有 module 和 go 的配置。在这个例子中，根据<a href="https://golang.org/cmd/go/#hdr-Remote_import_paths" target="_blank" rel="noopener">自定义导入路径</a>，我们将模块的路径设置为 golang.org/x/blog。用户可以通过这个路径来导入包，我们需要注意，不要改变这个路径。</p>
 <p>module 关键字定义了模块路径，go 关键字定义了在这个模块中编译代码所需要的 Go 语言版本。</p>
 <p>接下来，运行 go mod tidy 添加模块的依赖：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">$ go mod tidy</span><br><span class="line">go: finding golang.org/x/website latest</span><br><span class="line">go: finding gopkg.in/tomb.v2 latest</span><br><span class="line">go: finding golang.org/x/net latest</span><br><span class="line">go: finding golang.org/x/tools latest</span><br><span class="line">go: downloading github.com/gorilla/context v1.1.1</span><br><span class="line">go: downloading golang.org/x/tools v0.0.0-20190813214729-9dba7caff850</span><br><span class="line">go: downloading golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7</span><br><span class="line">go: extracting github.com/gorilla/context v1.1.1</span><br><span class="line">go: extracting golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7</span><br><span class="line">go: downloading gopkg.in/tomb.v2 v2.0.0-20161208151619-d5d1b5820637</span><br><span class="line">go: extracting gopkg.in/tomb.v2 v2.0.0-20161208151619-d5d1b5820637</span><br><span class="line">go: extracting golang.org/x/tools v0.0.0-20190813214729-9dba7caff850</span><br><span class="line">go: downloading golang.org/x/website v0.0.0-20190809153340-86a7442ada7c</span><br><span class="line">go: extracting golang.org/x/website v0.0.0-20190809153340-86a7442ada7c</span><br><span class="line">$ cat go.mod</span><br><span class="line">module golang.org/x/blog</span><br><span class="line"></span><br><span class="line">go 1.12</span><br><span class="line"></span><br><span class="line">require (</span><br><span class="line">    github.com/gorilla/context v1.1.1</span><br><span class="line">    golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7</span><br><span class="line">    golang.org/x/text v0.3.2</span><br><span class="line">    golang.org/x/tools v0.0.0-20190813214729-9dba7caff850</span><br><span class="line">    golang.org/x/website v0.0.0-20190809153340-86a7442ada7c</span><br><span class="line">    gopkg.in/tomb.v2 v2.0.0-20161208151619-d5d1b5820637</span><br><span class="line">)</span><br><span class="line">$ cat go.sum</span><br><span class="line">cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=</span><br><span class="line">cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=</span><br><span class="line">git.apache.org/thrift.git v0.0.0-20180902110319-2566ecd5d999/go.mod h1:fPE2ZNJGynbRyZ4dJvy6G277gSllfV2HJqblrnkyeyg=</span><br><span class="line">git.apache.org/thrift.git v0.0.0-20181218151757-9b75e4fe745a/go.mod h1:fPE2ZNJGynbRyZ4dJvy6G277gSllfV2HJqblrnkyeyg=</span><br><span class="line">github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=</span><br><span class="line">[...]</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go mod tidy
+go: finding golang.org/x/website latest
+go: finding gopkg.in/tomb.v2 latest
+go: finding golang.org/x/net latest
+go: finding golang.org/x/tools latest
+go: downloading github.com/gorilla/context v1.1.1
+go: downloading golang.org/x/tools v0.0.0-20190813214729-9dba7caff850
+go: downloading golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7
+go: extracting github.com/gorilla/context v1.1.1
+go: extracting golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7
+go: downloading gopkg.in/tomb.v2 v2.0.0-20161208151619-d5d1b5820637
+go: extracting gopkg.in/tomb.v2 v2.0.0-20161208151619-d5d1b5820637
+go: extracting golang.org/x/tools v0.0.0-20190813214729-9dba7caff850
+go: downloading golang.org/x/website v0.0.0-20190809153340-86a7442ada7c
+go: extracting golang.org/x/website v0.0.0-20190809153340-86a7442ada7c
+$ cat go.mod
+module golang.org/x/blog
+
+go 1.12
+
+require (
+    github.com/gorilla/context v1.1.1
+    golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7
+    golang.org/x/text v0.3.2
+    golang.org/x/tools v0.0.0-20190813214729-9dba7caff850
+    golang.org/x/website v0.0.0-20190809153340-86a7442ada7c
+    gopkg.in/tomb.v2 v2.0.0-20161208151619-d5d1b5820637
+)
+$ cat go.sum
+cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+git.apache.org/thrift.git v0.0.0-20180902110319-2566ecd5d999/go.mod h1:fPE2ZNJGynbRyZ4dJvy6G277gSllfV2HJqblrnkyeyg=
+git.apache.org/thrift.git v0.0.0-20181218151757-9b75e4fe745a/go.mod h1:fPE2ZNJGynbRyZ4dJvy6G277gSllfV2HJqblrnkyeyg=
+github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
+[...]
+$
+</code></pre>
 <p>go mod tidy 命令会添加所有依赖包以及依赖包的依赖，并且会生成一个 go.sum 文件，其中包含每个库的特定版本的校验和。最后让我们确认所有的构建和测试都能通过：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ go build ./...</span><br><span class="line">$ go <span class="built_in">test</span> ./...</span><br><span class="line">ok  	golang.org/x/blog	0.335s</span><br><span class="line">?   	golang.org/x/blog/content/appengine	[no <span class="built_in">test</span> files]</span><br><span class="line">ok  	golang.org/x/blog/content/cover	0.040s</span><br><span class="line">?   	golang.org/x/blog/content/h2push/server	[no <span class="built_in">test</span> files]</span><br><span class="line">?   	golang.org/x/blog/content/survey2016	[no <span class="built_in">test</span> files]</span><br><span class="line">?   	golang.org/x/blog/content/survey2017	[no <span class="built_in">test</span> files]</span><br><span class="line">?   	golang.org/x/blog/support/racy	[no <span class="built_in">test</span> files]</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go build ./...
+$ go test ./...
+ok  	golang.org/x/blog	0.335s
+?   	golang.org/x/blog/content/appengine	[no test files]
+ok  	golang.org/x/blog/content/cover	0.040s
+?   	golang.org/x/blog/content/h2push/server	[no test files]
+?   	golang.org/x/blog/content/survey2016	[no test files]
+?   	golang.org/x/blog/content/survey2017	[no test files]
+?   	golang.org/x/blog/support/racy	[no test files]
+$
+</code></pre>
 <p>注意当 go mod tidy 添加一个依赖时，会添加最新版本。如果你的 GOPATH 包含了一个旧版本的依赖项，并且发布了一个破坏性的更改，你可能会在执行 go mod tidy、go build 或 go test 时看到错误。如果发生了这种情况，你可以通过 go get 来降级版本（比如：go get github.com/broken/module@v1.1.0），或者花时间来确认你的模块中每个依赖最新版本的兼容性。</p>
 <h2>Go Modules 中的测试</h2>
 <p>在迁移到 Go Modules 后，有些测试需要做些调整。</p>
@@ -116,7 +224,9 @@
 <p>如果测试期望测试中的 go 命令在 GOPATH 模式下运行，那么它可能会失败。如果发生这种情况，你需要添加一个 go.mod 文件到需要被测试的文件目录下，或者显式设置 GO111MODULE=off。</p>
 <h2>发布一个版本</h2>
 <p>最后，你应该给你的新模块打上一个标签，并发布一个新正式版本。这个操作是可选的，但是如果没有一个正式的版本，下游的用户就只能使用提交时产生的 pseudo 版本号，这样后续将很难继续支持。</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git tag v1.2.0</span><br><span class="line">$ git push origin v1.2.0</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ git tag v1.2.0
+$ git push origin v1.2.0
+</code></pre>
 <p>你的 go.mod 文件中定义了明确的导入路径，并且添加了新的最小版本需求。如果你的用户已经使用了正确的导入路径，你的依赖也没有造成破坏性的变更，添加 go.mod 就是向后兼容的。但这是一个重要的改变，可能会暴露已经存在的问题。如果你已经打过标签了，你应该增量的发布<a href="https://semver.org/#spec-item-7" target="_blank" rel="noopener">次版本</a>。详情查看<a href="https://blog.golang.org/publishing-go-modules" target="_blank" rel="noopener">发布 Go Modules</a> 来学习如何增量发布版本。</p>
 <h2>导入和规范模块路径</h2>
 <p>每个模块都在 go.mod 文件中定义了模块路径。每个引用模块内的包的 import语句都必须以模块路径作为包路径的前缀。但是，go 命令可能会通过许多不同的远程导入路径解析到同一个包含该模块的仓库。比如 golang.org/x/lint 和 golang.org/x/lint 都会解析到存储这些代码的仓库 go.googlesource.com/lint。这个仓库中的 go.mod 文件声明了路径为 golang.org/x/lint，因此只有该路径对应于有效的模块。</p>
@@ -136,7 +246,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -144,7 +254,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

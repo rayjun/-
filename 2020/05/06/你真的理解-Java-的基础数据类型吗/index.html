@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -73,9 +72,11 @@
 <p>byte 是存储整数的最小类型，只占 1 个字节，因为还需要表示负数，因此只能保存 -128 ~ 127 范围内的数据。</p>
 <p>如果把一个超出范围的数值赋值给 byte 会怎么样？</p>
 <p>直接赋值无法编译通过：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span> b = <span class="number">129</span>; <span class="comment">// 编译通不过</span></span><br></pre></td></tr></table></figure></p>
-<p>需要通过强转才能编译通过，但得到值不是我们所期望的：
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span> b = (<span class="keyword">byte</span>)<span class="number">129</span>; <span class="comment">// -127</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">byte b = 129; // 编译通不过
+</code></pre>
+<p>需要通过强转才能编译通过，但得到值不是我们所期望的：</p>
+<pre><code class="language-java">byte b = (byte)129; // -127  
+</code></pre>
 <p>为什么会出现这样的结果呢？</p>
 <p>129 使用二进制表示就是 10000001，但因为所有的数值类型都是使用补码来表示，在强制转换之后，第一位会被认为是符号位，表示负数。</p>
 <p>负数补码的反码是除符号位以外取反，所以是：11111110。</p>
@@ -102,9 +103,12 @@
 <p>但是在编译时会将 false 换成 0，将 true 换成非零数。</p>
 <h2>字符类型</h2>
 <p>由于 Java 使用的是 Unicode，所以作为基本的字符单元，char 使用了 2 个字节的空间，char 实际存储的是该字符在 Unicode 字符集内中的排序位置，即整数。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> b = <span class="string">'a'</span> + <span class="number">1</span>; <span class="comment">// 98</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">char b = 'a' + 1; // 98
+</code></pre>
 <p>每个 char 只能存储一个字符，所以存储一些英文字符时会浪费一些空间。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 成为另一个字符，而不是像字符串拼接一样</span></span><br><span class="line"><span class="keyword">char</span> c = <span class="string">'a'</span> + <span class="string">'b'</span>; <span class="comment">// Ã</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">// 成为另一个字符，而不是像字符串拼接一样
+char c = 'a' + 'b'; // Ã
+</code></pre>
 <p>在 Java8 之前，String 使用 char 数组来存储字符串，但是从 Java 9 以后，已经替换成 byte 数组了，因为更加灵活，而且存储的效率也更高。</p>
 
 </article>
@@ -113,7 +117,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -121,7 +125,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

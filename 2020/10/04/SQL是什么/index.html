@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -89,15 +88,32 @@
 <p>DDL 全称是 data definition language，用于定义数据结构。</p>
 <p>因为如果要能使用 SQL，就要求数据是结构化的。结构化就是指数据的数据结构，有哪些字段，字段是哪种类型，都需要提前定义好。</p>
 <p>通俗来说，就是用来创建数据，创建表，修改表结构等等。</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> book(</span><br><span class="line"> <span class="keyword">id</span> <span class="built_in">bigint</span>(<span class="number">20</span>) primary <span class="keyword">key</span> auto_increment,</span><br><span class="line"> <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">50</span>),</span><br><span class="line"> author <span class="built_in">VARCHAR</span>(<span class="number">50</span>),</span><br><span class="line"> <span class="keyword">content</span> <span class="built_in">varchar</span>(<span class="number">50</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">CREATE TABLE book(
+ id bigint(20) primary key auto_increment,
+ name varchar(50),
+ author VARCHAR(50),
+ content varchar(50)
+);
+</code></pre>
 <h3>DCL</h3>
 <p>每个数据库系统中都会涉及到权限和安全，DCL 就是用来维护系统访问权限，全称是 data control language。</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span>, <span class="keyword">UPDATE</span></span><br><span class="line"><span class="keyword">ON</span> book</span><br><span class="line"><span class="keyword">TO</span> user1;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">GRANT SELECT, UPDATE
+ON book
+TO user1;
+</code></pre>
 <h3>DML</h3>
 <p>DML 是日常使用最频繁的一类，全称是 data manipulation language。</p>
 <p>对数据表的增删改查都是属于这一类。</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> *</span><br><span class="line"><span class="keyword">FROM</span>  Book</span><br><span class="line"><span class="keyword">WHERE</span> price &gt; <span class="number">100.00</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> title;</span><br></pre></td></tr></table></figure></p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> book</span><br><span class="line">(<span class="keyword">name</span>, author, <span class="keyword">content</span>)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">(<span class="string">'围城'</span>, <span class="string">'钱钟书'</span>, <span class="string">'城里的人想出来，墙外的人想进去'</span>);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">SELECT *
+FROM  Book
+WHERE price &gt; 100.00
+ORDER BY title;
+</code></pre>
+<pre><code class="language-sql">INSERT INTO book
+(name, author, content)
+VALUES
+('围城', '钱钟书', '城里的人想出来，墙外的人想进去');
+</code></pre>
 <h3>操作符</h3>
 <p>SQL 中还提供了很多逻辑操作符操作符，这些逻辑操作符会和表达式组合形成一个谓词，用来过滤数据。</p>
 <ul>
@@ -176,7 +192,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -184,7 +200,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

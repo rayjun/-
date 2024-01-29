@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -70,11 +69,56 @@
 <h2>1. 使用全局 map 来实现</h2>
 <p>使用 map 方案需要在全局维护一个 map，在一个请求进来的时候，会为每一个请求生成 RequestId，然后在每次在打印日志的时候，从这个 Map 中通过 goid 获取到 RequestId，打印到日志中。</p>
 <p>代码的实现很简单：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> requestIdMap = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">int64</span>]<span class="keyword">string</span>) <span class="comment">// 全局的 Map</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	r := gin.Default()</span><br><span class="line">	r.Use(Logger()) <span class="comment">// 使用中间件</span></span><br><span class="line"></span><br><span class="line">	r.GET(<span class="string">"/index"</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		Info(<span class="string">"main goroutine"</span>) <span class="comment">// 打印日志</span></span><br><span class="line"></span><br><span class="line">		c.JSON(<span class="number">200</span>, gin.H&#123;</span><br><span class="line">			<span class="string">"message"</span>: <span class="string">"index"</span>,</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line">	r.Run()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Logger</span><span class="params">()</span> <span class="title">gin</span>.<span class="title">HandlerFunc</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		requestIdMap[goid.Get()] = uuid.New().String() <span class="comment">// 在日志中间件中为每个请求设定</span></span><br><span class="line">		c.Next()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Info</span><span class="params">(msg <span class="keyword">string</span>)</span></span>  &#123;</span><br><span class="line">	now := time.Now()</span><br><span class="line">	nowStr := now.Format(<span class="string">"2006-01-02 15:04:05"</span>)</span><br><span class="line">	fmt.Printf(<span class="string">"%s [%s] %s\n"</span>, nowStr, requestIdMap[goid.Get()], msg) <span class="comment">// 打印日志</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var requestIdMap = make(map[int64]string) // 全局的 Map
+
+func main() {
+	r := gin.Default()
+	r.Use(Logger()) // 使用中间件
+
+	r.GET(&quot;/index&quot;, func(c *gin.Context) {
+		Info(&quot;main goroutine&quot;) // 打印日志
+
+		c.JSON(200, gin.H{
+			&quot;message&quot;: &quot;index&quot;,
+		})
+	})
+	r.Run()
+}
+
+func Logger() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		requestIdMap[goid.Get()] = uuid.New().String() // 在日志中间件中为每个请求设定
+		c.Next()
+	}
+}
+
+func Info(msg string)  {
+	now := time.Now()
+	nowStr := now.Format(&quot;2006-01-02 15:04:05&quot;)
+	fmt.Printf(&quot;%s [%s] %s\n&quot;, nowStr, requestIdMap[goid.Get()], msg) // 打印日志
+}
+</code></pre>
 <p>这样的实现很简单，但是问题也很多。</p>
 <p>第一个问题就是，在 Go 程序中，一次请求可能会涉及到多个 goroutine，用这种方式很难在多个 gotoutine 之间传递 RequestId。</p>
 <p>在下面的代码中，如果新启动了一个 goroutine，就会导致日志中获取不到 RequestId：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	r := gin.Default()</span><br><span class="line">	r.Use(Logger())</span><br><span class="line"></span><br><span class="line">	r.GET(<span class="string">"/index"</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		Info(<span class="string">"main goroutine"</span>)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;  <span class="comment">// 这里新启动了一个一个 goroutine</span></span><br><span class="line">			Info(<span class="string">"goroutine1"</span>)</span><br><span class="line">		&#125;()</span><br><span class="line"></span><br><span class="line">		c.JSON(<span class="number">200</span>, gin.H&#123;</span><br><span class="line">			<span class="string">"message"</span>: <span class="string">"index"</span>,</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line">	r.Run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func main() {
+	r := gin.Default()
+	r.Use(Logger())
+
+	r.GET(&quot;/index&quot;, func(c *gin.Context) {
+		Info(&quot;main goroutine&quot;)
+
+		go func() {  // 这里新启动了一个一个 goroutine
+			Info(&quot;goroutine1&quot;)
+		}()
+
+		c.JSON(200, gin.H{
+			&quot;message&quot;: &quot;index&quot;,
+		})
+	})
+	r.Run()
+}
+</code></pre>
 <p>获取 goroutine id 也不是一种常规的做法，一般要通过 hack 的方式来获取，这种做法已经不推荐了。而且这个全局的 map 为了并发安全，在实际的使用中，可以还需要用到锁，在高并发的情况下必然会影响性能。</p>
 <p>在每个请求结束的时候，还需要手动的把 requestId 从 map 中删除，否则就会造成内存泄漏。</p>
 <p>总的来说，使用 map 这种方式来实现并不是很好。</p>
@@ -82,7 +126,41 @@
 <p>在上面的代码中，我们使用一个 hack 的方式去获取 goroutine id，这种方式早就不推荐使用，更推荐使用 Context，关于 Context 内容，可以去看我之前的文章，在这里就不多说了。</p>
 <p>在传递 RequestId 的场景中，同样也可以使用 Context 来实现，使用 Context 好处很明显，Context 生命周期与请求相同，不需要手动销毁。而且Context 是每个请求独享的，也不用担心并发安全的问题，Context 还可以在 goroutine 之间传递。</p>
 <p>使用 Context 实现的代码如下：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	r := gin.Default()</span><br><span class="line">	r.Use(Logger())</span><br><span class="line"></span><br><span class="line">	r.GET(<span class="string">"/index"</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">		ctx, _ := c.Get(<span class="string">"ctx"</span>)</span><br><span class="line"></span><br><span class="line">		Info(ctx.(context.Context) , <span class="string">"main goroutine"</span>)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			Info(ctx.(context.Context), <span class="string">"goroutine1"</span>)</span><br><span class="line">		&#125;()</span><br><span class="line"></span><br><span class="line">		c.JSON(<span class="number">200</span>, gin.H&#123;</span><br><span class="line">			<span class="string">"message"</span>: <span class="string">"index"</span>,</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line">	r.Run()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Logger</span><span class="params">()</span> <span class="title">gin</span>.<span class="title">HandlerFunc</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		valueCtx := context.WithValue(c.Request.Context(), <span class="string">"RequestId"</span>, uuid.New().String())</span><br><span class="line">		c.Set(<span class="string">"ctx"</span>, valueCtx)</span><br><span class="line">		c.Next()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Info</span><span class="params">(ctx context.Context, msg <span class="keyword">string</span>)</span></span>  &#123;</span><br><span class="line">	now := time.Now()</span><br><span class="line">	nowStr := now.Format(<span class="string">"2006-01-02 15:04:05"</span>)</span><br><span class="line">	fmt.Printf(<span class="string">"%s [%s] %s\n"</span>, nowStr, ctx.Value(<span class="string">"RequestId"</span>), msg)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func main() {
+	r := gin.Default()
+	r.Use(Logger())
+
+	r.GET(&quot;/index&quot;, func(c *gin.Context) {
+
+		ctx, _ := c.Get(&quot;ctx&quot;)
+
+		Info(ctx.(context.Context) , &quot;main goroutine&quot;)
+
+		go func() {
+			Info(ctx.(context.Context), &quot;goroutine1&quot;)
+		}()
+
+		c.JSON(200, gin.H{
+			&quot;message&quot;: &quot;index&quot;,
+		})
+	})
+	r.Run()
+}
+
+func Logger() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		valueCtx := context.WithValue(c.Request.Context(), &quot;RequestId&quot;, uuid.New().String())
+		c.Set(&quot;ctx&quot;, valueCtx)
+		c.Next()
+	}
+}
+
+func Info(ctx context.Context, msg string)  {
+	now := time.Now()
+	nowStr := now.Format(&quot;2006-01-02 15:04:05&quot;)
+	fmt.Printf(&quot;%s [%s] %s\n&quot;, nowStr, ctx.Value(&quot;RequestId&quot;), msg)
+}
+</code></pre>
 <p>这样在一个请求中，所有的 gotroutine 都可以获取到同一个 RequestId，而且不用担心内存泄漏和并发安全。</p>
 <p>但是使用 Context 也有个问题就是需要每次传递 Context，很多人还不习惯使用这种方式。其实 Go 官方早就推荐使用 Context了，通常会把 Context 作为函数的第一个参数。如果函数使用结构体作为参数，也可以直接把 Context 作为结构体的一个字段。</p>
 <p>Context 除了使用可以同来传递 RequestId 之外，还可以用来控制 goroutine 的生命周期，这些内容在之前的 Context 文章中详细说明了，感兴趣的可以去看看。</p>
@@ -97,7 +175,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -105,7 +183,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

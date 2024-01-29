@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -71,9 +70,28 @@
 <p>如果一段代码无论是顺序执行还是并发执行，结果都是正确的，那就可以说这个代码是并发安全的。</p>
 <p>并发不安全的代码出现的问题有多种，比如死锁、活锁、经态等等。死锁和活锁都表示代码已经无法继续执行了，而竞态则表示代码是可以执行的，但是有可能会出现错误的结果。</p>
 <p>有一个典型的例子就是向银行账户中存款：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> balance <span class="keyword">int</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Deposit</span><span class="params">(amount <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    balance = balance + amount</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Balance</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> balance</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var balance int
+func Deposit(amount int) {
+    balance = balance + amount
+}
+func Balance() int {
+    return balance
+}
+</code></pre>
 <p>假如现在有两个人同时向这个账户中存款，各自存了 100 次：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		Deposit(<span class="number">100</span>)</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		Deposit(<span class="number">100</span>)</span><br><span class="line">	&#125;()</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 休眠一秒，让上面的 goroutine 执行完成</span></span><br><span class="line">time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">fmt.Println(Balance())</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">for i := 0; i &lt; 100; i++ {
+	go func() {
+		Deposit(100)
+	}()
+
+	go func() {
+		Deposit(100)
+	}()
+}
+// 休眠一秒，让上面的 goroutine 执行完成
+time.Sleep(1 * time.Second)
+fmt.Println(Balance())
+</code></pre>
 <p>如果程序正确，那么最后的输出应该是 20000，但多次运行，结果可能是 19800、19900 或者其他的值。这个时候，我们就会说这个程序存在数据竞态。</p>
 <p>这个问题的根本原因是 <code>balance = balance + amount</code> 这行代码在 CPU 上的执行操作不是原子的，有可能执行到一半的时候会被打断。</p>
 <h2>2. 如何消除竞态</h2>
@@ -97,29 +115,77 @@
 <h3>3.1 互斥锁</h3>
 <p>这个是解决竞态最经典的工具，它的原理就是如果要访问一个资源，那么就必须要拿到这个资源的锁，只有拿到锁才有资格访问资源，其他的 goroutine 想要访问，必须等到当前 goroutine 释放了锁，抢到锁之后再访问</p>
 <p>在使用之前，需要先为资源申请一把锁，使用的就是 sync.Mutex，这是 Go 语言中互斥锁的实现：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mu sync.Mutex</span><br><span class="line"><span class="keyword">var</span> balance <span class="keyword">int</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var mu sync.Mutex
+var balance int
+</code></pre>
 <p>每个拿到锁的 goroutine 都需要保证在对变量的访问结束之后，把锁释放掉，即使发生在异常情况，也需要释放，这里可以使用 defer 来保证最终会释放锁：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Deposit</span><span class="params">(amount <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	mu.Lock()</span><br><span class="line">	<span class="keyword">defer</span> mu.Unlock()</span><br><span class="line">	balance = balance + amount</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Balance</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	mu.Lock()</span><br><span class="line">	<span class="keyword">defer</span> mu.Unlock()</span><br><span class="line">	<span class="keyword">return</span> balance</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func Deposit(amount int) {
+	mu.Lock()
+	defer mu.Unlock()
+	balance = balance + amount
+}
+
+func Balance() int {
+	mu.Lock()
+	defer mu.Unlock()
+	return balance
+}
+</code></pre>
 <p>把代码改完之后，再去运行上面存款的代码，无论运行多少遍，最终的结果都是 20000，到这里，我们竞态的问题就算是解决了，但是还有点小问题。</p>
 <h3>3.2 读写互斥锁</h3>
 <p>上面的互斥锁解决了访问数据的竞态问题，但是还有个小问题，就是读余额的操作有点低效，每次来读余额的时候，都还需要去抢锁，实际上，这个变量如果没有改变，即使同时被多个 goroutine 读，也不会产生并发安全的问题。</p>
 <p>我们想要的一个理想的场景就是，如果这个变量没有在写入，就可以运行多个 goroutine 同时读，这样可以大大提高效率。</p>
 <p>Go 也提供了这个工具，那就是<strong>读写锁</strong>。这个锁读与读是不互斥的，简单来说就是这个锁可以保证同时只能有一个 goroutine 在写入，如果有 goroutine 在写入，其他的 goroutine 既不能读，也不能写，但允许多个 goroutine 同时来读。</p>
 <p>我们把上面的代码再改一下，只需要改一个地方：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mu sync.RWMutex <span class="comment">// 替换 sync.Mutex</span></span><br><span class="line"><span class="keyword">var</span> balance <span class="keyword">int</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var mu sync.RWMutex // 替换 sync.Mutex
+var balance int
+</code></pre>
 <p>这样改完之后，上面存款的代码还是会一直输出 20000，但同时可以允许多个 goroutine 同时读余额。</p>
 <p>大多数 Go 语言中的竞态问题都可以使用这两个工具来解决。</p>
 <h3>3.3 Once</h3>
 <p>Go 语言中还提供了这样的一个工具，可以保证代码只会执行一遍，多用于资源初始化等场景。使用的方式也很简单：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">o := &amp;sync.Once&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line">	o.Do(<span class="function"><span class="keyword">func</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			Deposit(<span class="number">100</span>)</span><br><span class="line">		&#125;()</span><br><span class="line"></span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			Deposit(<span class="number">100</span>)</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 休眠一秒，让上面的 goroutine 执行完成</span></span><br><span class="line">time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">fmt.Println(Balance())</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">o := &amp;sync.Once{}
+for i := 0; i &lt; 100; i++ {
+	o.Do(func(){
+		go func() {
+			Deposit(100)
+		}()
+
+		go func() {
+			Deposit(100)
+		}()
+	})
+}
+// 休眠一秒，让上面的 goroutine 执行完成
+time.Sleep(1 * time.Second)
+fmt.Println(Balance())
+</code></pre>
 <p>如果上面的代码使用 Once 来控制之后，都只会存一次，所以上面的代码会永远输出 200。</p>
 <h3>3.4 竞态检测器</h3>
 <p>很多处在竞态的错误很难发现，Go 语言中提供了一个工具，可以帮忙检查代码中是否存在竞态。使用起来很简单，只需要在以下命令之后加上 <code>-race</code> 参数就可以：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ go run -race</span><br><span class="line"></span><br><span class="line">$ go build -race</span><br><span class="line"></span><br><span class="line">$ go <span class="built_in">test</span> -race</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go run -race
+
+$ go build -race
+
+$ go test -race
+</code></pre>
 <p>加上这个参数之后，编译器会对代码在执行时对所有共享变量的访问，如果发现一个 goroutine 写入一个变量之后，没有任何同步的操作，就有另外一个 goroutine 读写了这个变量，那就说明这里存在竞态，就会报错。比如下面的代码：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">data := 1</span><br><span class="line"></span><br><span class="line">go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">	data = 2</span><br><span class="line">&#125;()</span><br><span class="line"></span><br><span class="line">go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">	data = 3</span><br><span class="line">&#125;()</span><br><span class="line"></span><br><span class="line">time.Sleep(2 * time.Second)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">data := 1
+
+go func() {
+	data = 2
+}()
+
+go func() {
+	data = 3
+}()
+
+time.Sleep(2 * time.Second)
+</code></pre>
 <p>运行 <code>go run -race main.go</code> 之后，会报下面的错误：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Found 1 data race(s)</span><br><span class="line"><span class="built_in">exit</span> status 66</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">Found 1 data race(s)
+exit status 66
+</code></pre>
 <h2>4. 小结</h2>
 <p>Go 中也提供了传统语言所提供的并发编程机制，也可以通过共享内存的方法来实现并发编程。Go 提供的接口相对来说比较简洁，提供的能力却足够强大。</p>
 <p>文 / Rayjun</p>
@@ -130,7 +196,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -138,7 +204,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

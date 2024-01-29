@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -75,13 +74,15 @@
 <h3>主从复制</h3>
 <p>主从复制是用来保证服务高可用的常见方式，Redis 中的实现也没有特别之处。</p>
 <p>Redis 配置主从模式很简单，假设现在有两个节点，10.123.123.100：6379 和 10.123.123.101：6379，将前一台机器设置为主节点，后台一台设置为从节点，只需要执行以下的命令就可以：</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10.123.123.101:6379&gt; SLAVEOF 10.123.123.100 6379</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">10.123.123.101:6379&gt; SLAVEOF 10.123.123.100 6379
+</code></pre>
 <p>主节点和从节点的数据完全一样。从节点在接上主节点时，就会从主节点上开始同步数据，第一次同步时，会复制完整的数据，后续断开重连时，不需要复制完整的数据，只需要复制缺失的那部分。</p>
 <p>主节点和从服务器会都会维护一个偏移量，掉线的节点重新连上来之后会把自己的偏移量发送给主节点。然后主节点就会把缺失的那部分数据发给从节点。</p>
 <p><img src="redis1.png" alt=""></p>
 <p>主从节点通过心跳检测来判断网络连接状态。</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10.123.123.101:6379&gt; REPLCONF ACK offset</span><br></pre></td></tr></table></figure>
-其中 offset 是复制的偏移量。</p>
+<pre><code class="language-shell">10.123.123.101:6379&gt; REPLCONF ACK offset
+</code></pre>
+<p>其中 offset 是复制的偏移量。</p>
 <p>一个 Redis 集群就是有多个这样的主从节点来组成。Redis 在集群状态下，所有<strong>写操作都会在主节点上进行，读操作都会在从节点上操作</strong>，这样也达到了读写分离的效果。</p>
 <h3>分片</h3>
 <p>分片还有一个常见的名称，<strong>分表分库</strong>，通过一定的算法将 key 放到某个节点之中。</p>
@@ -91,7 +92,8 @@
 <blockquote>
 <p>CRC 的全称是循环冗余检测，通常用于错误检测，CRC-16 表示是16位循环冗余检测算法，类似还有 CRC-8 和 CRC-32 算法</p>
 </blockquote>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CRC16(key) &amp; <span class="number">16383</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">CRC16(key) &amp; 16383
+</code></pre>
 <p>上面函数的结算结果会产生一个 0 - 16383 之间的值，根据值将请求分配到不同的节点进行操作。</p>
 <p>当 Redis 主从和 slot 机制组合之后，就会形成如下的结构。</p>
 <p><img src="redis3.png" alt=""></p>
@@ -106,7 +108,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -114,7 +116,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

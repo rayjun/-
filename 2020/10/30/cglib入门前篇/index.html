@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -74,7 +73,11 @@
 <p>需要注意，Enhancer 不能增强构造函数，也不能增强被 final 修饰的<strong>类</strong>，或者被 static 和 final 修饰的<strong>方法</strong>。</p>
 <p>如果不想直接生成一个对象，cglib 也可以生成一个 Class 对象，用这个 Class 对象生成对象或者其他操作。</p>
 <p>Enhancer 的使用分为两步，传入目标类型，设置回调。支持不同类型回调是 cglib 最强大的地方。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Enhancer enhancer = <span class="keyword">new</span> Enhancer();</span><br><span class="line">enhancer.setSuperclass(HelloImpl.class);</span><br><span class="line"><span class="comment">//enhancer.setInterfaces(HelloImpl.class.getInterfaces()); // 也可以使用接口</span></span><br><span class="line">enhancer.setCallback(...); <span class="comment">// 设置回调</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Enhancer enhancer = new Enhancer();
+enhancer.setSuperclass(HelloImpl.class);
+//enhancer.setInterfaces(HelloImpl.class.getInterfaces()); // 也可以使用接口
+enhancer.setCallback(...); // 设置回调
+</code></pre>
 <p>在 Enhancer 创建一个代理类之后所实现的行为要通过这些回调来实现。</p>
 <p>常见的的回调类型如下：</p>
 <ul>
@@ -88,59 +91,276 @@
 </ul>
 <h3>FixedValue</h3>
 <p>对于 FixedValue 类型的回调，调用所有的方法都会返回这个固定的值，如果类型不匹配，就会报错。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Enhancer enhancer = <span class="keyword">new</span> Enhancer();</span><br><span class="line">enhancer.setSuperclass(HelloImpl.class);</span><br><span class="line">enhancer.setCallback(<span class="keyword">new</span> FixedValue() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">loadObject</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Hello cglib"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello cglib"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">HelloImpl proxy = (HelloImpl) enhancer.create();</span><br><span class="line">proxy.sayHello(<span class="string">"ray"</span>); <span class="comment">// 会打印 Hello cglib</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Enhancer enhancer = new Enhancer();
+enhancer.setSuperclass(HelloImpl.class);
+enhancer.setCallback(new FixedValue() {
+    @Override
+    public Object loadObject() throws Exception {
+        System.out.println(&quot;Hello cglib&quot;);
+        return &quot;Hello cglib&quot;;
+    }
+});
+
+HelloImpl proxy = (HelloImpl) enhancer.create();
+proxy.sayHello(&quot;ray&quot;); // 会打印 Hello cglib
+</code></pre>
 <p>除了 static 和 final 类型的方法，其他所有的方法都会执行上面的代码，打印 <code>Hello cglib</code>。但是需要注意的是，如果某个方法返回的类型和上面的代理行为不一致就会报错，java.lang.Object 中的方法也是一样。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxy.hashCode(); <span class="comment">// java.lang.ClassCastException</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">proxy.hashCode(); // java.lang.ClassCastException
+</code></pre>
 <h3>InvocationHandler</h3>
 <p>看到这个是不是很熟悉，这个与 JDK 反射自带的 InvocationHandler 基本一致。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Enhancer enhancer = <span class="keyword">new</span> Enhancer();</span><br><span class="line">enhancer.setSuperclass(HelloImpl.class);</span><br><span class="line">enhancer.setCallback(<span class="keyword">new</span> InvocationHandler() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] objects)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (method.getReturnType() == String.class) &#123;</span><br><span class="line">            System.out.println(<span class="string">"Hello cglib"</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"Hello cglib"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">"Invoke other method"</span>);</span><br><span class="line">            <span class="keyword">return</span> method.invoke(proxy, objects); <span class="comment">// 这里可能会出现无限循环</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">HelloImpl proxy = (HelloImpl) enhancer.create();</span><br><span class="line">proxy.sayHello(<span class="string">"ray"</span>);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Enhancer enhancer = new Enhancer();
+enhancer.setSuperclass(HelloImpl.class);
+enhancer.setCallback(new InvocationHandler() {
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] objects) throws Throwable {
+        if (method.getReturnType() == String.class) {
+            System.out.println(&quot;Hello cglib&quot;);
+            return &quot;Hello cglib&quot;;
+        } else {
+            System.out.println(&quot;Invoke other method&quot;);
+            return method.invoke(proxy, objects); // 这里可能会出现无限循环
+        }
+    }
+});
+
+HelloImpl proxy = (HelloImpl) enhancer.create();
+proxy.sayHello(&quot;ray&quot;);
+</code></pre>
 <p>只想改变其中部分方法的行为，其他的方法还的行为不变，最简单的思路就是如果不是目标方法就会调用本来的实现，假设要调用 <code>hashcode()</code> 方法：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxy.hashCode();</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">proxy.hashCode();
+</code></pre>
 <p>这个代码并不会正常返回结果，而是进入无限循环，这是因为这个代理对象的每一个可以被代理的方法都被代理了，在调用被代理了的方法时，会重复进入到 <code>InvocationHandler#invoke</code> 这个方法中，然后进入死循环。</p>
 <p>解决办法如下。</p>
 <h3>MethodInterceptor</h3>
 <p>在 MethodInterceptor 中，有一个 <code>MethodProxy</code> 参数，这个就可以用来执行父类方法。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Enhancer enhancer = <span class="keyword">new</span> Enhancer();</span><br><span class="line">enhancer.setSuperclass(HelloImpl.class);</span><br><span class="line">enhancer.setCallback(<span class="keyword">new</span> MethodInterceptor() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">intercept</span><span class="params">(Object o, Method method, Object[] params, MethodProxy methodProxy)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (method.getReturnType() == String.class) &#123;</span><br><span class="line">            System.out.println(<span class="string">"Hello cglib"</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"Hello cglib"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> methodProxy.invokeSuper(o, params); <span class="comment">// 对上面无限问题的改善</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">HelloImpl proxy = (HelloImpl) enhancer.create();</span><br><span class="line">proxy.sayHello(<span class="string">"ray"</span>);</span><br><span class="line">proxy.hashCode(); <span class="comment">// 这个时候，调用 hashcode 方法就可以正常工作了</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Enhancer enhancer = new Enhancer();
+enhancer.setSuperclass(HelloImpl.class);
+enhancer.setCallback(new MethodInterceptor() {
+    @Override
+    public Object intercept(Object o, Method method, Object[] params, MethodProxy methodProxy) throws Throwable {
+        if (method.getReturnType() == String.class) {
+            System.out.println(&quot;Hello cglib&quot;);
+            return &quot;Hello cglib&quot;;
+        } else {
+            return methodProxy.invokeSuper(o, params); // 对上面无限问题的改善
+        }
+    }
+});
+
+HelloImpl proxy = (HelloImpl) enhancer.create();
+proxy.sayHello(&quot;ray&quot;);
+proxy.hashCode(); // 这个时候，调用 hashcode 方法就可以正常工作了
+</code></pre>
 <h3>LazyLoader</h3>
 <p>用来延迟加载对象。</p>
 <p>在下面这个例子中，使用 LazyLoader 来延迟加载一个 ArrayList 对象。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloImpl</span> <span class="keyword">implements</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ArrayList&lt;String&gt; data;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ArrayList&lt;String&gt; <span class="title">getData</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Enhancer enhancer = <span class="keyword">new</span> Enhancer();</span><br><span class="line">        enhancer.setSuperclass(ArrayList.class);</span><br><span class="line">        enhancer.setCallback(<span class="keyword">new</span> LazyLoader() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Object <span class="title">loadObject</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                System.out.println(<span class="string">"Begin invoke lazyloader"</span>);</span><br><span class="line">                ArrayList&lt;String&gt; data = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                data.add(<span class="string">"hello"</span>);</span><br><span class="line">                data.add(<span class="string">"cglib"</span>);</span><br><span class="line">                System.out.println(<span class="string">"End invoke lazyloader"</span>);</span><br><span class="line">                <span class="keyword">return</span> data;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (ArrayList&lt;String&gt;) enhancer.create();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HelloImpl helloImpl = <span class="keyword">new</span> HelloImpl();</span><br><span class="line">ArrayList&lt;String&gt; data = helloImpl.getData(); <span class="comment">// 在调用这个方法的时候，ArrayList 不会被创建</span></span><br><span class="line">System.out.println(data.get(<span class="number">0</span>));</span><br><span class="line">System.out.println(data.get(<span class="number">1</span>)); <span class="comment">// 每次调用都使用同一个对象，不会重复创建对象</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class HelloImpl implements Hello {
+
+    private ArrayList&lt;String&gt; data;
+
+    public ArrayList&lt;String&gt; getData() {
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(ArrayList.class);
+        enhancer.setCallback(new LazyLoader() {
+            @Override
+            public Object loadObject() throws Exception {
+                System.out.println(&quot;Begin invoke lazyloader&quot;);
+                ArrayList&lt;String&gt; data = new ArrayList&lt;&gt;();
+                data.add(&quot;hello&quot;);
+                data.add(&quot;cglib&quot;);
+                System.out.println(&quot;End invoke lazyloader&quot;);
+                return data;
+            }
+        });
+
+        return (ArrayList&lt;String&gt;) enhancer.create();
+    }
+}
+</code></pre>
+<pre><code class="language-java">HelloImpl helloImpl = new HelloImpl();
+ArrayList&lt;String&gt; data = helloImpl.getData(); // 在调用这个方法的时候，ArrayList 不会被创建
+System.out.println(data.get(0));
+System.out.println(data.get(1)); // 每次调用都使用同一个对象，不会重复创建对象
+</code></pre>
 <p>上面代码的执行结果如下:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Begin invoke lazyloader</span><br><span class="line">End invoke lazyloader</span><br><span class="line">hello</span><br><span class="line">cglib</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Begin invoke lazyloader
+End invoke lazyloader
+hello
+cglib
+</code></pre>
 <p>在执行 data.get(0) 的时候，ArrayList 才会被创建，也就是说只有在被使用的，才会去创建对象，而且每个对象只会被创建一次。</p>
 <h3>Dispatcher</h3>
 <p>Dispatcher 与 LazyLoader 的不同之处在于，每次去获取对象的时候都会创建一个新的对象，而不是复用同一个对象。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloImpl</span> <span class="keyword">implements</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ArrayList&lt;String&gt; data;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ArrayList&lt;String&gt; <span class="title">getDataDispatcher</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Enhancer enhancer = <span class="keyword">new</span> Enhancer();</span><br><span class="line">        enhancer.setSuperclass(ArrayList.class);</span><br><span class="line">        enhancer.setCallback(<span class="keyword">new</span> Dispatcher() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Object <span class="title">loadObject</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                System.out.println(<span class="string">"Begin invoke dispatcher"</span>);</span><br><span class="line">                ArrayList&lt;String&gt; data = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                data.add(<span class="string">"hello"</span>);</span><br><span class="line">                data.add(<span class="string">"cglib"</span>);</span><br><span class="line">                System.out.println(<span class="string">"End invoke Dispatcher"</span>);</span><br><span class="line">                <span class="keyword">return</span> data;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">return</span> (ArrayList&lt;String&gt;) enhancer.create();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HelloImpl helloimpl = <span class="keyword">new</span> HelloImpl();</span><br><span class="line">ArrayList&lt;String&gt; data = helloimpl.getDataDispatcher();</span><br><span class="line">System.out.println(data.get(<span class="number">0</span>));</span><br><span class="line">System.out.println(data.get(<span class="number">1</span>));<span class="comment">// 每次调用都会获取不同送的对象</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class HelloImpl implements Hello {
+
+    private ArrayList&lt;String&gt; data;
+
+    public ArrayList&lt;String&gt; getDataDispatcher() {
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(ArrayList.class);
+        enhancer.setCallback(new Dispatcher() {
+            @Override
+            public Object loadObject() throws Exception {
+                System.out.println(&quot;Begin invoke dispatcher&quot;);
+                ArrayList&lt;String&gt; data = new ArrayList&lt;&gt;();
+                data.add(&quot;hello&quot;);
+                data.add(&quot;cglib&quot;);
+                System.out.println(&quot;End invoke Dispatcher&quot;);
+                return data;
+            }
+        });
+        return (ArrayList&lt;String&gt;) enhancer.create();
+    }
+}
+</code></pre>
+<pre><code class="language-java">HelloImpl helloimpl = new HelloImpl();
+ArrayList&lt;String&gt; data = helloimpl.getDataDispatcher();
+System.out.println(data.get(0));
+System.out.println(data.get(1));// 每次调用都会获取不同送的对象
+</code></pre>
 <p>上面代理的执行结果如下，每次使用对象都会创建一个新的对象。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Begin invoke dispatcher</span><br><span class="line">End invoke Dispatcher</span><br><span class="line">hello</span><br><span class="line">Begin invoke dispatcher</span><br><span class="line">End invoke Dispatcher</span><br><span class="line">cglib</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Begin invoke dispatcher
+End invoke Dispatcher
+hello
+Begin invoke dispatcher
+End invoke Dispatcher
+cglib
+</code></pre>
 <h3>ProxyRefDispatcher</h3>
 <p>ProxyRefDispatcher 与 Dispatcher 功能类似，但是多了一个参数，使用这个回调同样要注意无限循环的问题。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Enhancer enhancer = <span class="keyword">new</span> Enhancer();</span><br><span class="line">enhancer.setSuperclass(HelloImpl.class);</span><br><span class="line">enhancer.setCallback(<span class="keyword">new</span> ProxyRefDispatcher() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">loadObject</span><span class="params">(Object proxy)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Invoke"</span>);</span><br><span class="line">        <span class="keyword">return</span> proxy.hashCode(); <span class="comment">// 同样可能会导致无限循环</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">HelloImpl proxy = (HelloImpl) enhancer.create();</span><br><span class="line">proxy.hashCode(); <span class="comment">// 这样调用会无限循环</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Enhancer enhancer = new Enhancer();
+enhancer.setSuperclass(HelloImpl.class);
+enhancer.setCallback(new ProxyRefDispatcher() {
+    @Override
+    public Object loadObject(Object proxy) throws Exception {
+        System.out.println(&quot;Invoke&quot;);
+        return proxy.hashCode(); // 同样可能会导致无限循环
+    }
+});
+
+HelloImpl proxy = (HelloImpl) enhancer.create();
+proxy.hashCode(); // 这样调用会无限循环
+</code></pre>
 <h3>NoOp</h3>
 <p>这个回调什么也不做，会完全继承被代理类的功能，所以 NoOp 不能使用接口来创建代理，只能使用类。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Enhancer enhancer = <span class="keyword">new</span> Enhancer();</span><br><span class="line">enhancer.setSuperclass(HelloImpl.class);</span><br><span class="line"><span class="comment">//enhancer.setInterfaces(HelloImpl.class.getInterfaces()); //不能使用接口，只能使用类</span></span><br><span class="line">enhancer.setCallback(<span class="keyword">new</span> NoOp() &#123;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">Hello proxy = (Hello) enhancer.create();</span><br><span class="line">proxy.sayHello(<span class="string">"Ray"</span>);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Enhancer enhancer = new Enhancer();
+enhancer.setSuperclass(HelloImpl.class);
+//enhancer.setInterfaces(HelloImpl.class.getInterfaces()); //不能使用接口，只能使用类
+enhancer.setCallback(new NoOp() {
+});
+
+Hello proxy = (Hello) enhancer.create();
+proxy.sayHello(&quot;Ray&quot;);
+</code></pre>
 <p>这个回调在一些特定的情况下还是挺有用的，看下面的例子。</p>
 <h3>CallbackFilter</h3>
 <p>在上面的例子中，都是给 Enhancer 设置了单个回调，其实每个 Enhancer 可以设置多个回调，这里就需要用到 <code>CallbackFilter</code>。</p>
 <p>比如现在就需要对 <code>sayHello</code> 方法进行处理，其他的方法保持父类的行为就可以，按照这个要求，实现的 CallbackFilter 如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CallbackHelperImpl</span> <span class="keyword">extends</span> <span class="title">CallbackHelper</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CallbackHelperImpl</span><span class="params">(Class superclass, Class[] interfaces)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(superclass, interfaces);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Object <span class="title">getCallback</span><span class="params">(Method method)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (method.getName() == <span class="string">"sayHello"</span>) &#123; <span class="comment">// 对这个方法就行增强，其他的方法不改变</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> FixedValue() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> Object <span class="title">loadObject</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                    System.out.println(<span class="string">"Hello cglib"</span>);</span><br><span class="line">                    <span class="keyword">return</span> <span class="string">"Hello cglib"</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// NoOp 就可以在这种情况下使用</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> NoOp() &#123;</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Enhancer enhancer = <span class="keyword">new</span> Enhancer();</span><br><span class="line">enhancer.setSuperclass(HelloImpl.class);</span><br><span class="line">CallbackHelper callbackHelper = <span class="keyword">new</span> CallbackHelperImpl(HelloImpl.class, <span class="keyword">null</span>);</span><br><span class="line">enhancer.setCallbackFilter(callbackHelper);</span><br><span class="line">enhancer.setCallbackTypes(callbackHelper.getCallbackTypes());</span><br><span class="line">enhancer.setCallbacks(callbackHelper.getCallbacks());</span><br><span class="line"></span><br><span class="line">HelloImpl proxy = (HelloImpl) enhancer.create();</span><br><span class="line"></span><br><span class="line">proxy.sayHello(<span class="string">"Ray"</span>); </span><br><span class="line">proxy.hashCode(); <span class="comment">// 其他方法的调用不受影响</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class CallbackHelperImpl extends CallbackHelper {
+    public CallbackHelperImpl(Class superclass, Class[] interfaces) {
+        super(superclass, interfaces);
+    }
+
+    @Override
+    protected Object getCallback(Method method) {
+        if (method.getName() == &quot;sayHello&quot;) { // 对这个方法就行增强，其他的方法不改变
+            return new FixedValue() {
+                @Override
+                public Object loadObject() throws Exception {
+                    System.out.println(&quot;Hello cglib&quot;);
+                    return &quot;Hello cglib&quot;;
+                }
+            };
+        } else { // NoOp 就可以在这种情况下使用
+            return new NoOp() {
+            };
+        }
+    }
+}
+</code></pre>
+<pre><code class="language-java">Enhancer enhancer = new Enhancer();
+enhancer.setSuperclass(HelloImpl.class);
+CallbackHelper callbackHelper = new CallbackHelperImpl(HelloImpl.class, null);
+enhancer.setCallbackFilter(callbackHelper);
+enhancer.setCallbackTypes(callbackHelper.getCallbackTypes());
+enhancer.setCallbacks(callbackHelper.getCallbacks());
+
+HelloImpl proxy = (HelloImpl) enhancer.create();
+
+proxy.sayHello(&quot;Ray&quot;); 
+proxy.hashCode(); // 其他方法的调用不受影响
+</code></pre>
 <p>调用结果如下，只有 sayHello 方法会被拦截，其他的方法不会有变动。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Hello cglib</span><br><span class="line"><span class="number">1647766367</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Hello cglib
+1647766367
+</code></pre>
 <h2>2. 实现动态代理</h2>
 <p>上面介绍了 Enhancer 之后，实现动态代理应该就不难了。</p>
 <p>InvocationHandler 和 MethodInterceptor 都可以用来实现动态代理，下面是两种实现。</p>
 <h3>InvocationHandler 实现</h3>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CGlibHelloProxyInvocationHandler</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Object target;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">bind</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">        Enhancer enhancer = <span class="keyword">new</span> Enhancer();</span><br><span class="line">        enhancer.setInterfaces(obj.getClass().getInterfaces());</span><br><span class="line">        <span class="comment">//enhancer.setSuperclass(obj.getClass().getSuperclass());</span></span><br><span class="line">        <span class="keyword">this</span>.target = obj;</span><br><span class="line">        enhancer.setCallback(<span class="keyword">this</span>);</span><br><span class="line">        <span class="keyword">return</span> enhancer.create(); <span class="comment">// 生成代理类</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object o, Method method, Object[] params)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> begin = System.currentTimeMillis();</span><br><span class="line">        Object result = method.invoke(target, params);</span><br><span class="line">        System.out.printf(<span class="string">"Invoke time "</span> + (System.currentTimeMillis() - begin) + <span class="string">" ms"</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class CGlibHelloProxyInvocationHandler implements InvocationHandler {
+
+    private Object target;
+
+    public Object bind(Object obj) {
+        Enhancer enhancer = new Enhancer();
+        enhancer.setInterfaces(obj.getClass().getInterfaces());
+        //enhancer.setSuperclass(obj.getClass().getSuperclass());
+        this.target = obj;
+        enhancer.setCallback(this);
+        return enhancer.create(); // 生成代理类
+    }
+
+    @Override
+    public Object invoke(Object o, Method method, Object[] params) throws Throwable {
+        long begin = System.currentTimeMillis();
+        Object result = method.invoke(target, params);
+        System.out.printf(&quot;Invoke time &quot; + (System.currentTimeMillis() - begin) + &quot; ms&quot;);
+        return result;
+    }
+}
+</code></pre>
 <p>使用上面的实现来创建代理并调用方法：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">HelloImpl helloImpl = <span class="keyword">new</span> HelloImpl();</span><br><span class="line"></span><br><span class="line">CGlibHelloProxyInvocationHandler helloProxyInvocationHandler = <span class="keyword">new</span> CGlibHelloProxyInvocationHandler();</span><br><span class="line">Hello proxy = (Hello) helloProxyInvocationHandler.bind(helloImpl);</span><br><span class="line"></span><br><span class="line">proxy.sayHello(<span class="string">"ray"</span>);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">HelloImpl helloImpl = new HelloImpl();
+
+CGlibHelloProxyInvocationHandler helloProxyInvocationHandler = new CGlibHelloProxyInvocationHandler();
+Hello proxy = (Hello) helloProxyInvocationHandler.bind(helloImpl);
+
+proxy.sayHello(&quot;ray&quot;);
+</code></pre>
 <p>这里需要注意，如果使用接口创建代理对象，第一行代码使用 <code>Hello helloImpl = new HelloImpl()</code> 或者 <code>HelloImpl helloImpl = new HelloImpl()</code> 创建对象传入都可以，如果使用是父类创建代理对象，那么只能使用第二种。</p>
 <h3>MethodInceptor 实现</h3>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CGlibHelloProxyMethodInterceptor</span> <span class="keyword">implements</span> <span class="title">MethodInterceptor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Object target;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">bind</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">        Enhancer enhancer = <span class="keyword">new</span> Enhancer();</span><br><span class="line">        enhancer.setInterfaces(obj.getClass().getInterfaces());</span><br><span class="line">        <span class="comment">//enhancer.setSuperclass(obj.getClass());</span></span><br><span class="line">        <span class="keyword">this</span>.target = obj;</span><br><span class="line">        enhancer.setCallback(<span class="keyword">this</span>);</span><br><span class="line">        <span class="keyword">return</span> enhancer.create();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">intercept</span><span class="params">(Object o, Method method, Object[] params, MethodProxy methodProxy)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> begin = System.currentTimeMillis();</span><br><span class="line">        Object result = method.invoke(target, params);</span><br><span class="line">        System.out.printf(<span class="string">"Invoke time "</span> + (System.currentTimeMillis() - begin) + <span class="string">" ms"</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class CGlibHelloProxyMethodInterceptor implements MethodInterceptor {
+
+    private Object target;
+
+    public Object bind(Object obj) {
+        Enhancer enhancer = new Enhancer();
+        enhancer.setInterfaces(obj.getClass().getInterfaces());
+        //enhancer.setSuperclass(obj.getClass());
+        this.target = obj;
+        enhancer.setCallback(this);
+        return enhancer.create();
+    }
+
+    @Override
+    public Object intercept(Object o, Method method, Object[] params, MethodProxy methodProxy) throws Throwable {
+        long begin = System.currentTimeMillis();
+        Object result = method.invoke(target, params);
+        System.out.printf(&quot;Invoke time &quot; + (System.currentTimeMillis() - begin) + &quot; ms&quot;);
+        return result;
+    }
+}
+</code></pre>
 <p>然后创建代理对象并调用：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">HelloImpl hello = <span class="keyword">new</span> HelloImpl();</span><br><span class="line"></span><br><span class="line">CGlibHelloProxyMethodInterceptor cGlibHelloProxy = <span class="keyword">new</span> CGlibHelloProxyMethodInterceptor();</span><br><span class="line">HelloImpl proxyObject = (HelloImpl) cGlibHelloProxy.bind(hello);</span><br><span class="line"></span><br><span class="line">proxyObject.sayHello(<span class="string">"ray"</span>);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">HelloImpl hello = new HelloImpl();
+
+CGlibHelloProxyMethodInterceptor cGlibHelloProxy = new CGlibHelloProxyMethodInterceptor();
+HelloImpl proxyObject = (HelloImpl) cGlibHelloProxy.bind(hello);
+
+proxyObject.sayHello(&quot;ray&quot;);
+</code></pre>
 <p>通常来说，使用 MethodInceptor 方式来实现更好，因为可以避免出现上面说到的无限循环的问题。</p>
 <p>cglib 相比于 Java 反射实现动态代理的优势就是不受类的限制，可以自由的选择根据接口或者类来生成新的代理对象。</p>
 <h3>cglib 中的 Proxy</h3>
@@ -159,7 +379,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -167,7 +387,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

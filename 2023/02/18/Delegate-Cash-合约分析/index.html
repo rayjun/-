@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -63,9 +62,7 @@
                     <div id="div-body">
                     <article class="post">
     <h1>Delegate Cash 合约分析</h1>
-    <ol>
-<li></li>
-</ol>
+    <h2>1.</h2>
 <p>最近猴子游戏 <strong><strong>Dookey Dash</strong></strong> 很火，这个游戏可以看成神庙逃亡的下水道版本，跑得越远，分数越高。但是很多人手残（比如我），很难玩出高的分数，于是游戏代打很自然的出现的了。</p>
 <p>但是有个难处理的细节，代打的人如何获取到门票的授权？总不能直接把钱包给出去或者把游戏门票（Sewer Pass）转出去，这样太不安全了。在这里的关键就是怎么去证明你拥有这个资产的所有权，但是又不威胁到资产的安全。</p>
 <p>在这个过程中，我发现有一个合约很好地解决了这个问题，就是这个 Delegate Cash。这个合约可以解决很多场景下资产所有权的问题：</p>
@@ -75,41 +72,85 @@
 </ul>
 <p><img src="0.png" alt="0"></p>
 <p>整个流程就是在 Delegate Cash 合约，你可以把自己的地址 A 代理给另外一个地址 B，B 拿到这个代理之后，能证明这些资产是属于你的，但是<strong>同时 B 合约无法操作 A 合约中的任何资产</strong>。这点很重要，这样即使 B 合约被钓鱼了或者私钥泄漏了，地址 A 中的资产也是安全的。</p>
-<ol start="2">
-<li></li>
-</ol>
+<h2>2.</h2>
 <p>Delegate Cash 有三种代理模式：</p>
 <ul>
 <li>代理一个 token</li>
 <li>代理一个合约地址</li>
 <li>代理整个地址</li>
 </ul>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 代理整个地址</span><br><span class="line">function delegateForAll(address delegate, bool value) external;</span><br><span class="line">&#x2F;&#x2F; 代理某个合约地址</span><br><span class="line">function delegateForContract(address delegate, address contract_, bool value) external;</span><br><span class="line">&#x2F;&#x2F; 代理一个 token</span><br><span class="line">function delegateForToken(address delegate, address contract_, uint256 tokenId, bool value) external;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-javascript">// 代理整个地址
+function delegateForAll(address delegate, bool value) external;
+// 代理某个合约地址
+function delegateForContract(address delegate, address contract_, bool value) external;
+// 代理一个 token
+function delegateForToken(address delegate, address contract_, uint256 tokenId, bool value) external;
+</code></pre>
 <p>用户所有的代理信息都被存储在下面两个变量中：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mapping(address &#x3D;&gt; EnumerableSet.Bytes32Set) internal delegationHashes;</span><br><span class="line">mapping(bytes32 &#x3D;&gt; IDelegationRegistry.DelegationInfo) internal delegationInfo;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-js">mapping(address =&gt; EnumerableSet.Bytes32Set) internal delegationHashes;
+mapping(bytes32 =&gt; IDelegationRegistry.DelegationInfo) internal delegationInfo;
+</code></pre>
 <p><code>delegationHashes</code> 中存储的是相关代理信息（比如代理地址、被代理地址、被代理的合约或者 token）算出来的 hash， <code>delegationInfo</code>中存储的是这些信息的原文。</p>
 <p>绑定代理和解除代理都是通过下面这个方法来实现:</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">function _setDelegationValues(</span><br><span class="line">        address delegate,</span><br><span class="line">        bytes32 delegateHash,</span><br><span class="line">        bool value,</span><br><span class="line">        IDelegationRegistry.DelegationType type_,</span><br><span class="line">        address vault,</span><br><span class="line">        address contract_,</span><br><span class="line">        uint256 tokenId</span><br><span class="line">    ) internal &#123;</span><br><span class="line">        if (value) &#123;</span><br><span class="line">            delegations[vault][vaultVersion[vault]].add(delegateHash);</span><br><span class="line">            delegationHashes[delegate].add(delegateHash);</span><br><span class="line">            delegationInfo[delegateHash] &#x3D;</span><br><span class="line">                DelegationInfo(&#123;vault: vault, delegate: delegate, type_: type_, contract_: contract_, tokenId: tokenId&#125;);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            delegations[vault][vaultVersion[vault]].remove(delegateHash);</span><br><span class="line">            delegationHashes[delegate].remove(delegateHash);</span><br><span class="line">            delete delegationInfo[delegateHash];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-js">function _setDelegationValues(
+        address delegate,
+        bytes32 delegateHash,
+        bool value,
+        IDelegationRegistry.DelegationType type_,
+        address vault,
+        address contract_,
+        uint256 tokenId
+    ) internal {
+        if (value) {
+            delegations[vault][vaultVersion[vault]].add(delegateHash);
+            delegationHashes[delegate].add(delegateHash);
+            delegationInfo[delegateHash] =
+                DelegationInfo({vault: vault, delegate: delegate, type_: type_, contract_: contract_, tokenId: tokenId});
+        } else {
+            delegations[vault][vaultVersion[vault]].remove(delegateHash);
+            delegationHashes[delegate].remove(delegateHash);
+            delete delegationInfo[delegateHash];
+        }
+    }
+</code></pre>
 <p>如果 value 为 true，则是绑定代理，如果 value 为 false，则是解除代理。然后还提供了一系列的查询方法来检查代理关系是否存在。</p>
 <p>整体的逻辑就这些，相当简单。但是还存在一个小问题，如果在使用的过程中，绑定了很多代理关系，一个个去解绑就会浪费很多 gas，所以还需要一个一件解绑所有代理的功能，Delegate Cash 的实现相当巧妙。</p>
 <p>引入了下面两个 version 的 map，其中 valutVersion 记录的是地址的版本，在当前的合约实现中，这个 map 的值的返回值一直是 0，delegateVersion 中记录的是当前这次代理的版本。</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mapping(address &#x3D;&gt; uint256) internal vaultVersion;</span><br><span class="line">mapping(address &#x3D;&gt; mapping(address &#x3D;&gt; uint256)) internal delegateVersion;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-js">mapping(address =&gt; uint256) internal vaultVersion;
+mapping(address =&gt; mapping(address =&gt; uint256)) internal delegateVersion;
+</code></pre>
 <p>这两个 Map 中存储的版本信息在每次算代理信息 hash 的时候会被用到：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function _computeAllDelegationHash(address vault, address delegate) internal view returns (bytes32) &#123;</span><br><span class="line">        uint256 vaultVersion_ &#x3D; vaultVersion[vault];</span><br><span class="line">        uint256 delegateVersion_ &#x3D; delegateVersion[vault][delegate];</span><br><span class="line">        return keccak256(abi.encode(delegate, vault, vaultVersion_, delegateVersion_));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-js">function _computeAllDelegationHash(address vault, address delegate) internal view returns (bytes32) {
+        uint256 vaultVersion_ = vaultVersion[vault];
+        uint256 delegateVersion_ = delegateVersion[vault][delegate];
+        return keccak256(abi.encode(delegate, vault, vaultVersion_, delegateVersion_));
+}
+</code></pre>
 <p>所以在取消对某个地址的全部代理时，只需要对这个版本号加 1：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function _revokeDelegate(address delegate, address vault) internal &#123;</span><br><span class="line">        ++delegateVersion[vault][delegate];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-js">function _revokeDelegate(address delegate, address vault) internal {
+        ++delegateVersion[vault][delegate];
+}
+</code></pre>
 <p>这样就会让后续检查代理时的 hash 对比都会失败，对应的代理关系也全部失效：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (delegationHash &#x3D;&#x3D; _computeAllDelegationHash(vault, delegationInfo_.delegate)) &#123;</span><br><span class="line">   &#x2F;&#x2F;....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-js"> if (delegationHash == _computeAllDelegationHash(vault, delegationInfo_.delegate)) {
+    //....
+ }
+</code></pre>
 <p>后续在其他的 DAPP 中，如果要检查用户是否拥有某个资产，只需要来检查这个代理关系就可以:</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">address requester &#x3D; msg.sender;</span><br><span class="line">  </span><br><span class="line">if (_vault !&#x3D; address(0)) &#123; </span><br><span class="line">     bool isDelegateValid &#x3D; dc.checkDelegateForContract(msg.sender, _vault, NFT_CONTRACT);</span><br><span class="line">     require(isDelegateValid, &quot;invalid delegate-vault pairing&quot;);</span><br><span class="line">     requester &#x3D; _vault;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
-<ol start="3">
-<li></li>
-</ol>
+<pre><code class="language-js">address requester = msg.sender;
+  
+if (_vault != address(0)) { 
+     bool isDelegateValid = dc.checkDelegateForContract(msg.sender, _vault, NFT_CONTRACT);
+     require(isDelegateValid, &quot;invalid delegate-vault pairing&quot;);
+     requester = _vault;
+ }
+</code></pre>
+<h2>3.</h2>
 <p>通过这样的一个简单的合约，就可以在安全的情况下来证明用户是否拥有某个资产。这个也符合链上资产使用习惯，在大多数场景中，只需要证明资产是自己的，但很多人的资产就是在这个证明的过程中丢的。</p>
 <p>这个合约对 gas 的消耗很大，在使用的过程中，要尽量减少代理和取消代理的次数。</p>
 <p><strong>参考链接</strong></p>
-<p>[1]<a href="https://delegate.cash/" target="_blank" rel="noopener">https://delegate.cash/</a></p>
-<p>[2]<a href="https://etherscan.io/address/0x00000000000076A84feF008CDAbe6409d2FE638B#code" target="_blank" rel="noopener">https://etherscan.io/address/0x00000000000076A84feF008CDAbe6409d2FE638B#code</a></p>
+<p>[1]<a href="https://delegate.cash/" target="_blank" rel="noopener">https://delegate.cash/</a>
+[2]<a href="https://etherscan.io/address/0x00000000000076A84feF008CDAbe6409d2FE638B#code" target="_blank" rel="noopener">https://etherscan.io/address/0x00000000000076A84feF008CDAbe6409d2FE638B#code</a></p>
 
 </article>
 
@@ -117,7 +158,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -125,7 +166,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

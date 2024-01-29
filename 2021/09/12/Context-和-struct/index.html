@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -69,11 +68,42 @@
 <p>这篇文章会通过一些例子来说明为什么应该直接传递 context，而不是把它存储在另一个类型中。同时也会介绍一个把 context 安全存储在 struct 中的少见案例，并会解释为什么要这么做。</p>
 <h2>把 context 作为参数</h2>
 <p>我们先来看一个把 context 作为参数的例子，来看看把 context 当做参数传递传递的优点：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Worker 把 work 添加到远程的服务运行</span></span><br><span class="line"><span class="keyword">type</span> Worker <span class="keyword">struct</span> &#123; <span class="comment">/* … */</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Work <span class="keyword">struct</span> &#123; <span class="comment">/* … */</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">()</span> *<span class="title">Worker</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;Worker&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *Worker)</span> <span class="title">Fetch</span><span class="params">(ctx context.Context)</span> <span class="params">(*Work, error)</span></span> &#123;</span><br><span class="line">  _ = ctx <span class="comment">// 一个提前传入的 ctx 用来控制请求的 deadline、取消以及元数据</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *Worker)</span> <span class="title">Process</span><span class="params">(ctx context.Context, work *Work)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">  _ = ctx <span class="comment">// 一个提前传入的 ctx 用来控制请求的 deadline、取消以及元数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">// Worker 把 work 添加到远程的服务运行
+type Worker struct { /* … */ }
+
+type Work struct { /* … */ }
+
+func New() *Worker {
+  return &amp;Worker{}
+}
+
+func (w *Worker) Fetch(ctx context.Context) (*Work, error) {
+  _ = ctx // 一个提前传入的 ctx 用来控制请求的 deadline、取消以及元数据
+}
+
+func (w *Worker) Process(ctx context.Context, work *Work) error {
+  _ = ctx // 一个提前传入的 ctx 用来控制请求的 deadline、取消以及元数据
+}
+</code></pre>
 <p>在这里 <code>(*Worker).Fetch</code> 和 <code>(*Worker).Process</code> 都直接把 context 作为第一个参数。用户可以为每一次调用设置 deadline、取消和元数据。并且这样可以很清晰的看到 context 在每个方法中的使用方式，这样就不会让传递到一个方法中的 context 会在其他的方法中被调用。这是因为 conetext 的作用域限制到了真正需要它的地方，这样 context 就会实用而清晰。</p>
 <h2>把 context 存进 struct 会造成误解</h2>
 <p>我们再看一下上面的例子，并做一点小改动，把 context 放进 struct 中。这样做问题在于这样会让调用者的生命周期变得模糊，或者会把这两者的作用域混在一起，这样更糟糕。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Worker <span class="keyword">struct</span> &#123;</span><br><span class="line">  ctx context.Context</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(ctx context.Context)</span> *<span class="title">Worker</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;Worker&#123;ctx: ctx&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *Worker)</span> <span class="title">Fetch</span><span class="params">()</span> <span class="params">(*Work, error)</span></span> &#123;</span><br><span class="line">  _ = w.ctx <span class="comment">// 共享的 w.ctx 用来控制请求的 deadline、取消以及元数据</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *Worker)</span> <span class="title">Process</span><span class="params">(work *Work)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">  _ = w.ctx <span class="comment">// 共享的 w.ctx 用来控制请求的 deadline、取消以及元数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type Worker struct {
+  ctx context.Context
+}
+
+func New(ctx context.Context) *Worker {
+  return &amp;Worker{ctx: ctx}
+}
+
+func (w *Worker) Fetch() (*Work, error) {
+  _ = w.ctx // 共享的 w.ctx 用来控制请求的 deadline、取消以及元数据
+}
+
+func (w *Worker) Process(work *Work) error {
+  _ = w.ctx // 共享的 w.ctx 用来控制请求的 deadline、取消以及元数据
+}
+</code></pre>
 <p>这里 <code>(*Worker).Fetch</code> 和 <code>(*Worker).Process</code> 共用一个存储在 Worker 中的 context。这将会让 Fetch 和 Process 的调用者无法指定 deadline、取消请求或者获取元数据，因为一个请求中可能有不同的 context。举个例子来说，无法只为 (*Worker).Fetch 指定 deadline，也无法只取消 (*Worker).Process。调用者的生命周期被一个共享的 context 打乱了，而且 context 的生命周期与 Worker 的生命周期相同。</p>
 <p>相比于之前的那种写法，这种更容易让人疑惑。用户可能会问他们自己：</p>
 <ul>
@@ -85,13 +115,40 @@
 <p>当 Go1.17 发布的时候，大量的 API 需要添加 context 以保证 API 的向后兼容性。比如 net/http 中的 Client 方法，Get、Do 都需要添加 context。每一个通过这些方法发送的外部请求，都可以通过 context 来传递 deadline、取消请求、传递元数据。</p>
 <p>这里有两种可以保持向后兼容的方式来添加对 context 的支持：第一个方法就是把 context 放在一个 struct 中，就像我们前面看到的那样，另一种方法就是重新写一个不同名称的方法，添加 context 参数。就像我们在如何保证模块的兼容性中讨论的那样，第二种方法应该要优于第一种方法。但是在一些情况下，是无法这样实现的：比如你的 API  暴露了大量的方法，然后把它们全部都重写一遍，这样可能会让代码很混乱。</p>
 <p>net/http 包选则了第一种方法，这里也提供了一个很值得学习的例子。我们来看一下其中的 Do 方法，在添加 context 之前，它是这样定义的：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Do 发送 http 请求并且返回 http 的响应</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Client)</span> <span class="title">Do</span><span class="params">(req *Request)</span> <span class="params">(*Response, error)</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">// Do 发送 http 请求并且返回 http 的响应
+func (c *Client) Do(req *Request) (*Response, error)
+</code></pre>
 <p>在 Go1.17 之后，如果我们不管向后的兼容性，Do 的定义可能是下面这样：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Do 发送 http 请求并且返回 http 的响应 </span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Client)</span> <span class="title">Do</span><span class="params">(ctx context.Context, req *Request)</span> <span class="params">(*Response, error)</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">// Do 发送 http 请求并且返回 http 的响应 
+func (c *Client) Do(ctx context.Context, req *Request) (*Response, error)
+</code></pre>
 <p>但为了保护兼容性，并且遵守 Go 对标准库兼容性的保证非常重要。所以，维护者选择在 http.Request 中添加一个 context 来保证这个 API 的向后兼容性：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">type</span> Request <span class="keyword">struct</span> &#123;</span><br><span class="line">  ctx context.Context</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个 context 用于这个请求的生命周期</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewRequestWithContext</span><span class="params">(ctx context.Context, method, url <span class="keyword">string</span>, body io.Reader)</span> <span class="params">(*Request, error)</span></span> &#123;</span><br><span class="line">  <span class="comment">// Simplified for brevity of this article.</span></span><br><span class="line">  <span class="keyword">return</span> &amp;Request&#123;</span><br><span class="line">    ctx: ctx,</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Client)</span> <span class="title">Do</span><span class="params">(req *Request)</span> <span class="params">(*Response, error)</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">
+type Request struct {
+  ctx context.Context
+  // ...
+}
+
+// 这个 context 用于这个请求的生命周期
+func NewRequestWithContext(ctx context.Context, method, url string, body io.Reader) (*Request, error) {
+  // Simplified for brevity of this article.
+  return &amp;Request{
+    ctx: ctx,
+    // ...
+  }
+}
+
+func (c *Client) Do(req *Request) (*Response, error) 
+</code></pre>
 <p>当你在为你的 API 添加对 context 的支持时，可以选择把 context 添加到 struct 中。然而，在不破坏代码的可用性和可读性时，为了保证代码的向后兼容，还是应该重新创建一个方法，像下面这样：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Client)</span> <span class="title">Call</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> c.CallContext(context.Background())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Client)</span> <span class="title">CallContext</span><span class="params">(ctx context.Context)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">
+func (c *Client) Call() error {
+  return c.CallContext(context.Background())
+}
+
+func (c *Client) CallContext(ctx context.Context) error {
+}
+</code></pre>
 <h2>小结</h2>
 <p>在一个调用栈中，Context 在跨库或者跨 API 传递信息时非常有用。但为了保证可读性、可调试性和有效性，它必须保持简洁和连贯。</p>
 <p>当通过参数传递 context 而不是存储在 Context 中时，用户可以完全利用它的扩展性在调用栈中构造一个由取消、deadline 和元数据信息组成的树，并且在通过参数传递时，它们的作用域是非常清晰，这让代码的可读性和可调试性都非常好。</p>
@@ -104,7 +161,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -112,7 +169,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

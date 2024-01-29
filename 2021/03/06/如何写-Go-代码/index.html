@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -77,53 +76,167 @@
 <p>导入路径是用来导入包的字符串。一个包的导入路径就是模块的路径加上这个包在模块中的子目录路径。比如模块 github.com/google/go-cmp 包含一个包，在 cmp 目录下。那么这个包的导入路径就是 github.com/google/go-cmp/cmp。标准库中的包没有模块路径前缀。</p>
 <h2>你的第一个程序</h2>
 <p>在编译和运行一个简单程序之前，要选择一个模块路径（在这里用 example.com/user/hello）并且创建一个 go.mod 文件来描述这个模块：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir hello <span class="comment"># 可选，如果已经存在，直接把项目拉取到本地</span></span><br><span class="line">$ <span class="built_in">cd</span> hello</span><br><span class="line">$ go mod init example.com/user/hello</span><br><span class="line">go: creating new go.mod: module example.com/user/hello</span><br><span class="line">$ cat go.mod</span><br><span class="line">module example.com/user/hello</span><br><span class="line"></span><br><span class="line">go 1.14</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ mkdir hello # 可选，如果已经存在，直接把项目拉取到本地
+$ cd hello
+$ go mod init example.com/user/hello
+go: creating new go.mod: module example.com/user/hello
+$ cat go.mod
+module example.com/user/hello
+
+go 1.14
+</code></pre>
 <p>Go 源文件的第一个语句必须是<strong>包名</strong>。可执行的文件必须使用 <strong>main</strong> 作为包名。</p>
 <p>接下来，在当前目录下创建一个 hello.go 文件，写入以下代码：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line">func <span class="function"><span class="title">main</span></span>() &#123;</span><br><span class="line">	fmt.Println(<span class="string">"Hello, world."</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">package main
+
+import &quot;fmt&quot;
+
+func main() {
+	fmt.Println(&quot;Hello, world.&quot;)
+}
+</code></pre>
 <p>现在你可以使用 go 命令来编译并安装这个程序：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go install example.com/user/hello</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go install example.com/user/hello
+</code></pre>
 <p>这个命令将会编译 <strong>hello</strong> 程序，产生一个可执行文件。这个命令会被安装为 <code>$HOME/go/bin/hello</code>（在 Windows 系统中，路径是 <code>%USERPROFILE%\go\bin\hello.exe</code>）。</p>
 <p>安装的目录通过 GOPATH 和 GOBIN 环境变量来控制。如果 GOBIN 设置了，就会安装到 GOBIN 指定的目录。如果 GOPATH 设置了，这个就会安装到 GOPATH 目录下的子目录 bin 中。否则就会被安装到默认的 GOPATH 子目录下 bin 下（$HOME/go 或者 %USERPROFILE%\go）。</p>
 <p>你可以使用 <code>go env</code>命令来设置环境变量的默认值：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go env -w GOBIN=/somewhere/<span class="keyword">else</span>/bin</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go env -w GOBIN=/somewhere/else/bin
+</code></pre>
 <p>使用  <code>go env -u</code> 删除 go env -w 设置的变量值：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go env -u GOBIN</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go env -u GOBIN
+</code></pre>
 <p>像 <code>go install</code> 这样的命令可以在模块的根目录及其子目录中使用。如果当前的工作目录不在 example.com/user/hello 模块中，go install 会失败。</p>
 <p>为了方便起见，go 命令接受工作目录的相对路径，如果没有给出其他路径，则默认为当前工作目录下的包。因此，在我们的工作目录中，以下命令都是等价的:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ go install example.com/user/hello</span><br><span class="line"></span><br><span class="line">$ go install .</span><br><span class="line"></span><br><span class="line">$ go install</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go install example.com/user/hello
+
+$ go install .
+
+$ go install
+</code></pre>
 <p>接下来，我们来运行一下这个程序，确保功能正常。为了使用方便，我们把安装目录增加到系统 PATH 路径下，这样就可以直接在命令行使用程序:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># windows 用户看这里： https://github.com/golang/go/wiki/SettingGOPATH</span></span><br><span class="line"><span class="comment"># 设置 %PATH%.</span></span><br><span class="line">$ <span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:$(dirname $(go list -f <span class="string">'&#123;&#123;.Target&#125;&#125;'</span> .))</span><br><span class="line">$ hello</span><br><span class="line">Hello, world.</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash"># windows 用户看这里： https://github.com/golang/go/wiki/SettingGOPATH
+# 设置 %PATH%.
+$ export PATH=$PATH:$(dirname $(go list -f '{{.Target}}' .))
+$ hello
+Hello, world.
+</code></pre>
 <p>如果你在用版本管理系统，现在就可以初始化仓库，添加文件，并提交第一次修改。这个步骤是可选的，在写代码的时候，不一定要使用版本管理系统：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git init</span><br><span class="line">Initialized empty Git repository <span class="keyword">in</span> /home/user/hello/.git/</span><br><span class="line">$ git add go.mod hello.go</span><br><span class="line">$ git commit -m <span class="string">"initial commit"</span></span><br><span class="line">[master (root-commit) 0b4507d] initial commit</span><br><span class="line"> 1 file changed, 7 insertion(+)</span><br><span class="line"> create mode 100644 go.mod hello.go</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ git init
+Initialized empty Git repository in /home/user/hello/.git/
+$ git add go.mod hello.go
+$ git commit -m &quot;initial commit&quot;
+[master (root-commit) 0b4507d] initial commit
+ 1 file changed, 7 insertion(+)
+ create mode 100644 go.mod hello.go
+</code></pre>
 <p>go 命令通过请求相应的 HTTPS URL 并读取 HTML 响应中的元数据来定位给定模块的存储库（参见 <a href="https://golang.org/cmd/go/#hdr-Remote_import_paths" target="_blank" rel="noopener">go help importpath</a>）。许多代码托管服务已经为包含 Go 代码的存储库提供了元数据，因此，为了让你的模块可以顺利的被人找到，直接使用存储库的 URL 作为你的模块路径。</p>
 <h3>导入当前模块内的包</h3>
 <p>让我们写一个 <code>morestrings</code> 包并在 hello 程序中使用它。首先，为这个包创建一个目录：$HOME/hello/morestrings，并创建一个 reverse.go 文件，填充下面的内容：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Package morestrings implements additional functions to manipulate UTF-8</span></span><br><span class="line"><span class="comment">// encoded strings, beyond what is provided in the standard "strings" package.</span></span><br><span class="line"><span class="keyword">package</span> morestrings</span><br><span class="line"></span><br><span class="line"><span class="comment">// ReverseRunes returns its argument string reversed rune-wise left to right.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReverseRunes</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	r := []<span class="keyword">rune</span>(s)</span><br><span class="line">	<span class="keyword">for</span> i, j := <span class="number">0</span>, <span class="built_in">len</span>(r)<span class="number">-1</span>; i &lt; <span class="built_in">len</span>(r)/<span class="number">2</span>; i, j = i+<span class="number">1</span>, j<span class="number">-1</span> &#123;</span><br><span class="line">		r[i], r[j] = r[j], r[i]</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">string</span>(r)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">// Package morestrings implements additional functions to manipulate UTF-8
+// encoded strings, beyond what is provided in the standard &quot;strings&quot; package.
+package morestrings
+
+// ReverseRunes returns its argument string reversed rune-wise left to right.
+func ReverseRunes(s string) string {
+	r := []rune(s)
+	for i, j := 0, len(r)-1; i &lt; len(r)/2; i, j = i+1, j-1 {
+		r[i], r[j] = r[j], r[i]
+	}
+	return string(r)
+}
+</code></pre>
 <p>因为我们的 ReverseRunes 方法以大写字母开头，所以它是导出的，可以在其他的包中导入 morestrings 包来使用.</p>
 <p>使用 go build 命令编译测试一下这个包：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> <span class="variable">$HOME</span>/hello/morestrings</span><br><span class="line">$ go build</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ cd $HOME/hello/morestrings
+$ go build
+</code></pre>
 <p>这不会产生输出文件，相反，它将已编译的包保存在本地构建缓存中。</p>
 <p>在确认 morestrings 是可编译的，就可以在 hello 程序中使用它。然后修改 $HOME$/hello/hello.go 来使用 morestrings 包：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"example.com/user/hello/morestrings"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(morestrings.ReverseRunes(<span class="string">"!oG ,olleH"</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+
+	&quot;example.com/user/hello/morestrings&quot;
+)
+
+func main() {
+	fmt.Println(morestrings.ReverseRunes(&quot;!oG ,olleH&quot;))
+}
+</code></pre>
 <p>安装 hello 程序：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go install example.com/user/hello</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go install example.com/user/hello
+</code></pre>
 <p>运行这个新版的程序，你应该可以看见一个反转的字符串：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hello</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ hello
+</code></pre>
 <h3>导入远程模块的包</h3>
 <p>导入路径可以使用版本管理系统（如 Git 或 Mercurial）获取源码，go 工具会自动从远程仓库获取包。例如，在程序中使用 github.com/google/go-cmp/cmp：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"example.com/user/hello/morestrings"</span></span><br><span class="line">	<span class="string">"github.com/google/go-cmp/cmp"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(morestrings.ReverseRunes(<span class="string">"!oG ,olleH"</span>))</span><br><span class="line">	fmt.Println(cmp.Diff(<span class="string">"Hello World"</span>, <span class="string">"Hello Go"</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+
+	&quot;example.com/user/hello/morestrings&quot;
+	&quot;github.com/google/go-cmp/cmp&quot;
+)
+
+func main() {
+	fmt.Println(morestrings.ReverseRunes(&quot;!oG ,olleH&quot;))
+	fmt.Println(cmp.Diff(&quot;Hello World&quot;, &quot;Hello Go&quot;))
+}
+</code></pre>
 <p>当你运行 go install，go build，或者 go run 等命令时，就会自动下载这些远程的模块并记录到 go.mod 文件中：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ go install example.com/user/hello</span><br><span class="line">go: finding module <span class="keyword">for</span> package github.com/google/go-cmp/cmp</span><br><span class="line">go: downloading github.com/google/go-cmp v0.4.0</span><br><span class="line">go: found github.com/google/go-cmp/cmp <span class="keyword">in</span> github.com/google/go-cmp v0.4.0</span><br><span class="line">$ hello</span><br><span class="line">Hello, Go!</span><br><span class="line">  string(</span><br><span class="line">- 	<span class="string">"Hello World"</span>,</span><br><span class="line">+ 	<span class="string">"Hello Go"</span>,</span><br><span class="line">  )</span><br><span class="line">$ cat go.mod</span><br><span class="line">module example.com/user/hello</span><br><span class="line"></span><br><span class="line">go 1.14</span><br><span class="line"></span><br><span class="line">require github.com/google/go-cmp v0.4.0</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go install example.com/user/hello
+go: finding module for package github.com/google/go-cmp/cmp
+go: downloading github.com/google/go-cmp v0.4.0
+go: found github.com/google/go-cmp/cmp in github.com/google/go-cmp v0.4.0
+$ hello
+Hello, Go!
+  string(
+- 	&quot;Hello World&quot;,
++ 	&quot;Hello Go&quot;,
+  )
+$ cat go.mod
+module example.com/user/hello
+
+go 1.14
+
+require github.com/google/go-cmp v0.4.0
+</code></pre>
 <p>模块依赖关系会自动下载到 GOPATH 下的 pkg/mod 子目录。某个模块的给定版本的下载内容在所有需要该版本的其他模块之间共享，因此 go 命令将这些文件和目录定义为只读。如果要删除这些下载的模块，可以使用：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go clean -modcache</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go clean -modcache
+</code></pre>
 <h3>测试</h3>
 <p>Go 有一个轻量级的测试框架，包含 <code>go test</code> 命令和 <code>testing</code> 包。</p>
 <p>测试文件的结尾必须以 <code>_test.go</code> 结尾，并且测试函数的名称都是 TestXXX，方法签名是 func(t *testing.T)。测试框架会运行每一个函数，如果函数调用了t.Error 或者 t.Fail 函数，那么这个测试就可以被认为失败。</p>
 <p>为 morestrings 添加一个测试 $HOME/hello/morestrings/reverse_test.go，写入以下代码：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> morestrings</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"testing"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestReverseRunes</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	cases := []<span class="keyword">struct</span> &#123;</span><br><span class="line">		in, want <span class="keyword">string</span></span><br><span class="line">	&#125;&#123;</span><br><span class="line">		&#123;<span class="string">"Hello, world"</span>, <span class="string">"dlrow ,olleH"</span>&#125;,</span><br><span class="line">		&#123;<span class="string">"Hello, 世界"</span>, <span class="string">"界世 ,olleH"</span>&#125;,</span><br><span class="line">		&#123;<span class="string">""</span>, <span class="string">""</span>&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> _, c := <span class="keyword">range</span> cases &#123;</span><br><span class="line">		got := ReverseRunes(c.in)</span><br><span class="line">		<span class="keyword">if</span> got != c.want &#123;</span><br><span class="line">			t.Errorf(<span class="string">"ReverseRunes(%q) == %q, want %q"</span>, c.in, got, c.want)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">package morestrings
+
+import &quot;testing&quot;
+
+func TestReverseRunes(t *testing.T) {
+	cases := []struct {
+		in, want string
+	}{
+		{&quot;Hello, world&quot;, &quot;dlrow ,olleH&quot;},
+		{&quot;Hello, 世界&quot;, &quot;界世 ,olleH&quot;},
+		{&quot;&quot;, &quot;&quot;},
+	}
+	for _, c := range cases {
+		got := ReverseRunes(c.in)
+		if got != c.want {
+			t.Errorf(&quot;ReverseRunes(%q) == %q, want %q&quot;, c.in, got, c.want)
+		}
+	}
+}
+</code></pre>
 <p>使用 go test 来运行测试：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ go <span class="built_in">test</span></span><br><span class="line">PASS</span><br><span class="line">ok  	example.com/user/morestrings 0.165s</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go test
+PASS
+ok  	example.com/user/morestrings 0.165s
+</code></pre>
 <p>运行 <code>go help test</code> 或者查看<a href="https://golang.org/pkg/testing/" target="_blank" rel="noopener">文档</a>来看更多细节。</p>
 <p>译 / Rayjun</p>
 
@@ -133,7 +246,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -141,7 +254,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

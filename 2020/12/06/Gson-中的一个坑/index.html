@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -67,18 +66,50 @@
 <p>但 Gson 使用起来也比较繁琐，没有 fastjson 之类的类库使用起来那么简单，本文介绍一些使用 Gson 在处理字符串类型时需要注意的事项。</p>
 <p>本文基于 Gson 2.8.6</p>
 <p>先来看段代码：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Gson gson = <span class="keyword">new</span> Gson();</span><br><span class="line">HashMap&lt;String, String&gt; data = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">data.put(<span class="string">"ray"</span>, <span class="string">"jun"</span>);</span><br><span class="line"></span><br><span class="line">String jsonString = gson.toJson(data);</span><br><span class="line">JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);</span><br><span class="line"></span><br><span class="line">String str = String.valueOf(jsonObject.get(<span class="string">"ray"</span>));</span><br><span class="line"></span><br><span class="line">assertTrue((str).equals(<span class="string">"jun"</span>)); <span class="comment">// false</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Gson gson = new Gson();
+HashMap&lt;String, String&gt; data = new HashMap&lt;&gt;();
+data.put(&quot;ray&quot;, &quot;jun&quot;);
+
+String jsonString = gson.toJson(data);
+JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
+
+String str = String.valueOf(jsonObject.get(&quot;ray&quot;));
+
+assertTrue((str).equals(&quot;jun&quot;)); // false
+</code></pre>
 <p>上面的代码输出的结果是 <code>false</code>。</p>
 <p>再看下面的这段代码：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Gson gson = <span class="keyword">new</span> Gson();</span><br><span class="line">HashMap&lt;String, Integer&gt; data = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">data.put(<span class="string">"ray"</span>, <span class="number">18</span>);</span><br><span class="line"></span><br><span class="line">String jsonString = gson.toJson(data);</span><br><span class="line"></span><br><span class="line">JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);</span><br><span class="line"></span><br><span class="line">Integer integer = Integer.valueOf(String.valueOf(jsonObject.get(<span class="string">"ray"</span>)));</span><br><span class="line"></span><br><span class="line">assertTrue(integer == <span class="number">18</span>); <span class="comment">// true</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Gson gson = new Gson();
+HashMap&lt;String, Integer&gt; data = new HashMap&lt;&gt;();
+data.put(&quot;ray&quot;, 18);
+
+String jsonString = gson.toJson(data);
+
+JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
+
+Integer integer = Integer.valueOf(String.valueOf(jsonObject.get(&quot;ray&quot;)));
+
+assertTrue(integer == 18); // true
+</code></pre>
 <p>上面的代码输出的结果是 <code>true</code>。这两段代码基本一样，在结果上却不同，下面来看看问题出在哪里。</p>
 <p>下面把第一段代码中两个值都打印出来：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String str = String.valueOf(jsonObject.get(<span class="string">"ray"</span>));</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">"jun"</span>);</span><br><span class="line">System.out.println(str);</span><br></pre></td></tr></table></figure></p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jun</span><br><span class="line"><span class="string">"jun"</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">String str = String.valueOf(jsonObject.get(&quot;ray&quot;));
+
+System.out.println(&quot;jun&quot;);
+System.out.println(str);
+</code></pre>
+<pre><code class="language-java">jun
+&quot;jun&quot;
+</code></pre>
 <p>第二个值明显和预期的不一样，问题就出在这里。</p>
 <p>JsonObject 的 get 方法返回的是一个 JsonElement 的类型，JsonObject 也实现了这个类型，是 Gson 中所有类型的父类。</p>
 <p>在上面的代码中，如果直接对 JsonElement 类型使用 String.valueOf，就会调用 JsonElement 方法的 toString 方法，大概代码如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">StringWriter stringWriter = <span class="keyword">new</span> StringWriter();</span><br><span class="line">JsonWriter jsonWriter = <span class="keyword">new</span> JsonWriter(stringWriter);</span><br><span class="line">jsonWriter.setLenient(<span class="keyword">true</span>);</span><br><span class="line">Streams.write(<span class="keyword">this</span>, jsonWriter);</span><br><span class="line"><span class="keyword">return</span> stringWriter.toString();</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">StringWriter stringWriter = new StringWriter();
+JsonWriter jsonWriter = new JsonWriter(stringWriter);
+jsonWriter.setLenient(true);
+Streams.write(this, jsonWriter);
+return stringWriter.toString();
+</code></pre>
 <p>相当于会把当前的元素放入 StringWriter 中，然后再调用 StringWriter 的 toString 方法，获得结果。</p>
 <p>到这里都没有问题，问题的关键在于对于字符串类型的值，在 JsonElement 中存储时，会在外面再加上一层引号。</p>
 <p>所以字符串 &quot;jun&quot; 会被存储为 &quot;&quot;jun&quot;&quot;，所以如果直接使用 toString 方法获得值时，字符串会多一层引号。</p>
@@ -92,7 +123,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -100,7 +131,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

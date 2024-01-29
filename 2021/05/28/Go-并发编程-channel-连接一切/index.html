@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -71,37 +70,109 @@
 <p>goroutine + channel 是对 CSP（Communicating Sequential Process）模式的一种实现。CSP 模式中，有两个核心的概念，process 和 channel，process 对应 groutine，所有的 process 之间的通信通过 channel 来实现。</p>
 <p>channel 是可以被单独创建的，可以用来连接任意两个 goroutine，channel 也有自己的数据类型，被称之为<strong>通道的元素类型</strong>。</p>
 <p>创建一个通道很简单，比如下面创建了传递 int 值的通道:</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">ch := make(chan int)
+</code></pre>
 <p>chan 表示通道，int 表示通道中传递的元素类型，使用 make 就可以创建一个新的通道。make 返回的结果是通道的引用，当复制这个通道或者把通道作为函数参数的时候，传递的都是引用，这点很重要，需要重点理解一下。这里顺便说一下，channel 是可比较的，也就是说可以通过 == 来比较。</p>
 <p>通道有两个操作，一个是发送，一个是接收，都使用 &lt;- 来表示，区别在于发送时，通道在前，接收时通道在后。向一个通道中发送数据：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x := <span class="number">5</span></span><br><span class="line">ch &lt;- x</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">x := 5
+ch &lt;- x
+</code></pre>
 <p>从通道中接收一个结果，如果不把结果赋值给一个变量，结果就会被抛弃，这样也是合法的：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x := &lt;-ch</span><br><span class="line">&lt;-ch <span class="comment">// 这样也是合法的</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">x := &lt;-ch
+&lt;-ch // 这样也是合法的
+</code></pre>
 <p>一个完整的发送和接收的例子如下：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		x := <span class="number">5</span></span><br><span class="line">		ch &lt;- x</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	y := &lt;-ch</span><br><span class="line">	fmt.Println(y)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+	ch := make(chan int)
+
+	go func() {
+		x := 5
+		ch &lt;- x
+	}()
+
+	y := &lt;-ch
+	fmt.Println(y)
+}
+</code></pre>
 <p>在使用通道的过程中，可能会出现死锁，具体的原因我们下文再详细说。对于通道来说，还有一个操作，就是关闭通道，对于一个已经关闭的 channel，无法再发送数据，否则会发生 panic，但是可以进行接收操作，下面的程序可以正常运行：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		x := <span class="number">5</span></span><br><span class="line">		ch &lt;- x</span><br><span class="line">		<span class="built_in">close</span>(ch)</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	y := &lt;-ch</span><br><span class="line">	fmt.Println(y)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+)
+
+func main() {
+	ch := make(chan int)
+
+	go func() {
+		x := 5
+		ch &lt;- x
+		close(ch)
+	}()
+
+	y := &lt;-ch
+	fmt.Println(y)
+}
+</code></pre>
 <h2>2.  无缓冲通道</h2>
 <p>上面用来创建通道的 make 其实还有第二个参数，用来指定通道容量。如果不指定这个参数或者指定的参数是 0，那么就表示这个通道是无缓冲通道：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 下面两种创建方式是等价的</span></span><br><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">// 下面两种创建方式是等价的
+ch := make(chan int)
+ch := make(chan int, 0)
+</code></pre>
 <p><strong>在无缓冲通道上的发送操作会阻塞，直到接收端的接收操作完成，然后才会继续执行</strong>。在上一篇文章中，我们为了解决主 goroutine 等待子 goroutine 执行完成用的就是这个方法。代码如下：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">goroutine2</span><span class="params">(isDone <span class="keyword">chan</span> <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"child goroutine begin..."</span>)</span><br><span class="line">	time.Sleep(<span class="number">2</span> * time.Second)</span><br><span class="line">	fmt.Println(<span class="string">"child goroutine end..."</span>)</span><br><span class="line">	isDone &lt;- <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	isDone := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>)</span><br><span class="line">	<span class="keyword">go</span> goroutine2(isDone)</span><br><span class="line">	&lt;-isDone</span><br><span class="line">	fmt.Println(<span class="string">"main goroutine end.."</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func goroutine2(isDone chan bool) {
+	fmt.Println(&quot;child goroutine begin...&quot;)
+	time.Sleep(2 * time.Second)
+	fmt.Println(&quot;child goroutine end...&quot;)
+	isDone &lt;- true
+}
+
+func main() {
+	isDone := make(chan bool)
+	go goroutine2(isDone)
+	&lt;-isDone
+	fmt.Println(&quot;main goroutine end..&quot;)
+}
+</code></pre>
 <p>所以对于无缓冲通道来说，不能在同一个 goroutine 中使用，否则会造成死锁。关于死锁的问题，下文再详细讨论。</p>
 <h2>3. 缓冲通道</h2>
 <p>在创建缓冲通道时，需要指定通道的容量：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">ch := make(chan int, 3)
+</code></pre>
 <p>上面的代码创建了容量为 3 的通道，可以直接向通道中发送值，发送的前 3 个操作不会阻塞：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ch &lt;- <span class="number">1</span></span><br><span class="line">ch &lt;- <span class="number">2</span></span><br><span class="line">ch &lt;- <span class="number">3</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">ch &lt;- 1
+ch &lt;- 2
+ch &lt;- 3
+</code></pre>
 <p>如果在发送的过程中，如果接收端没有接收，那么此时通道就是满的，在发送第 4 个值的时候就会阻塞。</p>
 <p>对于缓冲通道，可以使用 <code>cap</code> 方法得到通道的容量，可以使用 <code>len</code> 方法得到当前通道中元素的个数：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cap</span>(ch) <span class="comment">// 获取容量</span></span><br><span class="line"><span class="built_in">len</span>(ch) <span class="comment">// 获取元素个数</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">cap(ch) // 获取容量
+len(ch) // 获取元素个数
+</code></pre>
 <p>对于一个缓冲通道，在同一个 goroutine 中使用也有造成死锁的风险，所以最好不要在同一个 goroutine 中使用通道。</p>
 <h2>4. 单向通道</h2>
 <p>在默认情况下，创建的通道可以发送数据，可以接受数据，但是在一些情况下，我们值需要通道的发送或者接收能力。这个时候，就需要单向通道。</p>
 <p>单向通道的表示起来很简单，把 &lt;- 放在 chan 前，表示只接收，放在 chan 后表示只发送：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sendCh := male(<span class="keyword">chan</span>&lt;- <span class="keyword">int</span>) <span class="comment">// 表示只发送的通道</span></span><br><span class="line">recCh := <span class="built_in">make</span>(&lt;-<span class="keyword">chan</span> <span class="keyword">int</span>) <span class="comment">// 表示只接收的通道</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">sendCh := male(chan&lt;- int) // 表示只发送的通道
+recCh := make(&lt;-chan int) // 表示只接收的通道
+</code></pre>
 <p>但实际的使用中，我们不需要去创建这种单向通道，只是在某些情况下，我们把通道转成单向通道就行。比如下面的代码中，在 sendData 方法中，我只需要用到通道的发送能力，所以可以通道改成发送的单向通道，其他人阅读代码的时候，也更能理解：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">10</span>)</span><br><span class="line">	sendData(ch)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sendData</span><span class="params">(sendCh <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>;i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		sendCh &lt;- i</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func main() {
+	ch := make(chan int, 10)
+	sendData(ch)
+}
+
+func sendData(sendCh chan&lt;- int) {
+	for i := 0;i &lt; 10; i++ {
+		sendCh &lt;- i
+	}
+}
+</code></pre>
 <p>双向通道可以转成转成单向通道，但反过来却不行。</p>
 <h2>5. 小结</h2>
 <p>这篇文章介绍了通道，通道对于 Go 语言来说很重要，是实现高并发的基础，通道为 goroutine 之间提供了一种高效安全的通信方式。但在使用通道的时候需要注意死锁问题。</p>
@@ -113,7 +184,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -121,7 +192,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

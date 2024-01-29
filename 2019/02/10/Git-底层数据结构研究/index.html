@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -77,31 +76,58 @@
 <li>refs</li>
 </ul>
 <p>执行以下命令:</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat HEAD</span></span><br><span class="line">ref: refs/heads/master</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">$ cat HEAD
+ref: refs/heads/master
+</code></pre>
 <p>通过上面的操作我们发现 HEAD 的值是一个引用，指向了 <code>refs/heads/master</code>，而我们当前所在的分支就是 <strong>master</strong>，也就是说 HEAD 的值就是当前所处的分支。</p>
 <p>进入 refs 目录发现有如下内容:</p>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/git/git-refs.png" alt=""></p>
 <p>再进入 <strong>heads</strong> 目录中，内容如下:</p>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/git/git-refs-heads.png" alt=""></p>
 <p>heads 目录中有 <strong>dev</strong> 和 <strong>master</strong> 两个文件。也就是对应我们的 <strong>dev</strong> 和 <strong>master</strong> 两个分支。那么这两个文件中存储的到底是什么内容呢:</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat master</span></span><br><span class="line">9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span><br></pre></td></tr></table></figure>
-可以看到 master 文件中储存的是一个哈希值。这个哈希值代表了什么呢？可以通过 Git 提供的接口进行查询:</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -t 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span></span><br><span class="line">commit</span><br></pre></td></tr></table></figure>
-结果得到了一个叫做 commit 的东西，至于这个 commit 时什么我们稍后再说。</p>
+<pre><code class="language-shell">$ cat master
+9fa28775a75a2a0d156e0c37a9b20f04ec94b47a
+</code></pre>
+<p>可以看到 master 文件中储存的是一个哈希值。这个哈希值代表了什么呢？可以通过 Git 提供的接口进行查询:</p>
+<pre><code class="language-shell">$ git cat-file -t 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a
+commit
+</code></pre>
+<p>结果得到了一个叫做 commit 的东西，至于这个 commit 时什么我们稍后再说。</p>
 <p>在 <strong>heads</strong> 目录中，还有一个 <strong>tags</strong> 目录，这里面存储的就是而我们之前的创建的 tag。来看一下 tag 中存储的内容:</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat v0.0.1</span></span><br><span class="line">9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span><br></pre></td></tr></table></figure>
-tag 本身也是一个哈希值。同样来看一下 tag 的类型:</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -t 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span></span><br><span class="line">tag</span><br></pre></td></tr></table></figure>
-这里出现了一个 tag 类型（需要注意的是轻量级的标签指向的是一个 commit 而不是单独创建一个 tag 对象，所以在创建 tag 的使用建议带上 -m 参数）。</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span></span><br><span class="line">object 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span><br><span class="line">type commit</span><br><span class="line">tag v0.0.2</span><br><span class="line">tagger rayjun &lt;leijun19930412@sina.com&gt; 1549899267 +0800</span><br><span class="line"></span><br><span class="line">第二个标签</span><br></pre></td></tr></table></figure>
-通过将 <strong>git cat-file</strong> 的 -t 参数改成 -p，可以看到 tag 储存的其实就是一个 commit。</p>
+<pre><code class="language-shell">$ cat v0.0.1
+9fa28775a75a2a0d156e0c37a9b20f04ec94b47a
+</code></pre>
+<p>tag 本身也是一个哈希值。同样来看一下 tag 的类型:</p>
+<pre><code class="language-shell">$ git cat-file -t 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a
+tag
+</code></pre>
+<p>这里出现了一个 tag 类型（需要注意的是轻量级的标签指向的是一个 commit 而不是单独创建一个 tag 对象，所以在创建 tag 的使用建议带上 -m 参数）。</p>
+<pre><code class="language-shell">$ git cat-file -p 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a
+object 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a
+type commit
+tag v0.0.2
+tagger rayjun &lt;leijun19930412@sina.com&gt; 1549899267 +0800
+
+第二个标签
+</code></pre>
+<p>通过将 <strong>git cat-file</strong> 的 -t 参数改成 -p，可以看到 tag 储存的其实就是一个 commit。</p>
 <p>那么 commit 中储存了什么呢？来看一下:</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a</span></span><br><span class="line">tree 291f8d9c7f50c3ab750c2ef8dd182b3903d13292</span><br><span class="line">author rayjun &lt;leijun19930412@sina.com&gt; 1549894768 +0800</span><br><span class="line">committer rayjun &lt;leijun19930412@sina.com&gt; 1549894768 +0800</span><br><span class="line"></span><br><span class="line">Update</span><br></pre></td></tr></table></figure>
-通过 <strong>git cat-file</strong> 的 -p 参数，可以看到 commit 中储存了一个 tree 类型的对象。 继续往下看:</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p 291f8d9c7f50c3ab750c2ef8dd182b3903d13292</span></span><br><span class="line">100644 blob d67064b5343698146a1d22c063f80b039020314a	readme.md</span><br></pre></td></tr></table></figure>
-然后发现这个 tree 中出现了一个 blob 的类型，并且指向一个文件名。再往下看:</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p d67064b5343698146a1d22c063f80b039020314a</span></span><br><span class="line">Read me</span><br></pre></td></tr></table></figure>
-发现 blob 对象存储的就是文件的内容。看到这里，基本就明白了，git 的整个数据结构就是由tag、commit、tree 和 blob 等几类基础的数据结构构成。但 tag 其实也就是 commit，所以基础的数据结构也就是 commit、tree 和 blob。这些类型的对象都存储在 <strong>objects</strong> 文件夹中。也就是是说在 <strong>objects</strong> 存储了所有文件的版本信息。</p>
+<pre><code class="language-shell">$ git cat-file -p 9fa28775a75a2a0d156e0c37a9b20f04ec94b47a
+tree 291f8d9c7f50c3ab750c2ef8dd182b3903d13292
+author rayjun &lt;leijun19930412@sina.com&gt; 1549894768 +0800
+committer rayjun &lt;leijun19930412@sina.com&gt; 1549894768 +0800
+
+Update
+</code></pre>
+<p>通过 <strong>git cat-file</strong> 的 -p 参数，可以看到 commit 中储存了一个 tree 类型的对象。 继续往下看:</p>
+<pre><code class="language-shell">$ git cat-file -p 291f8d9c7f50c3ab750c2ef8dd182b3903d13292
+100644 blob d67064b5343698146a1d22c063f80b039020314a	readme.md
+</code></pre>
+<p>然后发现这个 tree 中出现了一个 blob 的类型，并且指向一个文件名。再往下看:</p>
+<pre><code class="language-shell">$ git cat-file -p d67064b5343698146a1d22c063f80b039020314a
+Read me
+</code></pre>
+<p>发现 blob 对象存储的就是文件的内容。看到这里，基本就明白了，git 的整个数据结构就是由tag、commit、tree 和 blob 等几类基础的数据结构构成。但 tag 其实也就是 commit，所以基础的数据结构也就是 commit、tree 和 blob。这些类型的对象都存储在 <strong>objects</strong> 文件夹中。也就是是说在 <strong>objects</strong> 存储了所有文件的版本信息。</p>
 <p>config 中保存着当前仓库的配置。</p>
 <h3>commit、tree 和 blob</h3>
 <p>Git 有着丰富的操作，那么底层的数据结构是如何支撑起这些复杂的操作的。其实 Git 底层的数据结构很简单，但是却足够灵活，所有的其他复杂的功能都是在这简单的数据结构上构建起来的。主要有 <strong>commit</strong> 和 <strong>tree</strong> 和 <strong>blob</strong> 三种数据结构组成。</p>
@@ -128,7 +154,7 @@ tag 本身也是一个哈希值。同样来看一下 tag 的类型:</p>
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -136,7 +162,7 @@ tag 本身也是一个哈希值。同样来看一下 tag 的类型:</p>
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -70,37 +69,56 @@
 <h2>模块的默认设置</h2>
 <p>现在 go 命令在编译代码时，会默认使用启用模块功能，即使没有 go.mod 文件。这促进了在所有的项目中使用模块功能。</p>
 <p>如果把 GO111MODULE 设置为 off，就还可以在 GOPATH 下编译代码。也可以把 GO111MODULE 设置为 auto，这样就可以检测当前目录或者父目录中的 go.mod 文件。你可以使用 <code>go env -w</code> 来设置 GO111MODULE 或者其他变量的值:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go env -w GO111MODULE=auto</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go env -w GO111MODULE=auto
+</code></pre>
 <p>我们计划在 Go1.17 中放弃对 GOPATH 的支持，换句话说，在 Go1.17 中，将会忽略 GO111MODULE 变量。如果你还有项目没有使用 Go Modules，现在是时候迁移了。如果在迁移的过程中，如果你遇到了问题，可以提交一个 issue 或者一个体验报告。</p>
 <h2>不自动修改 go.mod 和 go.sum</h2>
 <p>在之前，当 go 命令发现 go.mod 或者 go.sum 缺少了 require 命令或者缺少一个检验和，它会尝试自动去修复这个问题。我们收到了很多反馈，表示这种行为会让人意外，特别是还有 go list 这种本不该有副作用的命令。这种自动修复通常补充很准确，如果导入的包在依赖中找不到，go 命令就会添加一个新的依赖，可能会触发对其他依赖的升级。甚至一个拼写错误的导入路径都会触发一个失败的网络依赖查询。</p>
 <p>在 Go1.16 中，模块的命令发现 go.mod 或者 go.sum 的错误之后会把错误抛出来，而不是自动去修复这个错误。在大多数情况下，报错信息会提示使用一些命令来修复错误。</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ go build</span><br><span class="line">example.go:3:8: no required module provides package golang.org/x/net/html; to add it:</span><br><span class="line">    go get golang.org/x/net/html</span><br><span class="line">$ go get golang.org/x/net/html</span><br><span class="line">$ go build</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go build
+example.go:3:8: no required module provides package golang.org/x/net/html; to add it:
+    go get golang.org/x/net/html
+$ go get golang.org/x/net/html
+$ go build
+</code></pre>
 <p>与之前一样，go 命令可以使用 vendor 目录（请参阅 vendor 获取更多信息）。像 go get 和 go mod   tidy 命令任然可以修改 go.mod 和 go.sum，因为他们的主要目的是管理依赖项。</p>
 <h2>安装特定版本的依赖</h2>
 <p>go install 命令现在可以通过指定 @version 后缀来安装一个特定版本的依赖。</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go install golang.org/x/tools/gopls@v0.6.5</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go install golang.org/x/tools/gopls@v0.6.5
+</code></pre>
 <p>当使用这个语法时，go install 会按照执行的版本进行安装，忽略当前目录和父目录中的 go.mod 文件。（不使用 @version 后缀时，go install 与之前的行为一样，使用当前模块的 go.mod 中的版本来构建程序。）</p>
 <p>我们以前推荐使用 go get -u 来安装依赖包，但 go get 命令会在 go.mod 中增加或者修改模块的依赖版本，会让人迷惑。为了避免这种意外的修改，有人开始使用下面这种复杂的命令：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> <span class="variable">$HOME</span>; GO111MODULE=on go get program@latest</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ cd $HOME; GO111MODULE=on go get program@latest
+</code></pre>
 <p>现在我们可以用 go install program@latest 来进行安装。在 <a href="https://golang.org/ref/mod#go-install" target="_blank" rel="noopener">go install</a> 查看详情。</p>
 <p>为了避免对使用哪个版本出现歧义，在使用 go install 命令时，在 go.mod 中设置了几个限制。特别是暂时不允许使用 replace 和 exclude。如果后续 go install program@version 的表现足够好，我们计划让 go get 不再用来安装程序。具体参见 <a href="https://golang.org/issue/43684" target="_blank" rel="noopener">issue 43684</a>。</p>
 <h2>模块撤销</h2>
 <p>你曾经有没有发布过没有准备好的版本？或者你在发布一个版本后发现了一个问题，需要快速修复？在发布的版本中修复错误通常很困难。为了保持模块构建的确定性，一个版本在发布后不能被修改。如果你删除或者修改版本的 tag，但在 proxy.golang.org 或者其他代理商可能已经有了原版本的缓存。</p>
 <p>模块的作者现在可以在 go.mod 中使用 retract 撤回某个版本。一个被撤回的版本还会存在，也可以下载（依赖这个版本的程序不会崩溃），但是在使用 @latest 来下载依赖时，go 命令不会自动去选择这个被撤回的版本。对于已经在用这个版本程序，执行 go get 和 go list -m -u 命令时会出现警告。</p>
 <p>举个例子，假设 <code>[example.com/lib](http://example.com/lib)</code> 的作者发布了 v1.0.5 版本，但同时发现了一个安全问题，他可以在 go.mod 中添加一个撤回指令，像下面这样：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// Remote-triggered crash <span class="keyword">in</span> package foo. See CVE-2021-01234.</span><br><span class="line">retract v1.0.5</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">// Remote-triggered crash in package foo. See CVE-2021-01234.
+retract v1.0.5
+</code></pre>
 <p>接下来，作者打了一个新的 tag v1.0.6，并发布了新版本。然后，已经在使用 v1.0.5 的用户在检查更新或者升级包的时候会收到一个撤回的通知。通知的信息包括 retract 指令下的注释：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ go list -m -u all</span><br><span class="line">example.com/lib v1.0.0 (retracted)</span><br><span class="line">$ go get .</span><br><span class="line">go: warning: example.com/lib@v1.0.5: retracted by module author:</span><br><span class="line">    Remote-triggered crash <span class="keyword">in</span> package foo. See CVE-2021-01234.</span><br><span class="line">go: to switch to the latest unretracted version, run:</span><br><span class="line">    go get example.com/lib@latest</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go list -m -u all
+example.com/lib v1.0.0 (retracted)
+$ go get .
+go: warning: example.com/lib@v1.0.5: retracted by module author:
+    Remote-triggered crash in package foo. See CVE-2021-01234.
+go: to switch to the latest unretracted version, run:
+    go get example.com/lib@latest
+</code></pre>
 <p>想要在浏览器上查看指南，请查看 <a href="https://play-with-go.dev/" target="_blank" rel="noopener">play-with-go.dev</a> 上的<a href="https://play-with-go.dev/retract-module-versions_go116_en/" target="_blank" rel="noopener">模块版本撤回</a>。更多详细语法<a href="https://golang.org/ref/mod#go-mod-file-retract" target="_blank" rel="noopener">参见</a>。</p>
 <h2>使用 GOVCS</h2>
 <p>go 命令可以通过代理镜像（比如：<a href="https://proxy.golang.org/" target="_blank" rel="noopener">proxy.golang.org</a>）或者通过版本控制仓库（git、hg、svn、bzr、fossil 等等）下载源码。直接的版本控制访问很重要，特别是对于在代理上不可用的私有模块，但它也是一个潜在的安全问题，版本控制工具中的漏洞可能被恶意服务器利用来运行非预期的代码。</p>
 <p>Go1.16 中新增了一个配置变量，GOVCS，可以让用户指定允许的版本控制工具。GOVCS 接受一个 pattern:vcslist 的列表，逗号隔开。pattern 是通过 path.Match 方法来匹配一个或多个模块路径的前缀。public 和 private 是两个特殊的 pattern，private 匹配私有的模块（private 匹配在 GOPRIVATE 中定义的，public 只所有可以访问模块）。vclist 是一个通过管道分隔符分割的列表，包含允许的版本控制命令或关键字 all 或 off。</p>
 <p>比如：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GOVCS=github.com:git,evil.com:off,*:git|hg</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">GOVCS=github.com:git,evil.com:off,*:git|hg
+</code></pre>
 <p>在上面的配置中，允许通过 git 下载 github.com 上的模块。evil.com 上的所有模块都不能下载，其它的路径（*表示匹配所有）可以通过 git 或者 hg 下载。</p>
 <p>如果 没有设置 GOVCS，或者不匹配任何路径，go 命令就会使用默认值：git 和 hg 允许用于公共模块，而私有模块允许使用所有的工具。只允许 Git 和 Mercurial 用于公共模块的原因是，这两个工具在不受信任的服务器上运行的表现最好。相比之下，Bazaar、Fossil 和 Subversion 主要是在可信任的、经过验证的环境中使用的。默认的配置如下：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GOVCS=public:git|hg,private:all</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">GOVCS=public:git|hg,private:all
+</code></pre>
 <p>详细参见<a href="https://golang.org/ref/mod#vcs-govcs" target="_blank" rel="noopener">这里</a>。</p>
 <h2>接下来</h2>
 <p>我们希望这些特性对你有用。我们已经在努力的开发 Go1.17 中的新特性，特别是<a href="https://github.com/golang/go/issues/36460" target="_blank" rel="noopener">模块的延迟加载</a>，这会让模块的加载更快，更稳定。另外，如果你发现了 bug，请让我们<a href="https://github.com/golang/go/issues" target="_blank" rel="noopener">知道</a>。Happy coding！</p>
@@ -112,7 +130,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -120,7 +138,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

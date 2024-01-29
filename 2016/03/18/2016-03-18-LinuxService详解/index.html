@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -118,14 +117,25 @@
 </tbody>
 </table>
 <p>所以在启动后台程序的时候，可以使用 /etc/init.d/* 里面的脚本来完成 deamon 程序：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;etc&#x2F;init.d&#x2F;syslog start</span><br><span class="line"></span><br><span class="line">&#x2F;etc&#x2F;init.d&#x2F;syslog restart</span><br><span class="line"></span><br><span class="line">&#x2F;etc&#x2F;init.d&#x2F;syslog stop</span><br></pre></td></tr></table></figure></p>
+<pre><code>    /etc/init.d/syslog start
+
+    /etc/init.d/syslog restart
+
+    /etc/init.d/syslog stop
+</code></pre>
 <p>这是启动的一个方法，还可以利用其他的方法来完成以上的功能，那就是 service 程序，service 本身
 其实也是一个脚本，最后实际调用的还是 /etc/init.d/* 中的脚本。</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">service syslog start</span><br><span class="line"></span><br><span class="line">service syslog restart</span><br><span class="line"></span><br><span class="line">service syslog stop</span><br></pre></td></tr></table></figure></p>
+<pre><code>    service syslog start
+
+    service syslog restart
+
+    service syslog stop
+</code></pre>
 <h3>chkconfig 管理系统服务是否默认启动</h3>
 <p>当我们的 deamon 程序的脚本加入到 /etc/init.d/ 中后，我们就可以通过 chkconfig 命令很好的将这些程序
 管理起来，比如将一些 deamon 程序配置成开机启动。</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chkconfig  [--level [0123456]] [服务名称] [on|off]</span><br></pre></td></tr></table></figure></p>
+<pre><code>    chkconfig  [--level [0123456]] [服务名称] [on|off]
+</code></pre>
 <p>上面的命令就可以让某个服务在特定的运行等级下默认启动或者默认不启动。</p>
 
 </article>
@@ -134,7 +144,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -142,7 +152,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

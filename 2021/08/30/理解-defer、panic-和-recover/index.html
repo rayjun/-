@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -71,14 +70,32 @@
 <li>参数预计算</li>
 </ol>
 <p>在定义 defer 的时候，引用的外部参数会立刻被拷贝，在 i++ 执行之前就已经确定了，下面的代码最后打印的值是 0， 而不是1：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">t1</span><span class="params">()</span></span> &#123;</span><br><span class="line">	i := <span class="number">0</span></span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(i)</span><br><span class="line">	i++</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func t1() {
+	i := 0
+	defer fmt.Println(i)
+	i++
+}
+</code></pre>
 <p>如果想要最后打印的值是 1，则做如下修改：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">t2</span><span class="params">()</span></span> &#123;</span><br><span class="line">	i := <span class="number">0</span></span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		fmt.Println(i)</span><br><span class="line">	&#125;()</span><br><span class="line">	i++</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func t2() {
+	i := 0
+	defer func() {
+		fmt.Println(i)
+	}()
+	i++
+}
+</code></pre>
 <ol>
 <li>如果定义了多个 defer 语句，最后定义的最先执行</li>
 </ol>
 <p>下面的代码输出的结果是 4 3 2 1：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">t3</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="number">1</span>)</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="number">2</span>)</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="number">3</span>)</span><br><span class="line">	<span class="keyword">defer</span> fmt.Println(<span class="number">4</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func t3() {
+	defer fmt.Println(1)
+	defer fmt.Println(2)
+	defer fmt.Println(3)
+	defer fmt.Println(4)
+}
+</code></pre>
 <ol>
 <li>defer 可以对方法或者函数的命名返回值进行赋值</li>
 </ol>
@@ -91,9 +108,44 @@
 <p>recover 也是 Go 的内置函数，这个函数可以从 panic 中恢复程序的正常执行。recover 需要和 defer 定义在一起。</p>
 <p>在正常的流程中，recover 的执行不会产生任何影响。只有在 panic 发生的时候，recevoer 才会恢复应用，阻止程序崩溃。而 panic 发生的时候只会执行 defer 代码。所以 recover 只在和 defer 搭配的时候才会有意义。</p>
 <p><strong>recover 和 panic 需要在同一个 goroutine  使用，跨 goroutine 无法恢复应用</strong>。</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">		defer fmt.Println(<span class="string">"goroutine1 invoke"</span>)</span><br><span class="line">		go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">			defer fmt.Println(<span class="string">"goroutine2 invoke"</span>)</span><br><span class="line">			go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">				defer <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">					recover()</span><br><span class="line">				&#125;()</span><br><span class="line">				defer fmt.Println(<span class="string">"goroutine3 invoke"</span>)</span><br><span class="line">				panic(<span class="string">"panic"</span>)</span><br><span class="line"></span><br><span class="line">			&#125;()</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">time.Sleep(1 * time.Second)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">go func() {
+		defer fmt.Println(&quot;goroutine1 invoke&quot;)
+		go func() {
+			defer fmt.Println(&quot;goroutine2 invoke&quot;)
+			go func() {
+
+				defer func() {
+					recover()
+				}()
+				defer fmt.Println(&quot;goroutine3 invoke&quot;)
+				panic(&quot;panic&quot;)
+
+			}()
+		}()
+	}()
+
+time.Sleep(1 * time.Second)
+</code></pre>
 <p>下面的程序不会出现崩溃，但如果对 recover 的调用不在同一个 goroutine 中，就无法阻止程序的崩溃。</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">		defer fmt.Println(<span class="string">"goroutine1 invoke"</span>)</span><br><span class="line">		go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">			defer <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">				recover()</span><br><span class="line">			&#125;()</span><br><span class="line">			defer fmt.Println(<span class="string">"goroutine2 invoke"</span>)</span><br><span class="line"></span><br><span class="line">			go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">				defer fmt.Println(<span class="string">"goroutine3 invoke"</span>)</span><br><span class="line">				panic(<span class="string">"panic"</span>)</span><br><span class="line">			&#125;()</span><br><span class="line">			</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	time.Sleep(1 * time.Second)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">go func() {
+		defer fmt.Println(&quot;goroutine1 invoke&quot;)
+		go func() {
+
+			defer func() {
+				recover()
+			}()
+			defer fmt.Println(&quot;goroutine2 invoke&quot;)
+
+			go func() {
+				defer fmt.Println(&quot;goroutine3 invoke&quot;)
+				panic(&quot;panic&quot;)
+			}()
+			
+		}()
+	}()
+
+	time.Sleep(1 * time.Second)
+</code></pre>
 <h2>4. 小结</h2>
 <p>defer、panic、recover 是 Go 提供的流程控制方式，defer 可以用于正常的代码流程，用于关闭资源等操作，panic 则用来表示程序出现大问题，需要终止，可以自行触发，也可以被一些运行时的错误触发。但在一些情况下，我们不希望程序因为 panic 而终止，比如 web 服务，可以通过 recoever 来恢复程序。</p>
 <p><strong>本文基于 go1.14</strong></p>
@@ -106,7 +158,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -114,7 +166,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -78,7 +77,12 @@ map(), reduce()。</p>
 </li>
 </ul>
 <p>创建一个流有很多的方法，例如:</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Collection.stream();</span><br><span class="line">Collection.parallelStream();</span><br><span class="line">Arrays.stream(T array) or Stream.of();</span><br></pre></td></tr></table></figure></p>
+<pre><code>
+    Collection.stream();
+    Collection.parallelStream();
+    Arrays.stream(T array) or Stream.of();
+
+</code></pre>
 <p>一个流可以进行多种操作，总的来说，流的操作分为三类：</p>
 <ul>
 <li>
@@ -101,9 +105,40 @@ findFirst、 findAny、 limit。</p>
 </ul>
 <h4>Java Stream 应用</h4>
 <p>一个简单的 Stream 例子：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">    List&lt;Integer&gt; numbers &#x3D; Arrays.asList(1,45,9,34,78,19,65,76);</span><br><span class="line"></span><br><span class="line">    numbers.stream()</span><br><span class="line">            .filter((i) -&gt; i%2 &#x3D;&#x3D;0)</span><br><span class="line">            .map((i) -&gt; i * i)</span><br><span class="line">            .forEach(System.out::println);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code>    public static void main(String[] args) {
+
+        List&lt;Integer&gt; numbers = Arrays.asList(1,45,9,34,78,19,65,76);
+
+        numbers.stream()
+                .filter((i) -&gt; i%2 ==0)
+                .map((i) -&gt; i * i)
+                .forEach(System.out::println);
+    }
+
+</code></pre>
 <p>生成一个无限流，并且取出有限的个数：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public class NumberStream implements Supplier&lt;Long&gt; &#123;</span><br><span class="line"></span><br><span class="line">  long value &#x3D; 0;</span><br><span class="line"></span><br><span class="line">  @Override</span><br><span class="line">  public Long get() &#123;</span><br><span class="line">      this.value &#x3D; this.value + 1;</span><br><span class="line"></span><br><span class="line">      return this.value;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">      Stream&lt;Long&gt; numbers &#x3D; Stream.generate(new NumberStream());</span><br><span class="line"></span><br><span class="line">      numbers.map((x) -&gt; x * x ).skip(100).limit(10).forEach(System.out::println);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code>    public class NumberStream implements Supplier&lt;Long&gt; {
+
+      long value = 0;
+
+      @Override
+      public Long get() {
+          this.value = this.value + 1;
+
+          return this.value;
+      }
+
+
+      public static void main(String[] args) {
+
+          Stream&lt;Long&gt; numbers = Stream.generate(new NumberStream());
+
+          numbers.map((x) -&gt; x * x ).skip(100).limit(10).forEach(System.out::println);
+      }
+    }
+
+
+</code></pre>
 
 </article>
 
@@ -111,7 +146,7 @@ findFirst、 findAny、 limit。</p>
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -119,7 +154,7 @@ findFirst、 findAny、 limit。</p>
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

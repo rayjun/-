@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -114,7 +113,16 @@
 <p>缓存的方式主要有两种：<strong>应用缓存</strong>和<strong>数据库缓存</strong>（大多数系统都重度依赖这两种缓存方式）。</p>
 <p><img src="2.png" alt=""></p>
 <p>应用程序缓存需要在代码中编写缓存的逻辑，通常会先检查缓存中有没有值，如果没有，就回去数据库中获取并写入到缓存中（如果你使用的是<code>最近最少使用缓存算法</code>，那么值就很容易获取到），典型的代码如下（这是一个 Read-Through 缓存，如果缓存中没有值，就会去数据库中获取数据，然后再保存到缓存中）：</p>
-<p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">key = <span class="string">"user.%s"</span> % user_id</span><br><span class="line">user_blob = memcache.get(key)</span><br><span class="line"><span class="keyword">if</span> user_blob <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">    user = mysql.query(<span class="string">"SELECT * FROM users WHERE user_id=\"%s\""</span>, user_id)</span><br><span class="line">    <span class="keyword">if</span> user:</span><br><span class="line">        memcache.set(key, json.dumps(user))</span><br><span class="line">    <span class="keyword">return</span> user</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">return</span> json.loads(user_blob)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-python">key = &quot;user.%s&quot; % user_id
+user_blob = memcache.get(key)
+if user_blob is None:
+    user = mysql.query(&quot;SELECT * FROM users WHERE user_id=\&quot;%s\&quot;&quot;, user_id)
+    if user:
+        memcache.set(key, json.dumps(user))
+    return user
+else:
+    return json.loads(user_blob)
+</code></pre>
 <p>数据库缓存用的也很广泛。</p>
 <p><img src="3.png" alt=""></p>
 <p>只要使用数据库，就可以通过默认配置获得一定程度的缓存和性能。初始化的配置会优化通常的场景，针对你的系统做出针对性的配置之后就会极大的提升性能。</p>
@@ -177,7 +185,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -185,7 +193,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

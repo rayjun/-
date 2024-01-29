@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -68,23 +67,43 @@
 <p>pre-commit 官网：<a href="https://pre-commit.com/" target="_blank" rel="noopener">https://pre-commit.com/</a></p>
 <h2>1. 安装</h2>
 <p>pre-commit 插件是使用 Python 开发的，如果安装了 pip，直接使用 pip 安装：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pip install pre-commit</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">$ pip install pre-commit
+</code></pre>
 <p>如果是 python 的项目，直接在 requirements.txt 依赖文件中添加：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pre-commit</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">pre-commit
+</code></pre>
 <p>在 MacOS 上可以使用 <a href="https://brew.sh/" target="_blank" rel="noopener">Homebrew</a> 安装：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install pre-commit</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">$ brew install pre-commit
+</code></pre>
 <p>在 Windows 上，可以使用 <a href="https://docs.conda.io/en/latest/" target="_blank" rel="noopener">conda</a> 安装：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ conda install -c conda-forge pre-commit</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">$ conda install -c conda-forge pre-commit
+</code></pre>
 <p>查看是否安装成功：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ pre-commit --version</span><br><span class="line">pre-commit <span class="number">2.16</span><span class="number">.0</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">$ pre-commit --version
+pre-commit 2.16.0
+</code></pre>
 <h2>2. 使用</h2>
 <p>这个工具的使用也很简单，只需要在项目的根目录底下创建 <code>.pre-commit-config.yaml</code>，然后在项目中填充下面的内容：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">repos:</span><br><span class="line">-   repo: https:<span class="comment">//github.com/pre-commit/pre-commit-hooks</span></span><br><span class="line">    rev: v2<span class="number">.3</span><span class="number">.0</span></span><br><span class="line">    hooks:</span><br><span class="line">    -   id: check-yaml</span><br><span class="line">    -   id: end-of-file-fixer</span><br><span class="line">    -   id: trailing-whitespace</span><br><span class="line">-   repo: https:<span class="comment">//github.com/psf/black</span></span><br><span class="line">    rev: <span class="number">19.3</span>b0</span><br><span class="line">    hooks:</span><br><span class="line">    -   id: black</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+-   repo: https://github.com/psf/black
+    rev: 19.3b0
+    hooks:
+    -   id: black
+</code></pre>
 <p>根标签是 repos，表示可以配置多个 repo，每一个 repo 表示一个 git 地址，表示使用的插件库，rev 表示使用的 tag 版本，hooks 表示你要使用插件库中的那些插件。</p>
 <p>配置文件写完之后，然后执行 pre-commit install 安装插件：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ pre-commit install</span><br><span class="line">pre-commit installed at .git/hooks/pre-commit</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">$ pre-commit install
+pre-commit installed at .git/hooks/pre-commit
+</code></pre>
 <p>而且每次配置有变更的时候，运行下面的命令：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pre-commit run --all-files</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">pre-commit run --all-files
+</code></pre>
 <p>然后每次执行 git commit 时，git 都会调用这些插件，如果有插件执行失败，那些这次 commit 就会失败：</p>
 <p><img src="0.png" alt=""></p>
 <h2>3. 自定义</h2>
@@ -92,7 +111,13 @@
 <p>但很多时候，这个仓库中的插件并不能完全满足要求，比如我现在日常工作中主要写 Go，那么就需要自定义一些插件。</p>
 <p>在定义一个插件库时，需要在库的根目录创建一个 <code>.pre-commit-hooks.yaml</code> 文件，在这个文件中定义插件，插件完成后，就可以把库给其他人使用了。</p>
 <p>在这个配置文件中，每一项配置如下：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-   id: trailing-whitespace</span><br><span class="line">    name: Trim Trailing Whitespace</span><br><span class="line">    description: This hook trims trailing whitespace.</span><br><span class="line">    entry: trailing-whitespace-fixer</span><br><span class="line">    language: python</span><br><span class="line">    types: [text]</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">-   id: trailing-whitespace
+    name: Trim Trailing Whitespace
+    description: This hook trims trailing whitespace.
+    entry: trailing-whitespace-fixer
+    language: python
+    types: [text]
+</code></pre>
 <p>id 是插件的唯一标识，后续也是根据 id 来使用插件，name、description 是插件的名称和描述，自定义就行，extry 则表示具体插件的路径，一般是一段脚本文件。language 是编写这个插件所用的语言，目前支持 python、Go、node、bash 等诸多语言。types 是用来过滤目标文件，就是这个插件在那些文件上起作用。</p>
 <p>还有很多其他的属性可以配置，具体可以参考：<a href="https://pre-commit.com/#new-hooks" target="_blank" rel="noopener">https://pre-commit.com/#new-hooks</a></p>
 <p>新建的插件库还可以引用其他的插件库，只要创建配置文件引用其他的插件即可： <code>.pre-commit-config.yaml</code> 。</p>
@@ -106,7 +131,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -114,7 +139,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -72,16 +71,35 @@
 </blockquote>
 <h3>成员变量</h3>
 <p>LinkedList 的结构比 ArrayList 更简单，核心的成员变量如下，<code>size</code> 记录当前元素的个数，<code>first</code> 指向头结点，<code>last</code> 指向尾节点。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">transient</span> <span class="keyword">int</span> size = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">transient</span> Node&lt;E&gt; first;</span><br><span class="line"><span class="keyword">transient</span> Node&lt;E&gt; last;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">transient int size = 0;
+transient Node&lt;E&gt; first;
+transient Node&lt;E&gt; last;
+</code></pre>
 <p><code>Node</code> 的代码如下，通过泛型来存储具体的元素，每个节点都可以获取前一个或者后一个节点，所以 LinkedNode 底层数据结构是<strong>双向链表</strong>。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    E item;</span><br><span class="line">    Node&lt;E&gt; next;</span><br><span class="line">    Node&lt;E&gt; prev;</span><br><span class="line">    Node(Node&lt;E&gt; prev, E element, Node&lt;E&gt; next) &#123;</span><br><span class="line">        <span class="keyword">this</span>.item = element;</span><br><span class="line">        <span class="keyword">this</span>.next = next;</span><br><span class="line">        <span class="keyword">this</span>.prev = prev;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">private static class Node&lt;E&gt; {
+    E item;
+    Node&lt;E&gt; next;
+    Node&lt;E&gt; prev;
+    Node(Node&lt;E&gt; prev, E element, Node&lt;E&gt; next) {
+        this.item = element;
+        this.next = next;
+        this.prev = prev;
+    }
+}
+</code></pre>
 <p>因为底层使用的双向链表，所以理论上来说 LinkedList 的容量是没有限制的，自然也没有了扩容的过程。</p>
 <h3>实例化过程</h3>
 <p>LinkedList 的实例化过程也相对简单，只提供了两个构造函数。</p>
 <p>一个不带任何参数，也不需要做任何的数据初始化，头结点和尾节点的初始化都放在添加第一个元素的时候。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">LinkedList</span><span class="params">()</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public LinkedList() {
+}
+</code></pre>
 <p>第二个构造函数接收一个 <code>Collection</code> 类型的对象，会把对象中的所有元素都添加到当前 LinkedList 对象中。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">LinkedList</span><span class="params">(Collection&lt;? extends E&gt; c)</span> </span>&#123;</span><br><span class="line">   <span class="keyword">this</span>();</span><br><span class="line">   addAll(c);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java"> public LinkedList(Collection&lt;? extends E&gt; c) {
+    this();
+    addAll(c);
+ }
+</code></pre>
 <h3>具体实现</h3>
 <p>与 ArrayList 相比，LinkedList 有如下特点:</p>
 <ul>
@@ -95,36 +113,117 @@
 <h4>增删改查方法</h4>
 <p>List 中有的方法，LinkedList 中都实现了。</p>
 <p>可以添加元素：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    linkLast(e);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-可以看到，添加元素的操作实际上是用 <code>linkLast()</code> 方法来完成的，在添加元素的过程中，如果发现头结点为空，那说明是添加第一个元素，只需要把头结点指向刚添加的节点就可以，以下代码是在尾部添加一个节点:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">linkLast</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Node&lt;E&gt; l = last;</span><br><span class="line">    <span class="keyword">final</span> Node&lt;E&gt; newNode = <span class="keyword">new</span> Node&lt;&gt;(l, e, <span class="keyword">null</span>);</span><br><span class="line">    last = newNode;</span><br><span class="line">    <span class="keyword">if</span> (l == <span class="keyword">null</span>)</span><br><span class="line">        first = newNode;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        l.next = newNode;</span><br><span class="line">    size++;</span><br><span class="line">    modCount++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public boolean add(E e) {
+    linkLast(e);
+    return true;
+}
+</code></pre>
+<p>可以看到，添加元素的操作实际上是用 <code>linkLast()</code> 方法来完成的，在添加元素的过程中，如果发现头结点为空，那说明是添加第一个元素，只需要把头结点指向刚添加的节点就可以，以下代码是在尾部添加一个节点:</p>
+<pre><code class="language-java">void linkLast(E e) {
+    final Node&lt;E&gt; l = last;
+    final Node&lt;E&gt; newNode = new Node&lt;&gt;(l, e, null);
+    last = newNode;
+    if (l == null)
+        first = newNode;
+    else
+        l.next = newNode;
+    size++;
+    modCount++;
+}
+</code></pre>
 <p>上面是把元素添加到链表的尾部，因为 LinkedList 还可以被用作队列和栈，因此还提供了从头部添加元素的方法：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">linkFirst</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Node&lt;E&gt; f = first;</span><br><span class="line">    <span class="keyword">final</span> Node&lt;E&gt; newNode = <span class="keyword">new</span> Node&lt;&gt;(<span class="keyword">null</span>, e, f);</span><br><span class="line">    first = newNode;</span><br><span class="line">    <span class="keyword">if</span> (f == <span class="keyword">null</span>)</span><br><span class="line">        last = newNode;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        f.prev = newNode;</span><br><span class="line">    size++;</span><br><span class="line">    modCount++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>既然有添加元素的操作，也有删除元素的操作，代码如下：
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> E <span class="title">unlinkLast</span><span class="params">(Node&lt;E&gt; l)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> E element = l.item;</span><br><span class="line">    <span class="keyword">final</span> Node&lt;E&gt; prev = l.prev;</span><br><span class="line">    l.item = <span class="keyword">null</span>;</span><br><span class="line">    l.prev = <span class="keyword">null</span>;</span><br><span class="line">    last = prev;</span><br><span class="line">    <span class="keyword">if</span> (prev == <span class="keyword">null</span>)</span><br><span class="line">        first = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        prev.next = <span class="keyword">null</span>;</span><br><span class="line">    size--;</span><br><span class="line">    modCount++;</span><br><span class="line">    <span class="keyword">return</span> element;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java"> private void linkFirst(E e) {
+    final Node&lt;E&gt; f = first;
+    final Node&lt;E&gt; newNode = new Node&lt;&gt;(null, e, f);
+    first = newNode;
+    if (f == null)
+        last = newNode;
+    else
+        f.prev = newNode;
+    size++;
+    modCount++;
+}
+</code></pre>
+<p>既然有添加元素的操作，也有删除元素的操作，代码如下：</p>
+<pre><code class="language-java">private E unlinkLast(Node&lt;E&gt; l) {
+    final E element = l.item;
+    final Node&lt;E&gt; prev = l.prev;
+    l.item = null;
+    l.prev = null;
+    last = prev;
+    if (prev == null)
+        first = null;
+    else
+        prev.next = null;
+    size--;
+    modCount++;
+    return element;
+}
+</code></pre>
 <p>清空 LinkedList 就是把所有的元素置为 null:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (Node&lt;E&gt; x = first; x != <span class="keyword">null</span>; ) &#123;</span><br><span class="line">        Node&lt;E&gt; next = x.next;</span><br><span class="line">        x.item = <span class="keyword">null</span>;</span><br><span class="line">        x.next = <span class="keyword">null</span>;</span><br><span class="line">        x.prev = <span class="keyword">null</span>;</span><br><span class="line">        x = next;</span><br><span class="line">    &#125;</span><br><span class="line">    first = last = <span class="keyword">null</span>;</span><br><span class="line">    size = <span class="number">0</span>;</span><br><span class="line">    modCount++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public void clear() {
+    for (Node&lt;E&gt; x = first; x != null; ) {
+        Node&lt;E&gt; next = x.next;
+        x.item = null;
+        x.next = null;
+        x.prev = null;
+        x = next;
+    }
+    first = last = null;
+    size = 0;
+    modCount++;
+}
+</code></pre>
 <p>从以上代码可以发现，LinkedList 的操作都是对链表的操作。</p>
 <h4>用作队列和栈</h4>
 <p>做为普通队列时，可以在队列中进行入队和出队的操作。从队列头部获取一个元素，但是不删除元素 <code>peek()</code>:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">peek</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Node&lt;E&gt; f = first;</span><br><span class="line">    <span class="keyword">return</span> (f == <span class="keyword">null</span>) ? <span class="keyword">null</span> : f.item;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public E peek() {
+    final Node&lt;E&gt; f = first;
+    return (f == null) ? null : f.item;
+}
+</code></pre>
 <p>从队列头部获取一个元素并删除，<code>poll()</code>:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">poll</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Node&lt;E&gt; f = first;</span><br><span class="line">    <span class="keyword">return</span> (f == <span class="keyword">null</span>) ? <span class="keyword">null</span> : unlinkFirst(f);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public E poll() {
+    final Node&lt;E&gt; f = first;
+    return (f == null) ? null : unlinkFirst(f);
+}
+</code></pre>
 <p>在队列的尾部添加一个元素，<code>offer()</code>:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">offer</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">   <span class="keyword">return</span> add(e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java"> public boolean offer(E e) {
+    return add(e);
+ }
+</code></pre>
 <p>普通队列只可以在一端入队，在另一端出队，但是对于双向队列，可以在两端执行入队和出队操作。</p>
 <p>所以在在作为双向队列时，拿 peek 操作来说即可以 <code>peekFirst()</code> 也可以 <code>peekLast()</code>。其他的操作例如 offer、poll 同样类似。</p>
 <p>LinkedList 中还有 <code>push()</code> 和 <code>pop()</code> 操作。被当做栈使用时，只需要对头部节点进行操作就行。</p>
-<p>入栈操作:
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">push</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    addFirst(e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>出栈操作:
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">pop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> removeFirst();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>入栈操作:</p>
+<pre><code class="language-java">public void push(E e) {
+    addFirst(e);
+}
+</code></pre>
+<p>出栈操作:</p>
+<pre><code class="language-java">public E pop() {
+    return removeFirst();
+}
+</code></pre>
 <h4>其他功能</h4>
 <p>LinkedList 中也实现了 ListIterator 和 Spliterator 接口。</p>
 <p>所以 LinkedList 也可以从两端进行遍历。在遍历的时候，同样也有 fail-fast 机制来检查遍历的过程当中，容器中的元素是否被修改。</p>
 <p>在实现 Spliterator 接口之后，也可以对容器中的元素进行分段，然后同时让多个线程同时进行处理，提高处理效率。分割 LinkedList 的代码如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">LinkedList&lt;Integer&gt; list = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">        list.add(i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Spliterator&lt;Integer&gt; splitor = list.spliterator();</span><br><span class="line">    Spliterator&lt;Integer&gt; s1 = splitor.trySplit();</span><br><span class="line">    Spliterator&lt;Integer&gt; s2 = s1.trySplit();</span><br><span class="line"></span><br><span class="line">    System.out.println(s1.estimateSize()); <span class="comment">// 10</span></span><br><span class="line">    System.out.println(s2.estimateSize()); <span class="comment">// 10</span></span><br></pre></td></tr></table></figure>
-(完)</p>
+<pre><code class="language-java">LinkedList&lt;Integer&gt; list = new LinkedList&lt;&gt;();
+
+    for (int i = 0; i &lt; 20; i++) {
+        list.add(i);
+    }
+
+    Spliterator&lt;Integer&gt; splitor = list.spliterator();
+    Spliterator&lt;Integer&gt; s1 = splitor.trySplit();
+    Spliterator&lt;Integer&gt; s2 = s1.trySplit();
+
+    System.out.println(s1.estimateSize()); // 10
+    System.out.println(s2.estimateSize()); // 10
+</code></pre>
+<p>(完)</p>
 
 </article>
 
@@ -132,7 +231,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -140,7 +239,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

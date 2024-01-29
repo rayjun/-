@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -75,35 +74,129 @@
 </ul>
 <p>这几种方法都可以关闭线程池，但是每种方式之间有一些差别。</p>
 <p>现有如下任务：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Task</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"任务开始执行"</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"任务执行结束"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">class Task implements Runnable {
+
+    @Override
+    public void run() {
+        System.out.println(&quot;任务开始执行&quot;);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(&quot;任务执行结束&quot;);
+    }
+}
+</code></pre>
 <p>调用 <code>shutdown</code>方法之后，线程池就不会再接收新的任务，如果强行添加，就会报错。而线程池中的任务会继续执行，但是却不保证这些任务能够执行完成，具体原因，下文会说到。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ExecutorService threadPool = Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line">threadPool.submit(<span class="keyword">new</span> Task());</span><br><span class="line">threadPool.shutdown();</span><br><span class="line">threadPool.submit(<span class="keyword">new</span> Task());</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">ExecutorService threadPool = Executors.newFixedThreadPool(2);
+threadPool.submit(new Task());
+threadPool.shutdown();
+threadPool.submit(new Task());
+</code></pre>
 <p>上面代码的执行结果如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.FutureTask@<span class="number">7e07</span>db1f</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.FutureTask@7e07db1f
+</code></pre>
 <p>调用 <code>shutdownNow</code> 方法之后，所以运行中的任务都会终止，而且会返回队列中等待的任务。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ExecutorService threadPool = Executors.newFixedThreadPool(<span class="number">1</span>);</span><br><span class="line">threadPool.submit(<span class="keyword">new</span> Task());</span><br><span class="line">threadPool.shutdownNow();</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">ExecutorService threadPool = Executors.newFixedThreadPool(1);
+threadPool.submit(new Task());
+threadPool.shutdownNow();
+</code></pre>
 <p>调用 <code>awaitTermination</code> 之后，线程池中的任务会继续运行，而且还可以接受新的任务。它是线程阻塞的，会等到任务执行完成才结束主线程，这是它与shutdown 的区别。当然也不会无限期的等下去，可以通过设置超时时间，在超时时间之后，就会结束线程的阻塞。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ExecutorService threadPool = Executors.newFixedThreadPool(<span class="number">1</span>);</span><br><span class="line">threadPool.submit(<span class="keyword">new</span> Task());</span><br><span class="line">threadPool.awaitTermination(<span class="number">6</span>, TimeUnit.SECONDS);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">ExecutorService threadPool = Executors.newFixedThreadPool(1);
+threadPool.submit(new Task());
+threadPool.awaitTermination(6, TimeUnit.SECONDS);
+</code></pre>
 <h2>2. 正确的关闭线程池</h2>
 <h3>执行简单任务</h3>
 <p>还以上面的 Task 为例，这种 Task 不依赖外部的数据，执行这种任务的线程池在关闭时，只需要调用 shutdown 方法即可。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ExecutorService threadPool = Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line">    threadPool.submit(<span class="keyword">new</span> Task());</span><br><span class="line">    threadPool.submit(<span class="keyword">new</span> Task());</span><br><span class="line">    threadPool.shutdown();</span><br><span class="line">    System.out.println(<span class="string">"主线程结束"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public static void main(String[] args) {
+    ExecutorService threadPool = Executors.newFixedThreadPool(2);
+    threadPool.submit(new Task());
+    threadPool.submit(new Task());
+    threadPool.shutdown();
+    System.out.println(&quot;主线程结束&quot;);
+}
+</code></pre>
 <p>这时程序的输出如下，任务会在主线程结束之后继续执行。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">任务开始执行</span><br><span class="line">任务开始执行</span><br><span class="line">主线程结束</span><br><span class="line">任务执行结束</span><br><span class="line">任务执行结束</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">任务开始执行
+任务开始执行
+主线程结束
+任务执行结束
+任务执行结束
+</code></pre>
 <h3>执行复杂任务</h3>
 <p>在执行一些复杂任务时，任务需要依赖外部的数据，任务为下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Task1</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> Map&lt;String, String&gt; data;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Task1</span><span class="params">(Map&lt;String, String&gt; o)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.data = o;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (data.containsKey(<span class="string">"invoke"</span>)) &#123;</span><br><span class="line">            System.out.println(<span class="string">"正常任务执行!"</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"正常任务结束"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">class Task1 implements Runnable {
+    public Map&lt;String, String&gt; data;
+    public Task1(Map&lt;String, String&gt; o) {
+        this.data = o;
+    }
+    @Override
+    public void run() {
+        while (data.containsKey(&quot;invoke&quot;)) {
+            System.out.println(&quot;正常任务执行!&quot;);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(&quot;正常任务结束&quot;);
+    }
+}
+</code></pre>
 <p>在线程池中执行这个任务：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    ExecutorService threadPool = Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line">    Map&lt;String, String&gt; data = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    data.put(<span class="string">"invoke"</span>, <span class="string">"true"</span>);</span><br><span class="line">    threadPool.submit(<span class="keyword">new</span> Task1(data));</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    threadPool.shutdown();</span><br><span class="line">    data.remove(<span class="string">"invoke"</span>);</span><br><span class="line">    System.out.println(<span class="string">"主线程结束"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public static void main(String[] args) throws InterruptedException {
+    ExecutorService threadPool = Executors.newFixedThreadPool(2);
+    Map&lt;String, String&gt; data = new HashMap&lt;&gt;();
+    data.put(&quot;invoke&quot;, &quot;true&quot;);
+    threadPool.submit(new Task1(data));
+    Thread.sleep(1000);
+    threadPool.shutdown();
+    data.remove(&quot;invoke&quot;);
+    System.out.println(&quot;主线程结束&quot;);
+}
+</code></pre>
 <p>程序执行结果如下，在外部数据依赖删除之后，程序也就执行结束了。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">正常任务执行!</span><br><span class="line">主线程结束</span><br><span class="line">正常任务结束</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">正常任务执行!
+主线程结束
+正常任务结束
+</code></pre>
 <p>如果这个依赖是一些网络连接，或者数据库连接，在主程序退出之后，这些连接就会被销毁，那么线程池中的任务就无法继续执行。所以这个时候需要阻塞主线程，给线程池中的任务一些执行的时间。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    ExecutorService threadPool = Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line">    Map&lt;String, String&gt; data = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    data.put(<span class="string">"invoke"</span>, <span class="string">"true"</span>);</span><br><span class="line">    threadPool.submit(<span class="keyword">new</span> Task1(data));</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    threadPool.shutdown();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!threadPool.awaitTermination(<span class="number">4</span>, TimeUnit.SECONDS)) &#123;</span><br><span class="line">            System.out.println(<span class="string">"任务还没结束"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    data.remove(<span class="string">"invoke"</span>);</span><br><span class="line">    System.out.println(<span class="string">"主线程结束"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public static void main(String[] args) throws InterruptedException {
+    ExecutorService threadPool = Executors.newFixedThreadPool(2);
+    Map&lt;String, String&gt; data = new HashMap&lt;&gt;();
+    data.put(&quot;invoke&quot;, &quot;true&quot;);
+    threadPool.submit(new Task1(data));
+    Thread.sleep(1000);
+    threadPool.shutdown();
+    try {
+        if (!threadPool.awaitTermination(4, TimeUnit.SECONDS)) {
+            System.out.println(&quot;任务还没结束&quot;);
+        }
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+
+    data.remove(&quot;invoke&quot;);
+    System.out.println(&quot;主线程结束&quot;);
+}
+</code></pre>
 <p>调用了 awaitTermination 方法之后，主线程就会被阻塞，等待线程池中的任务继续执行，但是也不会无限期的等下去，等待超时时间过了之后，主程序还是会退出。</p>
 <p>在关闭线程池时，一般是 shutdown 与 awaitTermination 方法配合使用。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">threadPool.shutdown();</span><br><span class="line"><span class="keyword">if</span> (!threadPool.awaitTermination(<span class="number">5</span>, TimeUnit.SECONDS)) &#123;</span><br><span class="line">    System.out.println(<span class="string">"任务还没结束"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">threadPool.shutdown();
+if (!threadPool.awaitTermination(5, TimeUnit.SECONDS)) {
+    System.out.println(&quot;任务还没结束&quot;);
+}
+</code></pre>
 <p>如果还想确认在线程池退出时，确保线程池中的任务全部结束，可以在阻塞时间过了之后使用 shutdownNow:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">threadPool.shutdown();</span><br><span class="line"><span class="keyword">if</span> (!threadPool.awaitTermination(<span class="number">5</span>, TimeUnit.SECONDS)) &#123;</span><br><span class="line">    System.out.println(<span class="string">"任务还没结束"</span>);</span><br><span class="line">    threadPool.shutdownNow();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">threadPool.shutdown();
+if (!threadPool.awaitTermination(5, TimeUnit.SECONDS)) {
+    System.out.println(&quot;任务还没结束&quot;);
+    threadPool.shutdownNow();
+}
+</code></pre>
 <p>这样就可以让线程池按照预想的结果关闭。</p>
 <p>文 / Rayjun</p>
 
@@ -113,7 +206,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -121,7 +214,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

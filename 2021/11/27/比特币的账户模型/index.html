@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -86,9 +85,34 @@
 <p>这些流通的比特币，都来源于最开始比特币区块的产出。每个区块在被挖出来的时候会产生一个特殊的交易，被称之为<strong>铸币交易（coinbase-transaction）</strong>。这个交易会向那个挖出区块的地址发送一定数量的比特币，最开始是 50 个比特币，然后大约每隔四年左右，铸币交易产生的比特币会减半一次。</p>
 <p>运行全节点的节点比较是少数，大多数的人使用的还是手机钱包，对于手机钱包，自然无法在手机上来维护这个数据，所以手机钱包一般是去请求某个服务器，从服务器上获得结果。</p>
 <p>可以根据 API 来查询一个地址中未消费的比特币：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl --location --request GET http://www.tokenview.com:8088/unspent/btc/1JctmVUHHfchRQHR1K1v9E9rs3mSWLGEmt/1/50</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">curl --location --request GET http://www.tokenview.com:8088/unspent/btc/1JctmVUHHfchRQHR1K1v9E9rs3mSWLGEmt/1/50
+</code></pre>
 <p>然后就可以得到该地址的 UTXO:</p>
-<p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"code"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"msg"</span>: <span class="string">"成功"</span>,</span><br><span class="line">    <span class="attr">"data"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"block_no"</span>: <span class="number">707638</span>,</span><br><span class="line">            <span class="attr">"output_no"</span>: <span class="number">0</span>,</span><br><span class="line">            <span class="attr">"index"</span>: <span class="string">"23"</span>,</span><br><span class="line">            <span class="attr">"txid"</span>: <span class="string">"e167d10b492465e5a1b4d15176fa580af21cae314da337184f82089daf9bc740"</span>,</span><br><span class="line">            <span class="attr">"hex"</span>: <span class="string">"76a914c143e8f3f235ca9e82df0a017f01cd3f91ff3d4388ac"</span>,</span><br><span class="line">            <span class="attr">"confirmations"</span>: <span class="number">3629</span>,</span><br><span class="line">            <span class="attr">"value"</span>: <span class="string">"0.00231716"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"block_no"</span>: <span class="number">628354</span>,</span><br><span class="line">            <span class="attr">"output_no"</span>: <span class="number">0</span>,</span><br><span class="line">            <span class="attr">"index"</span>: <span class="string">"16"</span>,</span><br><span class="line">            <span class="attr">"txid"</span>: <span class="string">"8f8153d676adfb1ceb27154b96f025a6898d6ee49522cf38b847a63f93527372"</span>,</span><br><span class="line">            <span class="attr">"hex"</span>: <span class="string">"76a914c143e8f3f235ca9e82df0a017f01cd3f91ff3d4388ac"</span>,</span><br><span class="line">            <span class="attr">"confirmations"</span>: <span class="number">82913</span>,</span><br><span class="line">            <span class="attr">"value"</span>: <span class="string">"0.00231716"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-json">{
+    &quot;code&quot;: 1,
+    &quot;msg&quot;: &quot;成功&quot;,
+    &quot;data&quot;: [
+        {
+            &quot;block_no&quot;: 707638,
+            &quot;output_no&quot;: 0,
+            &quot;index&quot;: &quot;23&quot;,
+            &quot;txid&quot;: &quot;e167d10b492465e5a1b4d15176fa580af21cae314da337184f82089daf9bc740&quot;,
+            &quot;hex&quot;: &quot;76a914c143e8f3f235ca9e82df0a017f01cd3f91ff3d4388ac&quot;,
+            &quot;confirmations&quot;: 3629,
+            &quot;value&quot;: &quot;0.00231716&quot;
+        },
+        {
+            &quot;block_no&quot;: 628354,
+            &quot;output_no&quot;: 0,
+            &quot;index&quot;: &quot;16&quot;,
+            &quot;txid&quot;: &quot;8f8153d676adfb1ceb27154b96f025a6898d6ee49522cf38b847a63f93527372&quot;,
+            &quot;hex&quot;: &quot;76a914c143e8f3f235ca9e82df0a017f01cd3f91ff3d4388ac&quot;,
+            &quot;confirmations&quot;: 82913,
+            &quot;value&quot;: &quot;0.00231716&quot;
+        }
+    ]
+}
+</code></pre>
 <p>confirmations 表示该区块后面连接的区块数，区块数越大说明当前的 UTXO 越安全，被篡改的机率就越小， value 就是 UTXO 中包含的比特币的数量，txId 是输出改 UTXO 的交易Id，output_no 则是表示这是上一笔交易中的第几个输出。</p>
 <h2>3. 解决双花问题</h2>
 <p>在数字货币系统中，双花问题是必须要解决的。双花问题是指一分钱被花两次的情况。而比特币利用 UTXO 模型，很好的解决了这个问题。</p>
@@ -110,7 +134,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -118,7 +142,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

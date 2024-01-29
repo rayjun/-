@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -76,7 +75,8 @@
 </ul>
 <p>首先加密算法要使用可解密的，根据自己的需求进行选择就可以，比如 Base64，如果对加密的要求比较高，就可以使用 RSA 进行加密，但不管选择哪种加密方式，私钥要保存好。</p>
 <p>加密后的信息需要用键值对的形式存储在数据库中，键值对的形式如下：</p>
-<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user_database_username: YXNkZmFkZmFmc2RmYXNmZg==</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-json">user_database_username: YXNkZmFkZmFmc2RmYXNmZg==
+</code></pre>
 <p>存储的数据库可以根据具体的情况进行选择，需要能持久化数据的数据库，比如 MySQL。</p>
 <p>然后应用在使用账号密码或者其他敏感信息的时候，只需要在配置文件中配置好加密信息对应的 key。</p>
 <p>然后每次服务启动的时候，都先去加载这些配置文件，完成对加密信息的解密，然后才开始去初始化系统。</p>
@@ -84,7 +84,34 @@
 <p>这个接口可以通过 Http 接口，也可以通过 RPC 接口，可以根据具体的情况来确定。虽然每个框架的实现不一样，但是原理总是类似的。</p>
 <p>找到每个框架启动时候用于加载配置文件的流程，然后对这个流程中的某个节点做一点修改，就可以完成对加密配置的解密。</p>
 <p>以 Spring 框架为例，来实现这个解密过程，只需要继承 <code>PropertyPlaceholderConfigurer</code> 类，重写其中的 <code>convertProperties</code> 方法，将加密的信息通过解密接口解密，将解密后的值重新赋值给这些配置，整个过程就完成了。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomerPropertyPlaceholderConfigurer</span> <span class="keyword">extends</span> <span class="title">PropertyPlaceholderConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LoggerFactory.getLogger(CustomerPropertyPlaceholderConfigurer.class);</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">convertProperties</span><span class="params">(Properties props)</span> </span>&#123;</span><br><span class="line">        Enumeration propertyNames = props.propertyNames();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(propertyNames.hasMoreElements()) &#123;</span><br><span class="line">            String propertyName = (String)propertyNames.nextElement();</span><br><span class="line">            String propertyValue = props.getProperty(propertyName);</span><br><span class="line">            String convertedValue = <span class="keyword">this</span>.convertPropertyValue(propertyValue);</span><br><span class="line"></span><br><span class="line">            convertedValue = decrypt(convertedValue);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (!ObjectUtils.nullSafeEquals(propertyValue, convertedValue)) &#123;</span><br><span class="line">                logger.info(<span class="string">"Decrypt property: &#123;&#125;"</span>, propertyName);</span><br><span class="line">                props.setProperty(propertyName, convertedValue);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">decrypt</span><span class="params">(String encryptValue)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 实现具体的解密服务调用</span></span><br><span class="line">        <span class="keyword">return</span> encryptValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class CustomerPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
+
+    private static final Logger logger = LoggerFactory.getLogger(CustomerPropertyPlaceholderConfigurer.class);
+    
+    @Override
+    protected void convertProperties(Properties props) {
+        Enumeration propertyNames = props.propertyNames();
+
+        while(propertyNames.hasMoreElements()) {
+            String propertyName = (String)propertyNames.nextElement();
+            String propertyValue = props.getProperty(propertyName);
+            String convertedValue = this.convertPropertyValue(propertyValue);
+
+            convertedValue = decrypt(convertedValue);
+
+            if (!ObjectUtils.nullSafeEquals(propertyValue, convertedValue)) {
+                logger.info(&quot;Decrypt property: {}&quot;, propertyName);
+                props.setProperty(propertyName, convertedValue);
+            }
+        }
+    }
+
+    private String decrypt(String encryptValue) {
+        // 实现具体的解密服务调用
+        return encryptValue;
+    }
+}
+</code></pre>
 <p>当然这样做了之后，存储密钥的服务器也会存在风险，一个比较好的方式是将存储加密信息和密钥的数据库部署在内网，无法通过外网进行访问。</p>
 
 </article>
@@ -93,7 +120,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -101,7 +128,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -88,7 +87,14 @@
 <p>从根本来上来，HBase/BigTable 是一个 map。map 在不同的编程语言中有不同的叫法，比如 PHP 中的 array，Python 的 dictionary，Ruby 中的 Hash，或者 JavaScript 中的 Object。</p>
 <p>维基百科上对于 map 的定义是：map 是一个抽象的数据类型，包含了一组 key 和一组 value，每个 key 关联一个 value。</p>
 <p>如果用 JavaScript 的对象来表示 map，这里有一个简单的例子，其中所有的 value 都是字符串：</p>
-<p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"zzzzz"</span> : <span class="string">"woot"</span>,</span><br><span class="line">  <span class="attr">"xyz"</span> : <span class="string">"hello"</span>,</span><br><span class="line">  <span class="attr">"aaaab"</span> : <span class="string">"world"</span>,</span><br><span class="line">  <span class="attr">"1"</span> : <span class="string">"x"</span>,</span><br><span class="line">  <span class="attr">"aaaaa"</span> : <span class="string">"y"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-json">{
+  &quot;zzzzz&quot; : &quot;woot&quot;,
+  &quot;xyz&quot; : &quot;hello&quot;,
+  &quot;aaaab&quot; : &quot;world&quot;,
+  &quot;1&quot; : &quot;x&quot;,
+  &quot;aaaaa&quot; : &quot;y&quot;
+}
+</code></pre>
 <h2>持久化的</h2>
 <p>持久化的意思仅仅是指你放进这个特殊 map 的数据会在你的程序执行完成之后被保存下来。它和其他的持久化存储系统中持久化的概念没有任何区别，比如存一个文件到一个文件系统。我们继续...</p>
 <h2>分布式的</h2>
@@ -99,7 +105,14 @@
 <h2>有序的</h2>
 <p>和其他大多数 map 的实现不同，HBase 和 BigTable 的键值对的顺序严格按照字母顺序来排列。所以 rowKey 为 &quot;aaaaa&quot; 的下一条记录的 rowKey 就是 &quot;aaaab&quot;，并且会离 “zzzz” 非常远。</p>
 <p>继续看上面的那个 JSON 例子，排行序之后是下面这样的：</p>
-<p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"1"</span> : <span class="string">"x"</span>,</span><br><span class="line">  <span class="attr">"aaaaa"</span> : <span class="string">"y"</span>,</span><br><span class="line">  <span class="attr">"aaaab"</span> : <span class="string">"world"</span>,</span><br><span class="line">  <span class="attr">"xyz"</span> : <span class="string">"hello"</span>,</span><br><span class="line">  <span class="attr">"zzzzz"</span> : <span class="string">"woot"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-json">{
+  &quot;1&quot; : &quot;x&quot;,
+  &quot;aaaaa&quot; : &quot;y&quot;,
+  &quot;aaaab&quot; : &quot;world&quot;,
+  &quot;xyz&quot; : &quot;hello&quot;,
+  &quot;zzzzz&quot; : &quot;woot&quot;
+}
+</code></pre>
 <p>因为这个系统是分布式的，而且会越来越大，因此排序这个特性非常重要。这样就会把 rowKey 相近的记录放在一起，在某些情况下，如果你必须要扫描表（通常不推荐），那就能保证你需要获取的记录都在一块。</p>
 <p>那么如何选择 rowKey 就非常重要。比如说，一个表的 rowKey 就是域名。一个比较好的方式就是将域名进行反转来作为 rowKey（使用 “com.jimbojw.www”，而不要使用 “www.jimbojw.com”），这样，同一个域名下的记录就可以存储在相邻的位置。</p>
 <p>继续上面的域名例子，rowKey 为 “mail.jimbojw.com” 行应该与 “www.jimbojw.com” 行更近，而不是 “mail.xyz.com”，如果不把域名反转存储，就会发生这种情况。</p>
@@ -107,20 +120,94 @@
 <h2>多维的</h2>
 <p>到目前为止，我们还没有提过任何关于<strong>列</strong>的概念，而是将<strong>表</strong>在概念上当做常规的 map。我是故意这么做的。列和表、base 等词一样，都带有传统关系型数据库多年的情感包袱。</p>
 <p>然而，我发现把 HBase 理解为一个多维的 map 会容易很多，map 的 map。给上面的 JSON 再加上一列：</p>
-<p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"1"</span> : &#123;</span><br><span class="line">    <span class="attr">"A"</span> : <span class="string">"x"</span>,</span><br><span class="line">    <span class="attr">"B"</span> : <span class="string">"z"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"aaaaa"</span> : &#123;</span><br><span class="line">    <span class="attr">"A"</span> : <span class="string">"y"</span>,</span><br><span class="line">    <span class="attr">"B"</span> : <span class="string">"w"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"aaaab"</span> : &#123;</span><br><span class="line">    <span class="attr">"A"</span> : <span class="string">"world"</span>,</span><br><span class="line">    <span class="attr">"B"</span> : <span class="string">"ocean"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"xyz"</span> : &#123;</span><br><span class="line">    <span class="attr">"A"</span> : <span class="string">"hello"</span>,</span><br><span class="line">    <span class="attr">"B"</span> : <span class="string">"there"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"zzzzz"</span> : &#123;</span><br><span class="line">    <span class="attr">"A"</span> : <span class="string">"woot"</span>,</span><br><span class="line">    <span class="attr">"B"</span> : <span class="string">"1337"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-json">{
+  &quot;1&quot; : {
+    &quot;A&quot; : &quot;x&quot;,
+    &quot;B&quot; : &quot;z&quot;
+  },
+  &quot;aaaaa&quot; : {
+    &quot;A&quot; : &quot;y&quot;,
+    &quot;B&quot; : &quot;w&quot;
+  },
+  &quot;aaaab&quot; : {
+    &quot;A&quot; : &quot;world&quot;,
+    &quot;B&quot; : &quot;ocean&quot;
+  },
+  &quot;xyz&quot; : {
+    &quot;A&quot; : &quot;hello&quot;,
+    &quot;B&quot; : &quot;there&quot;
+  },
+  &quot;zzzzz&quot; : {
+    &quot;A&quot; : &quot;woot&quot;,
+    &quot;B&quot; : &quot;1337&quot;
+  }
+}
+</code></pre>
 <p>在上面的例子中你可以看到每个 key 都指向了另一个 map，其中包含着 A 和 B 两个 key。在这里，我们将最上面那层键值对称为<strong>行</strong>。并且在 HBase / BigTable 的术语表中，A 和 B 的映射称之为<strong>列族</strong>。</p>
 <p>一个表的列族在表创建的时候就会被创建好，而且后续修改很困难，添加一个新列族的开销同样也很大，所以在创建表的时候应当将后续会用到的所有列族创建好。</p>
 <p>好在一个列族可以有任意数量的列。称之为为列限定符（qualifier）或者标签（label）。</p>
 <p>下面是我们上面 JSON 例子的子集，这次加入了 qualifier 的维度：</p>
-<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  // ...</span><br><span class="line">  "aaaaa" : &#123;</span><br><span class="line">    "A" : &#123;</span><br><span class="line">      "foo" : "y",</span><br><span class="line">      "bar" : "d"</span><br><span class="line">    &#125;,</span><br><span class="line">    "B" : &#123;</span><br><span class="line">      "" : "w"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  "aaaab" : &#123;</span><br><span class="line">    "A" : &#123;</span><br><span class="line">      "foo" : "world",</span><br><span class="line">      "bar" : "domination"</span><br><span class="line">    &#125;,</span><br><span class="line">    "B" : &#123;</span><br><span class="line">      "" : "ocean"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-json">{
+  // ...
+  &quot;aaaaa&quot; : {
+    &quot;A&quot; : {
+      &quot;foo&quot; : &quot;y&quot;,
+      &quot;bar&quot; : &quot;d&quot;
+    },
+    &quot;B&quot; : {
+      &quot;&quot; : &quot;w&quot;
+    }
+  },
+  &quot;aaaab&quot; : {
+    &quot;A&quot; : {
+      &quot;foo&quot; : &quot;world&quot;,
+      &quot;bar&quot; : &quot;domination&quot;
+    },
+    &quot;B&quot; : {
+      &quot;&quot; : &quot;ocean&quot;
+    }
+  },
+  // ...
+}
+</code></pre>
 <p>注意在上面的两行数据中，A 列族有两列：foo 和 bar，B 列族只有一列，而且 qualifier 是一个空字符串。</p>
 <p>当访问 HBase / BigTable 中的数据时，你需要提供完整的列名：<code>&lt;family&gt;:&lt;qualifier&gt;</code>。举个例子，上面总共有三列，分别是：<code>A:foo</code>，<code>A:bar</code> 和 <code>B:</code>。</p>
 <p>列族虽然基本固定不变，但是列不是，来看下面的例子：</p>
-<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  // ...</span><br><span class="line">  "zzzzz" : &#123;</span><br><span class="line">    "A" : &#123;</span><br><span class="line">      "catch_phrase" : "woot",</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-json">{
+  // ...
+  &quot;zzzzz&quot; : {
+    &quot;A&quot; : {
+      &quot;catch_phrase&quot; : &quot;woot&quot;,
+    }
+  }
+}
+</code></pre>
 <p>在这个例子中，<code>zzzzz</code> 行有一个列 A:catch_phrase。因为每一行可以有任意数量的列，所以没有内置方法可以从所有行中的所有列中查询出一个列表。为了获取到那些信息，你需要做全表扫描。但是你可以查询所有的列族，因为它们是不变的（基本不变）。</p>
 <p>HBase / BigTable 中最后的一个维度是时间。所有数据默认通过时间戳（1970年以来的秒数）来表示版本，或者你也可以指定一个其他的整数。客户端在插入数据的时候可以指定这个时间戳。</p>
 <p>在最新的例子中，我们使用任意的整数来作为版本标识：</p>
-<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  // ...</span><br><span class="line">  "aaaaa" : &#123;</span><br><span class="line">    "A" : &#123;</span><br><span class="line">      "foo" : &#123;</span><br><span class="line">        15 : "y",</span><br><span class="line">        4 : "m"</span><br><span class="line">      &#125;,</span><br><span class="line">      "bar" : &#123;</span><br><span class="line">        15 : "d",</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    "B" : &#123;</span><br><span class="line">      "" : &#123;</span><br><span class="line">        6 : "w"</span><br><span class="line">        3 : "o"</span><br><span class="line">        1 : "w"</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-json">{
+  // ...
+  &quot;aaaaa&quot; : {
+    &quot;A&quot; : {
+      &quot;foo&quot; : {
+        15 : &quot;y&quot;,
+        4 : &quot;m&quot;
+      },
+      &quot;bar&quot; : {
+        15 : &quot;d&quot;,
+      }
+    },
+    &quot;B&quot; : {
+      &quot;&quot; : {
+        6 : &quot;w&quot;
+        3 : &quot;o&quot;
+        1 : &quot;w&quot;
+      }
+    }
+  },
+  // ...
+}
+</code></pre>
 <p>每个列族可以自己指定一个 cell 中的数据可以保留多少个版本（cell 由 rowKey 和列进行标识）。在大多数情况下，应用会直接访问一个 cell 中的数据，而不会指定一个时间戳（版本），HBase / BigTable 会直接返回最近版本（时间戳最大的那个）的数据，因为它是按照时间倒序来存储数据的。</p>
 <p>如果应用在请求数据的时候指定了一个时间戳，那么 HBase 就会返回时间戳小于或者等于指定时间戳的一个 cell 中的数据。</p>
 <p>如果查询上面例子中的 HBase 表，查询 <code>aaaaa A:foo</code>，就会返回 y，如果带时间戳查询 <code>aaaaa A:foo 10</code>，就会返回 m，如果查询 <code>aaaaa A:foo 2</code>，就会返回 null。</p>
@@ -139,7 +226,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -147,7 +234,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

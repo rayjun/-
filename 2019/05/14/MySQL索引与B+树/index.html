@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -87,7 +86,8 @@
 <p>所以 B+ 树是下面这个样子:</p>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/mysql/B%2B%E6%A0%91.png" alt=""></p>
 <p>对于 B+ 树来说，这两个设计很关键，第一个是为什么要使用双向链表，因为索引需要支持区间查找，如果使用单链表，那就只能支持单向区间查找了，反向的查找就支持不了，比如 ：</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> students <span class="keyword">where</span> age &lt; <span class="number">18</span>;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-sql">select * from students where age &lt; 18;
+</code></pre>
 <p>第二就是为什么 B+ 树是 m 叉，而不是二叉。二叉树的每个节点最多有两个子节点，如果一张数据库表中的数据有百万条，那么按照二叉树的方式来构造索引，二叉树的高度就会过高。这样会带来两个问题：</p>
 <ul>
 <li>树的高度过高就会占据更多的内存，这个与建立索引的初衷相违背</li>
@@ -109,12 +109,14 @@
 <h4>索引的优化</h4>
 <p><strong>索引必须使用在独立的列上</strong></p>
 <p>索引必须单独使用，不能是表达式，也不能是函数的参数:</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> students <span class="keyword">where</span> age + <span class="number">1</span> &gt; <span class="number">19</span>;</span><br></pre></td></tr></table></figure>
-上面的用法就会导致 age 上的索引失效</p>
+<pre><code class="language-sql">select * from students where age + 1 &gt; 19;
+</code></pre>
+<p>上面的用法就会导致 age 上的索引失效</p>
 <p><strong>多列索引</strong></p>
 <p>索引可以多列组合使用：</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> students <span class="keyword">where</span> <span class="keyword">name</span> = <span class="string">'xm'</span> <span class="keyword">and</span> age = <span class="number">18</span>;</span><br></pre></td></tr></table></figure>
-<strong>索引的排列顺序</strong></p>
+<pre><code class="language-sql">select * from students where name = 'xm' and age = 18;
+</code></pre>
+<p><strong>索引的排列顺序</strong></p>
 <p>在使用索引时，需要注意索引列的排列顺序，应当将索引选择性大的列放在前面。比如上面 sql 中的 <strong>name</strong> 和 <strong>age</strong> 列，假设 <code>name = 'xm'</code>  可以区分出查找出 5 条记录，而 <code>age = 18</code> 可以查出 20 条记录，那么 name 索引的选择性就是大于 age 的。</p>
 <p><strong>前缀索引</strong></p>
 <p>对于 <code>BLOB</code> 、<code>TEXT</code> 、<code>VARCHAR</code> 类型的列，必须使用前缀索引，只索引前面特定长度的字符。</p>
@@ -129,7 +131,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -137,7 +139,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

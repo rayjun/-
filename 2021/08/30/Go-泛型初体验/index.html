@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -67,31 +66,87 @@
 <p>泛型有望在 Go1.18 版本中发布。</p>
 <h2>1. 启用泛型</h2>
 <p>泛型的功能虽然添加到 Go.1.17 中了，如果要使用，需要添加一些参数开启，首先需要安装 Go1.17:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ go version                                                                                                                                                                                                                                                                       ~</span><br><span class="line">go version go1.17 darwin/amd64</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go version                                                                                                                                                                                                                                                                       ~
+go version go1.17 darwin/amd64
+</code></pre>
 <p>然后可以在编译 的参数中看到泛型的影子，下面的 -G 参数就是启用泛型所需要的参数：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ go tool compile -h                                                                                                                                                                                                                                                               ~</span><br><span class="line">usage: compile [options] file.go...</span><br><span class="line">  -% int</span><br><span class="line">    	debug non-static initializers</span><br><span class="line">  -+	compiling runtime</span><br><span class="line">  -B	<span class="built_in">disable</span> bounds checking</span><br><span class="line">  -C	<span class="built_in">disable</span> printing of columns <span class="keyword">in</span> error messages</span><br><span class="line">  -D path</span><br><span class="line">    	<span class="built_in">set</span> relative path <span class="keyword">for</span> <span class="built_in">local</span> imports</span><br><span class="line">  -E	debug symbol <span class="built_in">export</span></span><br><span class="line">  -G	accept generic code</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go tool compile -h                                                                                                                                                                                                                                                               ~
+usage: compile [options] file.go...
+  -% int
+    	debug non-static initializers
+  -+	compiling runtime
+  -B	disable bounds checking
+  -C	disable printing of columns in error messages
+  -D path
+    	set relative path for local imports
+  -E	debug symbol export
+  -G	accept generic code
+</code></pre>
 <p>看一个例子：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Addable <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="keyword">type</span> <span class="keyword">int</span>, <span class="keyword">int8</span>, <span class="keyword">int16</span>, <span class="keyword">int32</span>, <span class="keyword">int64</span>,</span><br><span class="line">		<span class="keyword">uint</span>, <span class="keyword">uint8</span>, <span class="keyword">uint16</span>, <span class="keyword">uint32</span>, <span class="keyword">uint64</span>, <span class="keyword">uintptr</span>,</span><br><span class="line">		<span class="keyword">float32</span>, <span class="keyword">float64</span>, <span class="keyword">complex64</span>, <span class="keyword">complex128</span>,</span><br><span class="line">		<span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">add</span>[<span class="title">T</span> <span class="title">Addable</span>]<span class="params">(a, b T)</span> <span class="title">T</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    fmt.Println(add(<span class="number">1</span>,<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">    fmt.Println(add(<span class="string">"foo"</span>,<span class="string">"bar"</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+)
+
+type Addable interface {
+	type int, int8, int16, int32, int64,
+		uint, uint8, uint16, uint32, uint64, uintptr,
+		float32, float64, complex64, complex128,
+		string
+}
+
+func add[T Addable](a, b T) T {
+    return a + b
+}
+
+func main() {
+    fmt.Println(add(1,2))
+
+    fmt.Println(add(&quot;foo&quot;,&quot;bar&quot;))
+}
+</code></pre>
 <p>如果直接运行上面的代码，会报下面的错误，这也说明 Go1.17 默认是不支持泛型的：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ go run main.go                                                                                                                                                                                                                       </span><br><span class="line"><span class="comment"># command-line-arguments</span></span><br><span class="line">./main.go:8:2: syntax error: unexpected <span class="built_in">type</span>, expecting method or interface name</span><br><span class="line">./main.go:14:6: missing <span class="keyword">function</span> body</span><br><span class="line">./main.go:14:9: syntax error: unexpected [, expecting (</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go run main.go                                                                                                                                                                                                                       
+# command-line-arguments
+./main.go:8:2: syntax error: unexpected type, expecting method or interface name
+./main.go:14:6: missing function body
+./main.go:14:9: syntax error: unexpected [, expecting (
+</code></pre>
 <p>需要加上下面的参数：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ go run -gcflags=-G=3 main.go                                                                                                                                                                                                     ↵</span><br><span class="line">3</span><br><span class="line">foobar</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go run -gcflags=-G=3 main.go                                                                                                                                                                                                     ↵
+3
+foobar
+</code></pre>
 <p>第一个泛型程序成功运行了。</p>
 <h2>2. 类型参数和约束</h2>
 <p>在 Go 泛型中，增加了两个新概念，一个是 type parameters，下面代码中的 T 就是类型参数，用来表示泛型：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">add</span>[<span class="title">T</span> <span class="title">Addable</span>]<span class="params">(a, b T)</span> <span class="title">T</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func add[T Addable](a, b T) T {
+    return a + b
+}
+</code></pre>
 <p>可以说 type parameters 在 Go 中就是泛型的意思。</p>
 <p>再看一下下面这段代码，这里泛型的类型是 any，上面的代码则是自定义的 Addable。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">print</span>[<span class="title">T</span> <span class="title">any</span>]<span class="params">(a T)</span></span> &#123;</span><br><span class="line">     fmt.Printf(<span class="string">"%v"</span>, a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func print[T any](a T) {
+     fmt.Printf(&quot;%v&quot;, a)
+}
+</code></pre>
 <p>上面的 add 函数是有约束的，只能使用 Addable 中定义的类型，如果我们把 Addable 中的 string 去掉，代码就会报下面的错误：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ go run -gcflags=-G=3 main.go</span><br><span class="line"><span class="comment"># command-line-arguments</span></span><br><span class="line">./main.go:24:20: string does not satisfy Addable (string not found <span class="keyword">in</span> int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, uintptr, float32, float64, complex64, complex128)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go run -gcflags=-G=3 main.go
+# command-line-arguments
+./main.go:24:20: string does not satisfy Addable (string not found in int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, uintptr, float32, float64, complex64, complex128)
+</code></pre>
 <p>而 print 函数则可以接受任何类型的参数。</p>
 <p>这就是 Go 中泛型最重要的两个概念：<strong>类型参数</strong> 和 <strong>约束</strong>。</p>
 <h2>3. 类型推断</h2>
 <p>正常使用泛型的时候，其实要使用下面这种方式来调用的，以 add 方法为例：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add[<span class="keyword">int</span>](<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">add[<span class="keyword">string</span>](<span class="string">"foo"</span>,<span class="string">"bar"</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">add[int](1,2)
+add[string](&quot;foo&quot;,&quot;bar&quot;)
+</code></pre>
 <p>但是按照下面的方式写代码也是合法的：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">add(<span class="string">"foo"</span>,<span class="string">"bar"</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">add(1,2)
+add(&quot;foo&quot;,&quot;bar&quot;)
+</code></pre>
 <p>可以把泛型参数省略调，这不部分的工作其实是 Go 编译器来完成的，编译器会根据传入的实际类型来推断，而不用每次写代码的时候都指明泛型的类型。</p>
 <p>类型推断可以让代码简洁不少。</p>
 <h2>4. 小结</h2>
@@ -106,7 +161,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -114,7 +169,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -69,34 +68,77 @@
 <h2>gomobile 安装</h2>
 <p>gomobile 可以把 go 代码编译成<strong>移动端应用</strong>或者**移动端SDK，**本文演示的是编译成 SDK。</p>
 <p>安装 gomobile：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> get golang.org/x/mobile/cmd/gomobile</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">go get golang.org/x/mobile/cmd/gomobile
+</code></pre>
 <p>安装不上的可以设置国内的 Go 代理：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go env -w GOPROXY=https://goproxy.cn,direct</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">go env -w GOPROXY=https://goproxy.cn,direct
+</code></pre>
 <p>go mobile 支持 Go Modules，所以不需要在 GOPATH 创建项目。创建了一个基于 Go Modules 的 hello 项目，其中只有一个文件 hello.go，具体代码如下：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> hello</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Hello</span><span class="params">(name <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> fmt.Sprintf(<span class="string">"Hello %s!"</span>, name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">package hello
+
+import &quot;fmt&quot;
+
+func Hello(name string) string {
+	return fmt.Sprintf(&quot;Hello %s!&quot;, name)
+}
+</code></pre>
 <h2>Android 平台</h2>
 <p>安装 Android Studio，下载最新版本就可以。</p>
 <p>通过 Android Studio 的 SDK manager 下载 NDK 和 CMake，选中右下角的 Show Package Details 可以下载特定版本。</p>
 <p>gomobile 对 NDK 的兼容性不好，我测试了 NDK 22 及以上版本都会失败，本文使用的 NDK 版本为 <code>21.4.7075529</code>，CMake 下载最新版本就可以。</p>
 <p><img src="0.png" alt=""></p>
 <p>然后配置环境变量：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> ANDROID_HOME=~/Library/Android/sdk</span><br><span class="line"><span class="built_in">export</span> ANDROID_NDK_HOME=~/Library/Android/sdk/ndk/21.4.7075529</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">export ANDROID_HOME=~/Library/Android/sdk
+export ANDROID_NDK_HOME=~/Library/Android/sdk/ndk/21.4.7075529
+</code></pre>
 <p>然后在 hello 项目的上一级目录执行以下命令:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># hello 是 go 项目的目录</span></span><br><span class="line">$ gomobile <span class="built_in">bind</span> -target=android hello</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash"># hello 是 go 项目的目录
+$ gomobile bind -target=android hello 
+</code></pre>
 <p>把 Go 代码编译成 SDK 使用的是 bind 命令。上面命名执行完成后，就会在产产生两个文件:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hello.aar</span><br><span class="line">hello-sources.jar</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">hello.aar
+hello-sources.jar
+</code></pre>
 <p>然后直接吧 hello.aar 导入 到 android studio 中使用，就可以像使用普通 Java 包一样来调用 hello 方法，这一步就不再演示了，调用代码如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hello.Hello;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 省略无关代码</span></span><br><span class="line">        fab.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">                <span class="comment">// 在这里调用 hello 方法</span></span><br><span class="line">                Snackbar.make(view, Hello.hello(<span class="string">"ray"</span>), Snackbar.LENGTH_LONG)</span><br><span class="line">                        .setAction(<span class="string">"Action"</span>, <span class="keyword">null</span>).show();</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">import hello.Hello;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // 省略无关代码
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 在这里调用 hello 方法
+                Snackbar.make(view, Hello.hello(&quot;ray&quot;), Snackbar.LENGTH_LONG)
+                        .setAction(&quot;Action&quot;, null).show();
+
+            }
+        });
+    }
+}
+</code></pre>
 <h2>IOS 平台</h2>
 <p>编译到 IOS 平台的需要安装 XCode 和配套的 Command Line Tools，整个流程会比 Android 平台简单不少。</p>
 <p>同样在项目的上级目录执行下面的命令：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># hello 是 go 项目的目录</span></span><br><span class="line">$ gomobile <span class="built_in">bind</span> -target=ios hello</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash"># hello 是 go 项目的目录
+$ gomobile bind -target=ios hello 
+</code></pre>
 <p>如果出现这个错误：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gomobile: -target=ios requires XCode</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">gomobile: -target=ios requires XCode
+</code></pre>
 <p>到 xcode 中配置一下 Command Line Tools：</p>
 <p><img src="1.png" alt=""></p>
 <p>上面的命令执行成功之后，就会在本地生成一个 Hello.FrameWork 目录，这个就是 IOS 平台上的依赖库。可以直接把整个目录拷贝到 IOS 的目录底下，然后添加到项目的依赖中，就可以在代码中使用了：</p>
-<p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ContentView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="comment">// 在这里调用 hello 方法</span></span><br><span class="line">        <span class="type">Text</span>(<span class="type">HelloHello</span>(<span class="string">"ray"</span>))</span><br><span class="line">            .padding()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-swift">struct ContentView: View {
+    var body: some View {
+        // 在这里调用 hello 方法
+        Text(HelloHello(&quot;ray&quot;))
+            .padding()
+    }
+}
+</code></pre>
 <h2>小结</h2>
 <p>到这里，Go 代码在 Android 和 IOS 上都跑起来了，这个工具本质上还是对 Go 命令的封装。后续我会再写一篇文章来详细介绍 gomobile 的实现。</p>
 <p>文 / Rayjun</p>
@@ -107,7 +149,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -115,7 +157,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

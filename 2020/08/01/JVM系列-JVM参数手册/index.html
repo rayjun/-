@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -191,9 +190,11 @@
 </table>
 <h2>GC 参数</h2>
 <p>在 JDK9 以后，日志相关的参数的都统一到了 <code>-Xlog</code> 中，注意，不仅仅 gc 的日志，是所有的日志，对于 -Xlog，配置方法如下：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xlog[:[selector][:output[:[decorators][:output-options]]]]</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">-Xlog[:[selector][:output[:[decorators][:output-options]]]]
+</code></pre>
 <p>其中 selector 是 tag 和日志 level 的组合体，tag 就是日志类别，gc 只是其中的一种 tag，如果要输出 GC 日志，使用方式如下：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xlog:gc</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">-Xlog:gc
+</code></pre>
 <p>level 的取值有：off，trace，debug，info，warning，error。</p>
 <p>output 就是日志的输出形式，可以使用的方式有:</p>
 <ul>
@@ -275,7 +276,8 @@
 </table>
 <p>在默认情况下，会使用 uptime，level 以及 tags 等装饰器，也可以使用 none 来关闭所有的装饰器。</p>
 <p>假如说现在要获取日志等级为info，需要打印机器名称、日志等级，JVM 的运行时间，所属 tag，并且要把这些日志保存为 gc.log 文件，配置如下：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xlog:gc*=info:file=gc.log:hostname,level,uptime,tags</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">-Xlog:gc*=info:file=gc.log:hostname,level,uptime,tags
+</code></pre>
 <p>常用的 GC 日志参数如下：</p>
 <h3>GC日志参数</h3>
 <table>
@@ -434,7 +436,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -442,7 +444,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -69,19 +68,77 @@
 <h2>1. 做一个基准测试</h2>
 <p>在开始分析每种拼接方法的优劣之前，先跑一个简单的基准测试，来看一下每种字符串拼接方法的性能。</p>
 <p>Go 中提供了基准测试框架，测试文件需要以 test 结尾，然后每个测试方法以 Benchmark 开头，这次对加号、fmt.SPrintf、和 strings.Builder 三种方式进行基准测试，代码如下：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkPlus</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">	str := <span class="string">"this is just a string"</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; b.N; i++ &#123;</span><br><span class="line">		stringPlus(str)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkSPrintf</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">	str := <span class="string">"this is just a string"</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; b.N; i++ &#123;</span><br><span class="line">		stringSprintf(str)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkStringBuilder</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">	str := <span class="string">"this is just a string"</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; b.N; i++ &#123;</span><br><span class="line">		stringBuilder(str)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stringPlus</span><span class="params">(str <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	s := <span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++ &#123;</span><br><span class="line">		s += str</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stringSprintf</span><span class="params">(str <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	s := <span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> i :=<span class="number">0</span>; i &lt; <span class="number">10000</span>; i++ &#123;</span><br><span class="line">		s += str</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stringBuilder</span><span class="params">(str <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	builder := strings.Builder&#123;&#125;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100000</span>; i++ &#123;</span><br><span class="line">		builder.WriteString(str)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> builder.String()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func BenchmarkPlus(b *testing.B) {
+	str := &quot;this is just a string&quot;
+
+	for i := 0; i &lt; b.N; i++ {
+		stringPlus(str)
+	}
+}
+
+func BenchmarkSPrintf(b *testing.B) {
+	str := &quot;this is just a string&quot;
+	for i := 0; i &lt; b.N; i++ {
+		stringSprintf(str)
+	}
+}
+
+func BenchmarkStringBuilder(b *testing.B) {
+	str := &quot;this is just a string&quot;
+	for i := 0; i &lt; b.N; i++ {
+		stringBuilder(str)
+	}
+}
+
+func stringPlus(str string) string {
+	s := &quot;&quot;
+	for i := 0; i &lt; 10000; i++ {
+		s += str
+	}
+	return s
+}
+
+func stringSprintf(str string) string {
+	s := &quot;&quot;
+	for i :=0; i &lt; 10000; i++ {
+		s += str
+	}
+	return s
+}
+
+func stringBuilder(str string) string {
+	builder := strings.Builder{}
+	for i := 0; i &lt; 100000; i++ {
+		builder.WriteString(str)
+	}
+	return builder.String()
+}
+</code></pre>
 <p>基准测试需要使用 <code>*testing.B</code> ，其中 b.N 不是一个固定的值，这个值的大小由框架自己来决定。</p>
 <p>在这里，我们分别测试用不同的方式拼接一个固定的字符串 10000 次，然后统计平均的代码执行时间，内存消耗情况。使用如下的命令运行基准测试：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> test -bench=. -benchmem</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">go test -bench=. -benchmem
+</code></pre>
 <p>-bench=. 参数运行当前包中所有基准测试，-benchmem 表示对测试的内存使用情况进行统计。运行上面的命令之后，输出结果如下：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">goos: darwin</span><br><span class="line">goarch: amd64</span><br><span class="line">pkg: zxin.com/zx-demo/string_benchmark</span><br><span class="line">BenchmarkPlus-12                      12          96586447 ns/op        1086401355 B/op    10057 allocs/op</span><br><span class="line">BenchmarkSPrintf-12                   12          97037216 ns/op        1086402698 B/op    10065 allocs/op</span><br><span class="line">BenchmarkStringBuilder-12            655           1713353 ns/op        11671537 B/op         35 allocs/op</span><br><span class="line">PASS</span><br><span class="line">ok      zxin.com/zx-demo/string_benchmark       6.186s</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">goos: darwin
+goarch: amd64
+pkg: zxin.com/zx-demo/string_benchmark
+BenchmarkPlus-12                      12          96586447 ns/op        1086401355 B/op    10057 allocs/op
+BenchmarkSPrintf-12                   12          97037216 ns/op        1086402698 B/op    10065 allocs/op
+BenchmarkStringBuilder-12            655           1713353 ns/op        11671537 B/op         35 allocs/op
+PASS
+ok      zxin.com/zx-demo/string_benchmark       6.186s
+</code></pre>
 <p>第一列表示基准测试的方法名称和所用的 GOMAXPROCS 的值，第二列表示这次测试循环的次数，第三列表示平均每次测试所用的时间，单位为纳秒，第四列表示平均每次运行所分配的内存，第五列表示每次运行所分配内存的次数。</p>
 <p>通过上面的测试，可以发现 strings.Builder 的表现是最好的，比直接使用加号来拼接字符串的内存消耗要小 100 倍。</p>
 <h2>2. 为什么性能的差异这么大</h2>
 <p>通过上面的基准测试可以发现，使用不同的方式来拼接字符串，性能差异很大。</p>
 <p>Go 的字符串是不可变的，如果使用加号的方式来拼接字符串，那么每次拼接都需要重新分配内存。而 strings.Builder 会对内存预分配，在字符串不断写入的过程中，会自动扩容长度。</p>
 <p>strings.Builder 的底层存储使用的是 []byte，初始的长度分配是 32，然后每次扩容时都会翻一倍。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Builder <span class="keyword">struct</span> &#123;</span><br><span class="line">	addr *Builder</span><br><span class="line">	buf  []<span class="keyword">byte</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type Builder struct {
+	addr *Builder
+	buf  []byte
+}
+</code></pre>
 <p>当长度到大 2048 时，再扩容就不会直接翻倍，而是每次增加 640 的倍数，第一次增加 640，第二次增加 1280，以此类推。</p>
 <p>在大量拼接字符串的时候 strings.Builder 会比直接拼接的效率更高。</p>
 <p>bytes.Buffer 是另一个类似的库，与 strings.Builder 性能相当，但如果是对于纯拼接字符串的场景，还是推荐使用 strings.Builder。</p>
@@ -90,9 +147,29 @@
 <p>如果涉及到一些字符串的格式化，那么使用 fmt.Sprintf 就更合适了。</p>
 <p>那么在大量拼接字符串的场景，直接使用 strings.Builder 就完事了么，其实还可以继续优化一下。在使用 strings.Builder 时，如果字符串在不断的增加，底层的存储还是要不断的扩容。如果可以预估字符串的长度，就可以提前分配好内存。减少扩容的次数。</p>
 <p>增加一个测试用例:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">func BenchmarkStringBuilderPre(b *testing.B) &#123;</span><br><span class="line">	str := <span class="string">"this is just a string"</span></span><br><span class="line">	<span class="keyword">for</span> i := 0; i &lt; b.N; i++ &#123;</span><br><span class="line">		stringBuilderPre(str)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func stringBuilderPre(str string) string &#123;</span><br><span class="line">	builder := strings.Builder&#123;&#125;</span><br><span class="line">	builder.Grow(1000000)</span><br><span class="line">	<span class="keyword">for</span> i := 0; i &lt; 100000; i++ &#123;</span><br><span class="line">		builder.WriteString(str)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">return</span> builder.String()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">func BenchmarkStringBuilderPre(b *testing.B) {
+	str := &quot;this is just a string&quot;
+	for i := 0; i &lt; b.N; i++ {
+		stringBuilderPre(str)
+	}
+}
+
+func stringBuilderPre(str string) string {
+	builder := strings.Builder{}
+	builder.Grow(1000000)
+	for i := 0; i &lt; 100000; i++ {
+		builder.WriteString(str)
+	}
+	return builder.String()
+}
+</code></pre>
 <p>下面是基准测试的结果：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pkg: zxin.com/zx-demo/string_benchmark</span><br><span class="line">BenchmarkPlus-12                              12          96676019 ns/op        1086401676 B/op    10057 allocs/op</span><br><span class="line">BenchmarkSPrintf-12                           12          96693407 ns/op        1086402022 B/op    10058 allocs/op</span><br><span class="line">BenchmarkStringBuilder-12                    607           1822282 ns/op        11671543 B/op         35 allocs/op</span><br><span class="line">BenchmarkStringBuilderPre-12                 860           1393689 ns/op         8257539 B/op          5 allocs/op</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">pkg: zxin.com/zx-demo/string_benchmark
+BenchmarkPlus-12                              12          96676019 ns/op        1086401676 B/op    10057 allocs/op
+BenchmarkSPrintf-12                           12          96693407 ns/op        1086402022 B/op    10058 allocs/op
+BenchmarkStringBuilder-12                    607           1822282 ns/op        11671543 B/op         35 allocs/op
+BenchmarkStringBuilderPre-12                 860           1393689 ns/op         8257539 B/op          5 allocs/op
+</code></pre>
 <p>可以看到，在提前指定长度的情况下，性能又提升了不少，内存的占用量和分配次数下降了不少，运行时间也有所提升。</p>
 <p>文 / Rayjun</p>
 
@@ -102,7 +179,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -110,7 +187,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -67,44 +66,128 @@
 <h2>1. http 的客户端</h2>
 <h3>1.1 发送普通请求</h3>
 <p>在 Go 语言中发送请求很简单，如果不需要额外的配置，可以直接使用 http 包封装的 http Client 发送请求，比如发送 GET 请求：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">resp, _ := http.Get(<span class="string">"https://golang.org"</span>)</span><br><span class="line"><span class="keyword">defer</span> resp.Body.Close()</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">resp, _ := http.Get(&quot;https://golang.org&quot;)
+defer resp.Body.Close()
+</code></pre>
 <p>发送 POST ，并携带 JSON 数据的请求：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">data := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>)</span><br><span class="line">dataJson, _ := json.Marshal(data)</span><br><span class="line">reader := bytes.NewBuffer(dataJson)</span><br><span class="line"></span><br><span class="line">resp, _ := http.Post(<span class="string">"https://golang.org"</span>, <span class="string">"application/json;charset=utf-8"</span>, reader)</span><br><span class="line"><span class="keyword">defer</span> resp.Body.Close()</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">data := make(map[string]string)
+dataJson, _ := json.Marshal(data)
+reader := bytes.NewBuffer(dataJson)
+
+resp, _ := http.Post(&quot;https://golang.org&quot;, &quot;application/json;charset=utf-8&quot;, reader)
+defer resp.Body.Close()
+</code></pre>
 <p>发送 POST 表单请求：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">resp, _ := http.PostForm(<span class="string">"https://golang.org"</span>, url.Values&#123;<span class="string">"username"</span>:&#123;<span class="string">"rayjun"</span>&#125;, <span class="string">"password"</span>:&#123;<span class="string">"password"</span>&#125;&#125;)</span><br><span class="line"><span class="keyword">defer</span> resp.Body.Close()</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">resp, _ := http.PostForm(&quot;https://golang.org&quot;, url.Values{&quot;username&quot;:{&quot;rayjun&quot;}, &quot;password&quot;:{&quot;password&quot;}})
+defer resp.Body.Close()
+</code></pre>
 <p><strong>在每个请求发完之后，需要手动关闭响应。</strong></p>
 <h3>1.2 客户端配置</h3>
 <p>在实际使用的过程中，我们通常不会直接上面的方法，而是会自己做一些 Client 的配置，比如调整超时时间：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">client := &amp;http.Client&#123;</span><br><span class="line">	Timeout: <span class="number">5</span> * time.Second,</span><br><span class="line">&#125;</span><br><span class="line">resp, _ := client.Get(<span class="string">"https://golang.org"</span>)</span><br><span class="line"><span class="keyword">defer</span> resp.Body.Close()</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">client := &amp;http.Client{
+	Timeout: 5 * time.Second,
+}
+resp, _ := client.Get(&quot;https://golang.org&quot;)
+defer resp.Body.Close()
+</code></pre>
 <p>另外在很多时候，我们需要使用 GET 和 POST 之外的 http 方法，那就需要下面这样的配置：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">client := &amp;http.Client&#123;</span><br><span class="line">	Timeout: <span class="number">5</span> * time.Second,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">req, _ := http.NewRequest(<span class="string">"PUT"</span>, <span class="string">"https://golang.org"</span>, <span class="literal">nil</span>)</span><br><span class="line">resp, _ := client.Do(req)</span><br><span class="line"><span class="keyword">defer</span> resp.Body.Close()</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">client := &amp;http.Client{
+	Timeout: 5 * time.Second,
+}
+
+req, _ := http.NewRequest(&quot;PUT&quot;, &quot;https://golang.org&quot;, nil)
+resp, _ := client.Do(req)
+defer resp.Body.Close()
+</code></pre>
 <p>比如还需要在请求的 Header 中增加一些字段：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">client := &amp;http.Client&#123;</span><br><span class="line">	Timeout: <span class="number">5</span> * time.Second,</span><br><span class="line">&#125;</span><br><span class="line">req, _ := http.NewRequest(<span class="string">"GET"</span>, <span class="string">"https://golang.org"</span>, <span class="literal">nil</span>)</span><br><span class="line">req.Header.Add(<span class="string">"User-Id"</span>, <span class="string">"userid123456"</span>)</span><br><span class="line">resp, _ := client.Do(req)</span><br><span class="line"><span class="keyword">defer</span> resp.Body.Close()</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">client := &amp;http.Client{
+	Timeout: 5 * time.Second,
+}
+req, _ := http.NewRequest(&quot;GET&quot;, &quot;https://golang.org&quot;, nil)
+req.Header.Add(&quot;User-Id&quot;, &quot;userid123456&quot;)
+resp, _ := client.Do(req)
+defer resp.Body.Close()
+</code></pre>
 <p>或者更进一步，我们需要自定义<strong>传输层</strong>的一些配置：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">tr := &amp;http.Transport&#123;</span><br><span class="line">	MaxIdleConns:       <span class="number">10</span>,</span><br><span class="line">	IdleConnTimeout:    <span class="number">30</span> * time.Second,</span><br><span class="line">	DisableCompression: <span class="literal">true</span>,</span><br><span class="line">&#125;</span><br><span class="line">client := &amp;http.Client&#123;Transport: tr&#125;</span><br><span class="line">resp, _ := client.Get(<span class="string">"https://golang.org"</span>)</span><br><span class="line"><span class="keyword">defer</span> resp.Body.Close()</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">tr := &amp;http.Transport{
+	MaxIdleConns:       10,
+	IdleConnTimeout:    30 * time.Second,
+	DisableCompression: true,
+}
+client := &amp;http.Client{Transport: tr}
+resp, _ := client.Get(&quot;https://golang.org&quot;)
+defer resp.Body.Close()
+</code></pre>
 <p>http 包中发送请求，提供了不同层次的配置，满足不同场景的使用。</p>
 <h2>2. http 的服务端</h2>
 <p>除了客户端，使用 http 包来创建 http 服务也很方便。</p>
 <h3>2.1 一行代码创建 http 服务</h3>
 <p>创建一个 http 服务，在 Go 代码中，只需要一行代码：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	http.ListenAndServe(<span class="string">":8080"</span>, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func main() {
+	http.ListenAndServe(&quot;:8080&quot;, nil)
+}
+</code></pre>
 <p>在 main 方法中，写下上面那行代码，然后运行 main 方法，端口号为 8080 的 http 服务就运行起来了， 但目前还处理不了任何请求。</p>
 <h3>2.2 添加请求路径</h3>
 <p>在上面代码的基础上，需要添加一个路径，这样服务才可以开始处理请求：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  http.Handle(<span class="string">"/index"</span>, &amp;CustomerHandler&#123;&#125;)</span><br><span class="line">	http.ListenAndServe(<span class="string">":8080"</span>, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> CustomerHandler <span class="keyword">struct</span> &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CustomerHandler)</span> <span class="title">ServeHTTP</span><span class="params">(writer http.ResponseWriter, request *http.Request)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"implement http server by self"</span>)</span><br><span class="line">	writer.Write([]<span class="keyword">byte</span>(<span class="string">"server echo"</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func main() {
+  http.Handle(&quot;/index&quot;, &amp;CustomerHandler{})
+	http.ListenAndServe(&quot;:8080&quot;, nil)
+}
+
+type CustomerHandler struct {
+
+}
+
+func (c *CustomerHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	fmt.Println(&quot;implement http server by self&quot;)
+	writer.Write([]byte(&quot;server echo&quot;))
+}
+</code></pre>
 <p>添加了 <code>/index</code> 路径，在这种方式下，需要为每一个请求都定义一个 Handler，然后 Handler 需要实现 ServeHttp 方法。</p>
 <p>Handler 是一个请求处理器，我们如果使用这种方式，就需要为每一个请求的 url 实现一个 Handler，这样实现很繁琐。</p>
 <p>但我们还有另一个选择，就是使用 HandlerFunc，添加另外一个路径：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	http.HandleFunc(<span class="string">"/index"</span>, <span class="function"><span class="keyword">func</span><span class="params">(writer http.ResponseWriter, request *http.Request)</span></span> &#123;</span><br><span class="line">		writer.Write([]<span class="keyword">byte</span>(<span class="string">"HandleFunc implement"</span>))</span><br><span class="line">	&#125;)</span><br><span class="line">	http.ListenAndServe(<span class="string">":8080"</span>, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func main() {
+	http.HandleFunc(&quot;/index&quot;, func(writer http.ResponseWriter, request *http.Request) {
+		writer.Write([]byte(&quot;HandleFunc implement&quot;))
+	})
+	http.ListenAndServe(&quot;:8080&quot;, nil)
+}
+</code></pre>
 <p>使用这种方式很简洁，值需要实现 HandlerFunc 类型的一个匿名方法就可以了，HandlerFunc 是一个适配器，可以让我们把一个与 ServeHTTP 签名相同的函数作为一个处理器。</p>
 <p>Handler 和 HandlerFunc 都是通过 DefaultServeMux 来实现的。 DefaultServeMux 才是上面服务的核心。</p>
 <p>在上面的代码，http.ListenAndServe 的第二个参数传入的是 nil，通常情况下，这个参数都是 nil，跟进代码，发现这个参数为 nil 的时候，就是使用 DefaultServeMux 来作为服务端的实现：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// server.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(sh serverHandler)</span> <span class="title">ServeHTTP</span><span class="params">(rw ResponseWriter, req *Request)</span></span> &#123;</span><br><span class="line">	handler := sh.srv.Handler</span><br><span class="line">	<span class="keyword">if</span> handler == <span class="literal">nil</span> &#123;</span><br><span class="line">		handler = DefaultServeMux</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> req.RequestURI == <span class="string">"*"</span> &amp;&amp; req.Method == <span class="string">"OPTIONS"</span> &#123;</span><br><span class="line">		handler = globalOptionsHandler&#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	handler.ServeHTTP(rw, req)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">// server.go
+func (sh serverHandler) ServeHTTP(rw ResponseWriter, req *Request) {
+	handler := sh.srv.Handler
+	if handler == nil {
+		handler = DefaultServeMux
+	}
+	if req.RequestURI == &quot;*&quot; &amp;&amp; req.Method == &quot;OPTIONS&quot; {
+		handler = globalOptionsHandler{}
+	}
+	handler.ServeHTTP(rw, req)
+}
+</code></pre>
 <p>DefaultServeMux 的类型是 ServeMux，这是 Go 语言原生包中 http 服务端的默认实现。ServeMux 同样实现了ServeHttp 这个方法。</p>
 <p>ServeHttp 方法才是整个 http 服务的核心，只要需要处理请求，就必须实现这个方法。Handler 和 HandlerFunc 只是 Go 语言提供的两种实现。</p>
 <h2>3. http 的反向代理</h2>
 <p>反向代理在开发 Web 应用，特别是开发网关类应用的时候会经常用到， Go 也提供了实现，基本上开箱即用。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	http.HandleFunc(<span class="string">"/formawd"</span>, <span class="function"><span class="keyword">func</span><span class="params">(writer http.ResponseWriter, request *http.Request)</span></span> &#123;</span><br><span class="line">		director := <span class="function"><span class="keyword">func</span><span class="params">(req *http.Request)</span></span> &#123;</span><br><span class="line">			req.URL.Scheme = <span class="string">"https"</span></span><br><span class="line">			req.URL.Host = <span class="string">"golang.org"</span></span><br><span class="line">			req.URL.Path = <span class="string">"upload"</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		proxy := &amp;httputil.ReverseProxy&#123;Director: director&#125;</span><br><span class="line">		proxy.ServeHTTP(writer, request)</span><br><span class="line">	&#125;)</span><br><span class="line">	</span><br><span class="line">	http.ListenAndServe(<span class="string">":8080"</span>, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func main() {
+	http.HandleFunc(&quot;/formawd&quot;, func(writer http.ResponseWriter, request *http.Request) {
+		director := func(req *http.Request) {
+			req.URL.Scheme = &quot;https&quot;
+			req.URL.Host = &quot;golang.org&quot;
+			req.URL.Path = &quot;upload&quot;
+		}
+
+		proxy := &amp;httputil.ReverseProxy{Director: director}
+		proxy.ServeHTTP(writer, request)
+	})
+	
+	http.ListenAndServe(&quot;:8080&quot;, nil)
+}
+</code></pre>
 <p>上面的代码会把所有的请求都转发到一个地方，当然也可以通过配置，将请求转发到不同的地方。</p>
 <h2>4. 小结</h2>
 <p>Go 语言原生的包就自带了 http 包，这个包提供 http 编程所需要的基础能力，开箱即用，不需要额外的依赖。在实际项目中使用，做个简单的封装即可。而且还自带反向代理的能力，可以很方便的写出一个 API 网关。</p>
@@ -116,7 +199,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -124,7 +207,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

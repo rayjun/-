@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -77,9 +76,27 @@
 </blockquote>
 <h3>fail-fast 具体实现</h3>
 <p>看如下的代码：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;Integer&gt; integers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">integers.add(<span class="number">1</span>);</span><br><span class="line">integers.add(<span class="number">2</span>);</span><br><span class="line">integers.add(<span class="number">3</span>);</span><br><span class="line">Iterator&lt;Integer&gt; itr = integers.iterator();</span><br><span class="line"><span class="keyword">while</span> (itr.hasNext()) &#123;</span><br><span class="line">    Integer a = itr.next();</span><br><span class="line">    integers.remove(a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">ArrayList&lt;Integer&gt; integers = new ArrayList&lt;&gt;();
+integers.add(1);
+integers.add(2);
+integers.add(3);
+Iterator&lt;Integer&gt; itr = integers.iterator();
+while (itr.hasNext()) {
+    Integer a = itr.next();
+    integers.remove(a);
+}
+</code></pre>
 <p>上面使用 ArrayList 的代码会报 ConcurrentModificationException 异常。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; integers = <span class="keyword">new</span> CopyOnWriteArrayList&lt;&gt;();</span><br><span class="line">integers.add(<span class="number">1</span>);</span><br><span class="line">integers.add(<span class="number">2</span>);</span><br><span class="line">integers.add(<span class="number">3</span>);</span><br><span class="line">Iterator&lt;Integer&gt; itr = integers.iterator();</span><br><span class="line"><span class="keyword">while</span> (itr.hasNext()) &#123;</span><br><span class="line">    Integer a = itr.next();</span><br><span class="line">    integers.remove(a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">List&lt;Integer&gt; integers = new CopyOnWriteArrayList&lt;&gt;();
+integers.add(1);
+integers.add(2);
+integers.add(3);
+Iterator&lt;Integer&gt; itr = integers.iterator();
+while (itr.hasNext()) {
+    Integer a = itr.next();
+    integers.remove(a);
+}
+</code></pre>
 <p>而使用 CopyOnWriteArrayList 的代码则不会报异常。</p>
 <p>fail-fast 机制和 modCount 这个变量有关，这个变量会记录容器被修改的次数，可以理解为容器对象的版本号。</p>
 <p>那么容器怎样才算是被修改呢？</p>
@@ -93,15 +110,27 @@
 <p>需要注意，修改容器中元素的内容 modCount 不会增加</p>
 </blockquote>
 <p>当容器使用迭代器对元素进行迭代时，会把 modCount 赋值给 expectedModCount。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> expectedModCount = modCount;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">int expectedModCount = modCount;
+</code></pre>
 <p>在迭代的过程中，会不断的去检查 expectedModCount 与 modCount 的值是否相等，如果不相等，就说明在容器迭代的过程中，有其他的操作修改了容器，导致 modCount 的值增加，那么就会报 ConcurrentModificationException 异常。</p>
 <blockquote>
 <p>注：fail-fast 机制不仅仅在迭代器中使用了，容器的增删改查和序列化等操作中也用到了。</p>
 </blockquote>
 <p>有没有办法在迭代的过程中删除某些元素？使用迭代器本身的 remove 方法就行，这样不会产生异常:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Iterator&lt;Integer&gt; itr = integers.iterator();</span><br><span class="line"><span class="keyword">while</span> (itr.hasNext()) &#123;</span><br><span class="line">    <span class="keyword">if</span> (itr.next() == <span class="number">2</span>) &#123;</span><br><span class="line">        itr.remove();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Iterator&lt;Integer&gt; itr = integers.iterator();
+while (itr.hasNext()) {
+    if (itr.next() == 2) {
+        itr.remove();
+    }
+}
+</code></pre>
 <p>不会产生异常的原因是在删除元素后，把最新的 modCount 的值赋值给了 expectedModCount，代码如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ListItr.remove() method</span></span><br><span class="line">ArrayList.<span class="keyword">this</span>.remove(lastRet);</span><br><span class="line">cursor = lastRet;</span><br><span class="line">lastRet = -<span class="number">1</span>;</span><br><span class="line">expectedModCount = modCount;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">// ListItr.remove() method
+ArrayList.this.remove(lastRet);
+cursor = lastRet;
+lastRet = -1;
+expectedModCount = modCount;
+</code></pre>
 <p>fail-fast 机制可以用来检测容器元素是否被修改，但是需要注意的是，不能依赖 fail-fast 机制来保证容器的元素不被修改，也就是说，不要在没有<strong>同步</strong>的情况下并发的修改容器中的元素。fast-fast 机制本来的职责就是检测系统的错误，所以仅仅只用它来检测 bug，而不要作其他的用途。</p>
 <blockquote>
 <p>注：同步是并发编程中的一个术语，如果说一段代码是同步的，那就代表是线程安全的</p>
@@ -109,9 +138,23 @@
 <h3>fail-safe 具体实现</h3>
 <p>和 fail-fast 不同的是，使用了 fail-safe 的容器则可以在迭代的过程中任意的修改容器的元素而不会报错。本质是因为迭代的是容器元素的副本，也就是说是将容器的元素拷贝了一份再进行遍历，这样即使原容器被修改，也不会影响到当前正在遍历的元素。</p>
 <p>CopyOnWriteArrayList 是一个支持 fail-safe 的容器，它获取迭代器的代码如下：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CopyOnWriteArrayList.listIterator() method</span></span><br><span class="line">Object[] es = getArray();</span><br><span class="line"><span class="keyword">int</span> len = es.length;</span><br><span class="line"><span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt; len)</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfBoundsException(outOfBounds(index, len));</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> COWIterator&lt;E&gt;(es, index);</span><br></pre></td></tr></table></figure></p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// COWIterator inner class</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Object[] snapshot;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> cursor;</span><br><span class="line"></span><br><span class="line">COWIterator(Object[] es, <span class="keyword">int</span> initialCursor) &#123;</span><br><span class="line">    cursor = initialCursor;</span><br><span class="line">    snapshot = es;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-COWIterator 将容器的元素做了一个快照，后续的操作都是在这个快照上进行的。</p>
+<pre><code class="language-java">// CopyOnWriteArrayList.listIterator() method
+Object[] es = getArray();
+int len = es.length;
+if (index &lt; 0 || index &gt; len)
+    throw new IndexOutOfBoundsException(outOfBounds(index, len));
+return new COWIterator&lt;E&gt;(es, index);
+</code></pre>
+<pre><code class="language-java">// COWIterator inner class
+private final Object[] snapshot;
+private int cursor;
+
+COWIterator(Object[] es, int initialCursor) {
+    cursor = initialCursor;
+    snapshot = es;
+}
+</code></pre>
+<p>COWIterator 将容器的元素做了一个快照，后续的操作都是在这个快照上进行的。</p>
 <p>为了支持 fail-safe 特性，需要付出额外的代价：</p>
 <ul>
 <li>迭代器中的元素不是容器的最新状态</li>
@@ -132,7 +175,7 @@ COWIterator 将容器的元素做了一个快照，后续的操作都是在这�
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -140,7 +183,7 @@ COWIterator 将容器的元素做了一个快照，后续的操作都是在这�
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -84,23 +83,73 @@
 <p>Go 模块与其他依赖管理系统的不同之处在于，需要使用主版本后缀。后缀需要解决<a href="https://research.swtch.com/vgo-import#dependency_story" target="_blank" rel="noopener">菱形依赖问题</a>。在 Go 模块出现之前，gopkg.in 允许包的维护者遵循我们现在所说的导入兼容性规则。在 gopkg.in，如果你同时依赖一个导入 gopkg.in/yaml.v1  和另一个 gopkg.in/yaml.v2 包，这不会冲突，因为两个 yaml 包有不同的导入路径，它们使用了版本后缀，就像 Go模块一样。因为 gopkg.in 与 Go 模块使用相同的版本后缀方法，Go 命令接受 gopkg.in/yaml.v2 中的 v2 作为有效的主版本后缀。这是为了兼容 gopkg.in 的特殊情况：托管在其他地方的模块需要使用 /v2 这样的后缀。</p>
 <h2>主版本策略</h2>
 <p>在包括 v2 版本的更高版本中，推荐在以主版本号命名的目录下进行开发：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">github.com/googleapis/gax-go @ master branch</span><br><span class="line">/go.mod    → module github.com/googleapis/gax-go</span><br><span class="line">/v2/go.mod → module github.com/googleapis/gax-go/v2</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">github.com/googleapis/gax-go @ master branch
+/go.mod    → module github.com/googleapis/gax-go
+/v2/go.mod → module github.com/googleapis/gax-go/v2
+</code></pre>
 <p>这个方法与对模块无感知的工具兼容：代码仓库中的文件路径与 GOPATH 模式下使用 go get 相匹配。这个策略还允许不同目录下的主版本同时进行开发。</p>
 <p>其他策略可能将主版本保留在单独的分支上。但是，如果 v2+ 版本的源代码在仓库的的默认分支上（通常是 master 分支），那么不支持版本感知的工具——包括 GOPATH 模式下的 go 命令——可能无法区分主要版本。</p>
 <p>这篇文章中的例子将遵循主版本子目录策略，因为它有最好的兼容性。我们建议模块作者，如果有用户在 GOPATH 模式下进行开发，就遵循这种策略。</p>
 <h2>发布 v2 及后续版本</h2>
 <p>这篇文章以 github.com/googleapis/gax-go 项目为例：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">pwd</span></span><br><span class="line">/tmp/gax-go</span><br><span class="line">$ ls</span><br><span class="line">CODE_OF_CONDUCT.md  call_option.go  internal</span><br><span class="line">CONTRIBUTING.md     gax.go          invoke.go</span><br><span class="line">LICENSE             go.mod          tools.go</span><br><span class="line">README.md           go.sum          RELEASING.md</span><br><span class="line">header.go</span><br><span class="line">$ cat go.mod</span><br><span class="line">module github.com/googleapis/gax-go</span><br><span class="line"></span><br><span class="line">go 1.9</span><br><span class="line"></span><br><span class="line">require (</span><br><span class="line">    github.com/golang/protobuf v1.3.1</span><br><span class="line">    golang.org/x/exp v0.0.0-20190221220918-438050ddec5e</span><br><span class="line">    golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3</span><br><span class="line">    golang.org/x/tools v0.0.0-20190114222345-bf090417da8b</span><br><span class="line">    google.golang.org/grpc v1.19.0</span><br><span class="line">    honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099</span><br><span class="line">)</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ pwd
+/tmp/gax-go
+$ ls
+CODE_OF_CONDUCT.md  call_option.go  internal
+CONTRIBUTING.md     gax.go          invoke.go
+LICENSE             go.mod          tools.go
+README.md           go.sum          RELEASING.md
+header.go
+$ cat go.mod
+module github.com/googleapis/gax-go
+
+go 1.9
+
+require (
+    github.com/golang/protobuf v1.3.1
+    golang.org/x/exp v0.0.0-20190221220918-438050ddec5e
+    golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3
+    golang.org/x/tools v0.0.0-20190114222345-bf090417da8b
+    google.golang.org/grpc v1.19.0
+    honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099
+)
+$
+</code></pre>
 <p>在开始开发 github.com/googleapis/gax-go 的 v2 版本时，我们会创建一个 v2 目录，并把所有的包都拷贝进来：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir v2</span><br><span class="line">$ cp *.go v2/</span><br><span class="line">building file list ... <span class="keyword">done</span></span><br><span class="line">call_option.go</span><br><span class="line">gax.go</span><br><span class="line">header.go</span><br><span class="line">invoke.go</span><br><span class="line">tools.go</span><br><span class="line"></span><br><span class="line">sent 10588 bytes  received 130 bytes  21436.00 bytes/sec</span><br><span class="line">total size is 10208  speedup is 0.95</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ mkdir v2
+$ cp *.go v2/
+building file list ... done
+call_option.go
+gax.go
+header.go
+invoke.go
+tools.go
+
+sent 10588 bytes  received 130 bytes  21436.00 bytes/sec
+total size is 10208  speedup is 0.95
+$
+</code></pre>
 <p>然后把当前的 go.mod 文件也拷贝到 v2 目录下，并在模块路径后面增加 v2 后缀：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cp go.mod v2/go.mod</span><br><span class="line">$ go mod edit -module github.com/googleapis/gax-go/v2 v2/go.mod</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ cp go.mod v2/go.mod
+$ go mod edit -module github.com/googleapis/gax-go/v2 v2/go.mod
+$
+</code></pre>
 <p>需要注意 v2 版本与 v0/v1 版本都是是被当做一个单独的模块：但两者可能使用了相同的构建。因此，如果你的 v2+ 版本模块有多个包，你应该更新它们以使用新的 /v2 导入路径。否则，你的 v2+ 模块就依赖你的 v0 / v1 模块。所以要将所有 github.com/my/project 引用更新到github.com/my/project/v2，可以使用 find 和 sed :</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ find . -<span class="built_in">type</span> f \</span><br><span class="line">    -name <span class="string">'*.go'</span> \</span><br><span class="line">    -<span class="built_in">exec</span> sed -i -e <span class="string">'s,github.com/my/project,github.com/my/project/v2,g'</span> &#123;&#125; \;</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ find . -type f \
+    -name '*.go' \
+    -exec sed -i -e 's,github.com/my/project,github.com/my/project/v2,g' {} \;
+$
+</code></pre>
 <p>现在我们有了一个 v2 版本的模块，但是我们想在发布一个版本之前进行试验和修改。在我们发布v2.0.0（或任何没有预发布后缀的版本）之前，我们可以在决定新 API 之前进行开发或做出破坏性的更改。如果我们想让用户在我们正式发布新 API 之前能够试用它，我们可以发布一个 v2 的预发布版本:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git tag v2.0.0-alpha.1</span><br><span class="line">$ git push origin v2.0.0-alpha.1</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ git tag v2.0.0-alpha.1
+$ git push origin v2.0.0-alpha.1
+$
+</code></pre>
 <p>一旦 v2 版本的 API 已经稳定，并确定不需要做任何破坏性的更改，我们可以发布正式版本，标记 v2.0.0：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git tag v2.0.0</span><br><span class="line">$ git push origin v2.0.0</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ git tag v2.0.0
+$ git push origin v2.0.0
+$
+</code></pre>
 <p>到目前为止，有两个主版本需要维护。向后兼容的更改和错误修复将产生新的次版本和补丁版本（例如，v1.1.0, v2.0.1，等等）。</p>
 <h2>结论</h2>
 <p>主版本变更会产生更多的开发和维护开销，并需要下游用户配合迁移。项目越大，这些管理代价就越大。只有在确定非做不可的原因之后，才应该进行主版本的变更。一旦修改原因被确定是一个破坏性变更，我们建议在主分支中开发多个主版本，因为这种方式能够最大化的与现有工具兼容。</p>
@@ -115,7 +164,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -123,7 +172,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

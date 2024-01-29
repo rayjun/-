@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -75,9 +74,40 @@
 </ul>
 <p>其中 net/http/pprof 是对 runtime/pprof 进行了封装，提供了 Web 环境的下的访问接口，通常我们使用这个就可以。</p>
 <p>这个包的使用也很简单，对于 Web 服务来说，只需要在 main.go 中引入这个包：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"context"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line">	_ <span class="string">"net/http/pprof"</span> <span class="comment">// 引入 pprof 包</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	http.HandleFunc(<span class="string">"/index"</span>, <span class="function"><span class="keyword">func</span><span class="params">(writer http.ResponseWriter, request *http.Request)</span></span> &#123;</span><br><span class="line">		writer.Write([]<span class="keyword">byte</span>(<span class="string">"index"</span>))</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	fmt.Println(<span class="string">"server starting"</span>)</span><br><span class="line">	http.ListenAndServe(<span class="string">":6060"</span>, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;context&quot;
+	&quot;fmt&quot;
+	&quot;net/http&quot;
+	_ &quot;net/http/pprof&quot; // 引入 pprof 包
+	&quot;time&quot;
+)
+
+func main() {
+	http.HandleFunc(&quot;/index&quot;, func(writer http.ResponseWriter, request *http.Request) {
+		writer.Write([]byte(&quot;index&quot;))
+	})
+
+	fmt.Println(&quot;server starting&quot;)
+	http.ListenAndServe(&quot;:6060&quot;, nil)
+}
+</code></pre>
 <p>对于非 Web 程序，可以通过下面的方式启动 pprof：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line">	_ <span class="string">"net/http/pprof"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 其他代码</span></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		fmt.Println(http.ListenAndServe(<span class="string">"localhost:6060"</span>, <span class="literal">nil</span>))</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="comment">// 其他代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">import (
+	&quot;fmt&quot;
+	&quot;net/http&quot;
+	_ &quot;net/http/pprof&quot;
+)
+
+func main() {
+	// 其他代码
+	go func() {
+		fmt.Println(http.ListenAndServe(&quot;localhost:6060&quot;, nil))
+	}()
+	// 其他代码
+}
+</code></pre>
 <p>配置好了之后，直接就可以通过 <a href="http://localhost:6060" target="_blank" rel="noopener">http://localhost:6060</a>/debug/pprof/ 来采集具体的数据了，在浏览pprof 提供的接口如下：</p>
 <ul>
 <li>/debug/pprof/allocs : 获取内存分配的抽样数据</li>
@@ -92,18 +122,54 @@
 </ul>
 <h3>1.2 直接在程序中获取</h3>
 <p>除了通过上面的 http 接口方式采集信息，还可以直接在代码中使用代码获取信息，比如获取 trace 信息：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">f, err := os.Create(<span class="string">"trace.out"</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">err = trace.Start(f)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">f, err := os.Create(&quot;trace.out&quot;)
+if err != nil {
+	panic(err)
+}
+
+err = trace.Start(f)
+if err != nil {
+	panic(err)
+}
+</code></pre>
 <p>获取 CPU 的信息：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> cpuprofile = flag.String(<span class="string">"cpuprofile"</span>, <span class="string">""</span>, <span class="string">"write cpu profile to `file`"</span>)</span><br><span class="line">flag.Parse()</span><br><span class="line"><span class="keyword">if</span> *cpuprofile != <span class="string">""</span> &#123;</span><br><span class="line">    f, err := os.Create(*cpuprofile)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(<span class="string">"could not create CPU profile: "</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> f.Close()</span><br><span class="line">    <span class="keyword">if</span> err := pprof.StartCPUProfile(f); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(<span class="string">"could not start CPU profile: "</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> pprof.StopCPUProfile()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var cpuprofile = flag.String(&quot;cpuprofile&quot;, &quot;&quot;, &quot;write cpu profile to `file`&quot;)
+flag.Parse()
+if *cpuprofile != &quot;&quot; {
+    f, err := os.Create(*cpuprofile)
+    if err != nil {
+        log.Fatal(&quot;could not create CPU profile: &quot;, err)
+    }
+    defer f.Close()
+    if err := pprof.StartCPUProfile(f); err != nil {
+        log.Fatal(&quot;could not start CPU profile: &quot;, err)
+    }
+    defer pprof.StopCPUProfile()
+}
+</code></pre>
 <p>获取内存信息：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> memprofile = flag.String(<span class="string">"memprofile"</span>, <span class="string">""</span>, <span class="string">"write memory profile to `file`"</span>)</span><br><span class="line"><span class="keyword">if</span> *memprofile != <span class="string">""</span> &#123;</span><br><span class="line">    f, err := os.Create(*memprofile)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(<span class="string">"could not create memory profile: "</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> f.Close() </span><br><span class="line">    runtime.GC() </span><br><span class="line">    <span class="keyword">if</span> err := pprof.WriteHeapProfile(f); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(<span class="string">"could not write memory profile: "</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var memprofile = flag.String(&quot;memprofile&quot;, &quot;&quot;, &quot;write memory profile to `file`&quot;)
+if *memprofile != &quot;&quot; {
+    f, err := os.Create(*memprofile)
+    if err != nil {
+        log.Fatal(&quot;could not create memory profile: &quot;, err)
+    }
+    defer f.Close() 
+    runtime.GC() 
+    if err := pprof.WriteHeapProfile(f); err != nil {
+        log.Fatal(&quot;could not write memory profile: &quot;, err)
+    }
+}
+</code></pre>
 <p>但这种写代码采集的方式其实不太好，一方面，需要硬编码到代码中，特别是对于线上的代码，不好控制，所以这种方式一般不会在线上使用，线上还是会使用 Http 接口来采集信息。</p>
 <h3>1.3 使用 Http 接口采集信息</h3>
 <p>上面介绍了 pprof 的 Http 接口，在这里我们以采集 CPU 信息为例，可以直接在命令行使用：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8080/debug/pprof/profile?seconds=3 -o cpu.pprof</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">curl http://localhost:8080/debug/pprof/profile?seconds=3 -o cpu.pprof
+</code></pre>
 <p>上面的这条命令表示对 CPU 的信息采集三秒，然后输出到 cpu.pprof 文件中，这里文件名的后缀可以随意定义，定义为 .txt、.out、.pprof 都可以。</p>
 <p>还可以采用另一种输出方式，直接采用重定向的方式输出到文件：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8080/debug/pprof/profile?seconds=3 &gt; cpu.pprof</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">curl http://localhost:8080/debug/pprof/profile?seconds=3 &gt; cpu.pprof
+</code></pre>
 <p>其他的信息，比如 trace 和 heap，都是采用同样的采集方式，加上 seconds，就可以设定采集的秒数。在线上环境中，这种方式很有用，既可以方便的采集到信息，又不会影响线上服务的运行。</p>
 <h2>2. 可视化分析</h2>
 <p>采集到数据之后，就需要进行分析，在进行数据分析的时候，我们需要用到两个工具：</p>
@@ -114,7 +180,8 @@
 <p>go tool pprof 可以对采集到的 CPU、内存等信息进行分析，go tool trace 则是对采集的 trace 信息进行分析。</p>
 <h3>2.1 在线分析</h3>
 <p>go tool pprof 既可以对采集到的离线数据进行分析，也可以是结合上面的 pprof  Http 接口，直接在线上进行分析，比如分析程序的内存使用情况:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go tool pprof -inuse_space http://localhost:8080/debug/pprof/heap</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go tool pprof -inuse_space http://localhost:8080/debug/pprof/heap
+</code></pre>
 <p>go tool pprof 可以搭配的参数很多，在这里就先不展开了，上面加的 -inuse_space 就表示采集正在使用中的内存信息。</p>
 <p>执行完这条命令之后，就可以进入到一个交互式的命令行：</p>
 <p><img src="0.png" alt=""></p>
@@ -123,18 +190,23 @@
 <p><img src="1.png" alt=""></p>
 <p>通过这个图，可以直接看图的底部，基本就可以看出来那些对象占据的内存比较多，是否有内存泄漏基本也可以看出来。</p>
 <p>在网页上在查看图形化结果的时候，需要安装 graphviz 库。在 Mac 上安装很简单，直接使用 Homebrew 进行安装（Homebrew 是 Mac 系统下的包管理软件，类似 Centos 中的 yum，Ubuntu 中的 apt），在 linux 系统上的安装过程类似：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install graphviz</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ brew install graphviz
+</code></pre>
 <h3>2.2 离线分析</h3>
 <p>这些图形化的结果在生产环境通常是看不了的，所以很多时候还是会把这些信息采集下来，然后在本地进行分析。内存分析的方式基本和上面一样，采集到信息之后，在本地运行：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go tool pprof memory.prof</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go tool pprof memory.prof
+</code></pre>
 <p>这样执行命令之后，也会进入一个与上面一样的交互式命令行环境。</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go tool pprof -http=:8080 memory.prof</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go tool pprof -http=:8080 memory.prof
+</code></pre>
 <p>这样会与输入 web 得到的效果是一样。</p>
 <p>对于内存信息的分析，直接在线上分析就可以，但是对于 tarce 的分析，无法在线上完成，只能通过线下的方式完成。</p>
 <p>采集 trace 信息：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://localhost:8080/debug/pprof/trace\?seconds\=10 &gt; trace.out</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ curl http://localhost:8080/debug/pprof/trace\?seconds\=10 &gt; trace.out
+</code></pre>
 <p>开始分析 trace 信息：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go tool trace trace.out</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go tool trace trace.out
+</code></pre>
 <p>命令执行之后就会打开一个网页，提供了各项分析的指标：</p>
 <p>![(2.png)</p>
 <ul>
@@ -156,7 +228,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -164,7 +236,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

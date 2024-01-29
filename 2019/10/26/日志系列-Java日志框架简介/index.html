@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -78,12 +77,40 @@ Java 中有很多记录日志的工具，很多时候不太容易分清楚，比
 <p>除了这些框架外，还有其他用途的日志框架，比如 <a href="https://tinylog.org/v2/" target="_blank" rel="noopener">tinylog</a>，<a href="https://github.com/zalando/logbook" target="_blank" rel="noopener">Logbook</a> 等框架。</p>
 <h4>Slf4j 是什么</h4>
 <p>Slf4j 是一套标准的日志接口。它本身是没有记录日志的功能的，需要依赖上面提到的那些日志框架。使用 Slf4j 的好处就是日志具体的记录方式和接口完全分离了。即使要换其他的日志框架，也不用改动代码。</p>
-<p>假如你需要使用日志打印 <code>Hello World</code>，在 Log4j 中，需要这么做:
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.log4j.Logger;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Log4jDemo</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Logger log = Logger.getLogger(Log4jDemo.class.getName());</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">      log.info(<span class="string">"Hello World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-在 Log4j2 中，需要这么做:
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.log4j.LogManager</span><br><span class="line"><span class="keyword">import</span> org.apache.log4j.Logger;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Log4j2Demo</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Logger log = LogManager.getLogger(Log4jDemo.class);</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">      log.info(<span class="string">"Hello World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-不同的日志框架使用的方式不一样，这样一旦需要换一个日志框架，将会是一件非常痛苦的事情，如果使用 Slf4j，不论底层使用的是哪一个日志框架，都可以使用相同的形式来记录日志:
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.slf4j.Logger;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Slf4jDemo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> statis Logger logger = LoggerFactory.getLogger(Slf4jDemo.class);</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        logger.info(<span class="string">"Hello world."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>假如你需要使用日志打印 <code>Hello World</code>，在 Log4j 中，需要这么做:</p>
+<pre><code class="language-java">import org.apache.log4j.Logger;
+
+public class Log4jDemo{
+    private static Logger log = Logger.getLogger(Log4jDemo.class.getName());
+   
+    public static void main(String[] args){
+      log.info(&quot;Hello World&quot;);
+    }
+}
+</code></pre>
+<p>在 Log4j2 中，需要这么做:</p>
+<pre><code class="language-java">import org.apache.log4j.LogManager
+import org.apache.log4j.Logger;
+
+public class Log4j2Demo{
+    private static Logger log = LogManager.getLogger(Log4jDemo.class);
+   
+    public static void main(String[] args){
+      log.info(&quot;Hello World&quot;);
+    }
+}
+</code></pre>
+<p>不同的日志框架使用的方式不一样，这样一旦需要换一个日志框架，将会是一件非常痛苦的事情，如果使用 Slf4j，不论底层使用的是哪一个日志框架，都可以使用相同的形式来记录日志:</p>
+<pre><code class="language-java">import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class Slf4jDemo {
+    private statis Logger logger = LoggerFactory.getLogger(Slf4jDemo.class);
+    public static void main(String[] args) {
+        logger.info(&quot;Hello world.&quot;);
+    }
+}
+</code></pre>
 <p>所以不论具体使用的是什么日志框架，都可以在上面套一个 <code>Slf4j</code>。</p>
 <p><a href="http://commons.apache.org/proper/commons-logging/" target="_blank" rel="noopener">Apache Commons Logging</a> 的目标与 Slf4j 是一致的，但是 Apache Commons Logging 的 API 没有 Slf4j 的丰富，而且限制太多，自然就没有 Slf4j 受欢迎。</p>
 <h4>日志框架用哪个</h4>
@@ -108,7 +135,7 @@ Java 中有很多记录日志的工具，很多时候不太容易分清楚，比
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -116,7 +143,7 @@ Java 中有很多记录日志的工具，很多时候不太容易分清楚，比
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

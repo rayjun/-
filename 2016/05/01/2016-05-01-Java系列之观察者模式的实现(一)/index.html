@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -73,13 +72,49 @@
 </ul>
 <h4>实现简单的观察者模式</h4>
 <p>首先需要定义一个可观察的对象,这个对象中有一个 data 变量，这个变量在被改变的时候会通知到观察者：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class ObservableObject extends Observable&#123;</span><br><span class="line"></span><br><span class="line">	int data &#x3D; 0;</span><br><span class="line">	</span><br><span class="line">	public void changeData(int change) &#123;</span><br><span class="line">		data &#x3D; change;</span><br><span class="line">		this.setChanged(); &#x2F;&#x2F;标记对象被改变</span><br><span class="line">		this.notifyObservers();  &#x2F;&#x2F;通知所有的观察者</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code>public class ObservableObject extends Observable{
+
+	int data = 0;
+	
+	public void changeData(int change) {
+		data = change;
+		this.setChanged(); //标记对象被改变
+		this.notifyObservers();  //通知所有的观察者
+	}
+}
+</code></pre>
 <p>定义观察者，观察者在接收到被观察者的改变之后，会将改变的值打印出来:</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class ObserverObject implements Observer &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void update(Observable o, Object arg) &#123;</span><br><span class="line">		ObservableObject oo &#x3D; (ObservableObject) o;</span><br><span class="line">		</span><br><span class="line">		System.out.println(&quot;被观察者的数据被修改为：&quot;+ oo.data);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code>public class ObserverObject implements Observer {
+
+	@Override
+	public void update(Observable o, Object arg) {
+		ObservableObject oo = (ObservableObject) o;
+		
+		System.out.println(&quot;被观察者的数据被修改为：&quot;+ oo.data);
+	}
+
+}
+</code></pre>
 <p>测试：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		ObservableObject observableObject &#x3D; new ObservableObject();</span><br><span class="line">		ObserverObject observerObject &#x3D; new ObserverObject();</span><br><span class="line">	</span><br><span class="line">		observableObject.addObserver(observerObject);</span><br><span class="line">		observableObject.changeData(1);</span><br><span class="line">		observableObject.changeData(-100);</span><br><span class="line">		</span><br><span class="line">		observableObject.deleteObserver(observerObject); &#x2F;&#x2F;移除观察者</span><br><span class="line">		observableObject.changeData(200);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code>public class Main {
+
+	public static void main(String[] args) {
+		ObservableObject observableObject = new ObservableObject();
+		ObserverObject observerObject = new ObserverObject();
+	
+		observableObject.addObserver(observerObject);
+		observableObject.changeData(1);
+		observableObject.changeData(-100);
+		
+		observableObject.deleteObserver(observerObject); //移除观察者
+		observableObject.changeData(200);
+	}
+}
+</code></pre>
 <p>运行结果为：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">被观察者的数据被修改为：1</span><br><span class="line">被观察者的数据被修改为：-100</span><br></pre></td></tr></table></figure></p>
+<pre><code>被观察者的数据被修改为：1
+被观察者的数据被修改为：-100
+</code></pre>
 <p>需要注意的是只打印了两个结果，是因为在第三次改变之前将观察者移除了，这样造成的结果是被观察者的改变将不能通知到被移除的观察者。</p>
 
 </article>
@@ -88,7 +123,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -96,7 +131,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

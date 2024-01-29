@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -78,7 +77,8 @@
 <p>区块链就是由这样的诸多区块构成的，这里需要注意的是，<strong>箭头的方向是不能反的</strong>，都是新产生的区块指向前一个区块，然后每个区块中都会存储一些数据。</p>
 <p>那这些区块是怎么连接起来的呢？</p>
 <p>这就要说到区块链中很重要的一个部分，<strong>哈希函数</strong>。这是数学或者计算机中的一个概念。它的特点是，它可以对一段数据做特定的操作，输出一段固定长度的字符串，这个字符串称之为哈希值，但是你无法（很难）根据输出推算出来输入是什么，但是你可以很快的根据输入来验证哈希值是否正确。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">h = hash(<span class="string">"I got 100 bitcoins"</span>) <span class="comment">//16df768dash</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">h = hash(&quot;I got 100 bitcoins&quot;) //16df768dash
+</code></pre>
 <p>而且对于哈希函数来说，只要传入的数据有一点不一样，那么产生的哈希值就会天差地别。</p>
 <p>对于哈希函数，你只需要知道它可以干什么就可以了。在下面讲挖矿的时候还会用到哈希函数。</p>
 <p>区块就是利用这个特点，算出它前面那个区块的哈希值，并把这个哈希值放到自己的区块中。也就是是说每一个区块都记录了自己前一个区块的哈希值。并通过这种方式连接起来。如果这个链中任何一个区块的数据被篡改，这个区块的哈希值就会产生变化，那么这个区块之后的其他区块就无法连上这个区块。</p>
@@ -131,7 +131,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -139,7 +139,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -98,7 +97,12 @@
 <h3>布尔值</h3>
 <p>布尔值相对来说比较简单，只有两个值： <code>true</code> 和 <code>false</code>。可以使用 ! 符号来进行取反运算，!true 就是 false。</p>
 <p>也可以使用 &amp;&amp; 和 || 来进行组合运算，在组合运算中，也会遵循短路行为，短路行为是指左边如果能直接确定最后的结果，那么后面的计算将不会进行，如下:</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> i = <span class="number">1</span></span><br><span class="line"><span class="comment">// i &lt; 100 代码就不会被执行</span></span><br><span class="line"><span class="keyword">if</span> i &gt; <span class="number">0</span> || i &lt; <span class="number">100</span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">"result %+v"</span>, i)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">var i = 1
+// i &lt; 100 代码就不会被执行
+if i &gt; 0 || i &lt; 100 {
+    fmt.Printf(&quot;result %+v&quot;, i)
+}
+</code></pre>
 <p>布尔值是可比较的。</p>
 <h2>2. 聚合类型</h2>
 <p>聚合类型的值由内存中的一组变量构成。数组和结构体都是聚合类型，数组和结构体的长度都是固定的。数组中的的元素类型<strong>必须</strong>都<strong>相同</strong>，而结构体中的元素<strong>可以不同</strong>。</p>
@@ -108,7 +112,11 @@
 <p>数组的可比较性取决于元素的可比较性，如果元素是可比较的，那么数组也是可比较的，反之亦然。</p>
 <h3>结构体</h3>
 <p>结构体是由任意个任意类型的变量组合在一起的数据类型，和其他语言中<strong>类</strong>的概念相似。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Student <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name <span class="keyword">string</span></span><br><span class="line">    age  <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type Student struct {
+    Name string
+    age  int
+}
+</code></pre>
 <p>Go 语言是一个面向对象的语言，但却又抛弃了 Java 中类和对象的概念，结构体是 Go 语言实现面向对象的基础之一，还有一部分是接口，下面会聊到。</p>
 <p>在 Go 的面向对象中，已经摈弃了继承的概念，但在结构体中，通过结构体嵌套，也算是实现了部分继承的功能。</p>
 <p>结构体的可比较性也取决于其中变量的可比较性。</p>
@@ -116,7 +124,14 @@
 <p>引用是另外一种数据类型，很多 Go 语言的高级功能都依赖引用。引用都间接指向变量或者状态，通过引用来操作数据会让该数据的全部引用都受影响。</p>
 <h3>指针</h3>
 <p>指针是一种数据类型，指针的值是一个变量的地址。对于一个变量来说，可以有多个指针，通过其中任意一个指针来修改数据，通过其他指针也会获取到最新修改的值。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">i := <span class="number">1</span></span><br><span class="line">p1 := &amp;i</span><br><span class="line">p2 := &amp;i</span><br><span class="line"></span><br><span class="line">*p1 = <span class="number">2</span></span><br><span class="line"></span><br><span class="line">fmt.Println(*p2) <span class="comment">// 2</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">i := 1
+p1 := &amp;i
+p2 := &amp;i
+
+*p1 = 2
+
+fmt.Println(*p2) // 2
+</code></pre>
 <p>指针是可比较的。</p>
 <h3>slice</h3>
 <p>slice 是一个拥有相同元素的可变长度序列。 slice 看起来与数组很像，但本质上不同。</p>
@@ -148,7 +163,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -156,7 +171,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

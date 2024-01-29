@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -114,7 +113,8 @@
 <p>在本文中，我使用 NAT + host-only 的方式来完成虚拟机既能访问外部网络，宿主机也能访问虚拟机的网络配置，但这不是唯一的方式。</p>
 <p>刚安装好的虚拟机无法访问外部网络，这是因为虚拟机的网卡还没有开启，先进入到虚拟机开启网卡，让虚拟机可以通过 NAT 的方式访问外网，然后使用 host-only 的方式实现宿主机访问虚拟机。</p>
 <p>使用 root 身份登录进系统，进入到网络的配置目录:</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/sysconfig/network-scripts/</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">cd /etc/sysconfig/network-scripts/
+</code></pre>
 <p>如果前面配置没有出错的话，在这里可以看到两个网卡的配置的：</p>
 <p><img src="13.png" alt=""></p>
 <p><code>ifcfg-enp0s3</code> 就对应 NAT 配置的那张网卡，<code>ifcfg-enp0s8</code> 就对应 host-only 配置的网卡。</p>
@@ -128,11 +128,15 @@
 <p><img src="15.png" alt=""></p>
 <p>首先要把网络从 dhcp 自动获取 ip 改成 static，再同样设置 ONBOOT 为 yes，IPADDR 指定这台虚拟机的固定 IP，IP 可以随意设置，但是要在这个网段内，NETMASK 配置的是这个网络的网络掩码。</p>
 <p>最后配置一下网关:</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/sysconfig/networking</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">vi /etc/sysconfig/networking
+</code></pre>
 <p>填入以下内容：</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NETWORKING=yes</span><br><span class="line">GATEWAY=192.168.56.2 # 这个值就是在配置 VirtualBox 全局网卡时的网关的 IP，不要配错了</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">NETWORKING=yes
+GATEWAY=192.168.56.2 # 这个值就是在配置 VirtualBox 全局网卡时的网关的 IP，不要配错了
+</code></pre>
 <p>这些都配置完成之后，重启网络服务:</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service network restart</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">service network restart
+</code></pre>
 <p>然后访问外网:</p>
 <p><img src="16.png" alt=""></p>
 <p>宿主机访问虚拟机:</p>
@@ -153,7 +157,9 @@
 <p>然后使用 ssh-copy-id 将公钥拷贝到像免密登录的机器：</p>
 <p><img src="19.png" alt=""></p>
 <p>然后就可以免密登录了：</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh root@192.168.56.4</span><br><span class="line">ssh root@192.168.56.5</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-shell">ssh root@192.168.56.4
+ssh root@192.168.56.5
+</code></pre>
 <p>另外两台机器进行同样的配置，然后三台虚拟机之间就可以相互免密访问。</p>
 <p>到这里，本地服务器集群就搭建完毕了。</p>
 
@@ -163,7 +169,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -171,7 +177,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

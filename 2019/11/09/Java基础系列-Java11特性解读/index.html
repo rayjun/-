@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -69,62 +68,139 @@
 <h4>本地变量类型推断</h4>
 <p>Java 10 中新增了一个关键字 <code>var</code>，在声明本地变量的时候用 <code>var</code>  就不需要写明具体的数据类型（本地变量是指在<strong>方法</strong>中声明的变量）。</p>
 <p>在 Java 10 之前的版本中，你需要这样声明变量:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String text = <span class="string">"Hello Java 9"</span>;</span><br></pre></td></tr></table></figure>
-在 Java 10，可以使用 <code>var</code> 替代 <code>String</code>。编译器会根据变量的赋值去推断变量的类型。在下面这个例子中 <code>text</code>  的类型是 <code>String</code>：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> text = <span class="string">"Hello Java 10"</span>;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">String text = &quot;Hello Java 9&quot;;
+</code></pre>
+<p>在 Java 10，可以使用 <code>var</code> 替代 <code>String</code>。编译器会根据变量的赋值去推断变量的类型。在下面这个例子中 <code>text</code>  的类型是 <code>String</code>：</p>
+<pre><code class="language-java">var text = &quot;Hello Java 10&quot;;
+</code></pre>
 <p>通过 <code>var</code> 声明的变量依然是静态类型。不能对已经变量赋值另外一种类型。下面的这段代码会编译不通过：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> text = <span class="string">"Hello Java 11"</span>;</span><br><span class="line">text = <span class="number">23</span>;</span><br></pre></td></tr></table></figure>
-可以通过 <code>final</code> 来防止声明的 <code>var</code> 变量被重复赋值：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">var</span> text = <span class="string">"Banana"</span>;</span><br><span class="line">text = <span class="string">"Joe"</span>; <span class="comment">// 编译报错</span></span><br></pre></td></tr></table></figure>
-<code>var</code> 变量必须赋值一个明确类型的值，对于没有赋值或者编译器无法推断类型的变量，都会编译错误。下面的代码都无法通过编译：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a;</span><br><span class="line"><span class="keyword">var</span> nothing = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">var</span> lambda = () -&gt; System.out.println(<span class="string">"Pity!"</span>);</span><br><span class="line"><span class="keyword">var</span> method = <span class="keyword">this</span>::someMethod;</span><br></pre></td></tr></table></figure>
-本地类型推断在处理泛型代码时很好用。在下面的例子中，<code>current</code>  的类型是 <code>Map&lt;String, List&lt;Integer&gt;&gt;</code>，如果使用 <code>var</code> 来替代 <code>Map&lt;String, List&lt;Integer&gt;&gt;</code>，就可以少些很多样本代码：
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> myList = <span class="keyword">new</span> ArrayList&lt;Map&lt;String, List&lt;Integer&gt;&gt;&gt;();</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> current : myList) &#123;</span><br><span class="line">    System.out.println(current);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">var text = &quot;Hello Java 11&quot;;
+text = 23;
+</code></pre>
+<p>可以通过 <code>final</code> 来防止声明的 <code>var</code> 变量被重复赋值：</p>
+<pre><code class="language-java">final var text = &quot;Banana&quot;;
+text = &quot;Joe&quot;; // 编译报错
+</code></pre>
+<p><code>var</code> 变量必须赋值一个明确类型的值，对于没有赋值或者编译器无法推断类型的变量，都会编译错误。下面的代码都无法通过编译：</p>
+<pre><code class="language-java">var a;
+var nothing = null;
+var lambda = () -&gt; System.out.println(&quot;Pity!&quot;);
+var method = this::someMethod;
+</code></pre>
+<p>本地类型推断在处理泛型代码时很好用。在下面的例子中，<code>current</code>  的类型是 <code>Map&lt;String, List&lt;Integer&gt;&gt;</code>，如果使用 <code>var</code> 来替代 <code>Map&lt;String, List&lt;Integer&gt;&gt;</code>，就可以少些很多样本代码：</p>
+<pre><code class="language-java">var myList = new ArrayList&lt;Map&lt;String, List&lt;Integer&gt;&gt;&gt;();
+for (var current : myList) {
+    System.out.println(current);
+}
+</code></pre>
 <p>在 Java 11 中 <code>var</code> 也可以用于 lambda 的参数，但是需要加上 <code>@Nullable</code> 注解：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Predicate&lt;String&gt; predicate = (<span class="meta">@Nullable</span> <span class="keyword">var</span> a ) -&gt; <span class="keyword">true</span>;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Predicate&lt;String&gt; predicate = (@Nullable var a ) -&gt; true;
+</code></pre>
 <blockquote>
 <p>Tip: 在 Intellij IDEA 中，可以通过选中一个变量，同时按下 <code>CMD/CTRL</code> 来显示变量的真实类型（对于键盘党可以使用 <code>CTRL + J</code>）。</p>
 </blockquote>
 <h4>HTTP Client</h4>
 <p><code>Java 9</code> 中隐藏一个处理 Http 请求的新 API，<code>HttpClient</code>。到 <code>Java11</code> 这个 API 已经很完善了，就在 JDK 的 <code>java.net</code> 包下。来看看这个 API 可以做点什么。</p>
 <p>这个新的 <code>HttpClient</code> 可以<strong>同步</strong>或者<strong>异步</strong>使用。同步的请求将会阻塞当前线程直到响应返回。<code>BodyHandlers</code> 定义了期望的返回数据类型。(e.g. 字符串、字节数组或者文件)：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> request = HttpRequest.newBuilder()</span><br><span class="line">                   .uri(URI.create(<span class="string">"https://winterbe.com"</span>))</span><br><span class="line">                   .GET()</span><br><span class="line">                   .build();</span><br><span class="line"><span class="keyword">var</span> client = HttpClient.newHttpClient();</span><br><span class="line">HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());</span><br><span class="line">System.out.println(response.body());</span><br></pre></td></tr></table></figure>
-同样的请求也可以进行异步处理。调用 <code>sendAsync</code> 不会阻塞当前线程并且会返回一个 <code>CompleteFuture</code> 来构建一个异步操作的管道。
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> request = HttpRequest.newBuilder()</span><br><span class="line">                   .uri(URI.create(<span class="string">"https://winterbe.com"</span>))</span><br><span class="line">                   .build();</span><br><span class="line"><span class="keyword">var</span> client = HttpClient.newHttpClient();</span><br><span class="line">client.sendAsync(request, HttpResponse.BodyHandlers.ofString())</span><br><span class="line">.thenApply(HttpResponse::body)</span><br><span class="line">.thenAccept(System.out::println);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">var request = HttpRequest.newBuilder()
+                   .uri(URI.create(&quot;https://winterbe.com&quot;))
+                   .GET()
+                   .build();
+var client = HttpClient.newHttpClient();
+HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());
+System.out.println(response.body());
+</code></pre>
+<p>同样的请求也可以进行异步处理。调用 <code>sendAsync</code> 不会阻塞当前线程并且会返回一个 <code>CompleteFuture</code> 来构建一个异步操作的管道。</p>
+<pre><code class="language-java">var request = HttpRequest.newBuilder()
+                   .uri(URI.create(&quot;https://winterbe.com&quot;))
+                   .build();
+var client = HttpClient.newHttpClient();
+client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+.thenApply(HttpResponse::body)
+.thenAccept(System.out::println);
+</code></pre>
 <blockquote>
 <p>可以省略 <code>.GET()</code>，默认的请求方法就是这个。</p>
 </blockquote>
 <p>下面的例子通过 <code>POST</code> 方法给一个 <code>URL</code> 发送数据。<code>BodyHandlers</code> 也可以用来定义请求中需要发送的数据的类型，比如<strong>字符串</strong>、<strong>字节数组</strong>、<strong>文件</strong>或者<strong>输入流</strong>：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> request = HttpRequest.newBuilder()</span><br><span class="line">                   .uri(URI.create(<span class="string">"https://postman-echo.com/post"</span>))</span><br><span class="line">                   .header(<span class="string">"Content-Type"</span>, <span class="string">"text/plain"</span>)</span><br><span class="line">                   .POST(HttpRequest.BodyPublishers.ofString(<span class="string">"Hi there!"</span>))</span><br><span class="line">                   .build();</span><br><span class="line"><span class="keyword">var</span> client = HttpClient.newHttpClient();</span><br><span class="line"><span class="keyword">var</span> response = client.send(request, HttpResponse.BodyHandlers.ofString());</span><br><span class="line">System.out.println(response.statusCode());      <span class="comment">// 200</span></span><br></pre></td></tr></table></figure>
-最后的这个例子演示了如何通过 <code>BASIC-AUTH</code> 来进行认证：
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> request = HttpRequest.newBuilder()</span><br><span class="line">    .uri(URI.create(<span class="string">"https://postman-echo.com/basic-auth"</span>))</span><br><span class="line">    .build();</span><br><span class="line"><span class="keyword">var</span> client = HttpClient.newBuilder()</span><br><span class="line">    .authenticator(<span class="keyword">new</span> Authenticator() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> PasswordAuthentication <span class="title">getPasswordAuthentication</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> PasswordAuthentication(<span class="string">"postman"</span>, <span class="string">"password"</span>.toCharArray());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    .build();</span><br><span class="line"><span class="keyword">var</span> response = client.send(request, HttpResponse.BodyHandlers.ofString());</span><br><span class="line">System.out.println(response.statusCode());      <span class="comment">// 200</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">var request = HttpRequest.newBuilder()
+                   .uri(URI.create(&quot;https://postman-echo.com/post&quot;))
+                   .header(&quot;Content-Type&quot;, &quot;text/plain&quot;)
+                   .POST(HttpRequest.BodyPublishers.ofString(&quot;Hi there!&quot;))
+                   .build();
+var client = HttpClient.newHttpClient();
+var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+System.out.println(response.statusCode());      // 200
+</code></pre>
+<p>最后的这个例子演示了如何通过 <code>BASIC-AUTH</code> 来进行认证：</p>
+<pre><code class="language-java">var request = HttpRequest.newBuilder()
+    .uri(URI.create(&quot;https://postman-echo.com/basic-auth&quot;))
+    .build();
+var client = HttpClient.newBuilder()
+    .authenticator(new Authenticator() {
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(&quot;postman&quot;, &quot;password&quot;.toCharArray());
+        }
+    })
+    .build();
+var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+System.out.println(response.statusCode());      // 200
+</code></pre>
 <h4>Collections</h4>
 <p>Java 中的容器比如 <code>List</code> 、<code>Set</code>、<code>Map</code> 已经扩展了很多新的方法。<code>List.of</code> 会根据参数创建一个新的不可变的 <code>list</code>，<code>List.copy</code> 会创建这个 <code>list</code>  的不可变副本。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> list = List.of(<span class="string">"A"</span>, <span class="string">"B"</span>, <span class="string">"C"</span>);</span><br><span class="line"><span class="keyword">var</span> copy = List.copyOf(List);</span><br><span class="line">System.out.println(list == copy); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-因为 <code>list</code> 已经是不可变的，在复制时没必要创建另一个实例，因此 <code>lisi</code> 和 <code>copy</code> 指向的是同一个实例。然而如果想复制一个可变的对象，就会创建一个新的实例来保证对原对象的修改不会影响到复制的对象。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> list = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line"><span class="keyword">var</span> copy = List.copyOf(list);</span><br><span class="line">System.out.println(list == copy);</span><br></pre></td></tr></table></figure></p>
-<p>当创建不可变的 map 时候，不需要手动创建 map 对象，只需要使用 <code>Map.of</code> 方法交替传入 key 和 value 就可以。
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> map = Map.of(<span class="string">"A"</span>, <span class="number">1</span>, <span class="string">"B"</span>, <span class="number">2</span>);</span><br><span class="line">System.out.println(map);</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">var list = List.of(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;);
+var copy = List.copyOf(List);
+System.out.println(list == copy); // true
+</code></pre>
+<p>因为 <code>list</code> 已经是不可变的，在复制时没必要创建另一个实例，因此 <code>lisi</code> 和 <code>copy</code> 指向的是同一个实例。然而如果想复制一个可变的对象，就会创建一个新的实例来保证对原对象的修改不会影响到复制的对象。</p>
+<pre><code class="language-java">var list = new ArrayList&lt;String&gt;();
+var copy = List.copyOf(list);
+System.out.println(list == copy);
+</code></pre>
+<p>当创建不可变的 map 时候，不需要手动创建 map 对象，只需要使用 <code>Map.of</code> 方法交替传入 key 和 value 就可以。</p>
+<pre><code class="language-java">var map = Map.of(&quot;A&quot;, 1, &quot;B&quot;, 2);
+System.out.println(map);
+</code></pre>
 <blockquote>
 <p>在 Java 11 中不可变容器的 API 没有变化。然而如果尝试对不可变的容器添加或者减少元素，就会抛出 <code>java.lang.UnsupportedOperationException</code> 异常。幸运的是 <code>Intellij IDEA</code> 会在你尝试修改不可变容器的时候发出一个警告。</p>
 </blockquote>
 <h4>Streams</h4>
 <p><code>Streams</code> 是在 Java8 中加入的新特性，在后面的又加入了 3 个新的方法。
 <code>Stream.ofNullable</code> 方法通过单个元素来构造流：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Stream.ofNullable(<span class="keyword">null</span>)</span><br><span class="line">         .count();  <span class="comment">// 0</span></span><br></pre></td></tr></table></figure>
-<code>dropWhile</code> 和 <code>takeWhile</code> 方法都可以接受一个 <code>predicate</code> 参数来决定是否将符合条件的元素从流中清理出去。</p>
+<pre><code class="language-java">Stream.ofNullable(null)
+         .count();  // 0
+</code></pre>
+<p><code>dropWhile</code> 和 <code>takeWhile</code> 方法都可以接受一个 <code>predicate</code> 参数来决定是否将符合条件的元素从流中清理出去。</p>
 <blockquote>
 <p>predicate 是一个函数式编程的接口</p>
 </blockquote>
 <h4>Optionals</h4>
 <p><code>Optionals</code> 也接收了一些相当有用的方法。比如现在可以将 optinals 很简单转成 stream 或者为一个空的 optional 返回另一个备用的 optional。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Optional.of(<span class="string">"foo"</span>).orElseThrow();     <span class="comment">// foo</span></span><br><span class="line">Optional.of(<span class="string">"foo"</span>).stream().count();  <span class="comment">// 1</span></span><br><span class="line">Optional.ofNullable(<span class="keyword">null</span>)</span><br><span class="line">    .or(() -&gt; Optional.of(<span class="string">"fallback"</span>))</span><br><span class="line">    .get();                           <span class="comment">// fallback</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">Optional.of(&quot;foo&quot;).orElseThrow();     // foo
+Optional.of(&quot;foo&quot;).stream().count();  // 1
+Optional.ofNullable(null)
+    .or(() -&gt; Optional.of(&quot;fallback&quot;))
+    .get();                           // fallback
+</code></pre>
 <h4>Strings</h4>
 <p><code>String</code> 这个基础的类也新增了一些方法来校验空格以及计算字符串的行数。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">" "</span>.isBlank();                <span class="comment">// true</span></span><br><span class="line"><span class="string">" Foo Bar "</span>.strip();          <span class="comment">// "Foo Bar"</span></span><br><span class="line"><span class="string">" Foo Bar "</span>.stripTrailing();  <span class="comment">// " Foo Bar"</span></span><br><span class="line"><span class="string">" Foo Bar "</span>.stripLeading();   <span class="comment">// "Foo Bar "</span></span><br><span class="line"><span class="string">"Java"</span>.repeat(<span class="number">3</span>);             <span class="comment">// "JavaJavaJava"</span></span><br><span class="line"><span class="string">"A\nB\nC"</span>.lines().count();    <span class="comment">// 3</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">&quot; &quot;.isBlank();                // true
+&quot; Foo Bar &quot;.strip();          // &quot;Foo Bar&quot;
+&quot; Foo Bar &quot;.stripTrailing();  // &quot; Foo Bar&quot;
+&quot; Foo Bar &quot;.stripLeading();   // &quot;Foo Bar &quot;
+&quot;Java&quot;.repeat(3);             // &quot;JavaJavaJava&quot;
+&quot;A\nB\nC&quot;.lines().count();    // 3
+</code></pre>
 <h4>InputStreams</h4>
 <p>最后简单说一下 <code>InputStream</code> 提供了一个非常有用的方法来传输数据到 <code>OutputStream</code>，下面这个例子在传输原始数据的时候能经常看到。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> classLoader = ClassLoader.getSystemClassLoader();</span><br><span class="line"><span class="keyword">var</span> inputStream = classLoader.getResourceAsStream(<span class="string">"myFile.txt"</span>);</span><br><span class="line"><span class="keyword">var</span> tempFile = File.createTempFile(<span class="string">"myFileCopy"</span>, <span class="string">"txt"</span>);</span><br><span class="line"><span class="keyword">try</span> (<span class="keyword">var</span> outputStream = <span class="keyword">new</span> FileOutputStream(tempFile)) &#123;</span><br><span class="line">    inputStream.transferTo(outputStream);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">var classLoader = ClassLoader.getSystemClassLoader();
+var inputStream = classLoader.getResourceAsStream(&quot;myFile.txt&quot;);
+var tempFile = File.createTempFile(&quot;myFileCopy&quot;, &quot;txt&quot;);
+try (var outputStream = new FileOutputStream(tempFile)) {
+    inputStream.transferTo(outputStream);
+}
+</code></pre>
 <h4>其他的 JVM 特性</h4>
 <p>上面的这些事我认为 Java8 到 Java11 中最有趣的新特性。但是新特性远远不止这些。下面的这些特性在最新的 Java 版本中都有：</p>
 <ul>
@@ -151,7 +227,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -159,7 +235,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

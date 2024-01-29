@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -69,46 +68,102 @@
 <h2>slice 的创建</h2>
 <p>slice 可以主动创建，也可从现有的数组中获取。</p>
 <p>带初始化元素的方式：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nums := []<span class="keyword">int</span>&#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">fmt.Println(<span class="built_in">len</span>(nums)) <span class="comment">// 6</span></span><br><span class="line">fmt.Println(<span class="built_in">cap</span>(nums)) <span class="comment">// 6</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">nums := []int{0, 1, 2, 3, 4, 5}
+fmt.Println(len(nums)) // 6
+fmt.Println(cap(nums)) // 6
+</code></pre>
 <p>不带初始化元素的方式，下面的这种方式会自动填充零值：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nums := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">6</span>) </span><br><span class="line">fmt.Println(<span class="built_in">len</span>(nums)) <span class="comment">// 6</span></span><br><span class="line">fmt.Println(<span class="built_in">cap</span>(nums)) <span class="comment">// 6</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">nums := make([]int, 6) 
+fmt.Println(len(nums)) // 6
+fmt.Println(cap(nums)) // 6
+</code></pre>
 <p>还可以创建一个更大容量的 slice：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nums := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">6</span>, <span class="number">12</span>) </span><br><span class="line">fmt.Println(<span class="built_in">len</span>(nums)) <span class="comment">// 6</span></span><br><span class="line">fmt.Println(<span class="built_in">cap</span>(nums)) <span class="comment">// 12</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">nums := make([]int, 6, 12) 
+fmt.Println(len(nums)) // 6
+fmt.Println(cap(nums)) // 12
+</code></pre>
 <p>在这里需要需要注意，虽然 slice 容量有 12，但是却不能直接访问 slice <strong>长度范围外</strong>的元素，否则会出现 panic:</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(nums[<span class="number">6</span>]) <span class="comment">// panic</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">fmt.Println(nums[6]) // panic
+</code></pre>
 <p>要么通过扩展 slice 的长度，要么使用 append 函数来添加元素。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nums = nums[:<span class="built_in">len</span>(nums)+<span class="number">1</span>] <span class="comment">// 将 slice 的长度扩展大 1</span></span><br><span class="line">nums = <span class="built_in">append</span>(nums, <span class="number">1</span>) <span class="comment">// 使用 append 将 nums 的长度加 1</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">nums = nums[:len(nums)+1] // 将 slice 的长度扩展大 1
+nums = append(nums, 1) // 使用 append 将 nums 的长度加 1
+</code></pre>
 <p>在使用上面的方式创建 slice 时，Go 会自动的创建一个底层数组来存储数据，slice 本身并不会存储数据。</p>
 <p>还有一种方式是通过数组来创建 slice：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">numsArr := [...]<span class="keyword">int</span>&#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line"></span><br><span class="line">numsSlice := numsArr[:] <span class="comment">// 这表示 slice 容纳数组的所有元素</span></span><br><span class="line">fmt.Println(<span class="built_in">len</span>(numsSlice)) <span class="comment">// 6</span></span><br><span class="line">fmt.Println(<span class="built_in">cap</span>(numsSlice)) <span class="comment">// 6</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">numsArr := [...]int{0, 1, 2, 3, 4, 5}
+
+numsSlice := numsArr[:] // 这表示 slice 容纳数组的所有元素
+fmt.Println(len(numsSlice)) // 6
+fmt.Println(cap(numsSlice)) // 6
+</code></pre>
 <h2>slice 的结构</h2>
 <p>一般 可以把 slice 看成是一个复合结构，结构如下，由三部分组成：指针、长度和容量：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Slice <span class="keyword">struct</span> &#123;</span><br><span class="line">    ptr      *T</span><br><span class="line">    <span class="built_in">len</span>, <span class="built_in">cap</span> <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type Slice struct {
+    ptr      *T
+    len, cap int
+}
+</code></pre>
 <p>slice 本身不会存储任何数据，slice 通过指针指向底层数组的某一个位置，这个位置就是 slice 的初始位置。长度表示当前 slice 中的元素个数，容量表示从指针的位置到底层数组的最后一个位置。</p>
 <p>slice 可变长的第一个原因就是可以通过改变指针的位置来改变 slice 的长度。比如下面这样:</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">numsSlice2 := numsSlice[<span class="number">1</span>:<span class="number">3</span>]</span><br><span class="line">fmt.Println(<span class="built_in">len</span>(numsSlice2)) <span class="comment">// 2</span></span><br><span class="line">fmt.Prinltn(<span class="built_in">cap</span>(numsSlice2)) <span class="comment">// 5</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">numsSlice2 := numsSlice[1:3]
+fmt.Println(len(numsSlice2)) // 2
+fmt.Prinltn(cap(numsSlice2)) // 5
+</code></pre>
 <p>这个操作在 numsSlice 的基础上创建的一个新的 slice，其实就是移动了一下 slice 的指针。</p>
 <p>另外 slice 不能使用 == 进行比较，因为 slice 的元素是非直接的，也就是 slice 本身不存储值，slice 甚至可以包含自身。另外因为 slice 的元素是靠底层的数组存储，所以当底层数组变动的时候，slice 读取到的值也会产生变化。如果 使用 == 来进行比较，可能会产生很多预料之外的结果。</p>
 <h2>理解 slice 的 cap</h2>
 <p>对于初学者来说，会把 slice 的长度和容量搞混。</p>
 <p>先来看下面这段代码：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">numsArr := [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line"></span><br><span class="line">s1 := numsArr[<span class="number">0</span> : <span class="number">3</span>] </span><br><span class="line">fmt.Println(s1) <span class="comment">// [1,2,3]</span></span><br><span class="line">fmt.Println(<span class="built_in">cap</span>(s1)) <span class="comment">// 6</span></span><br><span class="line">fmt.Println(<span class="built_in">len</span>(s1)) <span class="comment">// 3</span></span><br><span class="line"></span><br><span class="line">s2 := numsArr[<span class="number">3</span>:<span class="number">5</span>]</span><br><span class="line">fmt.Println(s2) <span class="comment">// [4,5]</span></span><br><span class="line">fmt.Println(<span class="built_in">cap</span>(s2)) <span class="comment">// 3</span></span><br><span class="line">fmt.Println(<span class="built_in">len</span>(s2)) <span class="comment">// 2</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">numsArr := [...]int{1, 2, 3, 4, 5, 6}
+
+s1 := numsArr[0 : 3] 
+fmt.Println(s1) // [1,2,3]
+fmt.Println(cap(s1)) // 6
+fmt.Println(len(s1)) // 3
+
+s2 := numsArr[3:5]
+fmt.Println(s2) // [4,5]
+fmt.Println(cap(s2)) // 3
+fmt.Println(len(s2)) // 2
+</code></pre>
 <p>我们可以发现，同样是从数组上来生成 slice，但是生成之后的 slice 的容量却不一样，在上面而我们说到了 slice 的初始位置靠指针来决定，s1 指针的位置在数组的最开始的位置。按照容量的定义，从指针到底层数组结束的地方，所以它的 容量还是 6。</p>
 <p>而 s2 中，指针的位置是数组的第四个元素，长度是 3，容量也是 3。这是初学者最容易犯错的地方。</p>
 <p>**长度表示 slice 中目前可访问的元素个数，容量则表示这个 slice 在不改变底层数组的情况下，最多个扩展到的长度。**如果要扩展 slice，使用下面的操作就可以：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s2 = s2[:<span class="number">3</span>] <span class="comment">// 把上面 s2 的长度从 2 扩展到 3</span></span><br><span class="line">fmt.Println(s2[<span class="number">2</span>]) <span class="comment">// 访问第三个元素</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">s2 = s2[:3] // 把上面 s2 的长度从 2 扩展到 3
+fmt.Println(s2[2]) // 访问第三个元素
+</code></pre>
 <p>这种方式是让 slice 可变长的第二种方式。</p>
 <h2>理解 append</h2>
 <p>append 方法也是让  slice 可变长的一种方式。</p>
 <p>append 函数经常会配合 slice 一起使用，在使用 append 的时候，我们需要使用下面的语法：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nums = <span class="built_in">append</span>(nums, <span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">nums = append(nums, 1)
+</code></pre>
 <p>而且这种做法是必须的，如果没有采用这种做法，可能会产生意料之外的结果。看下面的代码：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">numsArr := [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line"></span><br><span class="line">s1 := numsArr[<span class="number">3</span>:<span class="number">5</span>]</span><br><span class="line">fmt.Println(<span class="built_in">cap</span>(s1)) <span class="comment">// 3</span></span><br><span class="line">fmt.Println(<span class="built_in">len</span>(s1)) <span class="comment">// 2</span></span><br><span class="line"></span><br><span class="line">_ = <span class="built_in">append</span>(s1, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">fmt.Println(s1[<span class="number">2</span>]) <span class="comment">// panic</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">numsArr := [...]int{1, 2, 3, 4, 5, 6}
+
+s1 := numsArr[3:5]
+fmt.Println(cap(s1)) // 3
+fmt.Println(len(s1)) // 2
+
+_ = append(s1, 1)
+
+fmt.Println(s1[2]) // panic
+</code></pre>
 <p>上面的代码在调用 append 之后，如果没有使用返回的 slice，而是直接使用原来的 slice，就会产生越界的错误。</p>
 <p>因为 slice 本身虽然是可变长的，所以如果 slice 还有容量，那么每次添加元素，都需要扩展 slice 的长度，返回的也是一个新的 slice。</p>
 <p>另外 slice 依赖的底层数组是固定长度，在使用 append 时，如果底层的数组不足以存储新的元素之后，就需要扩容，扩容之后就会产生一个新的 slice 返回。</p>
 <p>可以理解 append 方法修改传入的 slice，而我们在调用 append 函数之后，就需要使用函数返回的结果。所以上面的代码需要修改为:</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">numsArr := [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line"></span><br><span class="line">	s1 := numsArr[<span class="number">3</span>:<span class="number">5</span>]</span><br><span class="line">	fmt.Println(<span class="built_in">cap</span>(s1)) <span class="comment">// 3</span></span><br><span class="line">	fmt.Println(<span class="built_in">len</span>(s1)) <span class="comment">// 2</span></span><br><span class="line"></span><br><span class="line">	s1 = <span class="built_in">append</span>(s1, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">	fmt.Println(s1[<span class="number">2</span>]) <span class="comment">//1</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">numsArr := [...]int{1, 2, 3, 4, 5, 6}
+
+	s1 := numsArr[3:5]
+	fmt.Println(cap(s1)) // 3
+	fmt.Println(len(s1)) // 2
+
+	s1 = append(s1, 1)
+
+	fmt.Println(s1[2]) //1
+</code></pre>
 <h2>小结</h2>
 <p>slice 是一个很有用的数据接口，既可以当数组用，也可以当 list 使用。在使用 slice 的过程中，一定要注意 slice 本身不存储数据，它只是在一个底层数组上，截取不同长度序列，可以说 slice 就是一个数组的子序列。</p>
 <p>另外我们说到了 slice 可变长的几种方式，一种是通过移动 slice 的指针，改变 slice 的长度，第二种是 slice 容量范围内扩展长度，第三种是通过 append 方式，这种方式会创建一个新的 slice。</p>
@@ -121,7 +176,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -129,7 +184,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

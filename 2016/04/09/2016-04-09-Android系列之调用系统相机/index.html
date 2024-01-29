@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -65,16 +64,59 @@
     <h1>Android系列之调用系统相机</h1>
     <p>在这次的开发中使用到了调用相机的功能，记录如下：</p>
 <p>调用系统相机，获取照片方法如下：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">File outputImage &#x3D; new File(filename); &#x2F;&#x2F;需要具体的文件名称和路径</span><br><span class="line"></span><br><span class="line">Intent intent &#x3D; new Intent();</span><br><span class="line">intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);</span><br><span class="line">imageUri &#x3D; Uri.fromFile(outputImage);</span><br><span class="line">intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);</span><br></pre></td></tr></table></figure></p>
+<pre><code>
+File outputImage = new File(filename); //需要具体的文件名称和路径
+
+Intent intent = new Intent();
+intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+imageUri = Uri.fromFile(outputImage);
+intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+
+</code></pre>
 <p>以上的代码虽然可以获取照片，但是却也什么都做不了，因为，我们可能需要对这些照片进行额外的操作，比如放到特定的文件夹，或者缩放，
 或者裁剪。</p>
 <h4>将照片放到特定的位置</h4>
 <p>如果只是调用 <code>Environment.getExternalStorageState()</code> ,这会将照片直接保存在 SD 卡的根目录，下面的代码可以将照片保存到 SD
 卡的任意地方，如果目录不存在，就会创建一个新的目录：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">private File createOutputFile(String path, String fileName) &#123;</span><br><span class="line"></span><br><span class="line">    String storageStatus &#x3D; Environment.getExternalStorageState();</span><br><span class="line"></span><br><span class="line">    if(Environment.MEDIA_REMOVED.equals(storageStatus)) &#123;</span><br><span class="line">        Log.i(TAG, &quot;SD 卡不存在&quot;);</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    File pictureDir &#x3D; new File(Environment.getExternalStorageDirectory(), path);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    if(! pictureDir.exists()) &#123;</span><br><span class="line"></span><br><span class="line">        if(! pictureDir.mkdirs()) &#123;</span><br><span class="line">            Log.i(TAG, &quot;目录创建失败&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    File file &#x3D; new File(pictureDir, fileName);</span><br><span class="line"></span><br><span class="line">    return file;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code>    private File createOutputFile(String path, String fileName) {
+
+        String storageStatus = Environment.getExternalStorageState();
+
+        if(Environment.MEDIA_REMOVED.equals(storageStatus)) {
+            Log.i(TAG, &quot;SD 卡不存在&quot;);
+            return null;
+        }
+
+        File pictureDir = new File(Environment.getExternalStorageDirectory(), path);
+
+
+        if(! pictureDir.exists()) {
+
+            if(! pictureDir.mkdirs()) {
+                Log.i(TAG, &quot;目录创建失败&quot;);
+            }
+        }
+
+        File file = new File(pictureDir, fileName);
+
+        return file;
+    }
+</code></pre>
 <h4>对照片进行裁剪</h4>
 <p>以下的代码可以启动一个裁剪器，对刚刚拍好的照片利用系统相机的功能进行裁剪：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Intent intent &#x3D; new Intent(&quot;com.android.camera.action.CROP&quot;);</span><br><span class="line">intent.setDataAndType(imageUri, &quot;image&#x2F;*&quot;);</span><br><span class="line">intent.putExtra(&quot;aspectX&quot;, 1);</span><br><span class="line">intent.putExtra(&quot;aspectY&quot;, 1);</span><br><span class="line">intent.putExtra(&quot;outputX&quot;, 200);</span><br><span class="line">intent.putExtra(&quot;outputY&quot;, 200);</span><br><span class="line">intent.putExtra(&quot;scale&quot;, true);</span><br><span class="line">intent.putExtra(&quot;return-data&quot;, false);</span><br><span class="line">intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);</span><br><span class="line">intent.putExtra(&quot;outputFormat&quot;, Bitmap.CompressFormat.JPEG.toString());</span><br><span class="line">intent.putExtra(&quot;noFaceDetection&quot;, true);</span><br></pre></td></tr></table></figure></p>
+<pre><code> Intent intent = new Intent(&quot;com.android.camera.action.CROP&quot;);
+ intent.setDataAndType(imageUri, &quot;image/*&quot;);
+ intent.putExtra(&quot;aspectX&quot;, 1);
+ intent.putExtra(&quot;aspectY&quot;, 1);
+ intent.putExtra(&quot;outputX&quot;, 200);
+ intent.putExtra(&quot;outputY&quot;, 200);
+ intent.putExtra(&quot;scale&quot;, true);
+ intent.putExtra(&quot;return-data&quot;, false);
+ intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+ intent.putExtra(&quot;outputFormat&quot;, Bitmap.CompressFormat.JPEG.toString());
+ intent.putExtra(&quot;noFaceDetection&quot;, true);
+
+</code></pre>
 
 </article>
 
@@ -82,7 +124,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -90,7 +132,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

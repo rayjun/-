@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -80,9 +79,62 @@
 <p>这篇文章中使用 git 版本管理为例子。Mercurial、Bazaar 等其他的版本管理工具也是支持的。</p>
 <h2>创建项目</h2>
 <p>在这篇文章中，你需要用一个已经存在的项目作为例子。在这里，继续使用<a href="https://rayjun.cn/2021/01/17/%E4%BD%BF%E7%94%A8Go-modules/" target="_blank" rel="noopener">第一篇文章</a>的代码来演示：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">$ cat go.mod</span><br><span class="line">module example.com/hello</span><br><span class="line"></span><br><span class="line">go 1.12</span><br><span class="line"></span><br><span class="line">require rsc.io/quote/v3 v3.1.0</span><br><span class="line"></span><br><span class="line">$ cat go.sum</span><br><span class="line">golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c h1:qgOY6WgZOaTkIIMiVjBQcw93ERBE4m30iBm00nkL0i8=</span><br><span class="line">golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=</span><br><span class="line">rsc.io/quote/v3 v3.1.0 h1:9JKUTTIUgS6kzR9mK1YuGKv6Nl+DijDNIc0ghT58FaY=</span><br><span class="line">rsc.io/quote/v3 v3.1.0/go.mod h1:yEA65RcK8LyAZtP9Kv3t0HmxON59tX3rD+tICJqUlj0=</span><br><span class="line">rsc.io/sampler v1.3.0 h1:7uVkIFmeBqHfdjD+gZwtXXI+RODJ2Wc4O7MPEh/QiW4=</span><br><span class="line">rsc.io/sampler v1.3.0/go.mod h1:T1hPZKmBbMNahiBKFy5HrXp6adAjACjK9JXDnKaTXpA=</span><br><span class="line"></span><br><span class="line">$ cat hello.go</span><br><span class="line">package hello</span><br><span class="line"></span><br><span class="line">import <span class="string">"rsc.io/quote/v3"</span></span><br><span class="line"></span><br><span class="line">func Hello() string &#123;</span><br><span class="line">    <span class="built_in">return</span> quote.HelloV3()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func Proverb() string &#123;</span><br><span class="line">    <span class="built_in">return</span> quote.Concurrency()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$ cat hello_test.go</span><br><span class="line">package hello</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    <span class="string">"testing"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func TestHello(t *testing.T) &#123;</span><br><span class="line">    want := <span class="string">"Hello, world."</span></span><br><span class="line">    <span class="keyword">if</span> got := Hello(); got != want &#123;</span><br><span class="line">        t.Errorf(<span class="string">"Hello() = %q, want %q"</span>, got, want)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func TestProverb(t *testing.T) &#123;</span><br><span class="line">    want := <span class="string">"Concurrency is not parallelism."</span></span><br><span class="line">    <span class="keyword">if</span> got := Proverb(); got != want &#123;</span><br><span class="line">        t.Errorf(<span class="string">"Proverb() = %q, want %q"</span>, got, want)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ cat go.mod
+module example.com/hello
+
+go 1.12
+
+require rsc.io/quote/v3 v3.1.0
+
+$ cat go.sum
+golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c h1:qgOY6WgZOaTkIIMiVjBQcw93ERBE4m30iBm00nkL0i8=
+golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+rsc.io/quote/v3 v3.1.0 h1:9JKUTTIUgS6kzR9mK1YuGKv6Nl+DijDNIc0ghT58FaY=
+rsc.io/quote/v3 v3.1.0/go.mod h1:yEA65RcK8LyAZtP9Kv3t0HmxON59tX3rD+tICJqUlj0=
+rsc.io/sampler v1.3.0 h1:7uVkIFmeBqHfdjD+gZwtXXI+RODJ2Wc4O7MPEh/QiW4=
+rsc.io/sampler v1.3.0/go.mod h1:T1hPZKmBbMNahiBKFy5HrXp6adAjACjK9JXDnKaTXpA=
+
+$ cat hello.go
+package hello
+
+import &quot;rsc.io/quote/v3&quot;
+
+func Hello() string {
+    return quote.HelloV3()
+}
+
+func Proverb() string {
+    return quote.Concurrency()
+}
+
+$ cat hello_test.go
+package hello
+
+import (
+    &quot;testing&quot;
+)
+
+func TestHello(t *testing.T) {
+    want := &quot;Hello, world.&quot;
+    if got := Hello(); got != want {
+        t.Errorf(&quot;Hello() = %q, want %q&quot;, got, want)
+    }
+}
+
+func TestProverb(t *testing.T) {
+    want := &quot;Concurrency is not parallelism.&quot;
+    if got := Proverb(); got != want {
+        t.Errorf(&quot;Proverb() = %q, want %q&quot;, got, want)
+    }
+}
+$
+</code></pre>
 <p>接下来，创建一个新的 git 仓库并添加一个初始的提交。如果你要发布自己的项目，记得添加一个 LICENSE 文件。切换到包含 go.mod 文件的目录，创建一个仓库：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git init</span><br><span class="line">$ git add LICENSE go.mod go.sum hello.go hello_test.go</span><br><span class="line">$ git commit -m <span class="string">"hello: initial commit"</span></span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ git init
+$ git add LICENSE go.mod go.sum hello.go hello_test.go
+$ git commit -m &quot;hello: initial commit&quot;
+$
+</code></pre>
 <h2>语义化版本和模块</h2>
 <p>每模块都在 go.mod 文件中有一个<a href="https://semver.org/" target="_blank" rel="noopener">语义版本</a>，这是用于构建模块的依赖的最小版本。</p>
 <p>一个语义版本号的格式都是 vMAJOR.MINOR.PATCH：</p>
@@ -105,7 +157,15 @@
 <li>使用 git tag 命令标记一个新的版本</li>
 <li>推送标记到远程仓库</li>
 </ol>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ go mod tidy</span><br><span class="line">$ go <span class="built_in">test</span> ./...</span><br><span class="line">ok      example.com/hello       0.015s</span><br><span class="line">$ git add go.mod go.sum hello.go hello_test.go</span><br><span class="line">$ git commit -m <span class="string">"hello: changes for v0.1.0"</span></span><br><span class="line">$ git tag v0.1.0</span><br><span class="line">$ git push origin v0.1.0</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go mod tidy
+$ go test ./...
+ok      example.com/hello       0.015s
+$ git add go.mod go.sum hello.go hello_test.go
+$ git commit -m &quot;hello: changes for v0.1.0&quot;
+$ git tag v0.1.0
+$ git push origin v0.1.0
+$
+</code></pre>
 <p>现在其他项目可以依赖于 example.com/hello 的 v0.1.0 版本。对于你自己的模块，可以运行 go list -m example.com/hello@v0.1.0 来确认最新可用版本（该示例模块不存在，因此没有可用的版本）。如果你没有立即看到最新版本，并且正在使用 Go 模块代理（自 Go 1.13 以来的默认设置），可以在几分钟内再次尝试，给代理一点时间来加载新版本。</p>
 <p>如果向公共 API 添加内容，对 v0 版本的模块进行破坏性更改，或者升级某个依赖项的次版本，则为下一个发行版增加次要版本。例如，v0.1.0 之后的下一个版本将是 v0.2.0。</p>
 <p>如果修复了现有版本中的bug，则增加补丁版本。例如，v0.1.0之后的下一个版本将是v0.1.1。</p>
@@ -121,7 +181,15 @@
 <p>因为有 Split 函数和 SplitN 函数，你会期望也有 Replace 函数和 ReplaceN 函数。我们无法在不做破坏性修改的情况下修改 Replace 函数。在 Go 1.12中，我们添加了一个新函数，ReplaceAll。因为 Split 和 Replace 的行为不同，结果产生的 API 有点奇怪，但这种不一致性比破坏性更改要好。</p>
 <p>假设你现在对 example.com/hello 的 API 很满意，并且希望发布 v1 作为第一个稳定版本。</p>
 <p>给 v1 加标签的过程和给 v0 版本加标签的过程是一样的：运行go mod tidy 和 go test ./.. ，标记版本，并将标记推送到远程仓库：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ go mod tidy</span><br><span class="line">$ go <span class="built_in">test</span> ./...</span><br><span class="line">ok      example.com/hello       0.015s</span><br><span class="line">$ git add go.mod go.sum hello.go hello_test.go</span><br><span class="line">$ git commit -m <span class="string">"hello: changes for v1.0.0"</span></span><br><span class="line">$ git tag v1.0.0</span><br><span class="line">$ git push origin v1.0.0</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go mod tidy
+$ go test ./...
+ok      example.com/hello       0.015s
+$ git add go.mod go.sum hello.go hello_test.go
+$ git commit -m &quot;hello: changes for v1.0.0&quot;
+$ git tag v1.0.0
+$ git push origin v1.0.0
+$
+</code></pre>
 <p>到现在， example.com/hello 的 v1 版本的 API 已经文档了。这就向每个人传达了我们的 API 是稳定的，他们应该会用的很舒服。</p>
 <h2>结论</h2>
 <p>本文介绍了用语义版本标记模块的过程以及何时发布 v1 版本。下面的一篇文章将涵盖如何维护和发布 v2 及后续版本的模块。</p>
@@ -137,7 +205,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -145,7 +213,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

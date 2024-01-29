@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -80,33 +79,58 @@
 <h2>增加函数</h2>
 <p>通常，给方法增加参数就是一种破坏性修改。我们将会讨论一些处理这类变更的方法，但在这之前，先来看一些不合理的修改方式：</p>
 <p>当想用一种好的方式来增加新参数时，却很容易添加成可变参数。来扩展下面这个函数：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Run</span><span class="params">(name String)</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func Run(name String)
+</code></pre>
 <p>添加一个默认值为 0 的 size 参数，有人可能会用下面的形式：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Run</span><span class="params">(name <span class="keyword">string</span>, size ...<span class="keyword">int</span>)</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func Run(name string, size ...int)
+</code></pre>
 <p>当前对这个方法的所有调用都能继续正常工作，但是对 Run 方法其他用法可能就会出问题，比如下面这种：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> mypkg</span><br><span class="line"><span class="keyword">var</span> runner <span class="function"><span class="keyword">func</span><span class="params">(<span class="keyword">string</span>)</span> = <span class="title">yourpkg</span>.<span class="title">Run</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">package mypkg
+var runner func(string) = yourpkg.Run
+</code></pre>
 <p>原来的 Run 方法不会报错是因为它的类型是 <code>func(string)</code>，但是新 Run 方法的类型是 <code>func(string, ...int)</code>，所以上面的代码会在编译时报错。</p>
 <p>保证调用的兼容性并不足以保证向后兼容性。因此，对函数的签名修改了就无法保证向后的兼容性。</p>
 <p>所以解决方法是<strong>增加一个方法</strong>，而不是修改一个方法的签名。举个例子，在引入 context 包之后，把 context.Context 作为函数的第一个参数已经成为一个常见的做法。然而，对于已经稳定的 api，不能给已经暴露出去的函数加上 context.Context 参数，因为这样会伤害到所有在使用这个函数的用户。</p>
 <p>因此，需要增加新方法。比如 database/sql 包中 Query 方法的签名是（一直都是）：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">Query</span><span class="params">(query <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(*Rows, error)</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func (db *DB) Query(query string, args ...interface{}) (*Rows, error)
+</code></pre>
 <p>当 context 包被创建之后，Go 的开发团队为 database/sql 包增加了一个新方法：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">QueryContext</span><span class="params">(ctx context.Context, query <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(*Rows, error)</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func (db *DB) QueryContext(ctx context.Context, query string, args ...interface{}) (*Rows, error)
+</code></pre>
 <p>为了避免复制代码，老方法调用了新方法：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">Query</span><span class="params">(query <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(*Rows, error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> db.QueryContext(context.Background(), query, args...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func (db *DB) Query(query string, args ...interface{}) (*Rows, error) {
+    return db.QueryContext(context.Background(), query, args...)
+}
+</code></pre>
 <p>通过增加新的方法可以用户自己掌握迁移的速度。新增的方法读取方法类似，而且排列在一起，新方法的名称中也包含了 Context，因此 database/sql API 的扩展并没有降低包的可读性。</p>
 <p>如果你预计函数在后续可能需要更多参数，可以提前做准备，把可选实参作为函数签名的一部分。最简单的方式是添加一个 struct 参数，比如 crypto/tls.Dial 方法就是这么做的：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Dial</span><span class="params">(network, addr <span class="keyword">string</span>, config *Config)</span> <span class="params">(*Conn, error)</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func Dial(network, addr string, config *Config) (*Conn, error)
+</code></pre>
 <p>通过 Dial 方法进行 TLS 通信需要 network 和 address 的参数，而其他的很多参数则有一个合理的默认值。如果直接给 config 参数传递 nil，则使用默认值。如果传入了一个 Config 结构体，那些设定了值的字段将覆盖默认值。以后如果要为 TLS 配置一个参数只需要在 Config 结构体中增加一个字段，这个修改是向后兼容的（几乎总是向后兼容的-见下文的<strong>维护结构体的兼容性</strong>）。</p>
 <p>有时候添加新函数和可选参数可以把选项构造为方法接收器。下面来看一下 net 包中监听网络地址功能的演变。在 Go1.11 之前，net 包仅仅提供了一个 Listen 函数：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Listen</span><span class="params">(network, address <span class="keyword">string</span>)</span> <span class="params">(Listener, error)</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">func Listen(network, address string) (Listener, error)
+</code></pre>
 <p>在 Go1.11 中，两个新功能被添加到 net 包的监听功能中：传入一个 context，允许调用者在创连接后而没有绑定之前，通过一个”控制函数”来调整原始连接。如果按照通常的做法，就会产生一个接受context、network、address 和控制函数的新函数。但包的作者没有这么做，而是新增了一个 ListenConfig 结构体，以便在将来添加更多的参数。而且他们没有在报级别添加一个名称很长的函数，而是直接在 ListenConfig 中添加了一个 Listen 方法：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ListenConfig <span class="keyword">struct</span> &#123;</span><br><span class="line">    Control <span class="function"><span class="keyword">func</span><span class="params">(network, address <span class="keyword">string</span>, c syscall.RawConn)</span> <span class="title">error</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="params">(*ListenConfig)</span> <span class="title">Listen</span><span class="params">(ctx context.Context, network, address <span class="keyword">string</span>)</span> <span class="params">(Listener, error)</span></span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type ListenConfig struct {
+    Control func(network, address string, c syscall.RawConn) error
+}
+
+func (*ListenConfig) Listen(ctx context.Context, network, address string) (Listener, error)
+</code></pre>
 <p>另一种提供提供可选参数的方法是<strong>选项类型</strong>模式，在这种模式中，每个选项都是一个函数，通过函数来修改值的状态。这种方法在 Rob Pike 的 <a href="https://commandcenter.blogspot.com/2014/01/self-referential-functions-and-design.html" target="_blank" rel="noopener">Self-referential functions and the design of options</a> 文中做了详细的描述。另外一个被广泛使用的例子是 <a href="http://google.golang.org/grpc" target="_blank" rel="noopener">google.golang.org/grpc</a> 包中的 DialOption。</p>
 <p>选项类型在函数参数中扮演与结构体选项相同的角色：它们都可以通过一种可扩展的方式来修改行为。选择哪个要看具体的场景。来看一下一下 gRPC 的 DialOption 选项类型的简单用法：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">grpc.Dial(<span class="string">"some-target"</span>,</span><br><span class="line">  grpc.WithAuthority(<span class="string">"some-authority"</span>),</span><br><span class="line">  grpc.WithMaxDelay(time.Second),</span><br><span class="line">  grpc.WithBlock())</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">grpc.Dial(&quot;some-target&quot;,
+  grpc.WithAuthority(&quot;some-authority&quot;),
+  grpc.WithMaxDelay(time.Second),
+  grpc.WithBlock())
+</code></pre>
 <p>这也同样可以被实现为一个结构体选项：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">notgrpc.Dial(<span class="string">"some-target"</span>, &amp;notgrpc.Options&#123;</span><br><span class="line">  Authority: <span class="string">"some-authority"</span>,</span><br><span class="line">  MaxDelay:  time.Second,</span><br><span class="line">  Block:     <span class="literal">true</span>,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">notgrpc.Dial(&quot;some-target&quot;, &amp;notgrpc.Options{
+  Authority: &quot;some-authority&quot;,
+  MaxDelay:  time.Second,
+  Block:     true,
+})
+</code></pre>
 <p>选项类型有一些副作用：它要求在每个调用的选项前写入包名，它们增加了包命名空间的大小。如果同一个选项调用了两次，我们也不清楚会发生怎样的行为。另一方面，接收选项类型的函数需要接收一个有可能总是为 nil 的参数。而且当一个类型的零值有意义时，总是需要为这个选项指定默认值，这样就不太优雅，通常需要一个指针或者一个额外的布尔字段。</p>
 <p>为了确保模块的公共 API 在未来的扩展性，这两种方法都是合理的。</p>
 <h2>使用接口</h2>
@@ -115,13 +139,39 @@
 <p>让我们用 archive/tar 包的例子来说明这一点。tar.NewReader 接收一个 io.Reader 参数，但随着时间的推移， Go 团队意识到如果可以调用 Seek，从一个文件头调到一下个文件头就会很有效率。但是他们不能给 io.Reader 添加一个 Seek 方法。这回会破坏 io.Reader 的所有实现。</p>
 <p>另一个被排除的选择是修改 tar.NewReader 的参数，不接受 io.Reader，而是接收 io.ReadSeeker，因为这样可以同时支持 io.Reader 和 Seek（通过 io.Seeker）。但是，正如之前所讨论的，修改函数签名也是一个破坏性的修改。</p>
 <p>所有，他们决定不动 tar.NewReader 的签名，而是在 tar.Reader 中增加了对 io.Seeker 的支持：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> tar</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Reader <span class="keyword">struct</span> &#123;</span><br><span class="line">  r io.Reader</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewReader</span><span class="params">(r io.Reader)</span> *<span class="title">Reader</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;Reader&#123;r: r&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span> <span class="title">Read</span><span class="params">(b []<span class="keyword">byte</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</span><br><span class="line">  <span class="keyword">if</span> rs, ok := r.r.(io.Seeker); ok &#123;</span><br><span class="line">    <span class="comment">// Use more efficient rs.Seek.</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Use less efficient r.r.Read.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">package tar
+
+type Reader struct {
+  r io.Reader
+}
+
+func NewReader(r io.Reader) *Reader {
+  return &amp;Reader{r: r}
+}
+
+func (r *Reader) Read(b []byte) (int, error) {
+  if rs, ok := r.r.(io.Seeker); ok {
+    // Use more efficient rs.Seek.
+  }
+  // Use less efficient r.r.Read.
+}
+</code></pre>
 <p>(在 <a href="https://github.com/golang/go/blob/60f78765022a59725121d3b800268adffe78bde3/src/archive/tar/reader.go#L837" target="_blank" rel="noopener">reader.go</a> 查看具体的代码。)</p>
 <p>当你遇到想要向现有接口添加新方法的情况时，就可以使用这个策略了。首先为新方法创建一个新接口，或者用新方法标识一个现有的接口。接下来，就可以修改需要支持它的函数，为新接口做类型检查，并添加使用它的代码。</p>
 <p>这种策略仅仅在旧接口没有新方法时也能工作的情况能使用，这样会限制模块在未来的扩展性。</p>
 <p>如果可能的话，最好是完全避免这类问题。比如，在设计和构造函数时，最好是返回具体的类型。与接口不同，使用具体类型可以让你在以后添加新方法二不会影响到用户。这种方式让你的模块在以后扩展起来更容易。</p>
 <p>提示：如果你确实需要使用一个接口，但又不想让用户来实现它，你可以添加一个未导出的方法。这可以防止在包外定义的类型在不嵌入的情况下满足接口的要求，从而可以让你在以后添加方法而不会破坏用户的实现。比如，看 <a href="https://github.com/golang/go/blob/83b181c68bf332ac7948f145f33d128377a09c42/src/testing/testing.go#L564-L567" target="_blank" rel="noopener">testing.TB's private() function</a>。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> TB <span class="keyword">interface</span> &#123;</span><br><span class="line">    Error(args ...<span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">    Errorf(format <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// A private method to prevent users implementing the</span></span><br><span class="line">    <span class="comment">// interface and so future additions to it will not</span></span><br><span class="line">    <span class="comment">// violate Go 1 compatibility.</span></span><br><span class="line">    private()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type TB interface {
+    Error(args ...interface{})
+    Errorf(format string, args ...interface{})
+    // ...
+
+    // A private method to prevent users implementing the
+    // interface and so future additions to it will not
+    // violate Go 1 compatibility.
+    private()
+}
+</code></pre>
 <p>Jonathan Amsterdam 的<strong>检测不兼容 API 变化</strong>演讲（<a href="https://www.youtube.com/watch?v=JhdL5AkH-AQ" target="_blank" rel="noopener">视频</a>、<a href="https://github.com/gophercon/2019-talks/blob/master/JonathanAmsterdam-DetectingIncompatibleAPIChanges/slides.pdf" target="_blank" rel="noopener">幻灯片</a>）中也详细探讨了这个主题。</p>
 <h2>添加配置方法</h2>
 <p>到现在为止，我们已经讨论了什么是破坏性改变，就是在改变类型或者函数时会让用户的代码编译不通过。然而，即使用的代码可以编译通过，行为的变化也会对用户的代码造成破坏性改变。比如，许多用户期望 json.Decoder 会忽略 JSON 中不属于参数结构的字段。在这种情况下，当 Go 团队想要返回一个错误时，他们必须小心。如果没有一个可选的机制，这样做意味着许多依赖这些方法的用户可能会开始接收他们以前没有接收到的错误。</p>
@@ -132,9 +182,21 @@
 <p>还有一种需要注意的情况，新字段可能会破坏用户代码。如果一个结构中的所有字段类型都是可比较的——这些类型的值可以用 == 和 != 进行比较，并用作map 中的 key —— 那么整个结构类型也是可比较的。在这种情况下，添加一个不可比较类型的新字段将使整个结构类型变得不可比较，这样比较该结构类型值的代码就会出错。</p>
 <p>为了保持结构的可比性，不要向结构中添加不可比较性字段。你可以为此编写一个测试，或者使用即将发布的 gorelease 工具来捕获这个问题。</p>
 <p>如果从一开始就不想让结构体进行比较，请确保该结构有一个不可比较的字段。它可能已经有了一个非切片、map 或函数类型是可比较的。但如果没有，可以这样添加一个:</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Point <span class="keyword">struct</span> &#123;</span><br><span class="line">        _ [<span class="number">0</span>]<span class="function"><span class="keyword">func</span><span class="params">()</span></span></span><br><span class="line"><span class="function">        <span class="title">X</span> <span class="title">int</span></span></span><br><span class="line"><span class="function">        <span class="title">Y</span> <span class="title">int</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type Point struct {
+        _ [0]func()
+        X int
+        Y int
+}
+</code></pre>
 <p>func() 类型不可比较，并且长度为零的数组不占用空间。我们可以定义一个类型来阐明我们的意图:</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> doNotCompare [<span class="number">0</span>]<span class="function"><span class="keyword">func</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">type</span> <span class="title">Point</span> <span class="title">struct</span></span> &#123;</span><br><span class="line">        doNotCompare</span><br><span class="line">        X <span class="keyword">int</span></span><br><span class="line">        Y <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">type doNotCompare [0]func()
+
+type Point struct {
+        doNotCompare
+        X int
+        Y int
+}
+</code></pre>
 <p>你应该在你的结构中使用doNotCompare吗？如果你已经定义了要作为指针使用的结构体——也就是说，它有指针方法，可能还有一个返回指针的 NewXXX 构造函数，那么添加一个doNotCompare字段可能是多余的。指针类型的用户明白，该类型的每个值都是不同的：如果他们想比较两个值，就应该比较指针。</p>
 <p>如果你想定义一个直接作为值使用的结构体，就像我们的例子，那么你通常希望它具有可比性。在不常见的情况下，你有一个值结构，但不想让它有可比性，就可以添加一个 doNotCompare 字段，这样可以自由地更改结构，而影响比较性。缺点这类型不能用作 map 的 key。</p>
 <h2>小结</h2>
@@ -148,7 +210,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -156,7 +218,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

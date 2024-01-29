@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -73,14 +72,58 @@
 <li>apache.common 中的 FileUtils.copyFile() 方法</li>
 </ul>
 <p><strong>使用 java.io</strong></p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">File originFile = <span class="keyword">new</span> File(<span class="string">"originFile.txt"</span>);</span><br><span class="line">File copyFile = <span class="keyword">new</span> File(<span class="string">"copyFile.txt"</span>);</span><br><span class="line"><span class="keyword">try</span> (</span><br><span class="line">    FileInputStream fis = <span class="keyword">new</span> FileInputStream(originFile);</span><br><span class="line">    FileOutputStream fos = <span class="keyword">new</span> FileOutputStream(copyFile);)&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">byte</span>[] data = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">int</span> len = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> ((len = fis.read(data)) != -<span class="number">1</span>) &#123;</span><br><span class="line">        fos.write(data, <span class="number">0</span>, len);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><strong>使用 java.nio</strong>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">File originFile = <span class="keyword">new</span> File(<span class="string">"originFile.txt"</span>);</span><br><span class="line">File copyFile = <span class="keyword">new</span> File(<span class="string">"copyFile.txt"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> (FileInputStream fis = <span class="keyword">new</span> FileInputStream(originFile);</span><br><span class="line">     FileOutputStream  fos = <span class="keyword">new</span> FileOutputStream(copyFile);) &#123;</span><br><span class="line"></span><br><span class="line">    FileChannel inChannel = fis.getChannel();</span><br><span class="line">    FileChannel outChannel = fos.getChannel();</span><br><span class="line">    inChannel.transferTo(<span class="number">0</span>, inChannel.size(), outChannel);</span><br><span class="line"></span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    System.out.println(e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">File originFile = new File(&quot;originFile.txt&quot;);
+File copyFile = new File(&quot;copyFile.txt&quot;);
+try (
+    FileInputStream fis = new FileInputStream(originFile);
+    FileOutputStream fos = new FileOutputStream(copyFile);){
+    
+    byte[] data = new byte[1024];
+    int len = 0;
+    while ((len = fis.read(data)) != -1) {
+        fos.write(data, 0, len);
+    }
+} catch (IOException e) {
+    e.printStackTrace();
+}
+</code></pre>
+<p><strong>使用 java.nio</strong></p>
+<pre><code class="language-java">File originFile = new File(&quot;originFile.txt&quot;);
+File copyFile = new File(&quot;copyFile.txt&quot;);
+
+try (FileInputStream fis = new FileInputStream(originFile);
+     FileOutputStream  fos = new FileOutputStream(copyFile);) {
+
+    FileChannel inChannel = fis.getChannel();
+    FileChannel outChannel = fos.getChannel();
+    inChannel.transferTo(0, inChannel.size(), outChannel);
+
+} catch (IOException e) {
+    System.out.println(e);
+}
+</code></pre>
 <p>而 Files.copy() 和 apache.common.FileUtils.copyFile() 则就是在这两种方式的基础上实现的。</p>
 <p>Files.copy() 的实现要复杂一些，在不同的操作系统上有不同的实现，可以认为是<strong>本地实现</strong>的用户态空间拷贝，用户态空间的概念下面会说到。</p>
 <p>Files.copy() 的可以理解为 java.io 中的实现，没有太大的差别。</p>
 <p>apache.common 中的 FileUtils.copyFile() 就是使用 NIO 中 transferFrom 来实现:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> (FileInputStream fis = <span class="keyword">new</span> FileInputStream(srcFile);</span><br><span class="line">    FileChannel input = fis.getChannel();</span><br><span class="line">    FileOutputStream fos = <span class="keyword">new</span> FileOutputStream(destFile);</span><br><span class="line">    FileChannel output = fos.getChannel()) &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">long</span> size = input.size(); </span><br><span class="line">    <span class="keyword">long</span> pos = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">long</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (pos &lt; size) &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">long</span> remain = size - pos;</span><br><span class="line">        count = remain &gt; FILE_COPY_BUFFER_SIZE ? FILE_COPY_BUFFER_SIZE : remain;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">long</span> bytesCopied = output.transferFrom(input, pos, count);</span><br><span class="line">        <span class="keyword">if</span> (bytesCopied == <span class="number">0</span>) &#123; </span><br><span class="line">            <span class="keyword">break</span>; </span><br><span class="line">        &#125;</span><br><span class="line">        pos += bytesCopied;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">try (FileInputStream fis = new FileInputStream(srcFile);
+    FileChannel input = fis.getChannel();
+    FileOutputStream fos = new FileOutputStream(destFile);
+    FileChannel output = fos.getChannel()) {
+    final long size = input.size(); 
+    long pos = 0;
+    long count = 0;
+    while (pos &lt; size) {
+        final long remain = size - pos;
+        count = remain &gt; FILE_COPY_BUFFER_SIZE ? FILE_COPY_BUFFER_SIZE : remain;
+        final long bytesCopied = output.transferFrom(input, pos, count);
+        if (bytesCopied == 0) { 
+            break; 
+        }
+        pos += bytesCopied;
+    }
+}
+</code></pre>
 <p>所以在 Java 中，实现文件复制的方法本质上只有两种，java.io 和 java.nio，那么这两种方式有什么区别呢？</p>
 <p>在我 2015 年的 i5 8G 内存的 MacBook pro 上，用两种方式分别拷贝一个 12M 的 txt 文件， 5 次耗时（ms）如下：</p>
 <table>
@@ -140,7 +183,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -148,7 +191,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

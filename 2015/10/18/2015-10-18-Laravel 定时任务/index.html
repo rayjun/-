@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -66,18 +65,49 @@
     <p>在 php 中使用定时器是一件不太简单的事情，之前大概只能通过 cron 来实现定时任务。但是在 Laravel5 中，定时任务将会变得很简单。</p>
 <h3>Laravel Schedule</h3>
 <p>这个是 Laravel5 中新增加的特性之一。在 Laravel5 中，进入到 app/Console/Kernel.php 中，可以看到以下代码：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">protected function schedule(Schedule $schedule)</span><br><span class="line">  &#123;</span><br><span class="line">      $schedule-&gt;command(&#39;inspire&#39;)</span><br><span class="line">               -&gt;hourly();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-这个 schedule 方法就是定时任务执行的关键，我们可以将所有的定时任务都放到其中，其中， Laravel 提供了诸多的方法来控制任务执行的时间间隔，例如：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$schedule-&gt;command(&#39;foo&#39;)-&gt;everyFiveMinutes();</span><br><span class="line"></span><br><span class="line">$schedule-&gt;command(&#39;foo&#39;)-&gt;everyTenMinutes();</span><br><span class="line"></span><br><span class="line">$schedule-&gt;command(&#39;foo&#39;)-&gt;everyThirtyMinutes();</span><br><span class="line"></span><br><span class="line">$schedule-&gt;command(&#39;foo&#39;)-&gt;mondays();</span><br><span class="line"></span><br><span class="line">$schedule-&gt;command(&#39;foo&#39;)-&gt;tuesdays();</span><br><span class="line"></span><br><span class="line">$schedule-&gt;command(&#39;foo&#39;)-&gt;wednesdays();</span><br><span class="line"></span><br><span class="line">$schedule-&gt;command(&#39;foo&#39;)-&gt;thursdays();</span><br><span class="line"></span><br><span class="line">$schedule-&gt;command(&#39;foo&#39;)-&gt;fridays();</span><br><span class="line"></span><br><span class="line">$schedule-&gt;command(&#39;foo&#39;)-&gt;saturdays();</span><br><span class="line"></span><br><span class="line">$schedule-&gt;command(&#39;foo&#39;)-&gt;sundays();</span><br></pre></td></tr></table></figure>
-我们既可以通过创建 Command 来作为任务来执行，也可以使用闭包函数来作为任务：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$schedule-&gt;call(function()</span><br><span class="line">&#123;</span><br><span class="line">  	 	&#x2F;&#x2F;TODO ...</span><br><span class="line">  	 	</span><br><span class="line">&#125;)-&gt;hourly();</span><br></pre></td></tr></table></figure>
-就这样，要执行的任务就可以简单的创建。</p>
+<pre><code>	 protected function schedule(Schedule $schedule)
+    {
+        $schedule-&gt;command('inspire')
+                 -&gt;hourly();
+    }
+</code></pre>
+<p>这个 schedule 方法就是定时任务执行的关键，我们可以将所有的定时任务都放到其中，其中， Laravel 提供了诸多的方法来控制任务执行的时间间隔，例如：</p>
+<pre><code>	$schedule-&gt;command('foo')-&gt;everyFiveMinutes();
+
+	$schedule-&gt;command('foo')-&gt;everyTenMinutes();
+
+	$schedule-&gt;command('foo')-&gt;everyThirtyMinutes();
+
+	$schedule-&gt;command('foo')-&gt;mondays();
+
+	$schedule-&gt;command('foo')-&gt;tuesdays();
+	
+	$schedule-&gt;command('foo')-&gt;wednesdays();
+
+	$schedule-&gt;command('foo')-&gt;thursdays();
+	
+	$schedule-&gt;command('foo')-&gt;fridays();
+	
+	$schedule-&gt;command('foo')-&gt;saturdays();
+	
+	$schedule-&gt;command('foo')-&gt;sundays();
+</code></pre>
+<p>我们既可以通过创建 Command 来作为任务来执行，也可以使用闭包函数来作为任务：</p>
+<pre><code>	$schedule-&gt;call(function()
+	{
+   	 	//TODO ...
+   	 	
+	})-&gt;hourly();
+</code></pre>
+<p>就这样，要执行的任务就可以简单的创建。</p>
 <h3>启动 Schedule</h3>
 <p>在定义完以上的任务之后，可以通过 <code>php artisan schedule:run</code> 来执行这些任务，但是，这个任务执行一起，需要不断的执行这个这个命令定时器才能不断的运行，所以就需要 <code>linux</code> 的系统功能的帮助，在命令行下执行下面的命令：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-执行完以上的命令之后，会出现一个处于编辑状态的文件，在文件中填入一下内容：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* * * * * php &#x2F;path&#x2F;to&#x2F;artisan schedule:run</span><br></pre></td></tr></table></figure>
-然后保存，关闭。上面命令的含义是每隔一分中就执行一下 <code>schedule:run</code>命令。这样一来，前面定义的任务就可以不断的按照定义的时间间隔不断的执行，定时任务的功能也就实现了。</p>
+<pre><code>	crontab -e
+</code></pre>
+<p>执行完以上的命令之后，会出现一个处于编辑状态的文件，在文件中填入一下内容：</p>
+<pre><code>	* * * * * php /path/to/artisan schedule:run
+</code></pre>
+<p>然后保存，关闭。上面命令的含义是每隔一分中就执行一下 <code>schedule:run</code>命令。这样一来，前面定义的任务就可以不断的按照定义的时间间隔不断的执行，定时任务的功能也就实现了。</p>
 <p>注：这个仅仅是在 <code>linux</code> 平台上，<code>windows</code> 还没研究过实现方法。</p>
 
 </article>
@@ -86,7 +116,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -94,7 +124,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

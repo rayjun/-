@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -67,7 +66,21 @@
 <p>Go Modules 在使用的过程中还是会有一些坑，这篇文章将会介绍一些我踩过的坑。</p>
 <h2>1. Go mod 命令详解</h2>
 <p>在 Go 中，提供了 <code>go mod</code> 命令来使用 Go Modules，可以通过 <code>go help mod</code> 来查看支持的命令：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ go <span class="built_in">help</span> mod</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用方式</span></span><br><span class="line">go mod &lt;<span class="built_in">command</span>&gt; [arguments]</span><br><span class="line"></span><br><span class="line"><span class="comment"># commands</span></span><br><span class="line">download <span class="comment"># 将远程的包下载到本地缓存中</span></span><br><span class="line">edit     <span class="comment"># 编辑 go.mod 文件，其实使用编辑器编辑会更方便</span></span><br><span class="line">graph    <span class="comment"># 查看所有依赖的关系</span></span><br><span class="line">init     <span class="comment"># 用来创建一个使用 Go Modules 的项目</span></span><br><span class="line">tidy     <span class="comment"># 添加缺失的包，以及移除不再使用的包</span></span><br><span class="line">vendor   <span class="comment"># 将依赖的包拷贝到项目的 vendor 目录下</span></span><br><span class="line">verify   <span class="comment"># 验证依赖包与预期的一致</span></span><br><span class="line">why      <span class="comment"># 解释为什么需要这个包</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go help mod
+
+# 使用方式
+go mod &lt;command&gt; [arguments]
+
+# commands
+download # 将远程的包下载到本地缓存中
+edit     # 编辑 go.mod 文件，其实使用编辑器编辑会更方便
+graph    # 查看所有依赖的关系
+init     # 用来创建一个使用 Go Modules 的项目
+tidy     # 添加缺失的包，以及移除不再使用的包
+vendor   # 将依赖的包拷贝到项目的 vendor 目录下
+verify   # 验证依赖包与预期的一致
+why      # 解释为什么需要这个包
+</code></pre>
 <p>go mod download 会将依赖缓存到本地，缓存的目录是 <code>$GOPATH/pkg/mod/cache</code>，这些被缓存的依赖可以被多个项目使用。</p>
 <p>go mod graph 可以用来查看项目的依赖，但看起来不是很直观，希望后续能够继续改进。</p>
 <p>go mod init 和 go mod tidy 最常用，分别用来初始化一个 Go Modules 以及添加和删除无用的依赖。</p>
@@ -76,22 +89,30 @@
 <h2>2. 如何获取新的依赖</h2>
 <p>在使用了 Go Modules 以后，go get 依然是获取依赖常用的方法。</p>
 <p>使用也很简单:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/rayjun/go-mod-demo</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">go get github.com/rayjun/go-mod-demo
+</code></pre>
 <p>这样会直接去拉取 go-mod-demo 的最新 tag，如果没有 tag，就会去拉取最新一次 commit。</p>
 <p>也可以直接去拉取某个指定的分支，下面的命令会拉取分支 v1.0.1 的代码：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/rayjun/go-mod-demo@v1.0.1</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">go get github.com/rayjun/go-mod-demo@v1.0.1
+</code></pre>
 <p>如果 tag 和分支同名时，会优先去拉取 tag 下的代码，一般情况下，不要让 tag 和分支同名，而且同名会导致推送代码到分支失败。</p>
 <p>在一些情况下，我们可以需要删除 tag 名，更新代码后再使用这个相同的 tag 名，这样就会导致之前已经下载了这些代码的人无法获取到最新的代码，所以需要先清空本地的缓存，然后再重新下载依赖：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">go clean --modcache <span class="comment"># 将本地缓存的所有依赖都清空</span></span><br><span class="line">go get -u github.com/rayjun/go-mod-demo@v1.0.1 <span class="comment"># 获取最新的代码</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">go clean --modcache # 将本地缓存的所有依赖都清空
+go get -u github.com/rayjun/go-mod-demo@v1.0.1 # 获取最新的代码
+</code></pre>
 <h2>3. Go Modules 中的版本号</h2>
 <p>Go Modules 使用的是<a href="https://semver.org/" target="_blank" rel="noopener">语义版本号</a>来实现对代码版本的管理，语义版本号由三个部分组成:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MAJOR.MINOR.PATCH <span class="comment"># 主版本号.次版本号.补丁版本号</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">MAJOR.MINOR.PATCH # 主版本号.次版本号.补丁版本号
+</code></pre>
 <p>在一些情况下，还可以配置 alpha 等来表示一些先行版本:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v1.0.2-alpha.1</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">v1.0.2-alpha.1
+</code></pre>
 <p>每个 Go Modules 都应该使用这样的版本号来管理代码。如果出现了 v1.0.2.1 这样的版本号，Go Modules 就无法识别：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -u github.com/rayjun/go-mod-demo@v1.0.2.1</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">go get -u github.com/rayjun/go-mod-demo@v1.0.2.1
+</code></pre>
 <p>实际在 go.mod 中显示的版本号是这样的:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">github.com/rayjun/go-mod-demo v1.0.3-0.20210327072248-86af6328b20f</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">github.com/rayjun/go-mod-demo v1.0.3-0.20210327072248-86af6328b20f
+</code></pre>
 <p>对于一个良好的 Go Modules，应该使用 master 分支 + 多 tag 的形式来管理代码，意思就是 master 保持最新的代码，然后每一个已经发布的代码使用 tag 的形式发布出来。tag 的版本号应该符合语义版本号的规则。</p>
 <p>文/Rayjun</p>
 
@@ -101,7 +122,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -109,7 +130,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

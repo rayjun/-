@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -69,12 +68,55 @@
 </blockquote>
 <h2>为什么需要 Spring</h2>
 <p>因为 Spring 可以<strong>简化 Java 开发</strong>。传统 Java 开发的困难之一在于代码的耦合度很高，各个组件的侵入性很强。在这里耦合度高和侵入性表达的是同样的问题。看下这个简单的例子：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Soldier</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Weapon weapon;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Soldier</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        weapon = <span class="keyword">new</span> Knife();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Knife</span> <span class="keyword">implements</span> <span class="title">Weapon</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Weapon</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-上面的代码坏在哪里？没错，就是代码的耦合度太高了，也可以说 Weapon 的侵入性太强。这样一来 Soldier 只能持有 Knife，想换一把武器就得修改一次代码，这对于运行的系统来说肯定是不能被接收了。实际要解决这个问题其实也很简单，只要做一点小小的改动：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Soldier</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Weapon weapon;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Soldier</span><span class="params">(Weapon weapon)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.weapon = weapon;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Gun</span> <span class="keyword">implements</span> <span class="title">Weapon</span></span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Weapon gun = <span class="keyword">new</span> Gun();</span><br><span class="line">Soldier s = <span class="keyword">new</span> Soldier(gun);</span><br></pre></td></tr></table></figure>
-做了一点小小的改动之后，好多了，这下 Soldier 想用什么武器就用什么武器，而不用换武器都需要修改 Solider 的代码。这个其实就是 Spring 的核心特性之一：<strong>依赖注入</strong>。但这样还是挺麻烦，每次都需要手动的去 new 一个对象，然后作为一个参数传进去，这个问题自然也有解决的办法，我们后面再讲。再来说一下引起代码复杂度的另一个原因。</p>
+<pre><code class="language-java">public class Soldier {
+    private Weapon weapon;
+
+    public void Soldier() {
+        weapon = new Knife();
+    }
+}
+public class Knife implements Weapon {
+}
+public interface Weapon {
+}
+</code></pre>
+<p>上面的代码坏在哪里？没错，就是代码的耦合度太高了，也可以说 Weapon 的侵入性太强。这样一来 Soldier 只能持有 Knife，想换一把武器就得修改一次代码，这对于运行的系统来说肯定是不能被接收了。实际要解决这个问题其实也很简单，只要做一点小小的改动：</p>
+<pre><code class="language-java">public class Soldier {
+    private Weapon weapon;
+    
+    public void Soldier(Weapon weapon) {
+        this.weapon = weapon;
+    }
+}
+public class Gun implements Weapon{
+}
+
+Weapon gun = new Gun();
+Soldier s = new Soldier(gun);
+</code></pre>
+<p>做了一点小小的改动之后，好多了，这下 Soldier 想用什么武器就用什么武器，而不用换武器都需要修改 Solider 的代码。这个其实就是 Spring 的核心特性之一：<strong>依赖注入</strong>。但这样还是挺麻烦，每次都需要手动的去 new 一个对象，然后作为一个参数传进去，这个问题自然也有解决的办法，我们后面再讲。再来说一下引起代码复杂度的另一个原因。</p>
 <p>有时候除了写业务代码之外，我们还需要做很多的其他的工作，比如安全检查，打日志等等，如果按照正常我们常用的写代码的方式，如下:</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Soldier</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Weapon weapon;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Soldier</span><span class="params">(Weapon weapon)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.weapon = weapon;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        FightLog.fightLogBefore();</span><br><span class="line">        weapon.attack();</span><br><span class="line">        FightLog.fightLogAfter();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FightLog</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightLogBefore</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Fight begin"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightLogAfter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Fight after"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">public class Soldier {
+    private Weapon weapon;
+
+    public void Soldier(Weapon weapon) {
+        this.weapon = weapon;
+    }
+    public void fight() {
+        FightLog.fightLogBefore();
+        weapon.attack();
+        FightLog.fightLogAfter();
+    }
+}
+public class FightLog {
+    public static void fightLogBefore() {
+        System.out.println(&quot;Fight begin&quot;);
+    }
+    public static void fightLogAfter() {
+        System.out.println(&quot;Fight after&quot;);
+    }
+}
+</code></pre>
 <p>如果我们要记录 Soldier 打斗的全过程，就不得不在打斗开始和结束的地方进行记录。这些记录打斗日志的代码会出现在系统的各个地方，而且和实际的业务逻辑无关，所以这样就会使代码变得很混乱，而且也有很多重复的代码。Spring 为这个问题也准备了一个解决方法：<strong>面向切面编程（AOP）</strong>。</p>
 <p>这两个问题也是日常开发中最容易遇到的问题，Spring 的核心目标就是为了解决这两个问题，以此来简化 Java 的开发，而且 Spring 也做到了。</p>
 <h2>什么是 Spring 容器</h2>
@@ -89,12 +131,26 @@
 <p>在 Spring 中，容器的实现不止一种。每种不同的容器都实现了 <code>BeanFactory</code>。这么多的容器实现是为了应对不同的情况，比如 Web 开发就需要一些额外的特性。还有为了方便不同的配置文件，也实现了不同的容器，这些容器最核心的目标都是用来管理 Bean。容器的继承关系很复杂，就不完整列出了。下面是其中几个比较关键的容器实现：</p>
 <p><img src="spring-context.png" alt=""></p>
 <p>上面的每一个容器都可以直接使用，但是很少会直接使用 BeanFactory，一般都会使用 ApplicationContext 及其子类。ApplicationContext 及其子类提供了更多的服务，比如从配置文件中加载信息等等，可以应对不同类型的 Spring 应用。</p>
-<p>以 ClassPathXmlApplicationContext 容器配置为例：
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;</span><br><span class="line">&lt;beans xmlns=<span class="string">"http://www.springframework.org/schema/beans"</span> xmlns:xsi=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span><br><span class="line">       xmlns:context=<span class="string">"http://www.springframework.org/schema/context"</span> xsi:schemaLocation=<span class="string">"http://www.springframework.org/schema/beans</span></span><br><span class="line"><span class="string">https://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd"</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;bean id=<span class="string">"gun"</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">"cn.rayjun.springdemo.springcontainer.Gun"</span>&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">    &lt;bean id=<span class="string">"solider"</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">"cn.rayjun.springdemo.springcontainer.Soldier"</span>&gt;</span><br><span class="line">        &lt;constructor-arg name=<span class="string">"weapon"</span> ref=<span class="string">"gun"</span>/&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
-上面我们说到了 Spring 容器需要两种原料，上面这个 xml 配置文件就是<strong>配置数据</strong>，Soldier 以及 Weapon 和其子类就是 <strong>POJOs</strong>。在这个文件中，我们将各个 POJO 之间的依赖关系配置好。然后 Spring 容器就会根据这些配置生成一个可用的系统。配置数据除了使用 xml 之外，还可以使用注解和 Java 代码来进行配置，这部分后续再详聊。</p>
-<p>这些容器也都提供了获取 Bean 的 API，如下：
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">"beans.xml"</span>);</span><br><span class="line">Soldier s = context.getBean(<span class="string">"soldier"</span>);</span><br></pre></td></tr></table></figure>
-但是永远不要用上面那种方式来获取 Bean，容器本来就是用来解耦的，如果用上面那种方式，根本就没有起到解耦的目的。具体使用方式在后续文章中详解。</p>
+<p>以 ClassPathXmlApplicationContext 容器配置为例：</p>
+<pre><code class="language-java">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot; xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+https://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+
+    &lt;bean id=&quot;gun&quot; class=&quot;cn.rayjun.springdemo.springcontainer.Gun&quot;&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id=&quot;solider&quot; class=&quot;cn.rayjun.springdemo.springcontainer.Soldier&quot;&gt;
+        &lt;constructor-arg name=&quot;weapon&quot; ref=&quot;gun&quot;/&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;
+</code></pre>
+<p>上面我们说到了 Spring 容器需要两种原料，上面这个 xml 配置文件就是<strong>配置数据</strong>，Soldier 以及 Weapon 和其子类就是 <strong>POJOs</strong>。在这个文件中，我们将各个 POJO 之间的依赖关系配置好。然后 Spring 容器就会根据这些配置生成一个可用的系统。配置数据除了使用 xml 之外，还可以使用注解和 Java 代码来进行配置，这部分后续再详聊。</p>
+<p>这些容器也都提供了获取 Bean 的 API，如下：</p>
+<pre><code class="language-java">ApplicationContext context = new ClassPathXmlApplicationContext(&quot;beans.xml&quot;);
+Soldier s = context.getBean(&quot;soldier&quot;);
+</code></pre>
+<p>但是永远不要用上面那种方式来获取 Bean，容器本来就是用来解耦的，如果用上面那种方式，根本就没有起到解耦的目的。具体使用方式在后续文章中详解。</p>
 <h3>Spring Bean 的生命周期。</h3>
 <p>Spring Bean 是容器管理的基本单位。Spring Bean 与普通的 Java 对象没有什么区别。</p>
 <p>每一个 Java 对象都有其生命周期，从对象被创建出来，到最后被回收，Spring Bean 自然也不例外，只是 Spring Bean 的生命周期要比普通的类稍微复制一点，但这些复杂的过程都是由容器来进行管理的，不需要开发者做额外的事情。而且开发者可以通过配置来决定一个 Bean 的生命周期。</p>
@@ -105,17 +161,61 @@
 <p>上面其实已经聊到了，Spring 的这两大特性其实就是用来解决 Java 编程的两大痛点。</p>
 <p>依赖注入的目的是代码解耦。当然完全的解耦是不可能的，类之间没有交互，程序就无法跑起来了。</p>
 <p>依赖注入的实现方式很简单，上文中将 Weapon 的实例通过构造函数传入就是依赖注入的一种实现。另一种注入的方式就是通过 Setter 方法来进行注入。依赖注入本身除了名字比较高端，其实比较简单，但是有一点需要注意，依赖注入经常会和<strong>面向接口编程</strong>一起出现，也就是说依赖注入需要使用多态的特性来使得解耦更加彻底。假如不使用接口编程，上面的代码会编程什么样呢：</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用刀的 Soldier</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Soldier</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Knife knife;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Soldier</span><span class="params">(Knife knife)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.knife = knife;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        knife.attack();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-假如说我要把刀换成枪，只能通过该代码来完成。
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用枪的 Soldier</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Soldier</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Gun gun;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Soldier</span><span class="params">(Gun gun)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.gun = gun;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        gun.attack();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-java">// 用刀的 Soldier
+public class Soldier {
+    private Knife knife;
+    public void Soldier(Knife knife) {
+        this.knife = knife;
+    }
+    public void fight() {
+        knife.attack();
+    }
+}
+</code></pre>
+<p>假如说我要把刀换成枪，只能通过该代码来完成。</p>
+<pre><code class="language-java">// 用枪的 Soldier
+public class Soldier {
+    private Gun gun;
+    public void Soldier(Gun gun) {
+        this.gun = gun;
+    }
+    public void fight() {
+        gun.attack();
+    }
+}
+</code></pre>
 <p>也就是说，如果不使用多态，依赖注入的威力顿时没了 90%。</p>
 <p>在 Spring 中，注入这个操作是 Spring 容器来完成的，需要开发者将各个 Bean 之间的依赖关系在配置中定义好，代码中基本不会出现 new 这个关键字，但是整个程序却跑起来了。</p>
 <p>依赖注入经常会和控制反转一起出现，这两个概念之间有什么关系吗？实际上可以说依赖注入是控制反转的一种实现。在没有 Spring 之前，如果需要对象，我们都需要手动 new 一个，而现在，所有的对象都不要自己来 new 了，这些事情都交给 Spring 容器来做了，也就是把生成对象的权利交给了 Spring 容器，所以 Spring 容器也称之为 IOC 容器。</p>
 <p>Spring 的另一大特性叫面向切面编程（AOP）。DI 的目标是使得代码之间的耦合度更低 <strong>（低耦合）</strong>，那么 AOP 的目标就是使代码的职责更加单一，提高代码的可复用性 <strong>（高内聚）</strong>。</p>
 <p>AOP 中引入了一个新的概念：<strong>切面</strong> 和 <strong>切点</strong>。我们可以把每一个 Bean 都配置为一个切面，Bean 中的每一个方法都可以配置为一个切点。</p>
 <p>FightLog 类改造如下，那么在 Soldier 在 fight 方法执行之后，战斗的过程也会被记录下来。这就是 AOP 的威力，不需要修改代码，就可以增加切面的方式来使代码变得整洁。</p>
-<p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FightLog</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Before</span>(<span class="string">"execution(* cn.rayjun.springdemo.springcontainer.Soldier.fight(..))"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightLogBefore</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Fight begin"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@After</span>(<span class="string">"execution(* cn.rayjun.springdemo.springcontainer.Soldier.fight(..))"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fightLogAfter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Fight after"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Soldier</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Weapon weapon;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Soldier</span><span class="params">(Weapon weapon)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.weapon = weapon;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        weapon.attack();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-如果不使用 AOP，这些与业务无关的代码会到处都是，而且会破坏代码职责单一性。常见的场景就是日志，我需要给某些点打日志，但是又不想代码中到处都是日志代码，那么使用 AOP 就是一个比较好的选择了，具体的原理后续的文章中再详细说。</p>
+<pre><code class="language-java">@Aspect
+public class FightLog {
+    @Before(&quot;execution(* cn.rayjun.springdemo.springcontainer.Soldier.fight(..))&quot;)
+    public static void fightLogBefore() {
+        System.out.println(&quot;Fight begin&quot;);
+    }
+
+    @After(&quot;execution(* cn.rayjun.springdemo.springcontainer.Soldier.fight(..))&quot;)
+    public static void fightLogAfter() {
+        System.out.println(&quot;Fight after&quot;);
+    }
+}
+
+public class Soldier {
+    private Weapon weapon;
+
+    public void Soldier(Weapon weapon) {
+        this.weapon = weapon;
+    }
+
+    public void fight() {
+        weapon.attack();
+    }
+}
+</code></pre>
+<p>如果不使用 AOP，这些与业务无关的代码会到处都是，而且会破坏代码职责单一性。常见的场景就是日志，我需要给某些点打日志，但是又不想代码中到处都是日志代码，那么使用 AOP 就是一个比较好的选择了，具体的原理后续的文章中再详细说。</p>
 <p>Spring的这两大特性将面向对象的思想实践的淋漓尽致。学会了 Spring，也就真懂面向对象编程了。</p>
 <h2>Spring 模块的架构图</h2>
 <p>Spring 已经演化到了第 5 个大版本了，所以 Spring 远远不只有容器了。实际上，Spring 已经为建设企业级应用的方方面面都给出了解决方案，可以用 Spring 来建设多种类型的应用。</p>
@@ -130,7 +230,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -138,7 +238,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

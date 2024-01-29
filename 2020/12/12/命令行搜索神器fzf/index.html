@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -71,30 +70,42 @@
 <p>重点说一下通过包管理器来安装。</p>
 <h3>macOS</h3>
 <p>在 macOS 上，可以通过 Homebrew 进行安装:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install fzf <span class="comment"># 安装 fzf</span></span><br><span class="line">brew update <span class="comment"># 更新 fzf</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">brew install fzf # 安装 fzf
+brew update # 更新 fzf
+</code></pre>
 <p>或者通过 MacPorts 进行安装:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">port install fzf <span class="comment"># 安装 fzf</span></span><br><span class="line">port upgrade fzf <span class="comment"># 更新 fzf</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">port install fzf # 安装 fzf
+port upgrade fzf # 更新 fzf
+</code></pre>
 <h3>Linux</h3>
 <p>在 Linux 系统上，使用相应的包管理器进行安装就可以，比如在 Ubuntu 上：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install fzf <span class="comment"># 安装 fzf</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">sudo apt install fzf # 安装 fzf
+</code></pre>
 <h3>Windows</h3>
 <p>在 Windows 上，可以使用 Chocolatey 或者 Scoop 包管理器进行安装：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">choco install fzf</span><br><span class="line">scoop install fzf</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">choco install fzf
+scoop install fzf
+</code></pre>
 <h3>Git</h3>
 <p>fzf 还可以直接下载源码进行安装:</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth 1 https://github.com/junegunn/fzf.git ~/.fzf</span><br><span class="line">~/.fzf/install</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
+</code></pre>
 <h2>2. 使用</h2>
 <p>在安装完成之后，可以直接在命令行进行使用，使用的方式很简单，打开一个命令行，在任意一个目录下输入 <code>fzf</code> 或者使用快捷键 CTRL-T，就可以进入到 fzf 的交互式搜索。</p>
 <p><img src="1.png" alt=""></p>
 <p>该目录下，包括子目录的所有文件都可以被搜索，而且可以随意的输入关键字，关键字可以被拆分，分别匹配。</p>
 <p>fzf 不但可以独立使用，还是以通过管道与其他的命令进行配合使用。</p>
 <p>比如结合 find：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find *.go ./ | fzf</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">find *.go ./ | fzf
+</code></pre>
 <p>比如结合 cat：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat demo.go | fzf</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">cat demo.go | fzf
+</code></pre>
 <p>基本上，上面的功能就足够使用了，但 fzf 还有更能更强大的地方，比如在命令行搜索文件时，只能看见文件名称。</p>
 <p>fzf 可以让你在命令行就对这些文件进行预览，很简单，使用下面的命令的就可以了：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fzf --preview <span class="string">'cat &#123;&#125;'</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">fzf --preview 'cat {}'
+</code></pre>
 <p>这个命令表示使用 cat 来作为预览时打开文件的工具，效果如下：</p>
 <p><img src="2.png" alt=""></p>
 <p>另外，可以使用 CTRL-J 和 CTRL-K 上下翻动文件，右侧就可以出现文件内容的预览。</p>
@@ -110,7 +121,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -118,7 +129,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-    <title>Rayjun 的博客</title>
+    <title>Rayjun</title>
     <meta name="description" content="发现自己 - https://rayjun.wtf">
     <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
     <meta charset="utf-8">
@@ -15,15 +15,17 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    
+    <!--
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
 
-    
+	
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
-
+-->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
     <script>
@@ -31,19 +33,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
+    hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
-            <a class="blog-name" href="/">rayjun 的博客</a>
+			<a class="blog-name" href="/">Rayjun</a>
             <nav class="menu-inner">
                 
                     <a class="menu" href="/">首页</a>
-                
-                    <a class="menu" href="/archives">归档</a>
-                
-                    <a class="menu" href="/about">关于</a>
                 
             <div class="menu nav-search">
                 <span>
@@ -79,16 +78,19 @@
 <p>在 Go Modules（下面会说到）出现之前，Go 的依赖库和源码都需要放在 GOPATH 的 src，否则会出现找不到依赖的情况。Go Modules 出现之后，Go 的依赖管理问题基本解决了大半，就不用把源码放在 GOPATH 中，GOPATH 基本只用来存放依赖。</p>
 <p><strong>基础语法</strong></p>
 <p>Go 的官网提供了一个入门的教程 <a href="https://tour.golang.org/welcome/1" target="_blank" rel="noopener">A Tour of Go</a>，这里面基本覆盖到了 Go 的全部语法。可以直接在<a href="https://tour.golang.org/welcome/1" target="_blank" rel="noopener">网页</a>上访问，也可以把这个应用下载到本地：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> get golang.org/x/tour</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">go get golang.org/x/tour
+</code></pre>
 <p>然后就可以在命令行输入（需要配置 GOPATH ）:</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tour</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">tour
+</code></pre>
 <p>这样就可以打开一个本地的网页，加载的速度就会快很多，毕竟 Go 的官网在境外，直接访问的还是有点慢。</p>
 <p>类似的教程还有一个 <a href="https://gobyexample.com/" target="_blank" rel="noopener">Go By Example</a>，这两个教程可以选择一个学习。</p>
 <p>在把上面的练习做完了之后，就可以开始看 《Go 程序设计语言》，这本书可以说是 Go 最好的入门教材，虽然在内容上有一定的滞后，但整体上依然非常值得看。</p>
 <p><strong>常用命令工具</strong></p>
 <p>Go 命令（go cli command）非常重要，Go 整个开发的生命周期都需要使用这些工具。</p>
 <p>Go 命令的基本用法如下：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go &lt;<span class="built_in">command</span>&gt; [arguments]</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">go &lt;command&gt; [arguments]
+</code></pre>
 <p>在 初学阶段，下面几个命令必须掌握：</p>
 <ul>
 <li>go run：编译并运行 Go 程序</li>
@@ -97,28 +99,55 @@
 <li>go test：运行测试</li>
 </ul>
 <p>在你开始使用 Go 开发程序之后，会频繁的用到上面的命令。如果要查看完整的命令，在命令行输入：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go <span class="built_in">help</span></span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">go help
+</code></pre>
 <p>这些内容都看完之后，对于 go 基本语法和常用工具应该是比较熟练了，为了能够尽快使用上手 Go 的开发，接下来应该要学习一些常用的组件和框架。</p>
 <h3>1.2 常用框架</h3>
 <p>如果要开发一个应用，基本都会涉及到 Web API 的开发，会使用 MySQL 和 Redis。下面就介绍一下 Go 语言中如何快速上手这些框架。</p>
 <p><strong>Web 框架</strong></p>
 <p>Go 中常用的 web 框架 有很多，我推荐 <a href="https://github.com/gin-gonic/gin" target="_blank" rel="noopener">gin</a>，这个框架简单易学，而且性能也很不错。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> get -u github.com/gin-gonic/gin</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">go get -u github.com/gin-gonic/gin
+</code></pre>
 <p>可以快速创建一个基于 http 的 API 服务：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">**<span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"github.com/gin-gonic/gin"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	r := gin.Default()</span><br><span class="line">	r.GET(<span class="string">"/ping"</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		c.JSON(<span class="number">200</span>, gin.H&#123;</span><br><span class="line">			<span class="string">"message"</span>: <span class="string">"pong"</span>,</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line">	r.Run() <span class="comment">// listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")</span></span><br><span class="line">&#125;**</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">**package main
+
+import &quot;github.com/gin-gonic/gin&quot;
+
+func main() {
+	r := gin.Default()
+	r.GET(&quot;/ping&quot;, func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			&quot;message&quot;: &quot;pong&quot;,
+		})
+	})
+	r.Run() // listen and serve on 0.0.0.0:8080 (for windows &quot;localhost:8080&quot;)
+}**
+</code></pre>
 <p><strong>MySQL 框架</strong></p>
 <p>在 Go 语言中，database/sql 包中定义了数据库操作的所有接口，但没有提供具体的实现。因为数据库的种类很多，这种只定义接口的屏蔽了数据库库的具体实现，便于我们更换和升级。</p>
 <p>所以在连接数据库的时候，需要自行选择数据库驱动，推荐那些完全实现了 database/sql 的驱动，这样利于代码的后续维护和升级。</p>
 <p>在这里以 MySQL 数据库为例，常用的驱动是  <a href="https://github.com/go-sql-driver" target="_blank" rel="noopener">go-sql-driver</a>/<a href="https://github.com/go-sql-driver/mysql" target="_blank" rel="noopener">mysql</a>，这个驱动完全实现了 database/sql 接口。</p>
 <p>安装很方便：</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go get -u github.com/go-sql-driver/mysql</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-bash">$ go get -u github.com/go-sql-driver/mysql
+</code></pre>
 <p>然后就可以使用 database/sql 的接口来操作数据库：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"database/sql"</span></span><br><span class="line">	_ <span class="string">"github.com/go-sql-driver/mysql"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">db, err := sql.Open(<span class="string">"mysql"</span>, <span class="string">"user:password@/dbname"</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">import (
+	&quot;database/sql&quot;
+	_ &quot;github.com/go-sql-driver/mysql&quot;
+)
+
+db, err := sql.Open(&quot;mysql&quot;, &quot;user:password@/dbname&quot;)
+if err != nil {
+	panic(err)
+}
+</code></pre>
 <p>用原生的 MySQL 接口来写代码会产生很多的冗余代码，如果想让代码更加整洁一点，ORM 框架就是必须的了，那就需要学习一下 <a href="https://github.com/go-gorm/gorm" target="_blank" rel="noopener">gorm</a> 框架。</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> get -u gorm.io/gorm</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">go get -u gorm.io/gorm
+</code></pre>
 <p><strong>Redis 框架</strong></p>
 <p>在 Go 中使用 Redis 就需要使用 <a href="https://github.com/go-redis/redis" target="_blank" rel="noopener">go-redis/redis</a> 组件了。安装同样很简单：</p>
-<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> get github.com/<span class="keyword">go</span>-redis/redis/v8</span><br></pre></td></tr></table></figure></p>
+<pre><code class="language-go">go get github.com/go-redis/redis/v8
+</code></pre>
 <p>除了这个组件之外，另一个 <a href="https://github.com/gomodule/redigo" target="_blank" rel="noopener">redigo</a> 使用的人也挺多的，可以自行探索一下。</p>
 <p>学完这些，就可以使用 Go 来日常的开发了。</p>
 <h2>2. 进阶</h2>
@@ -158,7 +187,7 @@
                     </div>
                 </div>
             </div>
-            <div class="content-right">
+            <!--<div class="content-right">
                 <div class="context-box">
                     <div class="wechat">
     <div class="header">
@@ -166,7 +195,7 @@
     </div>
 </div>
                 </div>
-            </div>
+			</div> -->
         </div>
     </div>
     <div class="bottom-outer">
