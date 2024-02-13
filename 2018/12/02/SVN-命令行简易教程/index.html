@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,7 +57,7 @@
                     <div id="div-body">
                     <div class="post">
     <h1>SVN 命令行简易教程</h1>
-    <h3>SVN 基础概念</h3>
+    <h3 id="SVN-基础概念">SVN 基础概念</h3>
 <p>SVN 是一种版本管理系统(VCS)，VCS 可以完成以下的事：</p>
 <ul>
 <li>
@@ -79,9 +79,9 @@
 <li>分支：用于创建项目的一个一个分支，可以在新的分支上继续工作，一个项目可以有多个分支</li>
 <li>工作副本：将项目从仓库拉取到本地之后，就是一个工作副本</li>
 </ul>
-<h3>SVN 命令行操作</h3>
+<h3 id="SVN-命令行操作">SVN 命令行操作</h3>
 <p>svn 在使用的过程中主要包括如下的过程:</p>
-<h4>从仓库获取阶段</h4>
+<h4 id="从仓库获取阶段">从仓库获取阶段</h4>
 <p><strong>从仓库检出代码</strong>：</p>
 <pre><code class="language-shell">$ svn checkout svn://gitee.com/XXX/svn_test_items --username=leijun19930412@sina.com
 </code></pre>
@@ -94,15 +94,15 @@
 <p><strong>从仓库更新代码</strong>：</p>
 <pre><code class="language-shell">$ svn update
 </code></pre>
-<h4>工作副本阶段</h4>
+<h4 id="工作副本阶段">工作副本阶段</h4>
 <p><strong>查看工作副本状态</strong>:</p>
 <pre><code class="language-shell">$ svn status
 </code></pre>
-<p><strong>查看文件变化</strong>:
+<p><strong>查看文件变化</strong>:<br>
 可以查看单个文件和单个文件夹的变化，也可以查看整个项目的变化。</p>
 <pre><code class="language-shell">$ svn diff
 </code></pre>
-<p><strong>添加全部新增文件</strong>:
+<p><strong>添加全部新增文件</strong>:<br>
 会忽略 svn.ignore 的文件，也可以只添加单独的文件和目录</p>
 <pre><code class="language-shell">$ svn add . --force
 </code></pre>
@@ -112,7 +112,7 @@
 <p><strong>解除项目的ignore</strong>:</p>
 <pre><code class="language-shell">$ svn add fileOrDir --no-ignore
 </code></pre>
-<p><strong>放弃文件的修改</strong>：
+<p><strong>放弃文件的修改</strong>：<br>
 如果想放弃某个文件的修改</p>
 <pre><code class="language-shell">$ svn revert hello.c
 </code></pre>
@@ -142,14 +142,14 @@
 <p><strong>新建tag</strong>:</p>
 <pre><code class="language-shell">$ svn copy --revision=version(版本号) trunk/ tags/tag_name 
 </code></pre>
-<p><strong>分支</strong>:
+<p><strong>分支</strong>:<br>
 新建分支:</p>
 <pre><code class="language-shell">$ svn copy trunk branches/branch_name
 </code></pre>
 <p>合并分支:</p>
 <pre><code class="language-shell">$ svn merge  brancjes/branch_name
 </code></pre>
-<h4>提交更改阶段</h4>
+<h4 id="提交更改阶段">提交更改阶段</h4>
 <p><strong>提交文件的修改</strong></p>
 <pre><code class="language-shell">$ svn commit -m &quot;Update&quot;
 </code></pre>
@@ -173,7 +173,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

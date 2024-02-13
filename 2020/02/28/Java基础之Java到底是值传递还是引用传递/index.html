@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -59,14 +59,14 @@
     <h1>Java基础之Java到底是值传递还是引用传递</h1>
     <p>Java 中有一个很经典但是一直争论不休的问题。就是 Java 在传参时到底是传递值还是传递引用。</p>
 <p>在讨论到底是值传递还是引用传递之前，先来准确定义一下<strong>值</strong>和<strong>引用</strong>。</p>
-<p><strong>值</strong>是指变量存储的就是值本身，比如 Java 的基本类型。
+<p><strong>值</strong>是指变量存储的就是值本身，比如 Java 的基本类型。<br>
 <strong>引用</strong>是指变量存储的是指向实际值的引用，也称之为句柄，比如 Java 中的数组和对象，来看下图：</p>
 <p><img src="valueref2.png" alt=""></p>
 <p>要想完整的理解这个点，需要稍微提一下 JVM 的知识。我们都知道 Java 是运行在 Java 虚拟机（JVM）上的。JVM 中有两块著名的内存区域：<strong>Java虚拟机栈</strong>和<strong>堆</strong>。值类型的变量所占据的内存是在栈上分配，引用类型的变量所占据的内存是在堆上分配。</p>
 <blockquote>
 <p>这块展开说就会涉及到 JVM 的内存模型，后续通过其他的文章再进行说明。</p>
 </blockquote>
-<h2>赋值操作</h2>
+<h2 id="赋值操作">赋值操作</h2>
 <p>先看一下这段代码：</p>
 <pre><code class="language-java">int a = 56;
 int b = a;
@@ -115,12 +115,12 @@ System.out.println(&quot;新对象的值：&quot;+paramB.getName());
 <p><img src="valueref3.png" alt=""></p>
 <p>paramB 再进行 new 操作之后，paramB 中存储的<strong>引用</strong>就变成了新对象的地址了。所以修改新的对象并不会影响原来的对象。</p>
 <p>所以可以把 Java 中的赋值操作总结为：<strong>对原变量中存储的内容进行拷贝，把拷贝的内容放到新的变量中，不论变量中存储的是基本类型还是引用类型</strong></p>
-<h2>Java 中的参数传递</h2>
+<h2 id="Java-中的参数传递">Java 中的参数传递</h2>
 <p>定义一个方法：</p>
-<pre><code class="language-java">public void func(int a) {
+<pre><code class="language-java">public void func(int a) &#123;
     a = 5;
     System.out.println(a);
-}
+&#125;
 </code></pre>
 <p>方法参数中的 a 称之为<strong>形参</strong>，在调用时传入的参数称之为<strong>实参</strong>。</p>
 <p>先说一下结论，Java 中参数的传递其实和<strong>赋值</strong>操作是一样的，相当于把实参赋值给形参。</p>
@@ -130,10 +130,10 @@ System.out.println(&quot;新对象的值：&quot;+paramB.getName());
 func(b);
 System.out.println(&quot;执行方法后的值：&quot;+b);
 
-public void func(int a) {
+public void func(int a) &#123;
     a = 5;
     System.out.println(&quot;在方法中修改形参的值&quot;+a);
-}
+&#125;
 </code></pre>
 <p>例子的输出为：</p>
 <pre><code class="language-java">在方法中修改形参的值: 5
@@ -144,10 +144,10 @@ public void func(int a) {
 func1(b);
 System.out.println(&quot;执行方法后的值：&quot;+b.getName());
 
-public void func1(ParamObject a) {
+public void func1(ParamObject a) &#123;
     a.setName(&quot;小明&quot;);
     System.out.println(&quot;在方法通过引用修改对象的值：&quot;+a.getName());
-}
+&#125;
 </code></pre>
 <p>这个例子的输出为：</p>
 <pre><code class="language-java">在方法通过引用修改对象的值：小明
@@ -158,10 +158,10 @@ public void func1(ParamObject a) {
 func2(b);
 System.out.println(&quot;执行方法后的值：&quot;+b.getName());
 
-public void func2(ParamObject a) {
+public void func2(ParamObject a) &#123;
     a = new ParamObject(&quot;小明&quot;);
     System.out.println(&quot;在方法新建对象后的值：&quot;+a.getName());
-}
+&#125;
 </code></pre>
 <p>最后这个例子的输出为：</p>
 <pre><code class="language-java">在方法新建对象后的值：小明
@@ -189,7 +189,7 @@ public void func2(ParamObject a) {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,21 +57,21 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Laravel 中的 oauth2</h1>
-    <h4>Web Api</h4>
+    <h4 id="Web-Api">Web Api</h4>
 <p>Web 如今渐渐发展成为一种服务，会有一些程序使用 Web 服务，并且程序 与 Web 服务之间使用的是 HTTP 进行通信的。程序向 Web 服务发出 HTTP 请求，并接收其响应。这时，通信所使用的规则就是 Web Api。而 Api 也活成为未来的一个发展方向。</p>
-<h4>dingo/api</h4>
+<h4 id="dingo-api">dingo/api</h4>
 <p>这是一个基于 composer 开发的用于管理 api 的一个工具，具体的配置如下：</p>
 <pre><code>https://github.com/dingo/api/wiki
 </code></pre>
-<h4>lucadegasperi/oauth2-server-laravel</h4>
+<h4 id="lucadegasperi-oauth2-server-laravel">lucadegasperi/oauth2-server-laravel</h4>
 <p>这时一个基于 composer 开发的用于 oauth2 二次开发的一个工具包，具体的配置如下：</p>
 <pre><code>https://github.com/lucadegasperi/oauth2-server-laravel/wiki
 </code></pre>
-<h4>具体应用</h4>
+<h4 id="具体应用">具体应用</h4>
 <p>本文不再赘述这两个组件的安装及配置，在下文之前，我们默认安装完成，迁移文件也已经执行。</p>
-<h5>原理说明</h5>
+<h5 id="原理说明">原理说明</h5>
 <p>在这两个组件中，<code>dingo/api</code> 主要的作用是为 <code>Web Api</code> 服务提供统一的管理。而在这篇文章中，我们主要用到这个组件 <code>oauth2</code> 的部分。配合 <code>lucadegasperi/oauth2-server-laravel</code> 来完成完整的移动应用与后端的验证通信过程。本文的例子采用的是 <code>password</code> 的验证方法。</p>
-<h5>具体实现</h5>
+<h5 id="具体实现">具体实现</h5>
 <p>在安装完成之后，在项目中会多出 <code>oauth2.php</code>, <code>api.php</code>等配置文件。我们的配置也将从这些文件展开。<code>lucadegasperi/oauth2-server-laravel</code> 这个组件主要是完成 <code>oauth2</code> 的具体验证和令牌的分发。在这次的实例中，我们采用的是 <code>password</code> 的验证方法，所以要在 <code>oauth2.php</code> 中做如下的配置：</p>
 <pre><code>'grant_types' =&gt; [
     'password' =&gt; [
@@ -94,27 +94,27 @@
 ],
 </code></pre>
 <p>在以上配置中我们配置了基本的验证规则以及令牌刷新的方法，简单明了。注意到上面有一个 <code>callback</code> 方法，这个方法是用来贵基本的用户名密码进行验证的一个方法，具体实现如下：</p>
-<pre><code>class Verifier {
+<pre><code>class Verifier &#123;
     public function verify($username, $password)
-    {
+    &#123;
         $credentials = [
             'phone'    =&gt; $username,
             'password' =&gt; $password,
         ];
 
        if (Auth::once($credentials))
-       {
+       &#123;
            return Auth::user()-&gt;id;
-       }
+       &#125;
 
       return false;
-   }
-}
+   &#125;
+&#125;
 </code></pre>
 <p>在以上的验证完成之后，就可以对客户端发送令牌：</p>
-<pre><code>Route::post('oauth/access_token', function() {
+<pre><code>Route::post('oauth/access_token', function() &#123;
     return Response::json(Authorizer::issueAccessToken());
-});
+&#125;);
 </code></pre>
 <p>具体参数如下：</p>
 <pre><code>grant_type: password
@@ -124,40 +124,40 @@ username: rayjun
 password: 12345
 </code></pre>
 <p>下面是一个返回的例子：</p>
-<pre><code>{
+<pre><code>&#123;
     &quot;access_token&quot;: &quot;2YotnFZFEjr1zCsicMWpAA&quot;,
     &quot;expires_in&quot;: 3600,
     &quot;token_type&quot;: &quot;bearer&quot;,
     &quot;refresh_token&quot;: &quot;tGzv3JOkF0XG5Qx2TlKWIA&quot;,
     &quot;user_id&quot;: 1
-}
+&#125;
 </code></pre>
 <p>然后需要在 <code>config/api.php</code> 中配置 <code>oauth2</code> 的验证方式：</p>
-<pre><code> 'oauth' =&gt; function ($app) {
+<pre><code> 'oauth' =&gt; function ($app) &#123;
         $provider = new Dingo\Api\Auth\Provider\OAuth2($app['oauth2-server.authorizer']-&gt;getChecker());
 
-        $provider-&gt;setUserResolver(function ($id) {
+        $provider-&gt;setUserResolver(function ($id) &#123;
             // Logic to return a user by their ID.
-        });
+        &#125;);
 
-        $provider-&gt;setClientResolver(function ($id) {
+        $provider-&gt;setClientResolver(function ($id) &#123;
             // Logic to return a client by their ID.
-        });
+        &#125;);
 
         return $provider;
-}
+&#125;
 </code></pre>
 <p>完成以上的配置基本就完成 <code>oauth2</code> 在 <code>laravel</code> 中的配置了。当然要在 <code>routes.php</code> 中指定要保护的路由，这一功能由 <code>dingo/api</code>帮助实现。如下：</p>
-<pre><code>$api-&gt;group(['protected' =&gt; true],function($api){
+<pre><code>$api-&gt;group(['protected' =&gt; true],function($api)&#123;
     //需要保护的路由
-});
+&#125;);
 </code></pre>
 <p>在 <code>laravel</code> 使用 <code>oauth2</code> 中的配置基本完成了。</p>
-<h5>注意</h5>
+<h5 id="注意">注意</h5>
 <p>以上的配置都是在以 <code>nginx</code> 为服务器的情况下配置的，如果你使用的是 <code>Apache</code> 服务器，那么还需要重写规则，在 <code>.htaccess</code> 文件中加入以下的代码：</p>
 <pre><code>#Authorization Headers
-RewriteCond %{HTTP:Authorization} .
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteCond %&#123;HTTP:Authorization&#125; .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%&#123;HTTP:Authorization&#125;]
 </code></pre>
 
 </div>
@@ -179,7 +179,7 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

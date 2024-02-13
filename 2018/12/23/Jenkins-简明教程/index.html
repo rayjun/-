@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -62,43 +62,43 @@
 <blockquote>
 <p>本文以 Java Web 项目为基础进行</p>
 </blockquote>
-<h4>持续交付的工作流程</h4>
+<h4 id="持续交付的工作流程">持续交付的工作流程</h4>
 <p>持续交付的流程可以分成 <strong>代码提交-&gt;代码拉取-&gt;构建-&gt;部署到机器</strong></p>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/autodeploy.png" alt=""></p>
 <p>现在主流的内部代码托管平台是 <strong>Gitlab</strong>，而持续集成使用的比较多的工具就是 <strong>Jenkins</strong> 了。这两个工具都是开源的，而且都有着丰富的插件来支持不同的持续交付的需求。至于部署应用对于不同的需求差别就很大了，简单的部署写一个部署脚本就可以解决了，复杂的大量的部署就需要自动部署的工具了。</p>
-<h4>Jenkins 简介：</h4>
+<h4 id="Jenkins-简介：">Jenkins 简介：</h4>
 <p>Jenkins 是一个开源的持续集成工具，Jenkins 有着丰富的插件，可以按照自己的环境灵活的定制构建和发布流程。还能监控集成环境中产生的错误，并且会产生详细的日志文件，这些日志对于排错有着非常大的帮助。通过图表可以方便的统计出近期的构建质量。</p>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/jenkins.png" alt=""></p>
 <p>在整个持续交付的过程中，Jenkins 主要干两件事，第一件事就是从托管平台上拉取最新的代码，然后将这些代码构建成我们的部署包。第二件事就是就这些应用包分发到目标机器上。</p>
 <p>Jenkins 可以安装代码托管平台的插件，比如 Gitlab 的插件，在流程构建起来后，只要 Gitlab 上有新的代码提交，那么 Jenkins 就会触发自动的构建的流程将代码部署上去。</p>
 <p>目前在 Jenkins 上使用的最多的是 Pipline 流程。</p>
-<h4>Jenkins Pipline 工作流程</h4>
+<h4 id="Jenkins-Pipline-工作流程">Jenkins Pipline 工作流程</h4>
 <p>Jenkins Pipline 是运行在 Jenkins 上的一个工作流框架，并且支持将原来运行的一个个单独的工作串联起来构建一个复杂的工作流程。而且这个工作流程是非侵入式的，也就是说，对于不同的项目可以灵活的构建不同的工作流程，而不需要去对 Jenkins进行二次开发。而定义一个 Pipline 的工作流程，只需要一个简单的 <strong>Groovy</strong> 脚本：</p>
 <pre><code class="language-Groovy">
-pipeline {
+pipeline &#123;
    agent any
-   stages {
-       stage('Build') {
-       steps {
+   stages &#123;
+       stage('Build') &#123;
+       steps &#123;
            sh '~/shell/jenkins_check_build.sh'
-       }
-   }
-   stage('Test') {
-       steps {
+       &#125;
+   &#125;
+   stage('Test') &#123;
+       steps &#123;
            echo 'Testing'
-       }
-   }
-   stage('Deploy - Staging') {
-       steps {
+       &#125;
+   &#125;
+   stage('Deploy - Staging') &#123;
+       steps &#123;
            echo './deploy staging'
-       }
-   }
-   stage('Deploy - Production') {
-       steps {
+       &#125;
+   &#125;
+   stage('Deploy - Production') &#123;
+       steps &#123;
            sh '~/shell/jenkins_check_deploy.sh'
-       }
-   }
-}
+       &#125;
+   &#125;
+&#125;
 </code></pre>
 <p>一个完成的 Pipline 中有多个 <strong>stage</strong>，对于不同的 stage 可以执行的不同的任务，这些任务都是可以通过自定义脚本来实现的。</p>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/pipline.png" alt=""></p>
@@ -106,8 +106,8 @@ pipeline {
 <blockquote>
 <p>Jenkins 在 Windows 上和 Linux 上都是可以工作的，但是部署应用到 Windows 服务器上时，需要在 Windows 上配置 freesshd。</p>
 </blockquote>
-<p>[1] https://jenkins.io/doc/
-[2] https://time.geekbang.org/column/104</p>
+<p>[1] <a href="https://jenkins.io/doc/">https://jenkins.io/doc/</a><br>
+[2] <a href="https://time.geekbang.org/column/104">https://time.geekbang.org/column/104</a></p>
 
 </div>
 
@@ -128,7 +128,7 @@ pipeline {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

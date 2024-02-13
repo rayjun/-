@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -65,7 +65,7 @@
 <li>hadoop-2.9.2</li>
 </ul>
 <p>在之前我写过一篇搭建本地服务器集群的方法，如果有需要，可以参考这里搭建一个本地的服务器集群。</p>
-<h2>环境准备</h2>
+<h2 id="环境准备">环境准备</h2>
 <p>在开始搭建 Hadoop 之前，还需要做一些准备。</p>
 <p>首先，关闭服务器的防火墙，并且禁止开机启动，这样就不用在各个服务器上对端口进行控制。</p>
 <pre><code class="language-bash">$ systemctl stop firewalld.service
@@ -158,12 +158,12 @@ export PATH=$PATH:$HADOOP_HOME/sbin
 <pre><code class="language-bash">$ source /etc/profile
 </code></pre>
 <p>到这里，所有软件安装完成。</p>
-<h2>集群规划</h2>
+<h2 id="集群规划">集群规划</h2>
 <p>基础环境配置完成后，需要对集群中服务器做规划，让每台服务器承担不同的角色。</p>
 <p>具体规划如下，最重要的 NameNode 放在第一台服务器上，yarn 的 ResourceManager 放在 第二台服务器上，SecondaryNamenode 则放在第三台服务器上。</p>
 <p>具体规划如下：</p>
 <p><img src="jiqunguihua.jpg" alt=""></p>
-<h2>集群配置</h2>
+<h2 id="集群配置">集群配置</h2>
 <p>然后就可以根据上面的规划来配置集群，以 IP 为 192.168.56.3 的服务器为例。</p>
 <p>Hadoop 的所有配置文件都在 <code>etc/hadoop</code> 目录下：</p>
 <pre><code class="language-bash">$ cd /opt/module/hadoop-2.9.2/etc/hadoop
@@ -235,7 +235,7 @@ bigdata3
 $ rsync -rvl /opt/module/hadoop-2.9.2/ root@bigdata3:/opt/module/hadoop-2.9.2
 </code></pre>
 <p>所有的配置到这里就完成了。</p>
-<h2>集群操作</h2>
+<h2 id="集群操作">集群操作</h2>
 <p>接下来启动集群，首次启动集群需要对 NameNode 进行格式化：</p>
 <pre><code class="language-bash">$ cd /opt/module/hadoop-2.9.2
 $ bin/hdfsnamenode-format
@@ -246,7 +246,7 @@ $ bin/hdfsnamenode-format
 <p>然后启动 yarn，在第二台服务器（IP：192.168.56.4）上启动：</p>
 <pre><code class="language-bash">$ sbin/start-yarn.sh
 </code></pre>
-<p>然后访问 http://192.168.56.5:50090/，如果看到如下的的界面，说明集群就启动成功了。</p>
+<p>然后访问 <a href="http://192.168.56.5:50090/%EF%BC%8C%E5%A6%82%E6%9E%9C%E7%9C%8B%E5%88%B0%E5%A6%82%E4%B8%8B%E7%9A%84%E7%9A%84%E7%95%8C%E9%9D%A2%EF%BC%8C%E8%AF%B4%E6%98%8E%E9%9B%86%E7%BE%A4%E5%B0%B1%E5%90%AF%E5%8A%A8%E6%88%90%E5%8A%9F%E4%BA%86%E3%80%82">http://192.168.56.5:50090/，如果看到如下的的界面，说明集群就启动成功了。</a></p>
 <p><img src="hadoop.png" alt=""></p>
 <p>停止集群时通过如下命令停止就可以了：</p>
 <pre><code class="language-bash">$ sbin/stop-yarn.sh
@@ -273,7 +273,7 @@ $ sbin/stop-dfs.sh
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,19 +57,19 @@
                     <div id="div-body">
                     <div class="post">
     <h1>如何打造一个高效的工作环境</h1>
-    <p>这篇文章并不是我一个人独立完成的，感谢<a href="https://coolshell.cn/" target="_blank" rel="noopener">皓哥</a>帮忙改稿和补充，也感谢其他同学的校对，才有了这篇文章。</p>
+    <p>这篇文章并不是我一个人独立完成的，感谢<a href="https://coolshell.cn/">皓哥</a>帮忙改稿和补充，也感谢其他同学的校对，才有了这篇文章。</p>
 <hr>
 <p>程序员是一个很懒的群体，总想着能够让代码为自己干活，他们不断地把工作生活中的一些事情用代码自动化了，从而让整个社会的效率运作地越来越高。所以，程序员在准备去优化这个世界的时候，都会先要优化自己的工作环境，是所谓“工欲善其事，必先利其器”。</p>
 <p>我们每个程序员都应该打造一套让自己更为高效的工作环境。那怕就是让你少输入一次命令，少按一次键，少在鼠标和键盘间切换一次，都会让程序员的工作变得更为的高效。所以，程序员一般需要一台性能比较好，不会因为开了太多的网页或程序就卡得不行的电脑，还要配备多个显示器，一个显示器写代码，一个查文档，一个测试运行结果，而不必在各种窗口来来回回的切换……在大量的窗口间切换经常会迷路，而且也容易出错（分不清线上或测试环境）……</p>
 <p>除了硬件上的装备，软件上也是能够得升程序员生产力的地方，下面我们就想在软件层面说一下可以提升程序员生产力的一些东西。</p>
 <p>这篇文章在查阅了很多资料以及结合自身的实践，从四个方面来说明如何打造一套适合自己的工具，分别是<strong>编辑器篇</strong>、<strong>命令行篇</strong>、<strong>Shell和脚本篇</strong>、<strong>版本管理篇</strong>。</p>
-<h3>编辑器篇</h3>
+<h3 id="编辑器篇">编辑器篇</h3>
 <p>对于程序员来说，日常与编辑器打交道的时间非常长。编辑器是值得我们投入大量时间去学习并且定制来满足我们的需要。</p>
 <p>如何选择合适的编辑器呢？编辑器有很多，有的值得投资时间去学习，有的基本就不用花时间去学。应当去学习那些能够提升生产力，有很强的生命力，并且能够适应各类环境的编辑器。</p>
 <p><strong>Vim</strong> 和 <strong>Emacs</strong> 就是非常值得投资的编辑器，如果你决定开始学习 Vim/Emacs，刚开始的时候会感觉高很痛苦，甚至会伤害到自己的生产力，但是没关系，通过两三周的专注练习后，就可以通过学习编辑器的死亡之谷，很快就可以赚回票价了。</p>
-<p>使用 Vim/Emacs 的另一个重要好处是，当你在处理一些线上问题的时候，有时候需要一个 IDE，你发现在一个Term 终端上是运行不了图形界面的编辑器了，你只有 Vim/Emacs 这样的选择。在 Coolshell 上有一篇《无插件Vim 编程技巧》（https://coolshell.cn/articles/11312.html）你可以移步一看。</p>
+<p>使用 Vim/Emacs 的另一个重要好处是，当你在处理一些线上问题的时候，有时候需要一个 IDE，你发现在一个Term 终端上是运行不了图形界面的编辑器了，你只有 Vim/Emacs 这样的选择。在 Coolshell 上有一篇《无插件Vim 编程技巧》（<a href="https://coolshell.cn/articles/11312.html%EF%BC%89%E4%BD%A0%E5%8F%AF%E4%BB%A5%E7%A7%BB%E6%AD%A5%E4%B8%80%E7%9C%8B%E3%80%82">https://coolshell.cn/articles/11312.html）你可以移步一看。</a></p>
 <p>为什么不学习 Notepad，因为，<strong>使用高效编辑器的终极目标是抛弃鼠标，让手编辑的速度可以跟的上大脑思考的速度</strong>。就我自己来说，从大二开始接触 Emacs 开始，已经使用 5 年了，通过不断的对 Emacs 进行定制，已经有了一套自己的使用模式了，每次打开 Emacs 就像是打开了自己才知道的秘籍，这是其他 IDE 都没有办法比的，通过不断定制自己的工具，可以激发自己创造的欲望。</p>
-<p>但是我不参加编辑器的圣战，这些都是无意义的口水战。在一次接触了 Vim 之后，我反而喜欢上 Vim 的编辑模式了，于是在 Emacs 中使用上了 Vim 的编辑模式，实际的情况是这两者并不冲突（皓哥翻译的那篇 《简明 Vim 练级攻略》（https://coolshell.cn/articles/5426.html）文章非常不错）。</p>
+<p>但是我不参加编辑器的圣战，这些都是无意义的口水战。在一次接触了 Vim 之后，我反而喜欢上 Vim 的编辑模式了，于是在 Emacs 中使用上了 Vim 的编辑模式，实际的情况是这两者并不冲突（皓哥翻译的那篇 《简明 Vim 练级攻略》（<a href="https://coolshell.cn/articles/5426.html%EF%BC%89%E6%96%87%E7%AB%A0%E9%9D%9E%E5%B8%B8%E4%B8%8D%E9%94%99%EF%BC%89%E3%80%82">https://coolshell.cn/articles/5426.html）文章非常不错）。</a></p>
 <p>在 Emacs 上，有很多有用的特性和插件。 Emacs 的 <strong>org-mode</strong>，这个工具用来写作，还可用来做任务管理，任务计时器，甚至可以用来做表格的计算。功能上已经完全不是 markdown 能比的，但是遗憾的是目前只能在 Emacs 中使用（貌似有人在 Vim 上实现过）。</p>
 <p>还有就是 Emacs 中的用来做文件管理的插件 <strong>helm</strong> 和 <strong>ivy</strong>，这两个插件完成的功能差不多，但是 helm 比较重量级一些，如果一个项目的代码量比较大时，文件的切换和搜索就没那么快了，所以我更喜欢轻量级的 ivy。</p>
 <p>还有两个我最喜欢的插件，<strong>evil</strong> 和 <strong>magit</strong>，evil 可以让 Emacs 变身成为一个 Vim，大多数的 Vim 操作都可以覆盖上。magit 是一个可以使 Emacs 变身成为 Git 的插件。当然其他的各种语言的支持插件就是常规操作了，不多说。</p>
@@ -78,35 +78,35 @@
 <ul>
 <li>
 <p><strong>一年成为 Emacs 高手</strong>，当年我也是靠着这一篇文章真正入门 emacs,</p>
-<p>https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/guide-zh.org</p>
+<p><a href="https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/guide-zh.org">https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/guide-zh.org</a></p>
 </li>
 <li>
-<p>陈斌 (一年成为 Emacs 高手的作者)的 Emacs 配置，是一个很不错的配置，我现在使用的配置要就是从这个演化来的 https://github.com/redguardtoo/emacs.d</p>
+<p>陈斌 (一年成为 Emacs 高手的作者)的 Emacs 配置，是一个很不错的配置，我现在使用的配置要就是从这个演化来的 <a href="https://github.com/redguardtoo/emacs.d">https://github.com/redguardtoo/emacs.d</a></p>
 </li>
 <li>
-<p>Steve Purcell 大牛的配置，很适合 Web 开发者：https://github.com/purcell/emacs.d</p>
+<p>Steve Purcell 大牛的配置，很适合 Web 开发者：<a href="https://github.com/purcell/emacs.d">https://github.com/purcell/emacs.d</a></p>
 </li>
 <li>
-<p>Spacemacs 配置，适合新手，有着非常完善的文档：https://github.com/syl20bnr/spacemacs</p>
+<p>Spacemacs 配置，适合新手，有着非常完善的文档：<a href="https://github.com/syl20bnr/spacemacs">https://github.com/syl20bnr/spacemacs</a></p>
 </li>
 <li>
-<p>reddit 的 Emacs 频道，最前沿的 Emacs 技巧：https://www.reddit.com/r/emacs/</p>
+<p>reddit 的 Emacs 频道，最前沿的 Emacs 技巧：<a href="https://www.reddit.com/r/emacs/">https://www.reddit.com/r/emacs/</a></p>
 </li>
 <li>
-<p>Emacs org-mode 的文档，从这个文档中你可以发现纯文本的魔力：https://orgmode.org/</p>
+<p>Emacs org-mode 的文档，从这个文档中你可以发现纯文本的魔力：<a href="https://orgmode.org/">https://orgmode.org/</a></p>
 </li>
 <li>
-<p>Emacs Wiki，上面有大量的 Emacs 插件的实践，虽然质量参差不齐，但是也有很多优秀的插件 https://www.emacswiki.org/emacs/EmacsWiki</p>
+<p>Emacs Wiki，上面有大量的 Emacs 插件的实践，虽然质量参差不齐，但是也有很多优秀的插件 <a href="https://www.emacswiki.org/emacs/EmacsWiki">https://www.emacswiki.org/emacs/EmacsWiki</a></p>
 </li>
 </ul>
 <p><strong>Vim</strong></p>
 <ul>
-<li>Doist 创业公司 CEO amix 的 Vim 配置，被称之为最强 vimrc：https://github.com/amix</li>
-<li>junegunn 是韩国的一个大牛，擅长写 Vim 插件，他的 Vim 插件看起来总是令人赏心悦目：https://github.com/junegunn/vim-plug</li>
-<li>SpaceVim，一个开箱即用的 Vim 配置，对新手很友好，和 Spacemacs 一样，有着很完善的文档：https://github.com/SpaceVim/SpaceVim</li>
-<li>reddit 的 Vim 频道，有很多最前沿的 Vim 技巧:https://www.reddit.com/r/vim/</li>
+<li>Doist 创业公司 CEO amix 的 Vim 配置，被称之为最强 vimrc：<a href="https://github.com/amix">https://github.com/amix</a></li>
+<li>junegunn 是韩国的一个大牛，擅长写 Vim 插件，他的 Vim 插件看起来总是令人赏心悦目：<a href="https://github.com/junegunn/vim-plug">https://github.com/junegunn/vim-plug</a></li>
+<li>SpaceVim，一个开箱即用的 Vim 配置，对新手很友好，和 Spacemacs 一样，有着很完善的文档：<a href="https://github.com/SpaceVim/SpaceVim">https://github.com/SpaceVim/SpaceVim</a></li>
+<li>reddit 的 Vim 频道，有很多最前沿的 Vim 技巧:<a href="https://www.reddit.com/r/vim/">https://www.reddit.com/r/vim/</a></li>
 </ul>
-<h3>命令行篇</h3>
+<h3 id="命令行篇">命令行篇</h3>
 <p>一个好的、可定制的命令行环境可以给工作效率带来很大的提升。如果你还在使用这个，那就差点意思了：</p>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/shell/Image.png" alt=""></p>
 <p>在不同的操作系统下，都有着很不错的命令行工具，比如 Mac 下的 <strong>Iterm2</strong>，Linux 下的原生命令行，如果你是在 Windows 下工作，问题也不大，因为 Windows 下现在有了 <strong>WSL</strong>。WSL 提供了一个由微软开发的Linux兼容的内核接口（不包含Linux内核代码），然后可以在其上运行GNU用户空间，例如 Ubuntu，openSUSE，SUSE Linux Enterprise Server，Debian和Kali Linux。这样的用户空间可能包含 Bash shell 和命令语言，使用本机 GNU/Linux 命令行工具（sed，awk 等），编程语言解释器（Ruby，Python 等），甚至是图形应用程序（使用主机端的X窗口系统）。</p>
@@ -114,7 +114,7 @@
 <ul>
 <li>查看连接你服务器 top10 用户端的 IP 地址：</li>
 </ul>
-<p><code>netstat -nat | awk '{print $5}' | awk -F ':' '{print $1}' | sort | uniq -c | sort -rn | head -n 10</code></p>
+<p><code>netstat -nat | awk  '&#123;print  $5&#125;' | awk -F ':' '&#123;print $1&#125;' | sort | uniq -c | sort -rn | head -n 10</code></p>
 <ul>
 <li>查看一下你最常用的10个命令：</li>
 </ul>
@@ -123,7 +123,7 @@
 <p>下面这几个命令，可能是你天天都在敲的。所以，你应该设置成 alias 来提高效率</p>
 <pre><code>alias nis=&quot;npm install --save &quot;
 alias svim='sudo vim'
-alias mkcd='foo(){ mkdir -p &quot;$1&quot;; cd &quot;$1&quot; }; foo '
+alias mkcd='foo()&#123; mkdir -p &quot;$1&quot;; cd &quot;$1&quot; &#125;; foo '
 alias install='sudo apt get install'
 alias update='sudo apt-get update &amp;&amp; sudo apt-get upgrade'
 alias ..=&quot;cd ..&quot;
@@ -133,80 +133,80 @@ alias sock5='ssh -D 8080 -q -C -N -f user@your.server'
 </code></pre>
 <p>你还可以参考如下的一些文章，看看别人是怎么用好 <code>alias</code> 的</p>
 <ul>
-<li>https://www.cyberciti.biz/tips/bash-aliases-mac-centos-linux-unix.html</li>
-<li>https://www.digitalocean.com/community/questions/what-are-your-favorite-bash-aliases</li>
-<li>https://www.linuxtrainingacademy.com/23-handy-bash-shell-aliases-for-unix-linux-and-mac-os-x/</li>
-<li>https://brettterpstra.com/2013/03/31/a-few-more-of-my-favorite-shell-aliases/</li>
+<li><a href="https://www.cyberciti.biz/tips/bash-aliases-mac-centos-linux-unix.html">https://www.cyberciti.biz/tips/bash-aliases-mac-centos-linux-unix.html</a></li>
+<li><a href="https://www.digitalocean.com/community/questions/what-are-your-favorite-bash-aliases">https://www.digitalocean.com/community/questions/what-are-your-favorite-bash-aliases</a></li>
+<li><a href="https://www.linuxtrainingacademy.com/23-handy-bash-shell-aliases-for-unix-linux-and-mac-os-x/">https://www.linuxtrainingacademy.com/23-handy-bash-shell-aliases-for-unix-linux-and-mac-os-x/</a></li>
+<li><a href="https://brettterpstra.com/2013/03/31/a-few-more-of-my-favorite-shell-aliases/">https://brettterpstra.com/2013/03/31/a-few-more-of-my-favorite-shell-aliases/</a></li>
 </ul>
 <p>命令行中除了原生的命令之外，还有很多可以提升使用体验的工具。下面罗列一些很不错的命令，把原生的命令增强地很厉害:</p>
 <ul>
 <li>
-<p><strong>fasd</strong> 增强了 <code>cd</code> 命令 (https://github.com/clvv/fasd)。</p>
+<p><strong>fasd</strong> 增强了 <code>cd</code> 命令 (<a href="https://github.com/clvv/fasd">https://github.com/clvv/fasd</a>)。</p>
 </li>
 <li>
-<p><strong>bat</strong> 增强了 <code>cat</code> 命令 (https://github.com/sharkdp/bat)。如果你想要有语法高亮的 <code>cat</code>，可以试试 <strong>ccat</strong>(https://github.com/jingweno/ccat)</p>
+<p><strong>bat</strong> 增强了 <code>cat</code> 命令 (<a href="https://github.com/sharkdp/bat">https://github.com/sharkdp/bat</a>)。如果你想要有语法高亮的 <code>cat</code>，可以试试 <strong>ccat</strong>(<a href="https://github.com/jingweno/ccat">https://github.com/jingweno/ccat</a>)</p>
 </li>
 <li>
-<p><strong>exa</strong> 增强了 <code>ls</code> 命令(https://github.com/ogham/exa），如果你需要在很多目录上浏览各种文件 ，<strong>ranger</strong> 命令可以比 <code>cd</code> 和 <code>cat</code> 更有效率（https://github.com/ranger/ranger)，甚至可以在你的终端预览图片。</p>
+<p><strong>exa</strong> 增强了 <code>ls</code> 命令(<a href="https://github.com/ogham/exa%EF%BC%89%EF%BC%8C%E5%A6%82%E6%9E%9C%E4%BD%A0%E9%9C%80%E8%A6%81%E5%9C%A8%E5%BE%88%E5%A4%9A%E7%9B%AE%E5%BD%95%E4%B8%8A%E6%B5%8F%E8%A7%88%E5%90%84%E7%A7%8D%E6%96%87%E4%BB%B6">https://github.com/ogham/exa），如果你需要在很多目录上浏览各种文件</a> ，<strong>ranger</strong> 命令可以比 <code>cd</code> 和 <code>cat</code> 更有效率（<a href="https://github.com/ranger/ranger">https://github.com/ranger/ranger</a>)，甚至可以在你的终端预览图片。</p>
 </li>
 <li>
-<p><strong>fd</strong> 是一个比 <code>find</code> 更简单更快的命令(https://github.com/sharkdp/fd)，他还会自动地忽略掉一些你配置在 <code>.gitignore</code> 中的文件，以及 <code>.git</code> 下的文件。</p>
+<p><strong>fd</strong> 是一个比 <code>find</code> 更简单更快的命令(<a href="https://github.com/sharkdp/fd">https://github.com/sharkdp/fd</a>)，他还会自动地忽略掉一些你配置在 <code>.gitignore</code> 中的文件，以及 <code>.git</code> 下的文件。</p>
 </li>
 <li>
-<p><strong>fzf</strong> 是另外一个很好用的文件搜索神器 (https://github.com/junegunn/fzf)，其主要是搜索当前目录以下的文件，还可以使用 <code>fzf --preview 'cat {}'</code> 边搜索文件边浏览内容。</p>
+<p><strong>fzf</strong> 是另外一个很好用的文件搜索神器 (<a href="https://github.com/junegunn/fzf">https://github.com/junegunn/fzf</a>)，其主要是搜索当前目录以下的文件，还可以使用 <code>fzf --preview 'cat &#123;&#125;'</code> 边搜索文件边浏览内容。</p>
 </li>
 <li>
-<p><code>grep</code> 是一个上古神器，然而，<strong>ack</strong> (https://beyondgrep.com/)、<strong>ag</strong> (https://github.com/ggreer/the_silver_searcher) 和 <strong>rg</strong> (https://github.com/BurntSushi/ripgrep) 是更好的grep，和上面的fd一样，在递归目录匹配的时候，会忽略到你配置在 .gitignore 中的规则。</p>
+<p><code>grep</code> 是一个上古神器，然而，<strong>ack</strong> (<a href="https://beyondgrep.com/">https://beyondgrep.com/</a>)、<strong>ag</strong> (<a href="https://github.com/ggreer/the_silver_searcher">https://github.com/ggreer/the_silver_searcher</a>) 和 <strong>rg</strong> (<a href="https://github.com/BurntSushi/ripgrep">https://github.com/BurntSushi/ripgrep</a>) 是更好的grep，和上面的fd一样，在递归目录匹配的时候，会忽略到你配置在 .gitignore 中的规则。</p>
 </li>
 <li>
-<p><code>rm</code> 是一个危险的命令，尤其是各种 <code>rm -rf …</code>，所以，<strong>trash</strong>（https://github.com/andreafrancia/trash-cli/) 是一个更好的删除命令。</p>
+<p><code>rm</code> 是一个危险的命令，尤其是各种 <code>rm -rf …</code>，所以，<strong>trash</strong>（<a href="https://github.com/andreafrancia/trash-cli/">https://github.com/andreafrancia/trash-cli/</a>) 是一个更好的删除命令。</p>
 </li>
 <li>
-<p><code>man</code> 命令是好读文档的命令，但是man的文档有时候太长了，所以，你可以试式 <strong>tldr</strong>（https://github.com/tldr-pages/tldr) 命令，把文档上的一些示例整出来给你看。</p>
+<p><code>man</code> 命令是好读文档的命令，但是man的文档有时候太长了，所以，你可以试式 <strong>tldr</strong>（<a href="https://github.com/tldr-pages/tldr">https://github.com/tldr-pages/tldr</a>) 命令，把文档上的一些示例整出来给你看。</p>
 </li>
 <li>
-<p>如果你想要一个图示化的<code>ping</code>，你可以试试 <strong>prettyping</strong> (https://github.com/denilsonsa/prettyping) 。</p>
+<p>如果你想要一个图示化的<code>ping</code>，你可以试试 <strong>prettyping</strong> (<a href="https://github.com/denilsonsa/prettyping">https://github.com/denilsonsa/prettyping</a>) 。</p>
 </li>
 <li>
-<p>如果你想搜索以前打过的命令，不要再用 Ctrl +R 了，你可以使用加强版的 <strong>hstr</strong> (https://github.com/dvorka/hstr) 。</p>
+<p>如果你想搜索以前打过的命令，不要再用 Ctrl +R 了，你可以使用加强版的 <strong>hstr</strong> (<a href="https://github.com/dvorka/hstr">https://github.com/dvorka/hstr</a>) 。</p>
 </li>
 <li>
-<p><strong>htop</strong> (https://hisham.hm/htop/） 是 top 的一个加强版。然而，还有很多的各式各样的top，比如：用于看IO负载的 <strong>iotop</strong> (http://guichaz.free.fr/iotop/)，网络负载的 <strong>iftop</strong> (http://www.ex-parrot.com/~pdw/iftop/), 以及把这些top都集成在一起的 <strong>atop</strong> (https://github.com/Atoptool/atop)。</p>
+<p><strong>htop</strong> (<a href="https://hisham.hm/htop/%EF%BC%89">https://hisham.hm/htop/）</a> 是 top 的一个加强版。然而，还有很多的各式各样的top，比如：用于看IO负载的 <strong>iotop</strong> (<a href="http://guichaz.free.fr/iotop/">http://guichaz.free.fr/iotop/</a>)，网络负载的 <strong>iftop</strong> (<a href="http://www.ex-parrot.com/~pdw/iftop/">http://www.ex-parrot.com/~pdw/iftop/</a>), 以及把这些top都集成在一起的 <strong>atop</strong> (<a href="https://github.com/Atoptool/atop">https://github.com/Atoptool/atop</a>)。</p>
 </li>
 <li>
-<p><strong>ncdu</strong> (https://dev.yorhel.nl/ncdu) 比 du 好用多了用。另一个选择是 nnn（https://github.com/jarun/nnn) 。</p>
+<p><strong>ncdu</strong> (<a href="https://dev.yorhel.nl/ncdu">https://dev.yorhel.nl/ncdu</a>) 比 du 好用多了用。另一个选择是 nnn（<a href="https://github.com/jarun/nnn">https://github.com/jarun/nnn</a>) 。</p>
 </li>
 <li>
-<p>如果你想把你的命令行操作建录制成一个 SVG 动图，那么你可以尝试使用 <strong>asciinema</strong> (https://asciinema.org/) 和 <strong>svg-trem</strong> (https://github.com/marionebl/svg-term-cli) 。</p>
+<p>如果你想把你的命令行操作建录制成一个 SVG 动图，那么你可以尝试使用 <strong>asciinema</strong> (<a href="https://asciinema.org/">https://asciinema.org/</a>) 和 <strong>svg-trem</strong> (<a href="https://github.com/marionebl/svg-term-cli">https://github.com/marionebl/svg-term-cli</a>) 。</p>
 </li>
 <li>
-<p><strong>httpie</strong>(https://github.com/jakubroztocil/httpie) 是一个可以用来替代 curl 和 wget 的 http 客户端，httpie 支持 json 和语法高亮，可以使用简单的语法进行 http 访问: <code>http -v github.com</code>。</p>
+<p><strong>httpie</strong>(<a href="https://github.com/jakubroztocil/httpie">https://github.com/jakubroztocil/httpie</a>) 是一个可以用来替代 curl 和 wget 的 http 客户端，httpie 支持 json 和语法高亮，可以使用简单的语法进行 http 访问: <code>http -v github.com</code>。</p>
 </li>
 <li>
-<p><strong>tmux</strong> (https://github.com/tmux/tmux) 在需要经常登录远程服务器工作的时候会很有用，可以保持远程登录的会话，还可以在一个窗口中查看多个 shell 的状态。</p>
+<p><strong>tmux</strong> (<a href="https://github.com/tmux/tmux">https://github.com/tmux/tmux</a>) 在需要经常登录远程服务器工作的时候会很有用，可以保持远程登录的会话，还可以在一个窗口中查看多个 shell 的状态。</p>
 </li>
 <li>
-<p><strong>Taskbook</strong>(https://github.com/klaussinani/taskbook) 是可以完全在命令行中使用的任务管理器 ，支持 ToDo 管理，还可以为每个任务加上优先级。</p>
+<p><strong>Taskbook</strong>(<a href="https://github.com/klaussinani/taskbook">https://github.com/klaussinani/taskbook</a>) 是可以完全在命令行中使用的任务管理器 ，支持 ToDo 管理，还可以为每个任务加上优先级。</p>
 </li>
 <li>
-<p><strong>sshrc</strong> (sshrc：https://github.com/Russell91/sshrc ) 是个神器，在你登录远程服务器的时候也能使用本机的 shell 的 rc 文件中的配置。</p>
+<p><strong>sshrc</strong> (sshrc：<a href="https://github.com/Russell91/sshrc">https://github.com/Russell91/sshrc</a> ) 是个神器，在你登录远程服务器的时候也能使用本机的 shell 的 rc 文件中的配置。</p>
 </li>
 <li>
-<p><strong>goaccess</strong> (https://github.com/allinurl/goaccess) 这个是一个轻量级的分析统计日志文件的工具，主要是分析各种各样的 access log。</p>
+<p><strong>goaccess</strong> (<a href="https://github.com/allinurl/goaccess">https://github.com/allinurl/goaccess</a>) 这个是一个轻量级的分析统计日志文件的工具，主要是分析各种各样的 access log。</p>
 </li>
 </ul>
 <p>关于这些增加命令，参考自下面的这些文章</p>
 <ol>
-<li>https://dev.to/_darrenburns/10-tools-to-power-up-your-command-line-4id4</li>
-<li>https://dev.to/_darrenburns/tools-to-power-up-your-command-line-part-2-2737</li>
-<li>https://dev.to/_darrenburns/power-up-your-command-line-part-3-4o53</li>
-<li>https://darrenburns.net/posts/tools/</li>
-<li>https://hacker-tools.github.io/</li>
+<li><a href="https://dev.to/_darrenburns/10-tools-to-power-up-your-command-line-4id4">https://dev.to/_darrenburns/10-tools-to-power-up-your-command-line-4id4</a></li>
+<li><a href="https://dev.to/_darrenburns/tools-to-power-up-your-command-line-part-2-2737">https://dev.to/_darrenburns/tools-to-power-up-your-command-line-part-2-2737</a></li>
+<li><a href="https://dev.to/_darrenburns/power-up-your-command-line-part-3-4o53">https://dev.to/_darrenburns/power-up-your-command-line-part-3-4o53</a></li>
+<li><a href="https://darrenburns.net/posts/tools/">https://darrenburns.net/posts/tools/</a></li>
+<li><a href="https://hacker-tools.github.io/">https://hacker-tools.github.io/</a></li>
 </ol>
-<h3>Shell 和脚本篇</h3>
+<h3 id="Shell-和脚本篇">Shell 和脚本篇</h3>
 <p>shell 是可以与计算机进行高效交互的文本接口。shell 提供了一套交互式的编程语言（脚本），shell的种类很多，比如 <strong>sh</strong>、<strong>bash</strong>、<strong>zsh</strong> 等。</p>
 <p>shell 的生命力很强，在各种高级编程语言大行其道的今天，很多的任务依然离不开 shell。比如可以使用 shell 来执行一些编译任务，或者做一些批处理任务，初始化数据、打包程序等等。</p>
-<p>写一个脚本很简单，<strong>touch zsh-script.sh</strong>：</p>
+<p>写一个脚本很简单，<strong>touch <a href="http://zsh-script.sh">zsh-script.sh</a></strong>：</p>
 <pre><code class="language-shell">#!/bin/zsh
 echo Hello shell
 </code></pre>
@@ -223,8 +223,8 @@ $ ./zsh-script.sh
 <pre><code class="language-shell">* * * * * /home/ray/zsh-script.zsh
 </code></pre>
 <p>crontab 是 Linux 中的一个定时器，可以定制执行任务，上面的表示每分钟执行一次脚本。</p>
-<p>我最喜欢的就是 <strong>zsh</strong> + <strong><a href="https://ohmyz.sh/" target="_blank" rel="noopener">oh-my-zsh</a></strong> + <strong><a href="https://github.com/zsh-users/zsh-autosuggestions" target="_blank" rel="noopener">zsh-autosuggestions</a></strong> 的组合，你也可以试试看。其中 zsh 和 oh-my-zsh 算是常规操作了，但是 zsh-autosuggestions 特别有用，可以超级快速的帮你补全你输入过的命令，让命令行的操作更加高效。 只需要简单的安装配置，你的命令行马上变得高档大气上档次，狂拽炫酷吊炸天。</p>
-<p>另外，<strong><a href="https://fishshell.com/" target="_blank" rel="noopener">fish</a></strong> 也是另外一个牛逼的shell，比如：命令行自动完成（根据历史记录），命令行命令高亮，当你要输入命令行参数的时候，自动提示有哪些参数…… fish在很多地方也是用起来很爽的。和上面的 oh-my-zsh 有点不分伯仲了。</p>
+<p>我最喜欢的就是 <strong>zsh</strong> + <strong><a href="https://ohmyz.sh/">oh-my-zsh</a></strong> + <strong><a href="https://github.com/zsh-users/zsh-autosuggestions">zsh-autosuggestions</a></strong> 的组合，你也可以试试看。其中 zsh 和 oh-my-zsh 算是常规操作了，但是 zsh-autosuggestions 特别有用，可以超级快速的帮你补全你输入过的命令，让命令行的操作更加高效。 只需要简单的安装配置，你的命令行马上变得高档大气上档次，狂拽炫酷吊炸天。</p>
+<p>另外，<strong><a href="https://fishshell.com/">fish</a></strong> 也是另外一个牛逼的shell，比如：命令行自动完成（根据历史记录），命令行命令高亮，当你要输入命令行参数的时候，自动提示有哪些参数…… fish在很多地方也是用起来很爽的。和上面的 oh-my-zsh 有点不分伯仲了。</p>
 <p>你也许会说，用 Python 脚本或 PHP 来写脚本会比 Shell 更好更没有 bug，但我要申辩一下:</p>
 <ul>
 <li>其一，如果你有一天要维护线上机器的时候，或是到了银行用户的系统（与外网完全隔离，而且服务器上没有安装 Python/PHP 或是他们的的高级库，那么，你只有 Shell 可以用了）。</li>
@@ -254,7 +254,7 @@ done
 
 PS3='Please enter your choice: '
 options=(&quot;Option 1&quot; &quot;Option 2&quot; &quot;Option 3&quot; &quot;Quit&quot;)
-select opt in &quot;${options[@]}&quot;
+select opt in &quot;$&#123;options[@]&#125;&quot;
 do
     case $opt in
         &quot;Option 1&quot;)
@@ -273,7 +273,7 @@ do
     esac
 done
 </code></pre>
-<p>颜色定义，你可以使用 <code>echo -e &quot;${Blu}blue ${Red}red ${RCol}etc....&quot;</code> 进行有颜色文本的输出</p>
+<p>颜色定义，你可以使用 <code>echo -e &quot;$&#123;Blu&#125;blue $&#123;Red&#125;red $&#123;RCol&#125;etc....&quot;</code> 进行有颜色文本的输出</p>
 <pre><code>RCol='\e[0m'    # Text Reset
 
 # Regular           Bold                Underline           High Intensity      BoldHigh Intens     Background          High Intensity Backgrounds
@@ -288,10 +288,10 @@ Whi='\e[0;37m';     BWhi='\e[1;37m';    UWhi='\e[4;37m';    IWhi='\e[0;97m';    
 </code></pre>
 <p>取当前运行脚本绝对路径的示例：（注：Linux下可以用 <code>dirname $(readlink -f $0)</code> ）</p>
 <pre><code>FILE=&quot;$0&quot;
-while [[ -h ${FILE} ]]; do
-    FILE=&quot;`readlink &quot;${FILE}&quot;`&quot;
+while [[ -h $&#123;FILE&#125; ]]; do
+    FILE=&quot;`readlink &quot;$&#123;FILE&#125;&quot;`&quot;
 done
-pushd &quot;`dirname &quot;${FILE}&quot;`&quot; &gt; /dev/null
+pushd &quot;`dirname &quot;$&#123;FILE&#125;&quot;`&quot; &gt; /dev/null
 DIR=`pwd -P`
 popd &gt; /dev/null
 
@@ -314,19 +314,19 @@ hash &lt;the_command&gt;
 type &lt;the_command&gt; 
 
 # 示例：
-gnudate() {
+gnudate() &#123;
     if hash gdate 2&gt;/dev/null; then
         gdate &quot;$@&quot;
     else
         date &quot;$@&quot;
     fi
-}
+&#125;
 </code></pre>
 <p>然后，如果要写出健壮性更好的脚本，下面是一些相关的技巧：</p>
 <ul>
 <li>使用 <code>-e</code> 参数，如：<code>set -e</code> 或是 <code>#!/bin/sh -e</code>，这样设置会让你的脚本出错就会停止运行，这样一来可以防止你的脚本在出错的情况下还在拼拿地干活停不下来。</li>
 <li>使用 <code>-u</code> 参数，如： <code>set -eu</code>，这意味着，如果你代码中有变量没有定义，就会退出。</li>
-<li>对一些变理，你可以使用默认值。如：<code>${FOO:-'default'}</code></li>
+<li>对一些变理，你可以使用默认值。如：<code>$&#123;FOO:-'default'&#125;</code></li>
 <li>处理你代码的退出码。这样方便你的脚本跟别的命令行或脚本集成。</li>
 <li>尽量不要使用 <code>;</code> 来执行多个命令，而是使用 <code>&amp;&amp;</code>，这样会在出错的时候停止运行后续的命令。</li>
 <li>对于一些字符串变量，使用引号括起，避免其中有空格或是别的什么诡异字符。</li>
@@ -335,41 +335,41 @@ gnudate() {
 <li>使用 <code>$()</code> 而不是 `` 来获得命令行的输出，主要原因是易读。</li>
 <li>小心不同的平台，尤其是 MacOS 和 Linux 的跨平台。</li>
 <li>对于 <code>rm -rf</code> 这样的高危操作，需要检查后面的变量名是否为空，比如：<code>rm -rf $MYDIDR/*</code> 如果 <code>$MYDIR</code>为空，结果是灾难性的。</li>
-<li>考虑使用 &quot;find/while&quot; 而不是 “for/find”。如：<code>for F in $(find . -type f) ; do echo $F; done</code> 写成 <code>find . -type f | while read F ; do echo $F ; done</code> 不但可以容忍空格，而且还更快。</li>
+<li>考虑使用 “find/while” 而不是 “for/find”。如：<code>for F in $(find . -type f) ; do echo $F; done</code> 写成 <code>find . -type f | while read F ; do echo $F ; done</code> 不但可以容忍空格，而且还更快。</li>
 <li>防御式编程，在正式执行命令前，把相关的东西都检查好，比如，文件目录有没有存在。</li>
 </ul>
 <p>最后推荐一些 Shell 和脚本的参考资料。</p>
 <p>各种有意思的命令拼装，一行命令走天涯:</p>
 <ul>
-<li>http://www.bashoneliners.com/</li>
-<li>http://www.shell-fu.org/</li>
-<li>http://www.commandlinefu.com/</li>
+<li><a href="http://www.bashoneliners.com/">http://www.bashoneliners.com/</a></li>
+<li><a href="http://www.shell-fu.org/">http://www.shell-fu.org/</a></li>
+<li><a href="http://www.commandlinefu.com/">http://www.commandlinefu.com/</a></li>
 </ul>
 <p>下面是一些脚本集中营，你可以在里面淘到各种牛X的脚本：</p>
 <ul>
-<li>http://www.shelldorado.com/scripts/</li>
-<li>https://snippets.siftie.com/public/tag/bash/</li>
-<li>https://bash.cyberciti.biz/</li>
-<li>https://github.com/alexanderepstein/Bash-Snippets</li>
-<li>https://github.com/miguelgfierro/scripts</li>
-<li>https://github.com/epety/100-shell-script-examples</li>
-<li>https://github.com/ruanyf/simple-bash-scripts</li>
+<li><a href="http://www.shelldorado.com/scripts/">http://www.shelldorado.com/scripts/</a></li>
+<li><a href="https://snippets.siftie.com/public/tag/bash/">https://snippets.siftie.com/public/tag/bash/</a></li>
+<li><a href="https://bash.cyberciti.biz/">https://bash.cyberciti.biz/</a></li>
+<li><a href="https://github.com/alexanderepstein/Bash-Snippets">https://github.com/alexanderepstein/Bash-Snippets</a></li>
+<li><a href="https://github.com/miguelgfierro/scripts">https://github.com/miguelgfierro/scripts</a></li>
+<li><a href="https://github.com/epety/100-shell-script-examples">https://github.com/epety/100-shell-script-examples</a></li>
+<li><a href="https://github.com/ruanyf/simple-bash-scripts">https://github.com/ruanyf/simple-bash-scripts</a></li>
 </ul>
 <p>甚至写脚本都可以使用框架:</p>
 <ul>
-<li>写bash脚本的框架  https://github.com/Bash-it/bash-it</li>
+<li>写bash脚本的框架  <a href="https://github.com/Bash-it/bash-it">https://github.com/Bash-it/bash-it</a></li>
 </ul>
 <p>Google的Shell脚本的代码规范：</p>
 <ul>
-<li>https://google.github.io/styleguide/shell.xml</li>
+<li><a href="https://google.github.io/styleguide/shell.xml">https://google.github.io/styleguide/shell.xml</a></li>
 </ul>
 <p>最后，别忘了几个和shell有关的索引资源：</p>
 <ul>
-<li>https://github.com/alebcay/awesome-shell</li>
-<li>https://github.com/awesome-lists/awesome-bash</li>
-<li>https://terminalsare.sexy/</li>
+<li><a href="https://github.com/alebcay/awesome-shell">https://github.com/alebcay/awesome-shell</a></li>
+<li><a href="https://github.com/awesome-lists/awesome-bash">https://github.com/awesome-lists/awesome-bash</a></li>
+<li><a href="https://terminalsare.sexy/">https://terminalsare.sexy/</a></li>
 </ul>
-<h3>版本管理篇</h3>
+<h3 id="版本管理篇">版本管理篇</h3>
 <p>版本管理的工具对我来说已经不仅仅不是管理代码的工具了。任何需要不断优化，不断修改的内容都需要进行版本管理。</p>
 <p>版本管理的工具很多。现在还有好些人还不喜欢 Git 还在用 svn，那是因为他们并不知道 Git 的强大之处，这种脱机的版本管理可以让你在没有网的情况下提效代码变更，再加上 Git 切换 branch 快得不行，merge branch 时会把 branch 的改动情况一同 merge 了，这样可以让你看到整个历史。再有 stash，cherry-pick 等等这样的黑魔法加持，你的工作效率真的很爽的。如今最好用的应该就是 <strong>Git</strong> 了，在加上最近 <strong>GitHub</strong> 私有仓库的开放，让这一优势继续扩大。</p>
 <p>Git 这么好用的原因来源于其底层数据结构的设计，非常的有意思，如果你接触过区块链，你会发现 Git 底层的数据结构与区块链的数据结构有异曲同工之处。</p>
@@ -387,7 +387,7 @@ gnudate() {
 <li>如果你要删除远程分支，可以使用 <code>git push origin --delete &lt;remote-branchname&gt;</code></li>
 <li>使用 <code>git add -p</code> 可以让你挑选修改，这样你可以把你的一次大改动变成多个提交。</li>
 <li><code>git checkout -p</code> 和 <code>git add -p</code> 类似，如果让你挑选你想checkout的修改。</li>
-<li>你知道你可以使用时间在你的git命令行上吗？比如：<code>git diff HEAD@{'2 months ago'}</code> 或 <code>git diff HEAD@{yesterday}</code> 或 <code>git diff HEAD@{'2010-01-01 12:00:00'}</code></li>
+<li>你知道你可以使用时间在你的git命令行上吗？比如：<code>git diff HEAD@&#123;'2 months ago'&#125;</code> 或 <code>git diff HEAD@&#123;yesterday&#125;</code> 或 <code>git diff HEAD@&#123;'2010-01-01 12:00:00'&#125;</code></li>
 </ul>
 <p>有时候，设置一下 Git 的别名也是可以让你更高效工作的一件事，比如：</p>
 <p>使用如下的 <code>git lg</code> 别名</p>
@@ -399,19 +399,19 @@ gnudate() {
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/git/git.log_.02.png" alt=""></p>
 <p>除此之外，Git 还有好些比较有用的别名，下面这几个收集库，可以让你更高效更赏心悦目地使用 Git</p>
 <ul>
-<li>https://github.com/momeni/gittify</li>
-<li>https://github.com/GitAlias/gitalias</li>
-<li>https://gist.github.com/mwhite/6887990</li>
+<li><a href="https://github.com/momeni/gittify">https://github.com/momeni/gittify</a></li>
+<li><a href="https://github.com/GitAlias/gitalias">https://github.com/GitAlias/gitalias</a></li>
+<li><a href="https://gist.github.com/mwhite/6887990">https://gist.github.com/mwhite/6887990</a></li>
 </ul>
 <p>Git 有多种用法，可以使用原生的 Git 命令行，原生的 Git 命令加上 shell 脚本的包装就可以做到很高效了。 Git 也有图形化的界面，比如 Git 安装包自带的 gitk 或者 TortoiseGit，因为比起命令行来太慢了。还有就是 magit，这是 Emacs 的一个插件，这个插件将所有 Git 的操作都融入到 Emacs 中了，只需要使用使用快捷键就能够完成 Git 的所有操作，但是同时又带有一点图形化的感觉，这么说有点苍白无力，看图:</p>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/emacs/emacs-git.jpg" alt=""></p>
 <p>我现在日常会使用 Git 来进行代码管理、博客文章的管理和自己的知识库的管理。这些内容使用版本管理起来的好处是可以看见自己的成长过程，每一次修改的内容，每一个想法的进化。</p>
 <p>下面推荐一下 Git 的学习资料:</p>
 <ul>
-<li>Progit2，最好的深入学习 Git 的教材，而且是开源的https://github.com/progit/progit2</li>
-<li>Magit，Git 在 Emacs 上的打开方式：https://magit.vc/</li>
-<li>Vim-fugitive，Git 在 Vim 上的打开方式：https://github.com/tpope/vim-fugitive</li>
-<li>Git 相关的 shell 提示： https://github.com/magicmonty/bash-git-prompt</li>
+<li>Progit2，最好的深入学习 Git 的教材，而且是开源的<a href="https://github.com/progit/progit2">https://github.com/progit/progit2</a></li>
+<li>Magit，Git 在 Emacs 上的打开方式：<a href="https://magit.vc/">https://magit.vc/</a></li>
+<li>Vim-fugitive，Git 在 Vim 上的打开方式：<a href="https://github.com/tpope/vim-fugitive">https://github.com/tpope/vim-fugitive</a></li>
+<li>Git 相关的 shell 提示： <a href="https://github.com/magicmonty/bash-git-prompt">https://github.com/magicmonty/bash-git-prompt</a></li>
 </ul>
 <p>Happy hacking！</p>
 <p>(完)</p>
@@ -435,7 +435,7 @@ gnudate() {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

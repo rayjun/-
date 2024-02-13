@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,8 +57,8 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Android系列之系统级别的AlertDialog</h1>
-    <h3>AlertDialog 的坑</h3>
-<p>对话框是安卓开发里面使用的一个很广的组件，我们可以利用这个组件来完成很多的功能，而这篇文章主要讲到的是在开发中使用 AlertDialog 时候遇到的
+    <h3 id="AlertDialog-的坑">AlertDialog 的坑</h3>
+<p>对话框是安卓开发里面使用的一个很广的组件，我们可以利用这个组件来完成很多的功能，而这篇文章主要讲到的是在开发中使用 AlertDialog 时候遇到的<br>
 一个小问题，开发时的代码类似下面这些:</p>
 <pre><code>
   AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.AlertDialogCustom));
@@ -69,17 +69,17 @@
   dialogBuilder.setCancelable(false);
 
 
-  dialogBuilder.setPositiveButton(&quot;OK&quot;, new DialogInterface.OnClickListener() {
+  dialogBuilder.setPositiveButton(&quot;OK&quot;, new DialogInterface.OnClickListener() &#123;
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which) &#123;
                 ActivityCollection.finishAll();
                 Intent intent = new Intent(context, LoginActivity.class);
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 context.startActivity(intent);
-            }
-        });
+            &#125;
+        &#125;);
 
   AlertDialog alertDialog = dialogBuilder.create();
  alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
@@ -90,7 +90,7 @@ alertDialog.show();
 <pre><code>    &lt;uses-permission android:name=&quot;android.permission.SYSTEM_ALERT_WINDOW&quot; /&gt;
 
 </code></pre>
-<p>以上的代码是弹出一个系统级别的警告框，上面的那些代码是没有问题的，但是在小米手机上调试时，程序没有报错，但是那个警告框就是
+<p>以上的代码是弹出一个系统级别的警告框，上面的那些代码是没有问题的，但是在小米手机上调试时，程序没有报错，但是那个警告框就是<br>
 没有弹出来，好吧，找了半天发现，需要在手机上开启这个系统对话框的权限：</p>
 <p><img src="http://7xi5nj.com1.z0.glb.clouddn.com/16-4-4/48782197.jpg" alt=""></p>
 
@@ -113,7 +113,7 @@ alertDialog.show();
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

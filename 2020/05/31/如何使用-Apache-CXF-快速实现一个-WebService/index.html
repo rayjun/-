@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,14 +58,14 @@
                     <div class="post">
     <h1>如何使用 Apache CXF 快速实现一个 WebService</h1>
     <p>在单体架构向分布式架构演进的过程中，跨进程的通信成为刚需，如果直接利用 Socket 进行通信，那么就会使得编程变得很复杂。</p>
-<p>在 1984 年，Bruce Jay Nelson 提出了<a href="https://dl.acm.org/doi/pdf/10.1145/2080.357392" target="_blank" rel="noopener">跨进程通信</a>的标准，也就是我们通常说的 RPC(Remote Procedure Call)。后面所有的所有的 RPC 框架都是通过这个标准来设计的。</p>
+<p>在 1984 年，Bruce Jay Nelson 提出了<a href="https://dl.acm.org/doi/pdf/10.1145/2080.357392">跨进程通信</a>的标准，也就是我们通常说的 RPC(Remote Procedure Call)。后面所有的所有的 RPC 框架都是通过这个标准来设计的。</p>
 <p>RPC 的理念其实很简单，当客户端想发起一个调用时，实际上是通过本地调用方的 Stub（可以理解为接口），这个 Stub 将要客户端需要执行的方法和参数通过约定的协议进行编码，然后通过网络传输到服务端，服务端接收到这些信息之后执行真正的方法，得到结果后再通过网络传输给客户端。</p>
-<h2>Web Services 简介</h2>
-<p><a href="https://www.w3.org/2002/ws/Activity" target="_blank" rel="noopener">Web Services</a> 属于 RPC 的一种。Web Services 使用 <a href="https://www.w3.org/TR/soap/" target="_blank" rel="noopener">SOAP</a> 作为传输协议，使用 <a href="https://www.w3.org/TR/wsdl20/" target="_blank" rel="noopener">WSDL</a> 作为服务的描述语言，使用 UDDI 作为服务注册发现（虽然没有发展起来）。</p>
+<h2 id="Web-Services-简介">Web Services 简介</h2>
+<p><a href="https://www.w3.org/2002/ws/Activity">Web Services</a> 属于 RPC 的一种。Web Services 使用 <a href="https://www.w3.org/TR/soap/">SOAP</a> 作为传输协议，使用 <a href="https://www.w3.org/TR/wsdl20/">WSDL</a> 作为服务的描述语言，使用 UDDI 作为服务注册发现（虽然没有发展起来）。</p>
 <p>虽然 Web Services 的相关协议在 2007 年之后基本就没再更新，但是在一些银行等金融机构，Web Services 还在被大量使用。</p>
 <p>WebService 的框架很多，比如 Axis2，XFire，CXF 等等。</p>
 <p>Apache Cxf 是其中最优秀，最具有生命力的一个，而且 CXF 框架不仅仅是一个 Web Services 框架，甚至可以通过 CXF 来实现 RESTful 风格的服务。</p>
-<h2>CXF 实现一个简单的 Web Services</h2>
+<h2 id="CXF-实现一个简单的-Web-Services">CXF 实现一个简单的 Web Services</h2>
 <p>使用 CXF 实现 Web Services 非常简单。</p>
 <p>一个完整的 Web Services 服务分为服务器端和服务端，先来看服务器端的代码实现。</p>
 <p>首先创建一个 Maven 项目，在 pom.xml 中引入如下的依赖：</p>
@@ -89,17 +89,17 @@
 <pre><code class="language-java">import javax.jws.WebService;
 
 @WebService
-public interface CxfDemoService {
+public interface CxfDemoService &#123;
     String hello(String name);
-}
+&#125;
 </code></pre>
 <p><code>@WebService</code> 注解表明这是一个对外的接口。然后需要实现具体的业务逻辑：</p>
-<pre><code class="language-java">public class CxfDemoServiceImpl implements CxfDemoService{
+<pre><code class="language-java">public class CxfDemoServiceImpl implements CxfDemoService&#123;
     @Override
-    public String hello(String name) {
+    public String hello(String name) &#123;
         return &quot;hello &quot; + name;
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>就像实现一个普通的类一样，没有任何特殊的地方。然后创建一个服务：</p>
 <pre><code class="language-java">CxfDemoServiceImpl implementor = new CxfDemoServiceImpl();
@@ -169,7 +169,7 @@ String reply = client.hello(&quot;Rayjun&quot;);
 System.out.println(&quot;Server : &quot; + reply); // Server: hello rayjun
 </code></pre>
 <p>上面的代码简单粗暴，如果直接这样进行开发，代码很容易就会变得难以维护，使用 Spring 来组织代码则可以很轻易的解决这个问题。</p>
-<h2>CXF 与 Spring 集成</h2>
+<h2 id="CXF-与-Spring-集成">CXF 与 Spring 集成</h2>
 <p>CXF 可以与 Spring 无缝连接，只需要引入下面的 Spring 依赖：</p>
 <pre><code class="language-java">&lt;dependency&gt;
   &lt;groupId&gt;org.springframework&lt;/groupId&gt;
@@ -228,7 +228,7 @@ System.out.println(&quot;Server : &quot; + reply); // Server: hello rayjun
   &lt;version&gt;9.4.29.v20200521&lt;/version&gt;
   &lt;configuration&gt;
     &lt;scanIntervalSeconds&gt;10&lt;/scanIntervalSeconds&gt;
-    &lt;war&gt;${project.basedir}/target/cxfdemo.war&lt;/war&gt;
+    &lt;war&gt;$&#123;project.basedir&#125;/target/cxfdemo.war&lt;/war&gt;
     &lt;webApp&gt;
       &lt;contextPath&gt;/&lt;/contextPath&gt;
     &lt;/webApp&gt;
@@ -260,7 +260,7 @@ System.out.println(&quot;Server : &quot; + reply); // Server: hello rayjun
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

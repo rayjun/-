@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,12 +57,12 @@
                     <div id="div-body">
                     <div class="post">
     <h1>linux系列-deamon详解</h1>
-    <h3>daemon 与 service</h3>
-<p>在 Linux 系统中，常驻在内存中，提供一些系统或者网络功能的程序就称之为 service，而这个运行的程序我们就称之为 daemon。
-实际上，这两个概念没有必要分得那么清楚，这两个名称只是在不同角度的不同的称谓， service 是在系统角度来看的， daemon 则是
+    <h3 id="daemon-与-service">daemon 与 service</h3>
+<p>在 Linux 系统中，常驻在内存中，提供一些系统或者网络功能的程序就称之为 service，而这个运行的程序我们就称之为 daemon。<br>
+实际上，这两个概念没有必要分得那么清楚，这两个名称只是在不同角度的不同的称谓， service 是在系统角度来看的， daemon 则是<br>
 在程序的角度上来看的。</p>
 <p>在这篇文章中，我们主要详细介绍一下常规 daemon 的详细配置以及开机启动配置，在后续的文章中，我会详细介绍 deamon。</p>
-<h3>deamon 的启动脚本与启动方式</h3>
+<h3 id="deamon-的启动脚本与启动方式">deamon 的启动脚本与启动方式</h3>
 <p>deamon 程序通常是由一个脚本来启动，在启动 deamon 的时候，脚本会完成以下的工作:</p>
 <ul>
 <li>环境的侦测</li>
@@ -118,7 +118,7 @@
 
     /etc/init.d/syslog stop
 </code></pre>
-<p>这是启动的一个方法，还可以利用其他的方法来完成以上的功能，那就是 service 程序，service 本身
+<p>这是启动的一个方法，还可以利用其他的方法来完成以上的功能，那就是 service 程序，service 本身<br>
 其实也是一个脚本，最后实际调用的还是 /etc/init.d/* 中的脚本。</p>
 <pre><code>    service syslog start
 
@@ -126,8 +126,8 @@
 
     service syslog stop
 </code></pre>
-<h3>chkconfig 管理系统服务是否默认启动</h3>
-<p>当我们的 deamon 程序的脚本加入到 /etc/init.d/ 中后，我们就可以通过 chkconfig 命令很好的将这些程序
+<h3 id="chkconfig-管理系统服务是否默认启动">chkconfig 管理系统服务是否默认启动</h3>
+<p>当我们的 deamon 程序的脚本加入到 /etc/init.d/ 中后，我们就可以通过 chkconfig 命令很好的将这些程序<br>
 管理起来，比如将一些 deamon 程序配置成开机启动。</p>
 <pre><code>    chkconfig  [--level [0123456]] [服务名称] [on|off]
 </code></pre>
@@ -152,7 +152,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

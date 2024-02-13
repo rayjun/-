@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -62,7 +62,7 @@
 </code></pre>
 <p>不用指定第二维的的长度，就可以创建完成。这与 Java 中数组内存分配的方式有关，这篇文章会详细分析 Java 数组的内存分配机制及原理。</p>
 <p>本文基于 JDK11</p>
-<h2>数组的定义和初始化</h2>
+<h2 id="数组的定义和初始化">数组的定义和初始化</h2>
 <p>Java 中的数组与其他语言中的数组没有什么区别，内存都是连续分配，可以通过下标直接访问数组的内容，而且数组中存放的数据需要一致：</p>
 <pre><code class="language-java">int[] arr1 = new int[3];
 arr1[0] = 1;
@@ -85,23 +85,23 @@ arr1[1][1] = 0; // 报错
 arr1[1][1] = 0; // 正常运行
 </code></pre>
 <p>如果要初始化一维数组：</p>
-<pre><code class="language-java">int[] arr1 = {1,2,3};
-int[] arr2 = new int[]{1,2,3};
+<pre><code class="language-java">int[] arr1 = &#123;1,2,3&#125;;
+int[] arr2 = new int[]&#123;1,2,3&#125;;
 </code></pre>
 <p>初始化二维数组：</p>
-<pre><code class="language-java">int[][] arr1 = {{1,2,3},{4,5,6}};
-int[][] arr2 = new int[][]{{1,2,3},{4,5,6}};
+<pre><code class="language-java">int[][] arr1 = &#123;&#123;1,2,3&#125;,&#123;4,5,6&#125;&#125;;
+int[][] arr2 = new int[][]&#123;&#123;1,2,3&#125;,&#123;4,5,6&#125;&#125;;
 </code></pre>
 <p>二维数组每维的长度都可以不一样：</p>
-<pre><code class="language-java">int[][] arr1 = new int[][]{{1,2},{3,4,5}};
+<pre><code class="language-java">int[][] arr1 = new int[][]&#123;&#123;1,2&#125;,&#123;3,4,5&#125;&#125;;
 </code></pre>
 <p>对于二维数组，可以被认为是数组的数组，其实二维数组的每一行都是一个单数的数组：</p>
-<pre><code class="language-java">int[][] arr1 = {{1, 2, 3}, {2, 3, 4}};
+<pre><code class="language-java">int[][] arr1 = &#123;&#123;1, 2, 3&#125;, &#123;2, 3, 4&#125;&#125;;
 int[] arr2 = arr1[0];
 </code></pre>
 <p>二维数组在初始化的时候不需要指定行列的数量，其他多维数组的创建方式类似。</p>
 <p>数组最多可以到 255 维，超过 255 维在编译的时候就会出现错误。</p>
-<h2>数组的内存结构</h2>
+<h2 id="数组的内存结构">数组的内存结构</h2>
 <p>为了能把上面二维数组的问题说清楚，需要先对数组的内存结构做一个说明。</p>
 <p>Java 程序在运行的过程中，会为每个线程分配单独的栈空间，如果声明一个数组变量，那么变量就在栈中分配。</p>
 <p>而 Java 中对象都是在堆上分配内存，Java 数组也是对象，所以数组也在堆上分配内存。</p>
@@ -133,7 +133,7 @@ int[] arr2 = arr1[0];
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

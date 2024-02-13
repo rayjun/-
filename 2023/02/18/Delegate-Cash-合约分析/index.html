@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,7 +57,7 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Delegate Cash 合约分析</h1>
-    <h2>1.</h2>
+    <h2 id="1">1.</h2>
 <p>最近猴子游戏 <strong><strong>Dookey Dash</strong></strong> 很火，这个游戏可以看成神庙逃亡的下水道版本，跑得越远，分数越高。但是很多人手残（比如我），很难玩出高的分数，于是游戏代打很自然的出现的了。</p>
 <p>但是有个难处理的细节，代打的人如何获取到门票的授权？总不能直接把钱包给出去或者把游戏门票（Sewer Pass）转出去，这样太不安全了。在这里的关键就是怎么去证明你拥有这个资产的所有权，但是又不威胁到资产的安全。</p>
 <p>在这个过程中，我发现有一个合约很好地解决了这个问题，就是这个 Delegate Cash。这个合约可以解决很多场景下资产所有权的问题：</p>
@@ -67,7 +67,7 @@
 </ul>
 <p><img src="0.png" alt="0"></p>
 <p>整个流程就是在 Delegate Cash 合约，你可以把自己的地址 A 代理给另外一个地址 B，B 拿到这个代理之后，能证明这些资产是属于你的，但是<strong>同时 B 合约无法操作 A 合约中的任何资产</strong>。这点很重要，这样即使 B 合约被钓鱼了或者私钥泄漏了，地址 A 中的资产也是安全的。</p>
-<h2>2.</h2>
+<h2 id="2">2.</h2>
 <p>Delegate Cash 有三种代理模式：</p>
 <ul>
 <li>代理一个 token</li>
@@ -95,18 +95,18 @@ mapping(bytes32 =&gt; IDelegationRegistry.DelegationInfo) internal delegationInf
         address vault,
         address contract_,
         uint256 tokenId
-    ) internal {
-        if (value) {
+    ) internal &#123;
+        if (value) &#123;
             delegations[vault][vaultVersion[vault]].add(delegateHash);
             delegationHashes[delegate].add(delegateHash);
             delegationInfo[delegateHash] =
-                DelegationInfo({vault: vault, delegate: delegate, type_: type_, contract_: contract_, tokenId: tokenId});
-        } else {
+                DelegationInfo(&#123;vault: vault, delegate: delegate, type_: type_, contract_: contract_, tokenId: tokenId&#125;);
+        &#125; else &#123;
             delegations[vault][vaultVersion[vault]].remove(delegateHash);
             delegationHashes[delegate].remove(delegateHash);
             delete delegationInfo[delegateHash];
-        }
-    }
+        &#125;
+    &#125;
 </code></pre>
 <p>如果 value 为 true，则是绑定代理，如果 value 为 false，则是解除代理。然后还提供了一系列的查询方法来检查代理关系是否存在。</p>
 <p>整体的逻辑就这些，相当简单。但是还存在一个小问题，如果在使用的过程中，绑定了很多代理关系，一个个去解绑就会浪费很多 gas，所以还需要一个一件解绑所有代理的功能，Delegate Cash 的实现相当巧妙。</p>
@@ -115,37 +115,37 @@ mapping(bytes32 =&gt; IDelegationRegistry.DelegationInfo) internal delegationInf
 mapping(address =&gt; mapping(address =&gt; uint256)) internal delegateVersion;
 </code></pre>
 <p>这两个 Map 中存储的版本信息在每次算代理信息 hash 的时候会被用到：</p>
-<pre><code class="language-js">function _computeAllDelegationHash(address vault, address delegate) internal view returns (bytes32) {
+<pre><code class="language-js">function _computeAllDelegationHash(address vault, address delegate) internal view returns (bytes32) &#123;
         uint256 vaultVersion_ = vaultVersion[vault];
         uint256 delegateVersion_ = delegateVersion[vault][delegate];
         return keccak256(abi.encode(delegate, vault, vaultVersion_, delegateVersion_));
-}
+&#125;
 </code></pre>
 <p>所以在取消对某个地址的全部代理时，只需要对这个版本号加 1：</p>
-<pre><code class="language-js">function _revokeDelegate(address delegate, address vault) internal {
+<pre><code class="language-js">function _revokeDelegate(address delegate, address vault) internal &#123;
         ++delegateVersion[vault][delegate];
-}
+&#125;
 </code></pre>
 <p>这样就会让后续检查代理时的 hash 对比都会失败，对应的代理关系也全部失效：</p>
-<pre><code class="language-js"> if (delegationHash == _computeAllDelegationHash(vault, delegationInfo_.delegate)) {
+<pre><code class="language-js"> if (delegationHash == _computeAllDelegationHash(vault, delegationInfo_.delegate)) &#123;
     //....
- }
+ &#125;
 </code></pre>
 <p>后续在其他的 DAPP 中，如果要检查用户是否拥有某个资产，只需要来检查这个代理关系就可以:</p>
 <pre><code class="language-js">address requester = msg.sender;
   
-if (_vault != address(0)) { 
+if (_vault != address(0)) &#123; 
      bool isDelegateValid = dc.checkDelegateForContract(msg.sender, _vault, NFT_CONTRACT);
      require(isDelegateValid, &quot;invalid delegate-vault pairing&quot;);
      requester = _vault;
- }
+ &#125;
 </code></pre>
-<h2>3.</h2>
+<h2 id="3">3.</h2>
 <p>通过这样的一个简单的合约，就可以在安全的情况下来证明用户是否拥有某个资产。这个也符合链上资产使用习惯，在大多数场景中，只需要证明资产是自己的，但很多人的资产就是在这个证明的过程中丢的。</p>
 <p>这个合约对 gas 的消耗很大，在使用的过程中，要尽量减少代理和取消代理的次数。</p>
 <p><strong>参考链接</strong></p>
-<p>[1]<a href="https://delegate.cash/" target="_blank" rel="noopener">https://delegate.cash/</a>
-[2]<a href="https://etherscan.io/address/0x00000000000076A84feF008CDAbe6409d2FE638B#code" target="_blank" rel="noopener">https://etherscan.io/address/0x00000000000076A84feF008CDAbe6409d2FE638B#code</a></p>
+<p>[1]<a href="https://delegate.cash/">https://delegate.cash/</a><br>
+[2]<a href="https://etherscan.io/address/0x00000000000076A84feF008CDAbe6409d2FE638B#code">https://etherscan.io/address/0x00000000000076A84feF008CDAbe6409d2FE638B#code</a></p>
 
 </div>
 
@@ -166,7 +166,7 @@ if (_vault != address(0)) {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

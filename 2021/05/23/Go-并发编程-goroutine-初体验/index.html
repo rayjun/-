@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -59,62 +59,62 @@
     <h1>Go 并发编程 -goroutine 初体验</h1>
     <p>说到 Go 语言，被人讨论最多的就是 Go 很擅长做高并发，并且不需要依赖外部的库，语言本身就支持高并发。</p>
 <p>Go 中实现这一能力的秘密是 goroutine，也经常被称之为协程，goroutine 是 Go 对协程的实现。在这篇文章中，会介绍协程的基本概念，以及 goroutine 的基本使用。</p>
-<h2>1.什么是协程</h2>
+<h2 id="1-什么是协程">1.什么是协程</h2>
 <p>协程（Coroutine），又被称之为微线程，这个概念出现的时间很早，在 1963 年就有相关的文献发表，但协程真正被用起来的时间很短。</p>
 <p>对于操作系统来说，线程是最小的调度单位，但对于一些高并发的环境，线程处理起来就比较吃力，一方面操作系统能够分配的线程数量有限，另外线程之间的切换相对来说也比较大。</p>
 <p>所以对于 Java 这类以线程为调度单位的语言，一般会依靠外部的类库来做到高并发，比如 Java 的Netty 就是一个开始高并发应用必不可少的库。</p>
 <p>协程和线程非常类似，只是比线程更加轻量级，具体表现在协程之间的切换不需要涉及系统调用，也不需要互斥锁或者信号量等同步手段，甚至都不需要操作系统的支持。</p>
 <p>协程与线程的行为基本一致，但是协程是在语言层面实现的，而线程是操作系统实现的。</p>
-<h2>2. Go 语言的协程</h2>
+<h2 id="2-Go-语言的协程">2. Go 语言的协程</h2>
 <p>在 Go 语言中，支持两种并发编程的模式，一种就是以 goroutine 和 channel 为主，这种方式称之为 CSP 模式，这种方式的核心是在 goroutine 之间传递值来来实现并发。</p>
 <p>还有一种方式是传统的共享内存式的模式，通过一些同步机制，比如锁之类的机制来实现并发。</p>
 <p>Go 程序通过 main 函数来启动，main 函数启动的时候也会启动一个 goroutine，称之为<strong>主 goroutine</strong>。然后在主 goroutine 中通过 go 关键字创建新的 goroutine。go 语句是立马返回的，不会阻塞当前的 goroutine。</p>
 <p>一个 Go 程序中可以创建的 goroutine 数量可以比线程数量多很多，这也是 Go 程序可以做到高并发的原因，goroutine 的实现原理，我们后续的文章再详细聊，下面来看看看 goroutine 的使用。</p>
-<h2>3. goroutine 的基本使用</h2>
+<h2 id="3-goroutine-的基本使用">3. goroutine 的基本使用</h2>
 <p>goroutine 的使用很简单，只需要在调用的函数前面添加 go 关键字，就会创建一个新的 goroutine：</p>
-<pre><code class="language-go">func goroutine1()  {
+<pre><code class="language-go">func goroutine1()  &#123;
 	fmt.Println(&quot;Hello goroutine&quot;)
-}
+&#125;
 
-func main() {
+func main() &#123;
 	go goroutine1()
 	fmt.Println(&quot;Hello main&quot;)
-}
+&#125;
 </code></pre>
 <p>但运行上面的代码之后，输出的结果为：</p>
 <pre><code class="language-bash">Hello main
 </code></pre>
 <p>预想中的 <code>Hello goroutine</code> 并没有出现，因为 main 方法执行完成之后，main 方法 所在的 goroutine 就销毁了，其他的 goroutine 都没有机会执行完。</p>
 <p>可以通过设置一个休眠时间来阻止主 goroutine 执行完成。</p>
-<pre><code class="language-go">func goroutine1()  {
+<pre><code class="language-go">func goroutine1()  &#123;
 	fmt.Println(&quot;Hello goroutine&quot;)
-}
+&#125;
 
-func main() {
+func main() &#123;
 	go goroutine1()
 	time.Sleep(1 * time.Second)
 	fmt.Println(&quot;Hello main&quot;)
-}
+&#125;
 </code></pre>
 <p>这样，输出结果就和我们预想的一样了:</p>
 <pre><code class="language-bash">Hello goroutine
 Hello main
 </code></pre>
 <p>但是这种方法也存在一些问题，这个休眠时间不太好设置，设置的过长，会浪费时间，设置的过短， goroutine 还没运行完成，所以最好的方式是让 goroutine 自己来决定。我们再改动一下代码：</p>
-<pre><code class="language-go">func goroutine2(isDone chan bool) {
+<pre><code class="language-go">func goroutine2(isDone chan bool) &#123;
 	fmt.Println(&quot;child goroutine begin...&quot;)
 	time.Sleep(2 * time.Second)
 	fmt.Println(&quot;child goroutine end...&quot;)
 	isDone &lt;- true
-}
+&#125;
 
-func main() {
+func main() &#123;
 	isDone := make(chan bool)
 	go goroutine2(isDone)
 	&lt;-isDone
 	close(isDone)
 	fmt.Println(&quot;main goroutine end..&quot;)
-}
+&#125;
 </code></pre>
 <p>在上面的代码中，我们使用了 <code>chan</code> 类型，这个类型我们后续会详细讲解，暂时只需要知道创建一个 chan 类型的变量，传入到一个子 goroutine 之后，它就会阻塞当前的 goroutine，直到子 goroutine 执行完成。这种方式比上面设置休眠时间的方式要优雅很多，也不会产生一些意料之外的结果。</p>
 <p>结果输出为：</p>
@@ -123,22 +123,22 @@ child goroutine end...
 main goroutine end..
 </code></pre>
 <p>但这种方式还是不完美，现在只启动了一个 goroutine，如果要启动多个 goroutine，这种方式就不管用了。当然，肯定还是有解决办法的，看下面的代码：</p>
-<pre><code class="language-go">func goroutine3(id int, wg *sync.WaitGroup) {
+<pre><code class="language-go">func goroutine3(id int, wg *sync.WaitGroup) &#123;
 	defer wg.Done()
 	fmt.Printf(&quot;child goroutine %d begin...\n&quot;, id)
 	time.Sleep(time.Second)
 	fmt.Printf(&quot;child goroutine %d end...\n&quot;, id)
-}
+&#125;
 
-func main() {
+func main() &#123;
 	var wg sync.WaitGroup
 
-	for i := 0; i &lt; 5; i++ {
+	for i := 0; i &lt; 5; i++ &#123;
 		wg.Add(1)
 		go goroutine3(i, &amp;wg)
-	}
+	&#125;
 	wg.Wait()
-}
+&#125;
 </code></pre>
 <p>这个代码看起来要复杂不少，其中 <code>sync</code> 包中包括了 Go 语言并发编程的所有工具，我们用到的 <code>WaitGroup</code> 就是其中的一个工具。</p>
 <p>首先创建一个 WaitGroup 类型的变量 wg，每创建一个 goroutine，就向 wg 中加 1，每个 goroutine 执行完成之后，就调用 wg.Done，这样 wg 就会减 1，wg.Wait() 会阻塞当前 goroutine，直到 wg 中的值清零。</p>
@@ -156,7 +156,7 @@ child goroutine 4 end...
 child goroutine 0 end...
 </code></pre>
 <p>到这里，我们了解了 goroutine 的基本使用，但很多情况下，goroutine 不是独立运行的，而经常需要与其他的 goroutine 通信，在下一篇文章中，我们将详细的聊一聊 goroutine 之间的通信方式。</p>
-<h2>4. 小结</h2>
+<h2 id="4-小结">4. 小结</h2>
 <p>在这篇文章中，我们了解了协程的概念，并且知道了 goroutine 是 Go 语言对协程的实现。也知道了如何通过启动一个新的 goroutine 并发的去做一些事情，同时也知道了如何让 main  goroutine 来等待其他 goroutine 工作完成再退出的几种方法。</p>
 <p>文 / Rayjun</p>
 
@@ -179,7 +179,7 @@ child goroutine 0 end...
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

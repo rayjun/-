@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,34 +58,36 @@
                     <div class="post">
     <h1>选择排序</h1>
     <p>选择排序在每一次的遍历中会找到一个最大(小)值，然后将该值放到已排序的末尾。重复这个过程直到所有的值都处在一个有序状态。</p>
-<h4>算法描述</h4>
+<h4 id="算法描述">算法描述</h4>
 <p>数组长度为n</p>
 <ol>
-<li>初始有序序列长度为0，无序序列长度为n；</li>
-</ol>
-<ol start="2">
-<li>第i次遍历后，选出最大(小)值放在有序序列的末尾，有序长度为i，无序序列长度为n-1；</li>
-</ol>
-<ol start="3">
-<li>n-1遍历后，排序完成；</li>
+<li>
+<p>初始有序序列长度为0，无序序列长度为n；</p>
+</li>
+<li>
+<p>第i次遍历后，选出最大(小)值放在有序序列的末尾，有序长度为i，无序序列长度为n-1；</p>
+</li>
+<li>
+<p>n-1遍历后，排序完成；</p>
+</li>
 </ol>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/849589-20171015224719590-1433219824.gif" alt=""></p>
-<h4>算法代码</h4>
-<pre><code class="language-java">public void sort(int[] arr, int n) {
+<h4 id="算法代码">算法代码</h4>
+<pre><code class="language-java">public void sort(int[] arr, int n) &#123;
    
-    for(int i = 0; i &lt; n -1; i++) {
+    for(int i = 0; i &lt; n -1; i++) &#123;
         int index = i;
-        for(j = i + 1; j &lt; n; j++) {
-            if(arr[index] &gt; arr[j]) {
+        for(j = i + 1; j &lt; n; j++) &#123;
+            if(arr[index] &gt; arr[j]) &#123;
                 index = j;
-            }
-        }
+            &#125;
+        &#125;
         
         int temp = arr[i];
         arr[i] = arr[index];
         arr[index] = temp;
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 
 </div>
@@ -107,7 +109,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

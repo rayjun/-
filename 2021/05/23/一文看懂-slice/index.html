@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -60,10 +60,10 @@
     <p>Go 语言中虽然有数组，但在代码中直接用的比较少，而是会间接的用到，slice 存储数据就是用的 数组，甚至可以认为数组是为了 slice 存在。Go 语言中的 slice 可以当做数组来使用，也可以当做其他语言中的 List 来使用。</p>
 <p>slice 表示一个拥有相同类型元素的<strong>可变长</strong>的序列。可变长是 slice 最重要的一个特性，这是它和数组最不同的地方，既然 slice 是依靠数组而存在的，那么 slice 是如何做到可变长的呢，这篇文章就来聊一下。</p>
 <p>先从 slice 的创建说起。</p>
-<h2>slice 的创建</h2>
+<h2 id="slice-的创建">slice 的创建</h2>
 <p>slice 可以主动创建，也可从现有的数组中获取。</p>
 <p>带初始化元素的方式：</p>
-<pre><code class="language-go">nums := []int{0, 1, 2, 3, 4, 5}
+<pre><code class="language-go">nums := []int&#123;0, 1, 2, 3, 4, 5&#125;
 fmt.Println(len(nums)) // 6
 fmt.Println(cap(nums)) // 6
 </code></pre>
@@ -86,18 +86,18 @@ nums = append(nums, 1) // 使用 append 将 nums 的长度加 1
 </code></pre>
 <p>在使用上面的方式创建 slice 时，Go 会自动的创建一个底层数组来存储数据，slice 本身并不会存储数据。</p>
 <p>还有一种方式是通过数组来创建 slice：</p>
-<pre><code class="language-go">numsArr := [...]int{0, 1, 2, 3, 4, 5}
+<pre><code class="language-go">numsArr := [...]int&#123;0, 1, 2, 3, 4, 5&#125;
 
 numsSlice := numsArr[:] // 这表示 slice 容纳数组的所有元素
 fmt.Println(len(numsSlice)) // 6
 fmt.Println(cap(numsSlice)) // 6
 </code></pre>
-<h2>slice 的结构</h2>
+<h2 id="slice-的结构">slice 的结构</h2>
 <p>一般 可以把 slice 看成是一个复合结构，结构如下，由三部分组成：指针、长度和容量：</p>
-<pre><code class="language-go">type Slice struct {
+<pre><code class="language-go">type Slice struct &#123;
     ptr      *T
     len, cap int
-}
+&#125;
 </code></pre>
 <p>slice 本身不会存储任何数据，slice 通过指针指向底层数组的某一个位置，这个位置就是 slice 的初始位置。长度表示当前 slice 中的元素个数，容量表示从指针的位置到底层数组的最后一个位置。</p>
 <p>slice 可变长的第一个原因就是可以通过改变指针的位置来改变 slice 的长度。比如下面这样:</p>
@@ -107,10 +107,10 @@ fmt.Prinltn(cap(numsSlice2)) // 5
 </code></pre>
 <p>这个操作在 numsSlice 的基础上创建的一个新的 slice，其实就是移动了一下 slice 的指针。</p>
 <p>另外 slice 不能使用 == 进行比较，因为 slice 的元素是非直接的，也就是 slice 本身不存储值，slice 甚至可以包含自身。另外因为 slice 的元素是靠底层的数组存储，所以当底层数组变动的时候，slice 读取到的值也会产生变化。如果 使用 == 来进行比较，可能会产生很多预料之外的结果。</p>
-<h2>理解 slice 的 cap</h2>
+<h2 id="理解-slice-的-cap">理解 slice 的 cap</h2>
 <p>对于初学者来说，会把 slice 的长度和容量搞混。</p>
 <p>先来看下面这段代码：</p>
-<pre><code class="language-go">numsArr := [...]int{1, 2, 3, 4, 5, 6}
+<pre><code class="language-go">numsArr := [...]int&#123;1, 2, 3, 4, 5, 6&#125;
 
 s1 := numsArr[0 : 3] 
 fmt.Println(s1) // [1,2,3]
@@ -129,13 +129,13 @@ fmt.Println(len(s2)) // 2
 fmt.Println(s2[2]) // 访问第三个元素
 </code></pre>
 <p>这种方式是让 slice 可变长的第二种方式。</p>
-<h2>理解 append</h2>
+<h2 id="理解-append">理解 append</h2>
 <p>append 方法也是让  slice 可变长的一种方式。</p>
 <p>append 函数经常会配合 slice 一起使用，在使用 append 的时候，我们需要使用下面的语法：</p>
 <pre><code class="language-go">nums = append(nums, 1)
 </code></pre>
 <p>而且这种做法是必须的，如果没有采用这种做法，可能会产生意料之外的结果。看下面的代码：</p>
-<pre><code class="language-go">numsArr := [...]int{1, 2, 3, 4, 5, 6}
+<pre><code class="language-go">numsArr := [...]int&#123;1, 2, 3, 4, 5, 6&#125;
 
 s1 := numsArr[3:5]
 fmt.Println(cap(s1)) // 3
@@ -149,7 +149,7 @@ fmt.Println(s1[2]) // panic
 <p>因为 slice 本身虽然是可变长的，所以如果 slice 还有容量，那么每次添加元素，都需要扩展 slice 的长度，返回的也是一个新的 slice。</p>
 <p>另外 slice 依赖的底层数组是固定长度，在使用 append 时，如果底层的数组不足以存储新的元素之后，就需要扩容，扩容之后就会产生一个新的 slice 返回。</p>
 <p>可以理解 append 方法修改传入的 slice，而我们在调用 append 函数之后，就需要使用函数返回的结果。所以上面的代码需要修改为:</p>
-<pre><code class="language-go">numsArr := [...]int{1, 2, 3, 4, 5, 6}
+<pre><code class="language-go">numsArr := [...]int&#123;1, 2, 3, 4, 5, 6&#125;
 
 	s1 := numsArr[3:5]
 	fmt.Println(cap(s1)) // 3
@@ -159,7 +159,7 @@ fmt.Println(s1[2]) // panic
 
 	fmt.Println(s1[2]) //1
 </code></pre>
-<h2>小结</h2>
+<h2 id="小结">小结</h2>
 <p>slice 是一个很有用的数据接口，既可以当数组用，也可以当 list 使用。在使用 slice 的过程中，一定要注意 slice 本身不存储数据，它只是在一个底层数组上，截取不同长度序列，可以说 slice 就是一个数组的子序列。</p>
 <p>另外我们说到了 slice 可变长的几种方式，一种是通过移动 slice 的指针，改变 slice 的长度，第二种是 slice 容量范围内扩展长度，第三种是通过 append 方式，这种方式会创建一个新的 slice。</p>
 <p>另外我们经常会对 string 做子串的截取操作和这里 slice 工作原理是一样的。</p>
@@ -184,7 +184,7 @@ fmt.Println(s1[2]) // panic
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

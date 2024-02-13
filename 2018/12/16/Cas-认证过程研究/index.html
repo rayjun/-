@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,7 +57,7 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Cas 认证过程研究</h1>
-    <h3>Cas 认证</h3>
+    <h3 id="Cas-认证">Cas 认证</h3>
 <blockquote>
 <p>本文所讨论的 Cas 系统版本是 5.1.x</p>
 </blockquote>
@@ -68,16 +68,16 @@
 <li><strong>TGT</strong>(Ticket-Granting-Ticket)：TGT 存储在 TGC 中，CAS 服务器通过 TGT 来判断客户端在 CAS 服务器中是否存在 SSO Session</li>
 <li><strong>ST</strong>(Service-Ticket)：由 CAS 服务器为特定用户生成的用于访问特定客户端的凭证，ST 作为 GET 方法的参数进行传递</li>
 </ul>
-<h4>CAS 系统认证的环境</h4>
+<h4 id="CAS-系统认证的环境">CAS 系统认证的环境</h4>
 <ul>
 <li><strong>CAS Server</strong>：CAS 认证的服务器，认证中心，用户输入的表单数据会在 CAS Server 中进行认证，认证成功后也由 CAS Server 发放（TGT），同时 CAS Server 也负责校验 TGT 的合法性。</li>
 <li><strong>CAS Management</strong>：CAS Server 的应用管理中心，每一个通过 CAS Server 认证的应用都需要在 CAS Management 中进行注册，CAS Management 默认已经注册，并且 CAS Management也是通过 CAS Server 进行认证 。</li>
 <li><strong>CAS Client</strong>：CAS Client 就是一个个应用，每一个 Client 在 cas-management 中进行注册之后，就可以在 CAS Server 中进行认证。</li>
 </ul>
 <p>CAS Server 和 CAS Management 官方都有提供开箱即用的程序，只要部署到 Tomcat 或者 Docker 中就行。</p>
-<p>而CAS Client 就是我们自己开发的应用程序，应用如果要集成到 CAS Server 中，还需要集成一些官方提供的模块，具体的集成方式在<a href="https://apereo.github.io/cas/5.1.x/integration/CAS-Clients.html" target="_blank" rel="noopener">这里</a>。</p>
+<p>而CAS Client 就是我们自己开发的应用程序，应用如果要集成到 CAS Server 中，还需要集成一些官方提供的模块，具体的集成方式在<a href="https://apereo.github.io/cas/5.1.x/integration/CAS-Clients.html">这里</a>。</p>
 <p>在部署了 CAS Server 相关的程序后，访问应用程序就可以触发认证的过程。</p>
-<h4>CAS 具体认证过程</h4>
+<h4 id="CAS-具体认证过程">CAS 具体认证过程</h4>
 <p>对于 CAS Server 来说，可以把认证的过程的分成三类，为了下文叙述方便，我们把 CAS Server 命名为 CS，应用1为 app1, 应用2为 app2：</p>
 <ul>
 <li>初次访问 app1</li>
@@ -103,7 +103,7 @@
 <li>在 ST 得到了 CS 的验证后，app2 就会在浏览器中生成新的 cookie，然后让用户访问 app2。</li>
 </ol>
 <p>这三个过程基本就是 CAS 认证的所有过程了，任何的认证都可以归为这三类中的一类。虽然 CAS 认证的过程看起来很复杂，但是实际上可以总结为任何应用的访问权都需要 CS 来决定，在通过 CS 的认证后，每一个应用的访问就是一个普通 Web 程序的访问方式了。</p>
-<h4>CAS Ticket 研究</h4>
+<h4 id="CAS-Ticket-研究">CAS Ticket 研究</h4>
 <p>Ticket 可以算是 CAS 体系中最为核心的部分，那么对于 Ticket 来说，有两个重要的配置需要关注:</p>
 <ul>
 <li>TicketRegistry: Ticket 的存储</li>
@@ -112,7 +112,7 @@
 <p>在 CAS 系统中，Ticket 的存储可以有多种方式：</p>
 <p><strong>基于内存的存储</strong>：</p>
 <p>这种方式只适合开发阶段或者小项目的部署，涉及到项目时就不适合使用这种方式。</p>
-<p><strong>基于缓存的存储</strong>：
+<p><strong>基于缓存的存储</strong>：<br>
 这个方式很适合在高可用的部署环境中使用（部署在 Docker 上）。支持以下的存储方式:</p>
 <ul>
 <li>Hazelcast</li>
@@ -126,7 +126,7 @@
 <ul>
 <li>JPA</li>
 </ul>
-<p><strong>基于 NoSql 的存储</strong>：
+<p><strong>基于 NoSql 的存储</strong>：<br>
 支持以下的 NoSql数据库:</p>
 <ul>
 <li>Infinispan</li>
@@ -147,7 +147,7 @@
 <p><strong>ST</strong>:</p>
 <p>ST 只有一个过期策略，ST 是依赖 TGT 存在的，所以 ST 的过期策略与 TGT 有关，当 TGT 过期后，ST也会一起过期。</p>
 <p>（完）</p>
-<p>[1]<a href="https://apereo.github.io/cas/5.1.x/planning/Architecture.html" target="_blank" rel="noopener">CAS 官方文档</a></p>
+<p>[1]<a href="https://apereo.github.io/cas/5.1.x/planning/Architecture.html">CAS 官方文档</a></p>
 
 </div>
 
@@ -168,7 +168,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

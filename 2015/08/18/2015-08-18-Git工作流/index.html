@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,9 +57,9 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Git 工作流</h1>
-    <p>作为一个 <code>web</code> 开发者，<code>Git</code> 已经成为一个很重要的工具。我们现在已经习惯每天打开电脑，然后编码，然后将代码推送到 <code>Github</code> 服务器上。这几乎成为日常工作的标配，<code>Git</code> 也成为了一个极其重要的软件。再搭配上 <code>emacs</code> 的 <code>magit</code> 插件，就成为了开发的神器，当然这只是我自己的喜好。不过还是强烈推荐。回到正题。<code>Git</code> 很强大，是一款很好的团队协作软件，分支与合并是它最为强大的两个特性，正因为太过于强大也就带来了不少的问题。因为可以随意的创建分支与合并，所以导致项目的主线变得难以协调和维护。一个好的 <code>Git</code> 工作流将大大提高工作效率，让所有人的协作变的井井有条。下面的 <code>Git</code> 流是参考了 <a href="http://www.ruanyifeng.com/blog/2015/08/git-use-process.html" target="_blank" rel="noopener">阮一峰的文章</a> 下面是一个推荐的工作流：</p>
+    <p>作为一个 <code>web</code> 开发者，<code>Git</code> 已经成为一个很重要的工具。我们现在已经习惯每天打开电脑，然后编码，然后将代码推送到 <code>Github</code> 服务器上。这几乎成为日常工作的标配，<code>Git</code> 也成为了一个极其重要的软件。再搭配上 <code>emacs</code> 的 <code>magit</code> 插件，就成为了开发的神器，当然这只是我自己的喜好。不过还是强烈推荐。回到正题。<code>Git</code> 很强大，是一款很好的团队协作软件，分支与合并是它最为强大的两个特性，正因为太过于强大也就带来了不少的问题。因为可以随意的创建分支与合并，所以导致项目的主线变得难以协调和维护。一个好的 <code>Git</code> 工作流将大大提高工作效率，让所有人的协作变的井井有条。下面的 <code>Git</code> 流是参考了 <a href="http://www.ruanyifeng.com/blog/2015/08/git-use-process.html">阮一峰的文章</a> 下面是一个推荐的工作流：</p>
 <p><img src="http://www.ruanyifeng.com/blogimg/asset/2015/bg2015080501.png" alt="git"></p>
-<h4>新建分支</h4>
+<h4 id="新建分支">新建分支</h4>
 <pre><code># 获取主干最新代码
 $ git checkout master
 $ git pull
@@ -67,12 +67,12 @@ $ git pull
 # 新建一个开发分支myfeature
 $ git checkout -b myfeature
 </code></pre>
-<h4>提交分支</h4>
+<h4 id="提交分支">提交分支</h4>
 <pre><code>$ git add .
 $ git status
 $ git commit
 </code></pre>
-<h4>撰写提交信息</h4>
+<h4 id="撰写提交信息">撰写提交信息</h4>
 <p>下面是一个范例：</p>
 <pre><code>Present-tense summary under 50 characters
 
@@ -81,17 +81,17 @@ $ git commit
 
 http://project.management-system.com/ticket/123
 </code></pre>
-<h4>与主干合并</h4>
+<h4 id="与主干合并">与主干合并</h4>
 <pre><code>$ git fetch origin
 $ git rebase origin/master
 </code></pre>
-<h4>合并commit</h4>
+<h4 id="合并commit">合并commit</h4>
 <pre><code>$ git rebase origin/master
 </code></pre>
-<h4>推送到远程仓库</h4>
+<h4 id="推送到远程仓库">推送到远程仓库</h4>
 <pre><code>$ git push --force origin myfeature
 </code></pre>
-<h4>提交 Pull request</h4>
+<h4 id="提交-Pull-request">提交 Pull request</h4>
 <p>提交到远程分支之后，就可以提交 <code>Pull request</code>,将代码合并到master。</p>
 
 </div>
@@ -113,7 +113,7 @@ $ git rebase origin/master
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,12 +58,12 @@
                     <div class="post">
     <h1>一文看懂 nil</h1>
     <p>写过 Go 代码的人，肯定对下面的代码不陌生：</p>
-<pre><code class="language-go">if err != nil {
+<pre><code class="language-go">if err != nil &#123;
     //...
-}
+&#125;
 </code></pre>
 <p>Go 项目中这行代码会大量存在，这里可能隐藏着陷阱。</p>
-<h2>1. Go 中的 nil</h2>
+<h2 id="1-Go-中的-nil">1. Go 中的 nil</h2>
 <p>Go 中 nil 代表零值，表示什么都没有，其他语言中也有类似的设计，比如 Java 中的 null。</p>
 <p>也不是所有类型的零值都是 nil，Go 中不同类型的零值如下：</p>
 <p><img src="0.png" alt=""></p>
@@ -78,7 +78,7 @@
 <pre><code class="language-go">var nil = make(map[string]string)
 </code></pre>
 <p>但永远不要这么做，否则程序就完蛋了。</p>
-<h2>2. nil 中的陷阱</h2>
+<h2 id="2-nil-中的陷阱">2. nil 中的陷阱</h2>
 <p>从 nil 的定义可以知道，nil 只能和指针等几种类型一起使用。</p>
 <p>指针的结构相对简单，就是指向一个内存地址，我们可以很安全的使用 nil 来判断指针是不是为空，有没有指向内存地址。</p>
 <p>channel、map、function 和 slice 的本质都是在使用指针，所以也可以使用 nil 来判断这些类型是否初始化、是否能使用。slice 特殊一点，还有 len 和 cap 两个属性，但不影响 nil 的判断：</p>
@@ -98,70 +98,70 @@ fmt.Printf(&quot;%T\n&quot;, inP) // *io.Writer
 <p><img src="3.png" alt=""></p>
 <p>如果再接着写下面的代码：</p>
 <pre><code class="language-go">var in io.Writer
-if in != nil {
+if in != nil &#123;
 	  in.Write([]byte(&quot;logs&quot;))
-}
+&#125;
 
 var inP *io.Writer
-if inP != nil {
+if inP != nil &#123;
 		inP.Write([]byte(&quot;logs&quot;)) // 这里会发生 panic
-}
+&#125;
 </code></pre>
 <p>inP 的 type 不是 nil，那么 inP 就不等于 nil。在使用接口时要注意，只有接口的类型和值都是 nil 时，这个接口才等于 nil，否则不相等。</p>
 <p>错误处理是 Go 程序的重要组成部分，但是这里也容易出现陷阱，看如下的代码：</p>
-<pre><code class="language-go">func main() {
+<pre><code class="language-go">func main() &#123;
 	err := Do()       // nil
 	fmt.Printf(&quot;result: %+v\n&quot;, (err == nil)) // true
-}
+&#125;
 
-func Do() *DoError { // nil
+func Do() *DoError &#123; // nil
 	return nil
-}
+&#125;
 
-type DoError struct {
+type DoError struct &#123;
 
-}
+&#125;
 
-func (d *DoError) Error() string {
+func (d *DoError) Error() string &#123;
 	return &quot;doError&quot;
-}
+&#125;
 </code></pre>
 <p>上面的代码返回的不是接口，而是 DoError 类型的指针，所以判断是否为 nil 没问题。</p>
 <p>如果换种形式，看下面的代码，返回的是  error 的接口类型，但是这个接口的类型是 *DoError，值是 nil，这样一来，就和预期的结果不符合。</p>
-<pre><code class="language-go">func main() {
+<pre><code class="language-go">func main() &#123;
     err := Do()       // error(*DoError, nil)
     fmt.Printf(&quot;result: %+v\n&quot;, (err == nil)) // false
-}
+&#125;
 
-func Do() error {    // error(*DoError, nil)
+func Do() error &#123;    // error(*DoError, nil)
    var err *DoError
    return err      // nil 
-}
+&#125;
 </code></pre>
 <p>判断 err 是不是 nil 是非常高频的使用场景，在处理这些错误时，要非常小心。</p>
-<h2>3. nil 的其他作用</h2>
+<h2 id="3-nil-的其他作用">3. nil 的其他作用</h2>
 <p>nil 除了作为零值之外，还有其他的用途。</p>
 <p>nil 作为方法的接受者是完全合法的，这里 p 是一个 *Person 类型的 nil：</p>
-<pre><code class="language-go">func main() {
+<pre><code class="language-go">func main() &#123;
 	var p *Person // nil
 	p.SayHi()
-}
+&#125;
 
-type Person struct {
-}
+type Person struct &#123;
+&#125;
 
-func (p *Person) SayHi() {
+func (p *Person) SayHi() &#123;
 	fmt.Println(&quot;hi&quot;)
-}
+&#125;
 </code></pre>
 <p>nil 还可以作为默认值，下面的代码应该也看的不少了，通常情况下，第二个参数我们都会直接传入 nil，这里 nil 的含义是使用默认的配置，我们在自己的代码中也可以这样使用。</p>
 <pre><code class="language-go">http.HandleFunc(&quot;localhost:8080&quot;, nil)
 </code></pre>
-<h2>4. 小结</h2>
+<h2 id="4-小结">4. 小结</h2>
 <p>nil 是指针，channel、函数、接口和 slice 等类型的零值，其中 interface 的零值有点特殊，只有在类型和值都是 nil 的时候，这个接口才是 nil。</p>
 <p>nil 除了作为零值使用之外，还有很多其他的用途，比如作为方法的接受者，表示默认值。</p>
 <p>文 / Rayjun</p>
-<p>[1] <a href="https://www.youtube.com/watch?v=ynoY2xz-F8s" target="_blank" rel="noopener">https://www.youtube.com/watch?v=ynoY2xz-F8s</a></p>
+<p>[1] <a href="https://www.youtube.com/watch?v=ynoY2xz-F8s">https://www.youtube.com/watch?v=ynoY2xz-F8s</a></p>
 
 </div>
 
@@ -182,7 +182,7 @@ func (p *Person) SayHi() {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -70,7 +70,7 @@
 <li>channel 会影响 goroutine 调度</li>
 </ul>
 <p>下面来探究一下这些特性是怎么实现的。</p>
-<h2>1. 创建 channel</h2>
+<h2 id="1-创建-channel">1. 创建 channel</h2>
 <p>可以创建的 channel 有两种：</p>
 <ul>
 <li>buffered channel，在创建时候需要指定缓冲区的大小</li>
@@ -80,7 +80,7 @@
 ch := make(chan int)    // unbuffered channel
 </code></pre>
 <p>chan 的底层数据结构叫 <code>hchan</code>，具体结构如下：</p>
-<pre><code class="language-go">type hchan struct {
+<pre><code class="language-go">type hchan struct &#123;
   buf      unsafe.Pointer
   lock     mutex
   sendx    uint   
@@ -92,28 +92,28 @@ ch := make(chan int)    // unbuffered channel
 	elemsize uint16
 	closed   uint32
 	elemtype *_type
-}
+&#125;
 </code></pre>
 <p>其中 buf 是一个循环队列，用来存储 channel 接收的数据，lock 用来保护数据安全，goroutine 来访问 channel 的 buf 之前，需要先获取锁。</p>
 <p>sendx 表示当前数据发送的的位置，recvx 表示当前数据接收的位置。sendq 和 recvq 是两个队列，这两个结构很重要，我们下面会讲到。</p>
 <p>qcount 表示当前 buf 中存储的数据个数，dataqsiz 表示 buf 可以接受的最大数据数量。elemtype 就表示数据的类型。</p>
 <p>channel 在使用 make 创建的时候，实际上会在堆上分配一块空间，初始化 hchan 结构，然后返回 hchan 的指针。这就是为什么在使用 channel 的时候，直接传递就可以，而不用获取 channel 的指针，这是因为 channel 本身就是指针。</p>
-<h2>2. 发送和接收</h2>
+<h2 id="2-发送和接收">2. 发送和接收</h2>
 <p>下面来详细看一下 channel 发送和接收数据的过程，现在假设有下面两个 goroutine: G1 和 G2，一个发送数据，一个接收数据：</p>
 <pre><code class="language-go">// G1
-func main() {
-    for _, task := range tasks {
+func main() &#123;
+    for _, task := range tasks &#123;
         taskCh &lt;- task
-    }
-}
+    &#125;
+&#125;
 
 // G2
-func worker() {
-   for {
+func worker() &#123;
+   for &#123;
        task := &lt;- taskCh
        process(task)
-   }
-}
+   &#125;
+&#125;
 </code></pre>
 <p>假设现在 G1 先执行，将数据发送到 channel中，会经过下面的三步：</p>
 <p><img src="0.png" alt=""></p>
@@ -140,11 +140,11 @@ func worker() {
 <p>这里 sudog 指向的是一个内存地址，用来接收 G1 发送进来的数据。在这里，最神奇的事情发生了，我们都知道 goroutine 是在栈上分配的，所以这里的 t 是在 G2 的栈上。</p>
 <p>G1 发送数据的时候，会把数据直接写入到 t 所指向的内存地址，而不是放到 buf 中。也就是说 G1 直接向 G2 的栈上写入了数据。之所以这样做，也是从性能的角度考虑，这样 G2 就不用再去获取锁了。</p>
 <p>这种一个栈向另一个栈写数据的情况只有这一种，在其他的地方不会出现。</p>
-<h2>3. 小结</h2>
+<h2 id="3-小结">3. 小结</h2>
 <p>通过上面我们知道，channel 通过 mutex（锁）来保证多个 goroutine 来访问 channel 的时候是安全的，同时 channel 维护了一个循环队列来保证数据的先进先出，同时也完成了在多个 goroutine 之间的数据传递，如果 goruotine 出现阻塞，则由调度器进行调度。</p>
 <p>但是 channel 的实现也做出了一些非常规的操作，跨栈写数据，这样会给垃圾回收带来很大的麻烦。但如果不这么做，性能方面就会牺牲很多，所以这是一个性能和简单的一个妥协。</p>
 <p>文 / Rayjun</p>
-<p>[1] https://www.youtube.com/watch?v=KBZlN0izeiY</p>
+<p>[1] <a href="https://www.youtube.com/watch?v=KBZlN0izeiY">https://www.youtube.com/watch?v=KBZlN0izeiY</a></p>
 
 </div>
 
@@ -165,7 +165,7 @@ func worker() {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

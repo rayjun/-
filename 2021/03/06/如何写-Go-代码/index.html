@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,19 +58,19 @@
                     <div class="post">
     <h1>如何写 Go 代码</h1>
     <p>在学完 Go 的语法之后，就可以开始写代码了，但一个项目中不可能只有几个代码文件，而是由很多代码组成，下面这篇文章将告诉你如何组织这些 Go 代码。</p>
-<p>原文地址：<a href="https://golang.org/doc/code" target="_blank" rel="noopener">https://golang.org/doc/code</a></p>
+<p>原文地址：<a href="https://golang.org/doc/code">https://golang.org/doc/code</a></p>
 <hr>
-<h2>写在前面</h2>
-<p>这篇文档演示了基于 Go Modules（模块） 的包的开发流程，并介绍了获取、构建和安装 Go 模块、包、命令时使用的 <a href="https://golang.org/cmd/go/" target="_blank" rel="noopener">Go 工具</a>。</p>
-<p>注意：这篇文章会假设你在使用 Go1.13或更高版本，并且没有设置 GO111MODULE 环境变量。如果需要是使用 Go Modules 的版本，看<a href="https://golang.org/doc/gopath_code.html" target="_blank" rel="noopener">这里</a>。</p>
-<h2>组织代码</h2>
+<h2 id="写在前面">写在前面</h2>
+<p>这篇文档演示了基于 Go Modules（模块） 的包的开发流程，并介绍了获取、构建和安装 Go 模块、包、命令时使用的 <a href="https://golang.org/cmd/go/">Go 工具</a>。</p>
+<p>注意：这篇文章会假设你在使用 Go1.13或更高版本，并且没有设置 GO111MODULE 环境变量。如果需要是使用 Go Modules 的版本，看<a href="https://golang.org/doc/gopath_code.html">这里</a>。</p>
+<h2 id="组织代码">组织代码</h2>
 <p>Go 代码是通过 package（包） 来组织。包是同一目录下所有源文件的集合，它们会被编译在一起。一个源文件中定义的函数、类型、变量和常量对同一个包下的其他源文件都是可见的。</p>
 <p>一个 repository（仓库）中包含一个或多个 module（模块）。模块由多个相关的包组成，并且会一起发布。一个仓库中通常只会包含一个模块，这个模块位于仓库的根目录。go.mod 中会声明模块路径，该模块中的所有包再被导入的时候，到会把这个路径当做前缀加上。一个模块的范围是从包含 go.mod 的文件夹及文件夹中所有的文件夹（包括所有的子文件夹），到那些包含了 go.mod 的子文件夹（如果有的话）为止。</p>
 <p>在代码可以编译之前，你不需要把代码推送到远程的仓库。模块可以不属于任何残酷，仅仅在本地定义。把要发布的代码组织好是一个好习惯。</p>
-<p>每个模块的路径不仅仅用于作为导入包的前缀，在使用 go 命令下载包的时候也需要用到。比如，为了下载 <a href="http://golang.org/x/tools" target="_blank" rel="noopener">golang.org/x/tools</a> 模块，go 命令就会找到 <a href="https://golang.org/x/tools" target="_blank" rel="noopener">https://golang.org/x/tools</a>（详情看<a href="https://golang.org/cmd/go/#hdr-Relative_import_paths" target="_blank" rel="noopener">这里</a>）。</p>
-<p>导入路径是用来导入包的字符串。一个包的导入路径就是模块的路径加上这个包在模块中的子目录路径。比如模块 github.com/google/go-cmp 包含一个包，在 cmp 目录下。那么这个包的导入路径就是 github.com/google/go-cmp/cmp。标准库中的包没有模块路径前缀。</p>
-<h2>你的第一个程序</h2>
-<p>在编译和运行一个简单程序之前，要选择一个模块路径（在这里用 example.com/user/hello）并且创建一个 go.mod 文件来描述这个模块：</p>
+<p>每个模块的路径不仅仅用于作为导入包的前缀，在使用 go 命令下载包的时候也需要用到。比如，为了下载 <a href="http://golang.org/x/tools">golang.org/x/tools</a> 模块，go 命令就会找到 <a href="https://golang.org/x/tools">https://golang.org/x/tools</a>（详情看<a href="https://golang.org/cmd/go/#hdr-Relative_import_paths">这里</a>）。</p>
+<p>导入路径是用来导入包的字符串。一个包的导入路径就是模块的路径加上这个包在模块中的子目录路径。比如模块 <a href="http://github.com/google/go-cmp">github.com/google/go-cmp</a> 包含一个包，在 cmp 目录下。那么这个包的导入路径就是 <a href="http://github.com/google/go-cmp/cmp%E3%80%82%E6%A0%87%E5%87%86%E5%BA%93%E4%B8%AD%E7%9A%84%E5%8C%85%E6%B2%A1%E6%9C%89%E6%A8%A1%E5%9D%97%E8%B7%AF%E5%BE%84%E5%89%8D%E7%BC%80%E3%80%82">github.com/google/go-cmp/cmp。标准库中的包没有模块路径前缀。</a></p>
+<h2 id="你的第一个程序">你的第一个程序</h2>
+<p>在编译和运行一个简单程序之前，要选择一个模块路径（在这里用 <a href="http://example.com/user/hello%EF%BC%89%E5%B9%B6%E4%B8%94%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA">example.com/user/hello）并且创建一个</a> go.mod 文件来描述这个模块：</p>
 <pre><code class="language-bash">$ mkdir hello # 可选，如果已经存在，直接把项目拉取到本地
 $ cd hello
 $ go mod init example.com/user/hello
@@ -86,9 +86,9 @@ go 1.14
 
 import &quot;fmt&quot;
 
-func main() {
+func main() &#123;
 	fmt.Println(&quot;Hello, world.&quot;)
-}
+&#125;
 </code></pre>
 <p>现在你可以使用 go 命令来编译并安装这个程序：</p>
 <pre><code class="language-bash">$ go install example.com/user/hello
@@ -101,7 +101,7 @@ func main() {
 <p>使用  <code>go env -u</code> 删除 go env -w 设置的变量值：</p>
 <pre><code class="language-bash">$ go env -u GOBIN
 </code></pre>
-<p>像 <code>go install</code> 这样的命令可以在模块的根目录及其子目录中使用。如果当前的工作目录不在 example.com/user/hello 模块中，go install 会失败。</p>
+<p>像 <code>go install</code> 这样的命令可以在模块的根目录及其子目录中使用。如果当前的工作目录不在 <a href="http://example.com/user/hello">example.com/user/hello</a> 模块中，go install 会失败。</p>
 <p>为了方便起见，go 命令接受工作目录的相对路径，如果没有给出其他路径，则默认为当前工作目录下的包。因此，在我们的工作目录中，以下命令都是等价的:</p>
 <pre><code class="language-bash">$ go install example.com/user/hello
 
@@ -112,7 +112,7 @@ $ go install
 <p>接下来，我们来运行一下这个程序，确保功能正常。为了使用方便，我们把安装目录增加到系统 PATH 路径下，这样就可以直接在命令行使用程序:</p>
 <pre><code class="language-bash"># windows 用户看这里： https://github.com/golang/go/wiki/SettingGOPATH
 # 设置 %PATH%.
-$ export PATH=$PATH:$(dirname $(go list -f '{{.Target}}' .))
+$ export PATH=$PATH:$(dirname $(go list -f '&#123;&#123;.Target&#125;&#125;' .))
 $ hello
 Hello, world.
 </code></pre>
@@ -125,21 +125,21 @@ $ git commit -m &quot;initial commit&quot;
  1 file changed, 7 insertion(+)
  create mode 100644 go.mod hello.go
 </code></pre>
-<p>go 命令通过请求相应的 HTTPS URL 并读取 HTML 响应中的元数据来定位给定模块的存储库（参见 <a href="https://golang.org/cmd/go/#hdr-Remote_import_paths" target="_blank" rel="noopener">go help importpath</a>）。许多代码托管服务已经为包含 Go 代码的存储库提供了元数据，因此，为了让你的模块可以顺利的被人找到，直接使用存储库的 URL 作为你的模块路径。</p>
-<h3>导入当前模块内的包</h3>
+<p>go 命令通过请求相应的 HTTPS URL 并读取 HTML 响应中的元数据来定位给定模块的存储库（参见 <a href="https://golang.org/cmd/go/#hdr-Remote_import_paths">go help importpath</a>）。许多代码托管服务已经为包含 Go 代码的存储库提供了元数据，因此，为了让你的模块可以顺利的被人找到，直接使用存储库的 URL 作为你的模块路径。</p>
+<h3 id="导入当前模块内的包">导入当前模块内的包</h3>
 <p>让我们写一个 <code>morestrings</code> 包并在 hello 程序中使用它。首先，为这个包创建一个目录：$HOME/hello/morestrings，并创建一个 reverse.go 文件，填充下面的内容：</p>
 <pre><code class="language-go">// Package morestrings implements additional functions to manipulate UTF-8
 // encoded strings, beyond what is provided in the standard &quot;strings&quot; package.
 package morestrings
 
 // ReverseRunes returns its argument string reversed rune-wise left to right.
-func ReverseRunes(s string) string {
+func ReverseRunes(s string) string &#123;
 	r := []rune(s)
-	for i, j := 0, len(r)-1; i &lt; len(r)/2; i, j = i+1, j-1 {
+	for i, j := 0, len(r)-1; i &lt; len(r)/2; i, j = i+1, j-1 &#123;
 		r[i], r[j] = r[j], r[i]
-	}
+	&#125;
 	return string(r)
-}
+&#125;
 </code></pre>
 <p>因为我们的 ReverseRunes 方法以大写字母开头，所以它是导出的，可以在其他的包中导入 morestrings 包来使用.</p>
 <p>使用 go build 命令编译测试一下这个包：</p>
@@ -156,9 +156,9 @@ import (
 	&quot;example.com/user/hello/morestrings&quot;
 )
 
-func main() {
+func main() &#123;
 	fmt.Println(morestrings.ReverseRunes(&quot;!oG ,olleH&quot;))
-}
+&#125;
 </code></pre>
 <p>安装 hello 程序：</p>
 <pre><code class="language-bash">$ go install example.com/user/hello
@@ -166,8 +166,8 @@ func main() {
 <p>运行这个新版的程序，你应该可以看见一个反转的字符串：</p>
 <pre><code class="language-bash">$ hello
 </code></pre>
-<h3>导入远程模块的包</h3>
-<p>导入路径可以使用版本管理系统（如 Git 或 Mercurial）获取源码，go 工具会自动从远程仓库获取包。例如，在程序中使用 github.com/google/go-cmp/cmp：</p>
+<h3 id="导入远程模块的包">导入远程模块的包</h3>
+<p>导入路径可以使用版本管理系统（如 Git 或 Mercurial）获取源码，go 工具会自动从远程仓库获取包。例如，在程序中使用 <a href="http://github.com/google/go-cmp/cmp%EF%BC%9A">github.com/google/go-cmp/cmp：</a></p>
 <pre><code class="language-go">package main
 
 import (
@@ -177,10 +177,10 @@ import (
 	&quot;github.com/google/go-cmp/cmp&quot;
 )
 
-func main() {
+func main() &#123;
 	fmt.Println(morestrings.ReverseRunes(&quot;!oG ,olleH&quot;))
 	fmt.Println(cmp.Diff(&quot;Hello World&quot;, &quot;Hello Go&quot;))
-}
+&#125;
 </code></pre>
 <p>当你运行 go install，go build，或者 go run 等命令时，就会自动下载这些远程的模块并记录到 go.mod 文件中：</p>
 <pre><code class="language-bash">$ go install example.com/user/hello
@@ -203,7 +203,7 @@ require github.com/google/go-cmp v0.4.0
 <p>模块依赖关系会自动下载到 GOPATH 下的 pkg/mod 子目录。某个模块的给定版本的下载内容在所有需要该版本的其他模块之间共享，因此 go 命令将这些文件和目录定义为只读。如果要删除这些下载的模块，可以使用：</p>
 <pre><code class="language-bash">$ go clean -modcache
 </code></pre>
-<h3>测试</h3>
+<h3 id="测试">测试</h3>
 <p>Go 有一个轻量级的测试框架，包含 <code>go test</code> 命令和 <code>testing</code> 包。</p>
 <p>测试文件的结尾必须以 <code>_test.go</code> 结尾，并且测试函数的名称都是 TestXXX，方法签名是 func(t *testing.T)。测试框架会运行每一个函数，如果函数调用了t.Error 或者 t.Fail 函数，那么这个测试就可以被认为失败。</p>
 <p>为 morestrings 添加一个测试 $HOME/hello/morestrings/reverse_test.go，写入以下代码：</p>
@@ -211,28 +211,28 @@ require github.com/google/go-cmp v0.4.0
 
 import &quot;testing&quot;
 
-func TestReverseRunes(t *testing.T) {
-	cases := []struct {
+func TestReverseRunes(t *testing.T) &#123;
+	cases := []struct &#123;
 		in, want string
-	}{
-		{&quot;Hello, world&quot;, &quot;dlrow ,olleH&quot;},
-		{&quot;Hello, 世界&quot;, &quot;界世 ,olleH&quot;},
-		{&quot;&quot;, &quot;&quot;},
-	}
-	for _, c := range cases {
+	&#125;&#123;
+		&#123;&quot;Hello, world&quot;, &quot;dlrow ,olleH&quot;&#125;,
+		&#123;&quot;Hello, 世界&quot;, &quot;界世 ,olleH&quot;&#125;,
+		&#123;&quot;&quot;, &quot;&quot;&#125;,
+	&#125;
+	for _, c := range cases &#123;
 		got := ReverseRunes(c.in)
-		if got != c.want {
+		if got != c.want &#123;
 			t.Errorf(&quot;ReverseRunes(%q) == %q, want %q&quot;, c.in, got, c.want)
-		}
-	}
-}
+		&#125;
+	&#125;
+&#125;
 </code></pre>
 <p>使用 go test 来运行测试：</p>
 <pre><code class="language-bash">$ go test
 PASS
 ok  	example.com/user/morestrings 0.165s
 </code></pre>
-<p>运行 <code>go help test</code> 或者查看<a href="https://golang.org/pkg/testing/" target="_blank" rel="noopener">文档</a>来看更多细节。</p>
+<p>运行 <code>go help test</code> 或者查看<a href="https://golang.org/pkg/testing/">文档</a>来看更多细节。</p>
 <p>译 / Rayjun</p>
 
 </div>
@@ -254,7 +254,7 @@ ok  	example.com/user/morestrings 0.165s
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

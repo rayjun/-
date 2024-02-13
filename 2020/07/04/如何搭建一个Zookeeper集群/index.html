@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -67,11 +67,11 @@
 <li>zookeeper-3.4.14</li>
 </ul>
 <p>本文使用之前配置好的的本地虚拟机集群，如果有配置服务器集群的需求，可以参照我之前关于搭建服务器集群文章。</p>
-<h2>软件安装</h2>
+<h2 id="软件安装">软件安装</h2>
 <p>软件安装相对简单，只需要将 Zookeeper 解压到 /opt/module （对这块有疑问的可以去看我之前的文章），并把目录更名为 <code>apache-zookeeper-3.6.1</code>。</p>
 <pre><code class="language-bash">$ tar -zxvf apache-zookeeper-3.6.1-bin.tar.gz -C /opt/module/
 </code></pre>
-<h2>集群配置</h2>
+<h2 id="集群配置">集群配置</h2>
 <p>在 apache-zookeeper-3.6.1 目录中创建一个 <code>zkData</code> 目录，这里面用来存放服务运行中产生的数据以及集群的配置</p>
 <pre><code class="language-bash">$ mkdir -p zkData
 </code></pre>
@@ -101,7 +101,7 @@ server.5=bigdata3:2888:3888
 <p>bigdata1，bigdata2，bigdata3 是三台机器的别名，在 <code>/etc/hosts</code> 文件中定义。</p>
 <p>在另外两台机器上分别编辑 myid 和 zoo.cfg，myid 中的内容不能相同。</p>
 <p>到这里，配置工作就完成了。</p>
-<h2>运行验证</h2>
+<h2 id="运行验证">运行验证</h2>
 <p>配置完成后，在三台机器上分别执行：</p>
 <pre><code class="language-bash">$ bin/zkServer.sh start
 </code></pre>
@@ -160,7 +160,7 @@ rayjun
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

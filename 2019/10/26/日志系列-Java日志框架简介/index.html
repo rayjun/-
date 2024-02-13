@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,71 +57,71 @@
                     <div id="div-body">
                     <div class="post">
     <h1>日志系列-Java日志框架简介</h1>
-    <p>日志对于程序很重要，日常分析生产环境问题的时候，基本就靠日志了。
+    <p>日志对于程序很重要，日常分析生产环境问题的时候，基本就靠日志了。<br>
 Java 中有很多记录日志的工具，很多时候不太容易分清楚，比如一会 <code>SLF4J</code> ，一会 <code>Log4j</code>，后面还有 <code>Log4j2</code>，让人傻傻分不清。</p>
-<h4>日志框架有哪些</h4>
+<h4 id="日志框架有哪些">日志框架有哪些</h4>
 <p>Java 中主流的日志框架如下：</p>
 <ul>
-<li><a href="http://logging.apache.org/log4j/1.2/index.htm" target="_blank" rel="noopener">Log4j</a></li>
-<li><a href="https://logging.apache.org/log4j/2.x/index.html" target="_blank" rel="noopener">Log4j2</a></li>
-<li><a href="http://logback.qos.ch/" target="_blank" rel="noopener">Logback</a></li>
+<li><a href="http://logging.apache.org/log4j/1.2/index.htm">Log4j</a></li>
+<li><a href="https://logging.apache.org/log4j/2.x/index.html">Log4j2</a></li>
+<li><a href="http://logback.qos.ch/">Logback</a></li>
 </ul>
 <p>Log4j 是一个很经典的日志框架，有很广泛的应用，但是在 2015 年官方宣布不在维护，转而推广 Log4j2，Log4j2 是 Log4j 的升级版，Log4j2 吸收了 Log4j 和其他框架的优点，同时也规避了 Log4j 存在的问题。</p>
 <p>Logback 的作者与 Log4j 的作者是同一个人，Logback 的实现方式与 Log4j 的实现方式差不多，但是提升了性能和一些配置方式，原生支持 Slf4j。</p>
 <p>JDK 中本身的日志 API，缺乏缓冲处理，在生产环境对性能的影响很大，相比于专门的日志框架功能差太多，所以不会用到生产环境中。</p>
-<p>除了这些框架外，还有其他用途的日志框架，比如 <a href="https://tinylog.org/v2/" target="_blank" rel="noopener">tinylog</a>，<a href="https://github.com/zalando/logbook" target="_blank" rel="noopener">Logbook</a> 等框架。</p>
-<h4>Slf4j 是什么</h4>
+<p>除了这些框架外，还有其他用途的日志框架，比如 <a href="https://tinylog.org/v2/">tinylog</a>，<a href="https://github.com/zalando/logbook">Logbook</a> 等框架。</p>
+<h4 id="Slf4j-是什么">Slf4j 是什么</h4>
 <p>Slf4j 是一套标准的日志接口。它本身是没有记录日志的功能的，需要依赖上面提到的那些日志框架。使用 Slf4j 的好处就是日志具体的记录方式和接口完全分离了。即使要换其他的日志框架，也不用改动代码。</p>
 <p>假如你需要使用日志打印 <code>Hello World</code>，在 Log4j 中，需要这么做:</p>
 <pre><code class="language-java">import org.apache.log4j.Logger;
 
-public class Log4jDemo{
+public class Log4jDemo&#123;
     private static Logger log = Logger.getLogger(Log4jDemo.class.getName());
    
-    public static void main(String[] args){
+    public static void main(String[] args)&#123;
       log.info(&quot;Hello World&quot;);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>在 Log4j2 中，需要这么做:</p>
 <pre><code class="language-java">import org.apache.log4j.LogManager
 import org.apache.log4j.Logger;
 
-public class Log4j2Demo{
+public class Log4j2Demo&#123;
     private static Logger log = LogManager.getLogger(Log4jDemo.class);
    
-    public static void main(String[] args){
+    public static void main(String[] args)&#123;
       log.info(&quot;Hello World&quot;);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>不同的日志框架使用的方式不一样，这样一旦需要换一个日志框架，将会是一件非常痛苦的事情，如果使用 Slf4j，不论底层使用的是哪一个日志框架，都可以使用相同的形式来记录日志:</p>
 <pre><code class="language-java">import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Slf4jDemo {
+public class Slf4jDemo &#123;
     private statis Logger logger = LoggerFactory.getLogger(Slf4jDemo.class);
-    public static void main(String[] args) {
+    public static void main(String[] args) &#123;
         logger.info(&quot;Hello world.&quot;);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>所以不论具体使用的是什么日志框架，都可以在上面套一个 <code>Slf4j</code>。</p>
-<p><a href="http://commons.apache.org/proper/commons-logging/" target="_blank" rel="noopener">Apache Commons Logging</a> 的目标与 Slf4j 是一致的，但是 Apache Commons Logging 的 API 没有 Slf4j 的丰富，而且限制太多，自然就没有 Slf4j 受欢迎。</p>
-<h4>日志框架用哪个</h4>
+<p><a href="http://commons.apache.org/proper/commons-logging/">Apache Commons Logging</a> 的目标与 Slf4j 是一致的，但是 Apache Commons Logging 的 API 没有 Slf4j 的丰富，而且限制太多，自然就没有 Slf4j 受欢迎。</p>
+<h4 id="日志框架用哪个">日志框架用哪个</h4>
 <p>那么问题来了，任何框架都需要应用到实际的项目当中。</p>
 <p>根据上面的讨论， Slf4j 肯定是需要的，那么底层的日志框架应该使用哪个。Log4j 肯定就不考虑了，Log4j2 就是为了干掉 Log4j 而诞生的。所以选择就集中在了 Log4j2 与 Logback 之间。</p>
 <p>在生产环境中，会产生大量的日志，这些日志最后都是需要写入到磁盘当中的。所以 IO 性能会影响日志框架的性能。而提升 IO 性能的有效方法就是提供缓冲区，先把日志写入到缓冲区，然后在特定的条件下将日志写入到磁盘当中。Log4j2 和 Logback 都提供了缓冲能力，也就是异步写入日志的能力。</p>
-<p><a href="https://www.sitepoint.com/which-java-logging-framework-has-the-best-performance/" target="_blank" rel="noopener">性能测试</a>显示，Log4j2 在记录同步日志的性能上比 Logback 要好 25% 左右，是所有的日志框架中最好的。Log4j2 和 Logback 在异步日志上性能差不多，但是 Logback 在记录异步日志功能上存在一些未解决的 bug，所以如果要使用异步日志，就不推荐使用 Logback。并且 Log4j2 比其他的日志框架更能适应多线程的环境。</p>
+<p><a href="https://www.sitepoint.com/which-java-logging-framework-has-the-best-performance/">性能测试</a>显示，Log4j2 在记录同步日志的性能上比 Logback 要好 25% 左右，是所有的日志框架中最好的。Log4j2 和 Logback 在异步日志上性能差不多，但是 Logback 在记录异步日志功能上存在一些未解决的 bug，所以如果要使用异步日志，就不推荐使用 Logback。并且 Log4j2 比其他的日志框架更能适应多线程的环境。</p>
 <p>其他日志框架有的优点， Log4j2 都有，其他框架有的问题，Log4j2 都没有，所以选择 Log4j2 大概率是不会错的，所以 <code>Slf4j + Log4j2</code> 是一个比较好的选择。</p>
 <p>后面会写一个日志专题系列。</p>
 <p>(完)</p>
 <ul>
-<li>https://www.sitepoint.com/which-java-logging-framework-has-the-best-performance/</li>
-<li>https://en.wikipedia.org/wiki/Java_logging_framework</li>
-<li>https://dzone.com/articles/java-logging-frameworks-and-tools</li>
-<li>https://www.baeldung.com/java-logging-intro</li>
-<li>https://stackify.com/compare-java-logging-frameworks/</li>
+<li><a href="https://www.sitepoint.com/which-java-logging-framework-has-the-best-performance/">https://www.sitepoint.com/which-java-logging-framework-has-the-best-performance/</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Java_logging_framework">https://en.wikipedia.org/wiki/Java_logging_framework</a></li>
+<li><a href="https://dzone.com/articles/java-logging-frameworks-and-tools">https://dzone.com/articles/java-logging-frameworks-and-tools</a></li>
+<li><a href="https://www.baeldung.com/java-logging-intro">https://www.baeldung.com/java-logging-intro</a></li>
+<li><a href="https://stackify.com/compare-java-logging-frameworks/">https://stackify.com/compare-java-logging-frameworks/</a></li>
 </ul>
 
 </div>
@@ -143,7 +143,7 @@ public class Slf4jDemo {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

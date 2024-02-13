@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -63,11 +63,11 @@
 <blockquote>
 <p>本文基于 JDK1.8</p>
 </blockquote>
-<h3>成员变量</h3>
+<h3 id="成员变量">成员变量</h3>
 <p>在 ArrayList 类的头部，定义了以下几个成员变量。</p>
 <pre><code class="language-java">private static final int DEFAULT_CAPACITY = 10;
-private static final Object[] EMPTY_ELEMENTDATA = {};
-private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};
+private static final Object[] EMPTY_ELEMENTDATA = &#123;&#125;;
+private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;
 transient Object[] elementData;
 private int size;
 </code></pre>
@@ -76,37 +76,37 @@ private int size;
 <pre><code class="language-java">ArrayList list = new ArrayList(); // 此时 elementData 指向的就是 DEFAULTCAPACITY_EMPTY_ELEMENTDATA
 </code></pre>
 <p>这些变量中需要注意的是 elementData 是不带访问修饰符的，这是为了让 ArrayList 的内部类可以方便的访问它，ArrayList 的内部类后面会讲到。elementData 变量是使用 transient 来修饰的，这表示在序列化的时候 elementData 是不会被序列化的，具体的序列化方式后面再讲。</p>
-<h3>初始化过程</h3>
+<h3 id="初始化过程">初始化过程</h3>
 <p>在上面说到 <code>DEFAULT_CAPACITY</code> 是 ArrayList 的默认容量，值是10，但是需要注意的是，默认容量不一定用的上，在实例化 ArrayList 的时候分<strong>三种</strong>情况，第一种不给构造函数传参，但是此时会新建一个长度为 10 的对象数组。而是在<strong>添加第一个元素</strong>的时才会创建一个长度为 10 的数组，并把第一个元素添加进去。第二种情况会给构造参数传值 n，如果 n 大于0，那么就会直接创建一个长度为 n 的对象数组，如果 n 等于 0，那么就会把 EMPTY_ELEMENTDATA 赋值给 elementData。</p>
 <p>第三种实例化特殊一点，是直接传入另一个容器对象 c 来初始化 ArrayList 对象，此时会先检查 c 的长度，如果 c 容器里面没有元素，直接把 EMPTY_ELEMENTDATA 赋值给 elementData，如果 c 不为空，就会 c 中的元素拷贝到 elementData 中。</p>
-<h3>扩容过程</h3>
+<h3 id="扩容过程">扩容过程</h3>
 <p>扩容的过程可以用以下的流程图来表示：</p>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/Java/collection/ArrayList%E6%89%A9%E5%AE%B9%E6%B5%81%E7%A8%8B.001.jpeg" alt=""></p>
 <p>扩容对 ArrayList 来说是一个很重要的过程，这也是为什么它比数组好用的原因。</p>
 <p>ArrayList 的扩容有两种方式，一个是自动扩容，一种是手动扩容。自动扩容每次会把当前容器的大小扩大 1.5 倍，手动扩容需要指定大小。既然已经有了自动扩容，那为什么还需要手动扩容呢？设想一个场景，实例化一个 ArrayList 之后，你大概知道会填充一万个元素，如果这个时候自动扩容的话要经过多次扩容才能装下这么多元素，但是手动指定容器大小的话只需要一次就可以了。</p>
 <p>具体把 ArrayList 扩容到多大是由下面这段代码决定的:</p>
-<pre><code class="language-java">    private int newCapacity(int minCapacity) {
+<pre><code class="language-java">    private int newCapacity(int minCapacity) &#123;
         int oldCapacity = elementData.length;
         int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1);
-        if (newCapacity - minCapacity &lt;= 0) {
+        if (newCapacity - minCapacity &lt;= 0) &#123;
             if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA)
                 return Math.max(DEFAULT_CAPACITY, minCapacity);
             if (minCapacity &lt; 0) // overflow
                 throw new OutOfMemoryError();
             return minCapacity;
-        }
+        &#125;
         return (newCapacity - MAX_ARRAY_SIZE &lt;= 0)
             ? newCapacity
             : hugeCapacity(minCapacity);
-    }
+    &#125;
 
-    private static int hugeCapacity(int minCapacity) {
+    private static int hugeCapacity(int minCapacity) &#123;
         if (minCapacity &lt; 0) // overflow
             throw new OutOfMemoryError();
         return (minCapacity &gt; MAX_ARRAY_SIZE)
             ? Integer.MAX_VALUE
             : MAX_ARRAY_SIZE;
-    }
+    &#125;
 </code></pre>
 <p><code>newCapacity</code> 是根据当前的元素的个数计算出来的，右移一位代表除以2，所以 newCapacity 为当前容量的 1.5 倍。然后这个值会与传入的值 <code>minCapacity</code> 进行对比，两个值哪个大就用哪个。</p>
 <p>为什么每次自动扩容都能为当前大小的 1.5 倍呢？那是因为自动扩容的时候传入的 minCapacity 都只比当前的容量大 1，所以肯定小于 newCapacity。而 newCapacity 就是 当前容量大小的 1.5 倍。</p>
@@ -118,11 +118,11 @@ private int size;
 <blockquote>
 <p>注意：ArrayList 没有缩容的过程。</p>
 </blockquote>
-<h3>具体实现</h3>
+<h3 id="具体实现">具体实现</h3>
 <p>ArrayList 中有了很多的方法，这些方法核心都是围绕 elementData 操作的。</p>
 <p><code>siez()</code> 和 <code>isEmpty()</code> 方法想着简单，一个用来返回容器中的元素的数量，一个用来判断容器是否为空。</p>
 <p><code>clone()</code> 、 <code>toArray()</code> 和 <code>toArray(T[] a)</code> 这三个方法本质上都是对容器当前的元素做一个备份，都用到了 <code>Arrays.copyOf()</code> 方法。但是需要注意的是 <code>toArray(T[] a)</code> 的实现:</p>
-<pre><code class="language-java">public &lt;T&gt; T[] toArray(T[] a) {
+<pre><code class="language-java">public &lt;T&gt; T[] toArray(T[] a) &#123;
     if (a.length &lt; size)
         // Make a new array of a's runtime type, but my contents:
         return (T[]) Arrays.copyOf(elementData, size, a.getClass());
@@ -130,59 +130,59 @@ private int size;
     if (a.length &gt; size)
         a[size] = null;
     return a;
-}
+&#125;
 </code></pre>
 <p>在这个方法中除了使用 <code>Arrays.copyOf()</code> 还用到了 <code>System.arraycopy()</code>，其实 Arrays.copyOf() 底层就是使用 System.arraycopy() 方法实现的。但是区别在于前者会返回一个一个新的数组，后者则是直接在原数组上进行操作。</p>
 <p>ArrayList 中的 <code>add()</code>、<code>get()</code> 、<code>set()</code>、<code>remove()</code> 等方法用于元素的增删改查，实现并不复杂，只是在操作元素之前需要对容器的 size 进行检查，如果不满足操作要求，就会报出异常。</p>
 <p><code>euqal()</code> 类的方法主要都是对比每个元素的类型、顺序和值是否一致。</p>
 <p>在 JDK1.8 以后，出现了 <code>removeIf()</code> 方法，这个方法使得从容器中删除元素变得很简单。</p>
-<h4>迭代器</h4>
+<h4 id="迭代器">迭代器</h4>
 <p>ArrayList 中有两个内部类 <code>Itr</code> 和 <code>ListItr</code>，主要方法如下：</p>
-<pre><code class="language-java">private class Itr implements Iterator&lt;E&gt; {
-    Itr() {}
+<pre><code class="language-java">private class Itr implements Iterator&lt;E&gt; &#123;
+    Itr() &#123;&#125;
 
-    public boolean hasNext() {
-    }
+    public boolean hasNext() &#123;
+    &#125;
 
-    public E next() {
+    public E next() &#123;
       
-    }
+    &#125;
 
-    public void remove() {
-    }
-}
+    public void remove() &#123;
+    &#125;
+&#125;
 </code></pre>
-<pre><code class="language-java">private class ListItr extends Itr implements ListIterator&lt;E&gt; {
-    ListItr(int index) {
+<pre><code class="language-java">private class ListItr extends Itr implements ListIterator&lt;E&gt; &#123;
+    ListItr(int index) &#123;
         super();
         cursor = index;
-    }
+    &#125;
 
-    public boolean hasPrevious() {
-    }
+    public boolean hasPrevious() &#123;
+    &#125;
 
-    public int nextIndex() {
-    }
+    public int nextIndex() &#123;
+    &#125;
 
-    public int previousIndex() {
-    }
+    public int previousIndex() &#123;
+    &#125;
 
-    public E previous() {
-    }
+    public E previous() &#123;
+    &#125;
 
-    public void set(E e) {
-    }
+    public void set(E e) &#123;
+    &#125;
 
-    public void add(E e) {
-    }
-}
+    public void add(E e) &#123;
+    &#125;
+&#125;
 </code></pre>
 <p>ListItr 继承了 Itr，这两个内部类都实现了迭代器模式，用于遍历 ArrayList 的元素。从上面的方法可知，Itr 和 ListItr 最大的区别在于 ListItr 可以从两个方向对容器的元素进行遍历。而 Itr 只能使用顺着一个方向进行遍历。</p>
 <p>在 JDK1.8 以后，ArrayList 中有一个 <code>ArrayListSpliterator</code> 内部类，这个类用于分割容器。用于提升多线程环境中的处理效率：</p>
 <pre><code class="language-java">ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;();
-for (int i = 0; i &lt; 10; i++) {
+for (int i = 0; i &lt; 10; i++) &#123;
     list.add(i);
-}
+&#125;
 Spliterator&lt;Integer&gt; s0 = list.spliterator();
 System.out.println(s0.estimateSize()); // 5
 Spliterator&lt;Integer&gt; s1 = s0.trySplit();
@@ -191,9 +191,9 @@ System.out.println(s1.estimateSize()); // 5
 <p><code>s0</code> 中有 10 个元素，在调用 <code>s0.trySplit()</code> 方法之后，s0 和 s1 中各有 5 个元素。然后可以对分割开的元素进行处理:</p>
 <pre><code class="language-java">s0.forEachRemaining(i -&gt; System.out.println(i));
 </code></pre>
-<h4>SubList</h4>
+<h4 id="SubList">SubList</h4>
 <p>ArrayList 中还有一个内部类 <code>SubList</code>。SubList 用于返回 ArrayList 的一部分元素，内部的操作方法与 ArrayList 基本一致，但是需要注意的是，对 SubList 的操作会直接影响到原 ArrarList。</p>
-<h4>fail-fast 机制</h4>
+<h4 id="fail-fast-机制">fail-fast 机制</h4>
 <p>在 ArrayList 中，<code>checkForComodification()</code> 和 <code>ConcurrentModificationException()</code> 使用的频率很高。这个和 fail-fast 机制有关。</p>
 <p>ArrayList 不是线程安全的，所以在对容器操作的过程中，容器的元素倍其他的操作或者线程修改之后，就会出现 ConcurrentModificationException 异常。checkForComodification() 方法就是用来检查元素是否被修改。这个机制就称之为 <code>fail-fast</code>。</p>
 <p>后续会有其他的文章来介绍 <code>fail-fast</code>。</p>
@@ -218,7 +218,7 @@ System.out.println(s1.estimateSize()); // 5
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,7 +57,7 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Java 为什么需要包装类</h1>
-    <p>在 Java 的世界中，对象是一等公民，但 Java 也还是做出了妥协，出于对性能的考虑而保留了 8 种基础数据类型。
+    <p>在 Java 的世界中，对象是一等公民，但 Java 也还是做出了妥协，出于对性能的考虑而保留了 8 种基础数据类型。<br>
 但是在某些场景下，无法直接使用基本数据类型，所以还是需要使用对象，Java 的包装类就是这样出现的。</p>
 <p>## 自动装箱和拆箱</p>
 <p>看下面的代码：</p>
@@ -71,7 +71,7 @@ list.add(i); // 装箱;
 15: invokevirtual #10                 // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
 // ...
 </code></pre>
-<p>简单解释一下 <code>invokestatic</code> 和 <code>invokevirtual</code>，这两个都是 JVM 的指令，前者表示调用 Java 的
+<p>简单解释一下 <code>invokestatic</code> 和 <code>invokevirtual</code>，这两个都是 JVM 的指令，前者表示调用 Java 的<br>
 静态方法，后者表示调用对象方法。</p>
 <p>invokestatic 调用了 Integer.valueOf() 方法，所以装箱实际上就是调用了 <code>Integer.valueOf()</code> 方法。</p>
 <p><strong>拆箱</strong>也很简单，看下面的代码：</p>
@@ -88,18 +88,18 @@ int i2 = 1; // 拆箱;
 <p>Byte，Short，Long，Float，Double，Boolean，Character 与 Integer 类似。</p>
 <p>但是需要注意，还有一个特殊的包装类 Void。 Void 是 void 的包装类，Void 不能被继承，也不能被实例化，仅仅就是一个占位符。</p>
 <p>如果一个方法使用 void 修饰，说明方法没有返回值，如果使用 Void 修饰，则该方法只能返回 null。</p>
-<pre><code class="language-java">public Void nullFunc() {
+<pre><code class="language-java">public Void nullFunc() &#123;
     return null; // 返回其他值会编译不通过
-}
+&#125;
 </code></pre>
 <p>Void 常用于反射中，判断一个方法的返回值是不是 void。</p>
-<pre><code class="language-java">for (Method method : VoidDemo.class.getMethods()) {
-    if (method.getReturnType().equals(Void.TYPE)) {
+<pre><code class="language-java">for (Method method : VoidDemo.class.getMethods()) &#123;
+    if (method.getReturnType().equals(Void.TYPE)) &#123;
         // ...
-    }
-}
+    &#125;
+&#125;
 </code></pre>
-<p>## 包装类的缓存
+<p>## 包装类的缓存<br>
 先看下面的代码：</p>
 <pre><code class="language-java">Integer i1 = 200;
 Integer i2 = 200;
@@ -112,50 +112,50 @@ Integer i6 = 100;
 System.out.println(i5 == i6); // true
 </code></pre>
 <p>上面的代码应该算是一道经典的面试题了。通过上文可知，装箱操作使用的是 <code>Integer.valueOf()</code> 方法，源码如下：</p>
-<pre><code class="language-java">public static Integer valueOf(int i) {
+<pre><code class="language-java">public static Integer valueOf(int i) &#123;
     if (i &gt;= IntegerCache.low &amp;&amp; i &lt;= IntegerCache.high)
         return IntegerCache.cache[i + (-IntegerCache.low)];
     return new Integer(i);
-}
+&#125;
 </code></pre>
 <p>关键实现在 IntegerCache 中，在某个范围内的数值可以直接使用已经创建好的对象。IntegerCache 是一个静态内部类，而且不能实例化，仅仅用来缓存 Integer 对象：</p>
-<pre><code class="language-java">private static class IntegerCache {
+<pre><code class="language-java">private static class IntegerCache &#123;
     static final int low = -128; // 缓存对象的最小值，不能配置
     static final int high;
     static final Integer cache[];
-    static {
+    static &#123;
         int h = 127; // 缓存对象的最大值可以配置，但是不能超过 Integer的最大值，不能小于 127
         String integerCacheHighPropValue =
             sun.misc.VM.getSavedProperty(&quot;java.lang.Integer.IntegerCache.high&quot;);
-        if (integerCacheHighPropValue != null) {
-            try {
+        if (integerCacheHighPropValue != null) &#123;
+            try &#123;
                 int i = parseInt(integerCacheHighPropValue);
                 i = Math.max(i, 127);
                 h = Math.min(i, Integer.MAX_VALUE - (-low) -1);
-            } catch( NumberFormatException nfe) {
-            }
-        }
+            &#125; catch( NumberFormatException nfe) &#123;
+            &#125;
+        &#125;
         high = h;
         cache = new Integer[(high - low) + 1];
         int j = low;
         for(int k = 0; k &lt; cache.length; k++)
             cache[k] = new Integer(j++);
         assert IntegerCache.high &gt;= 127;
-    }
-    private IntegerCache() {}
-}
+    &#125;
+    private IntegerCache() &#123;&#125;
+&#125;
 </code></pre>
 <p>缓存对象的默认大小范围是 -128 ~ 127，正数范围可以根据自己的需要进行调整，负数最小就是 -128，不可以调整。如果不在这个范围内，就会创建新的对象。</p>
 <p>上面代码的结果就很清晰了，第一个结果为 false 是因为 200 超出了默认的缓存范围，因此会创建新的对象。第二个结果为 false 是因为直接使用 new 来创建对象，而没有使用缓存对象。第三个结果为 true 是因为刚好在缓存的范围内。</p>
 <p>所以在使用 Integer 等包装类生成对象时，不要使用 new 去新建对象，而应该尽可能使用缓存的对象，而且比较两个 Integer 对象时不要使用 ==，而应该使用 equals。</p>
 <p>其他的包装类的实现基本类似，只是在对象缓存上的实现有些不同：</p>
-<p>- Byte 的范围刚好是 -128~127，所以都可以直接从缓存中获取对象。
-- Short 缓存范围也是 -128 ~ 127，而且不可以调整。
-- Long 的实现与 Short 一致。
-- Character 因为没有负数，所以缓存范围是 0 ~ 127，也不可以调整范围。
-- Boolean 的值只有 true 和 false，在类加载的时候直接创建好。
+<p>- Byte 的范围刚好是 -128~127，所以都可以直接从缓存中获取对象。<br>
+- Short 缓存范围也是 -128 ~ 127，而且不可以调整。<br>
+- Long 的实现与 Short 一致。<br>
+- Character 因为没有负数，所以缓存范围是 0 ~ 127，也不可以调整范围。<br>
+- Boolean 的值只有 true 和 false，在类加载的时候直接创建好。<br>
 - Float，Double 则没有缓存机制，因为是浮点数，可以表示无穷无尽的数，缓存的意义不大。</p>
-<p>## 小心空指针
+<p>## 小心空指针<br>
 此外还需要注意的一点就是，使用包装类生成的是对象，是对象就有可能出现空指针异常，在代码中需要进行处理。</p>
 <pre><code class="language-java">Integer integer = null;
 int i = integer; // NPE
@@ -180,7 +180,7 @@ int i = integer; // NPE
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

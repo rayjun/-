@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -63,7 +63,7 @@
 <li>所有<strong>数据</strong>都是使用二进制表示</li>
 <li><strong>数值</strong>类型一律使用补码来表示</li>
 </ul>
-<h2>整数类型</h2>
+<h2 id="整数类型">整数类型</h2>
 <p>byte 是存储整数的最小类型，只占 1 个字节，因为还需要表示负数，因此只能保存 -128 ~ 127 范围内的数据。</p>
 <p>如果把一个超出范围的数值赋值给 byte 会怎么样？</p>
 <p>直接赋值无法编译通过：</p>
@@ -82,7 +82,7 @@
 <li>int 占据 4 个字节，表示的范围是：-2147483648 ~ 2147483647</li>
 <li>long 占据 8 个字节，表示的范围是：-9223372036854775808 ~ 9223372036854775807</li>
 </ul>
-<h2>浮点数类型</h2>
+<h2 id="浮点数类型">浮点数类型</h2>
 <p>Java 中的浮点数有 float 和 double 两种，按照 IEEE754 标准来实现，分别占 4 个字节和 8 个字节。</p>
 <p>以 float 来说，总共有 32 位：</p>
 <p><img src="float.png" alt=""></p>
@@ -93,10 +93,10 @@
 <p>$(-1)^0$ * $2^3$ * $1.00111$</p>
 <p>因为浮点数的小数位会因为精度的问题而出现变化，所以不能使用 == 去比较两个浮点数，否则可能出现意想不到的情况。</p>
 <p>double 除了位数不一样，其他与 float 一致。</p>
-<h2>布尔类型</h2>
+<h2 id="布尔类型">布尔类型</h2>
 <p>boolean 的情况比较特殊，boolean 赋值时只能选择 true 或者 false，无法赋值其他的值。</p>
 <p>但是在编译时会将 false 换成 0，将 true 换成非零数。</p>
-<h2>字符类型</h2>
+<h2 id="字符类型">字符类型</h2>
 <p>由于 Java 使用的是 Unicode，所以作为基本的字符单元，char 使用了 2 个字节的空间，char 实际存储的是该字符在 Unicode 字符集内中的排序位置，即整数。</p>
 <pre><code class="language-java">char b = 'a' + 1; // 98
 </code></pre>
@@ -125,7 +125,7 @@ char c = 'a' + 'b'; // Ã
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,27 +57,27 @@
                     <div id="div-body">
                     <div class="post">
     <h1>给代码上一份保险</h1>
-    <p>程序员都知道代码规范很重要，但是代码规范太多了，很多时候也不一定能够全部记得住。而 git 中的 <a href="https://pre-commit.com/" target="_blank" rel="noopener">pre-commit</a> 就是这样的一个神器，可以帮助你在 git commit 时，检查代码是不是没有问题。</p>
+    <p>程序员都知道代码规范很重要，但是代码规范太多了，很多时候也不一定能够全部记得住。而 git 中的 <a href="https://pre-commit.com/">pre-commit</a> 就是这样的一个神器，可以帮助你在 git commit 时，检查代码是不是没有问题。</p>
 <p>这里需要区分一下，git 自带了一个 pre-commit，本文介绍的是 pre-commit 是一个 git pre-commit 的扩展框架，可以用来管理、开发多种语言插件。后面所说的 pre-commit 都是指这个框架。</p>
-<p>pre-commit 官网：<a href="https://pre-commit.com/" target="_blank" rel="noopener">https://pre-commit.com/</a></p>
-<h2>1. 安装</h2>
+<p>pre-commit 官网：<a href="https://pre-commit.com/">https://pre-commit.com/</a></p>
+<h2 id="1-安装">1. 安装</h2>
 <p>pre-commit 插件是使用 Python 开发的，如果安装了 pip，直接使用 pip 安装：</p>
 <pre><code class="language-go">$ pip install pre-commit
 </code></pre>
 <p>如果是 python 的项目，直接在 requirements.txt 依赖文件中添加：</p>
 <pre><code class="language-go">pre-commit
 </code></pre>
-<p>在 MacOS 上可以使用 <a href="https://brew.sh/" target="_blank" rel="noopener">Homebrew</a> 安装：</p>
+<p>在 MacOS 上可以使用 <a href="https://brew.sh/">Homebrew</a> 安装：</p>
 <pre><code class="language-go">$ brew install pre-commit
 </code></pre>
-<p>在 Windows 上，可以使用 <a href="https://docs.conda.io/en/latest/" target="_blank" rel="noopener">conda</a> 安装：</p>
+<p>在 Windows 上，可以使用 <a href="https://docs.conda.io/en/latest/">conda</a> 安装：</p>
 <pre><code class="language-go">$ conda install -c conda-forge pre-commit
 </code></pre>
 <p>查看是否安装成功：</p>
 <pre><code class="language-go">$ pre-commit --version
 pre-commit 2.16.0
 </code></pre>
-<h2>2. 使用</h2>
+<h2 id="2-使用">2. 使用</h2>
 <p>这个工具的使用也很简单，只需要在项目的根目录底下创建 <code>.pre-commit-config.yaml</code>，然后在项目中填充下面的内容：</p>
 <pre><code class="language-go">repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
@@ -101,8 +101,8 @@ pre-commit installed at .git/hooks/pre-commit
 </code></pre>
 <p>然后每次执行 git commit 时，git 都会调用这些插件，如果有插件执行失败，那些这次 commit 就会失败：</p>
 <p><img src="0.png" alt=""></p>
-<h2>3. 自定义</h2>
-<p>pre-commit 提供了很多可以直接使用的插件，就在 <a href="https://github.com/pre-commit/pre-commit-hooks" target="_blank" rel="noopener">https://github.com/pre-commit/pre-commit-hooks</a> 这个仓库中。</p>
+<h2 id="3-自定义">3. 自定义</h2>
+<p>pre-commit 提供了很多可以直接使用的插件，就在 <a href="https://github.com/pre-commit/pre-commit-hooks">https://github.com/pre-commit/pre-commit-hooks</a> 这个仓库中。</p>
 <p>但很多时候，这个仓库中的插件并不能完全满足要求，比如我现在日常工作中主要写 Go，那么就需要自定义一些插件。</p>
 <p>在定义一个插件库时，需要在库的根目录创建一个 <code>.pre-commit-hooks.yaml</code> 文件，在这个文件中定义插件，插件完成后，就可以把库给其他人使用了。</p>
 <p>在这个配置文件中，每一项配置如下：</p>
@@ -114,10 +114,10 @@ pre-commit installed at .git/hooks/pre-commit
     types: [text]
 </code></pre>
 <p>id 是插件的唯一标识，后续也是根据 id 来使用插件，name、description 是插件的名称和描述，自定义就行，extry 则表示具体插件的路径，一般是一段脚本文件。language 是编写这个插件所用的语言，目前支持 python、Go、node、bash 等诸多语言。types 是用来过滤目标文件，就是这个插件在那些文件上起作用。</p>
-<p>还有很多其他的属性可以配置，具体可以参考：<a href="https://pre-commit.com/#new-hooks" target="_blank" rel="noopener">https://pre-commit.com/#new-hooks</a></p>
+<p>还有很多其他的属性可以配置，具体可以参考：<a href="https://pre-commit.com/#new-hooks">https://pre-commit.com/#new-hooks</a></p>
 <p>新建的插件库还可以引用其他的插件库，只要创建配置文件引用其他的插件即可： <code>.pre-commit-config.yaml</code> 。</p>
-<p>同时 pre-cpmmit 提供了一个 插件的搜索页面：<a href="https://pre-commit.com/hooks.html" target="_blank" rel="noopener">https://pre-commit.com/hooks.html</a>。可以在这里找到自己想要的插件，基本覆盖了主流的语言。</p>
-<p>如果你想提交自己的插件，可以 fork 这个仓库：<a href="https://github.com/pre-commit/pre-commit.com" target="_blank" rel="noopener">https://github.com/pre-commit/pre-commit.com</a>，在仓库中添加自己的插件。</p>
+<p>同时 pre-cpmmit 提供了一个 插件的搜索页面：<a href="https://pre-commit.com/hooks.html">https://pre-commit.com/hooks.html</a>。可以在这里找到自己想要的插件，基本覆盖了主流的语言。</p>
+<p>如果你想提交自己的插件，可以 fork 这个仓库：<a href="https://github.com/pre-commit/pre-commit.com">https://github.com/pre-commit/pre-commit.com</a>，在仓库中添加自己的插件。</p>
 <p>文 / Rayjun</p>
 
 </div>
@@ -139,7 +139,7 @@ pre-commit installed at .git/hooks/pre-commit
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

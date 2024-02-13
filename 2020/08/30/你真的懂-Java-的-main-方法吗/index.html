@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -61,21 +61,21 @@
 <p>这篇文章会讨论 Java 程序如何启动，以及其中经历的主要过程。</p>
 <p>本文基于 openJDK11</p>
 <p>先来看段代码：</p>
-<pre><code class="language-java">public class Main1 {
+<pre><code class="language-java">public class Main1 &#123;
     public static Map&lt;String, String&gt; data = new HashMap&lt;&gt;();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) &#123;
         data.put(&quot;name&quot;, &quot;rayjun&quot;);
         System.out.println(data.get(&quot;name&quot;));
-    }
-}
+    &#125;
+&#125;
 </code></pre>
-<pre><code class="language-java">public class Main2 {
+<pre><code class="language-java">public class Main2 &#123;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) &#123;
         System.out.println(Main1.data.get(&quot;name&quot;));
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>先执行 Main1.main()，再执行 Main2.main()，程序输出的结果是什么：</p>
 <pre><code class="language-java">Main1.main(): rayjun
@@ -83,22 +83,22 @@ Main2.main(): null
 </code></pre>
 <p>上面程序运行的结果应该都在预料之中吧。</p>
 <p>然后把代码改成下面这样：</p>
-<pre><code class="language-java">public class Main1 {
+<pre><code class="language-java">public class Main1 &#123;
     public static Map&lt;String, String&gt; data = new HashMap&lt;&gt;();
 
-    public static void invoke() {
+    public static void invoke() &#123;
         data.put(&quot;name&quot;, &quot;rayjun&quot;);
         System.out.println(data.get(&quot;name&quot;));
-    }
-}
+    &#125;
+&#125;
 </code></pre>
-<pre><code class="language-java">public class Main2 {
+<pre><code class="language-java">public class Main2 &#123;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) &#123;
         Main1.invoke();
         System.out.println(Main1.data.get(&quot;name&quot;));
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>这回输出的结果是:</p>
 <pre><code class="language-java">Main1.invoke(): rayjun
@@ -109,26 +109,26 @@ Main2.main(): rayjun
 <p>在第一个例子中，启动了两个 mian 方法，也就是启动了两个进程，那么说明他们运行在不同的虚拟机实例上，那么数据自然就不是共享的，所以在第二个 main 方法中无法获取到第一个 mian 方法中设置的数据。</p>
 <p>第二个例子中，两个类在同一个 main 方法中启动，那么就是在同一个进程中，也就是在同一个虚拟机实例上，同一个虚拟机实例上，public 类型的静态变量，在整个进程中都是共享的。</p>
 <p>如果代码按照如下的形式再次进行修改：</p>
-<pre><code class="language-java">public class Main1 {
+<pre><code class="language-java">public class Main1 &#123;
     public static Map&lt;String, String&gt; data = new HashMap&lt;&gt;();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) &#123;
         invoke();
-    }
+    &#125;
 
-    public static void invoke() {
+    public static void invoke() &#123;
         data.put(&quot;name&quot;, &quot;rayjun&quot;);
         System.out.println(data.get(&quot;name&quot;));
-    }
-}
+    &#125;
+&#125;
 </code></pre>
-<pre><code class="language-java">public class Main2 {
+<pre><code class="language-java">public class Main2 &#123;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) &#123;
         Main1.main(args);
         System.out.println(Main1.data.get(&quot;name&quot;));
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>执行结果如下：</p>
 <pre><code class="language-java">Main1.main(): rayjun
@@ -138,7 +138,7 @@ Main2.main(): rayjun
 <p>那么 main 方法在执行的过程中到底发生了什么？</p>
 <p>下面是 Java 代码到执行结束的完成流程：</p>
 <p><img src="1.png" alt=""></p>
-<h2>程序启动</h2>
+<h2 id="程序启动">程序启动</h2>
 <p>Java 有个特性叫编写一次，到处运行，这是因为有虚拟机的存在，我们所编写的所有代码最终都是在虚拟机上运行。</p>
 <p>但 JVM 是无法执行 Java 代码的，所以需要使用 <code>javac</code> 将Java 代码编译成<strong>字节码</strong>文件，字节码文件才可以在 JVM 上执行。</p>
 <p>字节码文件准备好了之后，就需要启动 JVM 实例，JVM 可以接受各类参数，以便适应不同的执行环节，在初始化 JVM 实例时，需要先检查 JVM 参数，并且校验这些参数是否合法。</p>
@@ -149,7 +149,7 @@ Main2.main(): rayjun
 <p>JVM 刚开始会对字节码文件解释执行，但是随着 JVM 技术发展，也慢慢出现了 JIT（即时编译）技术，可以将部分字节码或者全部字节码通过编译的的方式来执行。</p>
 <p>当字节码被加载，然后就会进入程序的运行状态，我们所熟知的垃圾回收机制就开始运行，程序运行的过程中，不断有对象被创建，也会不断有对象被回收。</p>
 <p>如果没有发生内存泄漏的情况，程序会在垃圾回收的支持下持续运行。</p>
-<h2>程序运行</h2>
+<h2 id="程序运行">程序运行</h2>
 <p>程序开始执行的时候，会创建一些线程。</p>
 <p>JVM 在启动的时候会创建一个 <code>VM Thread</code>，这是所有线程的祖先，其他的线程都是由这个线程派生出去的。</p>
 <p>在 Java 中，线程分为两种：<strong>普通线程</strong>和<strong>守护线程</strong>。</p>
@@ -157,16 +157,16 @@ Main2.main(): rayjun
 <p>在 Java 中，如果要把一个线程编程守护线程，只需要调用 <code>Thread.setDaemon()</code>，判断一个线程是否是守护线程，只需要调用 <code>Thread.isDeamon()</code>。</p>
 <p>执行 Java 程序的时候，除了需要为运行的代码创建一个线程之外，还需要创建一个处理后台任务的守护线程。</p>
 <p>执行以下代码：</p>
-<pre><code class="language-java">public class Main3 {
+<pre><code class="language-java">public class Main3 &#123;
 
-   public static void main(String[] args) {
+   public static void main(String[] args) &#123;
       ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
       ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(false, false);
-      for (ThreadInfo threadInfo : threadInfos) {
+      for (ThreadInfo threadInfo : threadInfos) &#123;
           System.out.println(&quot;Thread id: &quot;+threadInfo.getThreadId() + &quot;, thread name: &quot; + threadInfo.getThreadName() + &quot;, isDaemon: &quot;+threadInfo.isDaemon());
-      }
-   }
-}
+      &#125;
+   &#125;
+&#125;
 </code></pre>
 <p>执行结果如下：</p>
 <pre><code class="language-bash">Thread id: 1, thread name: **main**, isDaemon: false
@@ -187,20 +187,20 @@ Thread id: 12, thread name: **Attach Listener**, isDaemon: true
 <li>Monitor Ctrl-Break：该线程用于应用监测以及用于排查问题</li>
 </ul>
 <p>只要 JVM 中还有非守护线程存在，JVM 实例就不会退出。</p>
-<h2>程序如何退出</h2>
+<h2 id="程序如何退出">程序如何退出</h2>
 <p>当程序执行完成之后，JVM 也要退出，程序执行完的标志就是非守护线程都退出了。当所有的非守护线程退出之后，守护线程也会退出。</p>
 <p>程序在执行完成之后，会调用 <code>System.exit()</code> 方法，然后虚拟机退出，程序彻底结束。</p>
 <p>exit 方法接收一个整型的参数，如果传入的值为 0，那么就表示程序是正常退出的，如果是任何非零的值，那么就表示是异常退出。</p>
 <p>其实在代码中，非常不推荐调用这个方法，因为这个方法会造成一些意向不到的情况。</p>
 <p>看下面这段代码：</p>
-<pre><code class="language-java">try {
+<pre><code class="language-java">try &#123;
     System.out.println(&quot;App invoking&quot;);
     throw new Exception();
-} catch (Exception e) {
+&#125; catch (Exception e) &#123;
     System.exit(2);
-} finally {
+&#125; finally &#123;
     System.out.println(&quot;App existing&quot;);
-}
+&#125;
 </code></pre>
 <p>上面的代码会输出：</p>
 <pre><code class="language-java">App invoking
@@ -228,7 +228,7 @@ Thread id: 12, thread name: **Attach Listener**, isDaemon: true
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

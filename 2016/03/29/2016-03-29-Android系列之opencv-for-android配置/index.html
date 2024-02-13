@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,19 +57,19 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Android系列之opencv-for-android的开发环境配置</h1>
-    <h3>opencv for android</h3>
-<p>opencv 近些年的发展很好，在安卓平台上已经有了比较成熟的版本。关于 Opencv For Android 的相关细节可以查看<a href="http://opencv.org/downloads.html" target="_blank" rel="noopener">官网</a>。本文主要是关于在 Android Studio 平台上开发环境的配置，本文的软件版本为 Android Studio 1.5 以及 Opencv For Android 2.4.11。</p>
-<h3>配置过程</h3>
+    <h3 id="opencv-for-android">opencv for android</h3>
+<p>opencv 近些年的发展很好，在安卓平台上已经有了比较成熟的版本。关于 Opencv For Android 的相关细节可以查看<a href="http://opencv.org/downloads.html">官网</a>。本文主要是关于在 Android Studio 平台上开发环境的配置，本文的软件版本为 Android Studio 1.5 以及 Opencv For Android 2.4.11。</p>
+<h3 id="配置过程">配置过程</h3>
 <ol>
-<li>下载 Opencv For Android 的 sdk，<a href="http://opencv.org/downloads.html" target="_blank" rel="noopener">下载地址</a>, 下载完成之后解压。</li>
+<li>下载 Opencv For Android 的 sdk，<a href="http://opencv.org/downloads.html">下载地址</a>, 下载完成之后解压。</li>
 <li>将 opencv 导入进 Android Studio, 从 File -&gt; New -&gt; Import Module， 然后选择 sdk/java 那个文件夹。</li>
 <li>更新导入的 Module 中的 build.gradle 文件，将其中 android sdk 的版本改成当前项目的 android sdk 的版本。</li>
 <li>增加 Module 依赖，File -&gt; Project Structure, 然后选择 app Module，切换到Dependencies，点击 + 号，选择 Module，就能看见刚才添加的 OPencv Module，把它添加进来。</li>
 <li>将解压包下的 sdk/native/libs 里面的内容拷贝到 app/src/mian 目录下，并将其改名为 jniLibs。</li>
 </ol>
 <p>在实际使用的时候，在 MainActivity 下添加以下的代码：</p>
-<pre><code>if (!OpenCVLoader.initDebug()) {
-}
+<pre><code>if (!OpenCVLoader.initDebug()) &#123;
+&#125;
 </code></pre>
 <p>以上的代码是去加载 opencv 的库文件。</p>
 <p>在 android  studio 中配置这个环境很简便，甚至都不需要配置 NDK 的环境。</p>
@@ -93,7 +93,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

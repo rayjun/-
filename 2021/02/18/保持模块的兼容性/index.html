@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,8 +58,8 @@
                     <div class="post">
     <h1>保持模块的兼容性</h1>
     <p>这是 Go Modules 系列的最后一篇文章，前面的四篇文章中介绍了如何使用模块，以及如何更新大版本，最后这篇文章将介绍一下在项目的维护过程中，如何保证项目的兼容性。</p>
-<p>原文地址：<a href="https://blog.golang.org/module-compatibility" target="_blank" rel="noopener">https://blog.golang.org/module-compatibility</a></p>
-<h2>简介</h2>
+<p>原文地址：<a href="https://blog.golang.org/module-compatibility">https://blog.golang.org/module-compatibility</a></p>
+<h2 id="简介">简介</h2>
 <p>这个系列的文章总共有五篇，这是第五篇：</p>
 <ul>
 <li><a href="http://">使用 Go Modules</a></li>
@@ -71,7 +71,7 @@
 <p>你的模块随着不断的添加新特性，以及重新设计公开接口而不停变化。正如<a href="http://">上一篇</a>文章所讨论的，对 v1+ 模块做出破坏性修改，就必须升级主版本号（或者采用新的模块路径）。</p>
 <p>然而，发布一个主版本对用户就不太友好。他们必须找到新的版本，并学习新的 API，然后修改他们的代码。有些用户可能永远也不会更新，这就意味着你也必须永远维护者两个版本的代码。所以最好是对你现在的代码用兼容的方式修改。</p>
 <p>在这篇文章中，我们会介绍一些不做破坏性修改的技术。一句话概括就是：增加，不要修改或删除。我们也会讨论如何从一开始就对 API 的兼容性进行设计。</p>
-<h2>增加函数</h2>
+<h2 id="增加函数">增加函数</h2>
 <p>通常，给方法增加参数就是一种破坏性修改。我们将会讨论一些处理这类变更的方法，但在这之前，先来看一些不合理的修改方式：</p>
 <p>当想用一种好的方式来增加新参数时，却很容易添加成可变参数。来扩展下面这个函数：</p>
 <pre><code class="language-go">func Run(name String)
@@ -87,15 +87,15 @@ var runner func(string) = yourpkg.Run
 <p>保证调用的兼容性并不足以保证向后兼容性。因此，对函数的签名修改了就无法保证向后的兼容性。</p>
 <p>所以解决方法是<strong>增加一个方法</strong>，而不是修改一个方法的签名。举个例子，在引入 context 包之后，把 context.Context 作为函数的第一个参数已经成为一个常见的做法。然而，对于已经稳定的 api，不能给已经暴露出去的函数加上 context.Context 参数，因为这样会伤害到所有在使用这个函数的用户。</p>
 <p>因此，需要增加新方法。比如 database/sql 包中 Query 方法的签名是（一直都是）：</p>
-<pre><code class="language-go">func (db *DB) Query(query string, args ...interface{}) (*Rows, error)
+<pre><code class="language-go">func (db *DB) Query(query string, args ...interface&#123;&#125;) (*Rows, error)
 </code></pre>
 <p>当 context 包被创建之后，Go 的开发团队为 database/sql 包增加了一个新方法：</p>
-<pre><code class="language-go">func (db *DB) QueryContext(ctx context.Context, query string, args ...interface{}) (*Rows, error)
+<pre><code class="language-go">func (db *DB) QueryContext(ctx context.Context, query string, args ...interface&#123;&#125;) (*Rows, error)
 </code></pre>
 <p>为了避免复制代码，老方法调用了新方法：</p>
-<pre><code class="language-go">func (db *DB) Query(query string, args ...interface{}) (*Rows, error) {
+<pre><code class="language-go">func (db *DB) Query(query string, args ...interface&#123;&#125;) (*Rows, error) &#123;
     return db.QueryContext(context.Background(), query, args...)
-}
+&#125;
 </code></pre>
 <p>通过增加新的方法可以用户自己掌握迁移的速度。新增的方法读取方法类似，而且排列在一起，新方法的名称中也包含了 Context，因此 database/sql API 的扩展并没有降低包的可读性。</p>
 <p>如果你预计函数在后续可能需要更多参数，可以提前做准备，把可选实参作为函数签名的一部分。最简单的方式是添加一个 struct 参数，比如 crypto/tls.Dial 方法就是这么做的：</p>
@@ -106,13 +106,13 @@ var runner func(string) = yourpkg.Run
 <pre><code class="language-go">func Listen(network, address string) (Listener, error)
 </code></pre>
 <p>在 Go1.11 中，两个新功能被添加到 net 包的监听功能中：传入一个 context，允许调用者在创连接后而没有绑定之前，通过一个”控制函数”来调整原始连接。如果按照通常的做法，就会产生一个接受context、network、address 和控制函数的新函数。但包的作者没有这么做，而是新增了一个 ListenConfig 结构体，以便在将来添加更多的参数。而且他们没有在报级别添加一个名称很长的函数，而是直接在 ListenConfig 中添加了一个 Listen 方法：</p>
-<pre><code class="language-go">type ListenConfig struct {
+<pre><code class="language-go">type ListenConfig struct &#123;
     Control func(network, address string, c syscall.RawConn) error
-}
+&#125;
 
 func (*ListenConfig) Listen(ctx context.Context, network, address string) (Listener, error)
 </code></pre>
-<p>另一种提供提供可选参数的方法是<strong>选项类型</strong>模式，在这种模式中，每个选项都是一个函数，通过函数来修改值的状态。这种方法在 Rob Pike 的 <a href="https://commandcenter.blogspot.com/2014/01/self-referential-functions-and-design.html" target="_blank" rel="noopener">Self-referential functions and the design of options</a> 文中做了详细的描述。另外一个被广泛使用的例子是 <a href="http://google.golang.org/grpc" target="_blank" rel="noopener">google.golang.org/grpc</a> 包中的 DialOption。</p>
+<p>另一种提供提供可选参数的方法是<strong>选项类型</strong>模式，在这种模式中，每个选项都是一个函数，通过函数来修改值的状态。这种方法在 Rob Pike 的 <a href="https://commandcenter.blogspot.com/2014/01/self-referential-functions-and-design.html">Self-referential functions and the design of options</a> 文中做了详细的描述。另外一个被广泛使用的例子是 <a href="http://google.golang.org/grpc">google.golang.org/grpc</a> 包中的 DialOption。</p>
 <p>选项类型在函数参数中扮演与结构体选项相同的角色：它们都可以通过一种可扩展的方式来修改行为。选择哪个要看具体的场景。来看一下一下 gRPC 的 DialOption 选项类型的简单用法：</p>
 <pre><code class="language-go">grpc.Dial(&quot;some-target&quot;,
   grpc.WithAuthority(&quot;some-authority&quot;),
@@ -120,15 +120,15 @@ func (*ListenConfig) Listen(ctx context.Context, network, address string) (Liste
   grpc.WithBlock())
 </code></pre>
 <p>这也同样可以被实现为一个结构体选项：</p>
-<pre><code class="language-go">notgrpc.Dial(&quot;some-target&quot;, &amp;notgrpc.Options{
+<pre><code class="language-go">notgrpc.Dial(&quot;some-target&quot;, &amp;notgrpc.Options&#123;
   Authority: &quot;some-authority&quot;,
   MaxDelay:  time.Second,
   Block:     true,
-})
+&#125;)
 </code></pre>
 <p>选项类型有一些副作用：它要求在每个调用的选项前写入包名，它们增加了包命名空间的大小。如果同一个选项调用了两次，我们也不清楚会发生怎样的行为。另一方面，接收选项类型的函数需要接收一个有可能总是为 nil 的参数。而且当一个类型的零值有意义时，总是需要为这个选项指定默认值，这样就不太优雅，通常需要一个指针或者一个额外的布尔字段。</p>
 <p>为了确保模块的公共 API 在未来的扩展性，这两种方法都是合理的。</p>
-<h2>使用接口</h2>
+<h2 id="使用接口">使用接口</h2>
 <p>有时候，新特性需要对公开的接口进行更改：例如，需要用新方法扩展接口。但直接把新方法添加到接口是一个有破坏性的修改，那么，我们如何在公开的接口上添加新方法？</p>
 <p>基本思想是定义新接口来接收新方法，然后在使用旧接口的地方，动态检查使用的类型是旧类型还是新类型。</p>
 <p>让我们用 archive/tar 包的例子来说明这一点。tar.NewReader 接收一个 io.Reader 参数，但随着时间的推移， Go 团队意识到如果可以调用 Seek，从一个文件头调到一下个文件头就会很有效率。但是他们不能给 io.Reader 添加一个 Seek 方法。这回会破坏 io.Reader 的所有实现。</p>
@@ -136,65 +136,65 @@ func (*ListenConfig) Listen(ctx context.Context, network, address string) (Liste
 <p>所有，他们决定不动 tar.NewReader 的签名，而是在 tar.Reader 中增加了对 io.Seeker 的支持：</p>
 <pre><code class="language-go">package tar
 
-type Reader struct {
+type Reader struct &#123;
   r io.Reader
-}
+&#125;
 
-func NewReader(r io.Reader) *Reader {
-  return &amp;Reader{r: r}
-}
+func NewReader(r io.Reader) *Reader &#123;
+  return &amp;Reader&#123;r: r&#125;
+&#125;
 
-func (r *Reader) Read(b []byte) (int, error) {
-  if rs, ok := r.r.(io.Seeker); ok {
+func (r *Reader) Read(b []byte) (int, error) &#123;
+  if rs, ok := r.r.(io.Seeker); ok &#123;
     // Use more efficient rs.Seek.
-  }
+  &#125;
   // Use less efficient r.r.Read.
-}
+&#125;
 </code></pre>
-<p>(在 <a href="https://github.com/golang/go/blob/60f78765022a59725121d3b800268adffe78bde3/src/archive/tar/reader.go#L837" target="_blank" rel="noopener">reader.go</a> 查看具体的代码。)</p>
+<p>(在 <a href="https://github.com/golang/go/blob/60f78765022a59725121d3b800268adffe78bde3/src/archive/tar/reader.go#L837">reader.go</a> 查看具体的代码。)</p>
 <p>当你遇到想要向现有接口添加新方法的情况时，就可以使用这个策略了。首先为新方法创建一个新接口，或者用新方法标识一个现有的接口。接下来，就可以修改需要支持它的函数，为新接口做类型检查，并添加使用它的代码。</p>
 <p>这种策略仅仅在旧接口没有新方法时也能工作的情况能使用，这样会限制模块在未来的扩展性。</p>
 <p>如果可能的话，最好是完全避免这类问题。比如，在设计和构造函数时，最好是返回具体的类型。与接口不同，使用具体类型可以让你在以后添加新方法二不会影响到用户。这种方式让你的模块在以后扩展起来更容易。</p>
-<p>提示：如果你确实需要使用一个接口，但又不想让用户来实现它，你可以添加一个未导出的方法。这可以防止在包外定义的类型在不嵌入的情况下满足接口的要求，从而可以让你在以后添加方法而不会破坏用户的实现。比如，看 <a href="https://github.com/golang/go/blob/83b181c68bf332ac7948f145f33d128377a09c42/src/testing/testing.go#L564-L567" target="_blank" rel="noopener">testing.TB's private() function</a>。</p>
-<pre><code class="language-go">type TB interface {
-    Error(args ...interface{})
-    Errorf(format string, args ...interface{})
+<p>提示：如果你确实需要使用一个接口，但又不想让用户来实现它，你可以添加一个未导出的方法。这可以防止在包外定义的类型在不嵌入的情况下满足接口的要求，从而可以让你在以后添加方法而不会破坏用户的实现。比如，看 <a href="https://github.com/golang/go/blob/83b181c68bf332ac7948f145f33d128377a09c42/src/testing/testing.go#L564-L567">testing.TB’s private() function</a>。</p>
+<pre><code class="language-go">type TB interface &#123;
+    Error(args ...interface&#123;&#125;)
+    Errorf(format string, args ...interface&#123;&#125;)
     // ...
 
     // A private method to prevent users implementing the
     // interface and so future additions to it will not
     // violate Go 1 compatibility.
     private()
-}
+&#125;
 </code></pre>
-<p>Jonathan Amsterdam 的<strong>检测不兼容 API 变化</strong>演讲（<a href="https://www.youtube.com/watch?v=JhdL5AkH-AQ" target="_blank" rel="noopener">视频</a>、<a href="https://github.com/gophercon/2019-talks/blob/master/JonathanAmsterdam-DetectingIncompatibleAPIChanges/slides.pdf" target="_blank" rel="noopener">幻灯片</a>）中也详细探讨了这个主题。</p>
-<h2>添加配置方法</h2>
+<p>Jonathan Amsterdam 的<strong>检测不兼容 API 变化</strong>演讲（<a href="https://www.youtube.com/watch?v=JhdL5AkH-AQ">视频</a>、<a href="https://github.com/gophercon/2019-talks/blob/master/JonathanAmsterdam-DetectingIncompatibleAPIChanges/slides.pdf">幻灯片</a>）中也详细探讨了这个主题。</p>
+<h2 id="添加配置方法">添加配置方法</h2>
 <p>到现在为止，我们已经讨论了什么是破坏性改变，就是在改变类型或者函数时会让用户的代码编译不通过。然而，即使用的代码可以编译通过，行为的变化也会对用户的代码造成破坏性改变。比如，许多用户期望 json.Decoder 会忽略 JSON 中不属于参数结构的字段。在这种情况下，当 Go 团队想要返回一个错误时，他们必须小心。如果没有一个可选的机制，这样做意味着许多依赖这些方法的用户可能会开始接收他们以前没有接收到的错误。</p>
 <p>因此，他们并没有去改变所有用户的习惯，而是在 Decoder 结构体中添加了一个配吹方法：Decoder.DisallowUnknownFields。调用这个方法，用户就可以使用新的行为，否则就继续保持老的行为。</p>
-<h2>维护结构体的兼容性</h2>
+<h2 id="维护结构体的兼容性">维护结构体的兼容性</h2>
 <p>我们在上面看到，对函数签名的任何更改都是破坏性更改。有了结构体，情况就好多了。如果你有一个导出的结构类型，添加一个字段或删除一个未导出的字段，也不会破坏兼容性。在添加字段时，确保它的零值是有意义的，并保留旧的行为，这样即使没有设置这个字段的现有代码也能继续工作。</p>
 <p>回想一下上面的例子，net 包的作者在 Go1.11 中添加了 ListenConfig，因为他们认为可能会添加更多的参数，事实证明他们是对的。在 Go1.13 中，添加了 KeepAlive 参数，这个参数可以禁用 KeepAlive 或修改其周期。缺省值 0 将会保留启用 keep-alive 的默认周期的原始行为。</p>
 <p>还有一种需要注意的情况，新字段可能会破坏用户代码。如果一个结构中的所有字段类型都是可比较的——这些类型的值可以用 == 和 != 进行比较，并用作map 中的 key —— 那么整个结构类型也是可比较的。在这种情况下，添加一个不可比较类型的新字段将使整个结构类型变得不可比较，这样比较该结构类型值的代码就会出错。</p>
 <p>为了保持结构的可比性，不要向结构中添加不可比较性字段。你可以为此编写一个测试，或者使用即将发布的 gorelease 工具来捕获这个问题。</p>
 <p>如果从一开始就不想让结构体进行比较，请确保该结构有一个不可比较的字段。它可能已经有了一个非切片、map 或函数类型是可比较的。但如果没有，可以这样添加一个:</p>
-<pre><code class="language-go">type Point struct {
+<pre><code class="language-go">type Point struct &#123;
         _ [0]func()
         X int
         Y int
-}
+&#125;
 </code></pre>
 <p>func() 类型不可比较，并且长度为零的数组不占用空间。我们可以定义一个类型来阐明我们的意图:</p>
 <pre><code class="language-go">type doNotCompare [0]func()
 
-type Point struct {
+type Point struct &#123;
         doNotCompare
         X int
         Y int
-}
+&#125;
 </code></pre>
 <p>你应该在你的结构中使用doNotCompare吗？如果你已经定义了要作为指针使用的结构体——也就是说，它有指针方法，可能还有一个返回指针的 NewXXX 构造函数，那么添加一个doNotCompare字段可能是多余的。指针类型的用户明白，该类型的每个值都是不同的：如果他们想比较两个值，就应该比较指针。</p>
 <p>如果你想定义一个直接作为值使用的结构体，就像我们的例子，那么你通常希望它具有可比性。在不常见的情况下，你有一个值结构，但不想让它有可比性，就可以添加一个 doNotCompare 字段，这样可以自由地更改结构，而影响比较性。缺点这类型不能用作 map 的 key。</p>
-<h2>小结</h2>
+<h2 id="小结">小结</h2>
 <p>在从头开始规划 API 时，请仔细考虑 API 对于未来新更改的可扩展性。当你确实需要添加新特性时，请记住这条规则：添加、不更改或删除，记住异常、接口、函数参数和返回值不能以向后兼容的方式添加。</p>
 <p>如果你需要大幅度改变一个API，或者随着更多特性的添加，一个 API 开始被使用的越来越少，那么可能是时候推出一个新的主版本了。但在大多数情况下，进行向后兼容的更改很容易，并且可以避免给用户造成痛苦。</p>
 <p>译 / Rayjun</p>
@@ -218,7 +218,7 @@ type Point struct {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

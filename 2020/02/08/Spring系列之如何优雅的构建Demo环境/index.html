@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,7 +58,7 @@
                     <div class="post">
     <h1>Spring系列之如何优雅的构建Demo环境</h1>
     <p>在最开始学习 Java 的时候，最常用的方式就是写一个 main 方法，然后在这个方法中不断写代码，然后跑起来。通常这样也不会有问题，但是这难免有点不优雅，毕竟一个类只能有一个 main 方法。</p>
-<h2>如何优雅的写 Demo</h2>
+<h2 id="如何优雅的写-Demo">如何优雅的写 Demo</h2>
 <p>特别是要系统学习一些框架的时候，通常需要写大量的示例代码。使用 main 方法时，很多代码写过一遍后就得删除或者注释掉，回头想重新看这个例子的时候就得重新写。</p>
 <p>总的来是，直接在 main 中写 Demo 代码有如下的问题：</p>
 <ul>
@@ -76,13 +76,13 @@
 <blockquote>
 <p>本文基于 JUnit5，Spring5，Maven3.6</p>
 </blockquote>
-<h2>使用 JUnit 写 Spring Demo</h2>
+<h2 id="使用-JUnit-写-Spring-Demo">使用 JUnit 写 Spring Demo</h2>
 <p>下面来看一下如何使用 JUnit 快速的搭建一个 Spring 的 Demo 环境。</p>
 <p>我们使用 Maven 作为构建工具，创建一个 maven 的普通项目后，需要引入相关的依赖。</p>
 <blockquote>
 <p>在这里我只引入了 Spring5 的核心依赖，如果有需要，可以自行引入其他的依赖</p>
 </blockquote>
-<h3>引入依赖</h3>
+<h3 id="引入依赖">引入依赖</h3>
 <pre><code class="language-java">&lt;properties&gt;
     &lt;spring.version&gt;5.2.2.RELEASE&lt;/spring.version&gt;
     &lt;junit5.version&gt;5.1.0-M2&lt;/junit5.version&gt;
@@ -92,28 +92,28 @@
     &lt;dependency&gt;
         &lt;groupId&gt;org.springframework&lt;/groupId&gt;
         &lt;artifactId&gt;spring-core&lt;/artifactId&gt;
-        &lt;version&gt;${spring.version}&lt;/version&gt;
+        &lt;version&gt;$&#123;spring.version&#125;&lt;/version&gt;
     &lt;/dependency&gt;
     &lt;dependency&gt;
         &lt;groupId&gt;org.springframework&lt;/groupId&gt;
         &lt;artifactId&gt;spring-beans&lt;/artifactId&gt;
-        &lt;version&gt;${spring.version}&lt;/version&gt;
+        &lt;version&gt;$&#123;spring.version&#125;&lt;/version&gt;
     &lt;/dependency&gt;
     &lt;dependency&gt;
         &lt;groupId&gt;org.springframework&lt;/groupId&gt;
         &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
-        &lt;version&gt;${spring.version}&lt;/version&gt;
+        &lt;version&gt;$&#123;spring.version&#125;&lt;/version&gt;
     &lt;/dependency&gt;
     &lt;dependency&gt;
         &lt;groupId&gt;org.springframework&lt;/groupId&gt;
         &lt;artifactId&gt;spring-test&lt;/artifactId&gt;
-        &lt;version&gt;${spring.version}&lt;/version&gt;
+        &lt;version&gt;$&#123;spring.version&#125;&lt;/version&gt;
     &lt;/dependency&gt;
 
     &lt;dependency&gt;
         &lt;groupId&gt;org.junit.jupiter&lt;/groupId&gt;
         &lt;artifactId&gt;junit-jupiter-engine&lt;/artifactId&gt;
-        &lt;version&gt;${junit5.version}&lt;/version&gt;
+        &lt;version&gt;$&#123;junit5.version&#125;&lt;/version&gt;
         &lt;scope&gt;test&lt;/scope&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;
@@ -122,7 +122,7 @@
 <p>然后项目的基本结构如图：</p>
 <p><img src="struct.png" alt=""></p>
 <p>在 test 目录下创建一个包，和源码码包名保持一致，然后就可以开始写测试代码了。</p>
-<h3>启动 Spring 容器</h3>
+<h3 id="启动-Spring-容器">启动 Spring 容器</h3>
 <p>启动 Spring 项目的关键在于启动 Spring 容器，在单元测试从也一样，这里分别演示一下 XML 版本和 Java 配置版本。</p>
 <p><strong>XML版</strong>：</p>
 <p>首先在 <strong>resources 目录</strong>下创建一个 beans.xml 配置文件（文件名称可以随便起）：</p>
@@ -141,8 +141,8 @@
 <p>容器的配置创建好了，然后就需要在测试类中用如下的方式加载了：</p>
 <pre><code class="language-java">@ContextConfiguration(locations = &quot;classpath:beans.xml&quot;)
 @SpringJUnitConfig
-public class SpringTest1 {
-}
+public class SpringTest1 &#123;
+&#125;
 </code></pre>
 <p><code>@SpringJUnitConfig</code> 注解是 Spring 增强过了的，加上这个注解之后，就可以在单元测试中很方便的使用 Spring 的特性。</p>
 <p><code>@ContextConfiguration</code> 用来加载 Spring 容器的配置文件，除了可以加载 XML，还可以加载 Java 配置。</p>
@@ -151,49 +151,49 @@ public class SpringTest1 {
 <p>创建一个 Java 类来充当配置文件，位置放在哪里都行：</p>
 <pre><code class="language-java">@Configuration
 @ComponentScan(basePackages = &quot;cn.rayjun.spring5demo&quot;)
-public class SoldierConfig {
-}
+public class SoldierConfig &#123;
+&#125;
 </code></pre>
 <p><code>@Configuration</code> 表明这个类是一个配置类。<code>@ComponentScan</code> 与 XML 配置中的 <code>component-scan</code> 作用一样。</p>
 <p>然后同样在测试用例中启动容器：</p>
 <pre><code class="language-java">@ContextConfiguration(classes = SoldierConfig.class)
 @SpringJUnitConfig
-public class SpringTest2 {
-}
+public class SpringTest2 &#123;
+&#125;
 </code></pre>
 <p>这样，就算是配置好了。</p>
-<h3>编写第一个测试用例</h3>
+<h3 id="编写第一个测试用例">编写第一个测试用例</h3>
 <p>容器相关的配置已经准备好了，接下来来编写第一条测试用例：</p>
 <pre><code class="language-java">@ContextConfiguration(locations = &quot;classpath:beans.xml&quot;)
 @SpringJUnitConfig
-public class SpringTest1 {
+public class SpringTest1 &#123;
 
     @Autowired
     private Gun gun;
     
     @Test
-    public void test1() {
+    public void test1() &#123;
         Assertions.assertNotNull(gun);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>通过上面的代码我们发现，可以直接通过注入的方式来注入相关的依赖。比如 Gun 类，只要在配置中声明好，然后就可以在测试用用例使用。甚至可以通过这种方式获取到容器本身：</p>
 <pre><code class="language-java">@ContextConfiguration(locations = &quot;classpath:beans.xml&quot;)
 @SpringJUnitConfig
-public class SpringTest1 {
+public class SpringTest1 &#123;
 
     @Autowired
     private ApplicationContext context;
     
     @Test
-    public void test2() {
+    public void test2() &#123;
         Gun gun = (Gun) context.getBean(&quot;gun&quot;);
         Assertions.assertNotNull(gun);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>这样，就可以很方便的测试容器中的任何代码，通过单元测试还可以判断代码质量。如果很难为一段代码写单元测试，那说明这段代码和某些依赖耦合的很紧。因为在 Spring 容器中，核心都是通过依赖注入的方式来管理依赖，如果某项依赖无法通过依赖注入，可能就要考虑一下代码是否有问题了。</p>
-<h3>高阶用法</h3>
+<h3 id="高阶用法">高阶用法</h3>
 <p>除了这些之外，有时候还会有一些复杂的情况，比如涉及到 Web，数据库方面测试。</p>
 <p>spring-test 提供了 Web 测试的一样方法，来模拟接口或者 web 页面的访问。然后对于其他的一些异常情况的模拟，比如网速慢，真实环境难以搭建等等问题，就需要使用 Mock 的方式来模拟这些情况，就需要 再引入一些其他的依赖，这些回头再用新的文章来说明。</p>
 
@@ -216,7 +216,7 @@ public class SpringTest1 {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -59,11 +59,11 @@
     <h1>Go的声明语法为什么是这样</h1>
     <p>作为 Go 语言的初学者，一定觉得 Go 语言的声明语法很奇怪，我当然也不例外。对于这个问题，Go  语言官方写了一篇博客来回答这个问题，我觉得挺有意思的，就把博客翻译了一下。</p>
 <p>总的来说， GO 的声明语法遵循一个原则，就是让声明可以从左往右读，由于指针沿用了 C 语言的风格，所以指针是一个例外，下面是原文的翻译。</p>
-<p>原文地址：<a href="https://blog.golang.org/declaration-syntax" target="_blank" rel="noopener">https://blog.golang.org/declaration-syntax</a>、</p>
+<p>原文地址：<a href="https://blog.golang.org/declaration-syntax">https://blog.golang.org/declaration-syntax</a>、</p>
 <hr>
-<h2>简介</h2>
+<h2 id="简介">简介</h2>
 <p>很多 Go 语言的初学者都会奇怪，为什么声明语法与 C 语言族（Rayjun注：C++，Java 等语言）的差异这么大。在这篇文章中，我们会对比这两种方式，并且解释为什么 Go 语言要这样来实现。</p>
-<h2>C 语法</h2>
+<h2 id="C-语法">C 语法</h2>
 <p>首先，让我们来讨论一下 C 语言的语法。C 语言选择了一种不寻常而且巧妙的方式来声明语法。不用特殊的语法来描述类型，而是写一个包含被声明项的表达式，并声明该表达式将具有什么类型，就像下面这样：</p>
 <pre><code class="language-c">int x
 </code></pre>
@@ -76,10 +76,10 @@ int a[3];
 <pre><code class="language-c">int main(argc, argv)
     int argc;
     char *argv[];
-{ /* ... */ }
+&#123; /* ... */ &#125;
 </code></pre>
 <p>我们再看一个方法，现在 C 语言的方法声明就是用的这种方式，因为这个表达式 main(argc, argv) 返回 int，所以最后会写成下面的形式：</p>
-<pre><code class="language-c">int main(int argc, char *argv[]) { /* ... */ }
+<pre><code class="language-c">int main(int argc, char *argv[]) &#123; /* ... */ &#125;
 </code></pre>
 <p>这与上面第一个方法的基本结构是相同的。</p>
 <p>对于简单类型，这是一个很好的方法，如果对于那些复杂类型，很容易让人迷惑。最有名的例子就是<strong>方法指针</strong>。如果按照这个结构来，就会得到下面的结果：</p>
@@ -110,7 +110,7 @@ int a[3];
 <p>还有一点需要说明。因为类型和声明语法是相同的，所以很难解析中间有类型的表达式。这就是为什么 C 语言中类型转换总是用括号括起来的原因，如下：</p>
 <pre><code class="language-c">(int)M_PI
 </code></pre>
-<h2>Go 语法</h2>
+<h2 id="Go-语法">Go 语法</h2>
 <p>C 语言族以外的语法通常有不同的声明语法。名字通常放在前面，后面通常有一个冒号。因此，我们上面的例子就变成了(用一种虚构但具有说明性的语言)：</p>
 <pre><code class="language-go">x: int
 p: pointer to int
@@ -139,9 +139,9 @@ a [3]int
 </code></pre>
 <p>从左到右读起来依然很清晰，声明的名字总是排在前面，很直观。</p>
 <p>类型和表达式语法之间的区别使得 Go 在编写和调用闭包很简单：</p>
-<pre><code class="language-go">sum := func(a, b int) int { return a+b } (3, 4)
+<pre><code class="language-go">sum := func(a, b int) int &#123; return a+b &#125; (3, 4)
 </code></pre>
-<h2>指针</h2>
+<h2 id="指针">指针</h2>
 <p>指针是一个意外情况。看下面的例子，注意在组数和 slice 中，Go 的声明语法把中括号放在类型的左边，而表达式语法把中括号放在了右边：</p>
 <pre><code class="language-go">var a []int
 x = a[1]
@@ -167,10 +167,10 @@ x = p^
 <p>如果我们愿意放弃 * 作为指针语法，那么这些括号就没有必要了。</p>
 <p>因此，Go 的指针语法与 C语言的指针形式绑定在一起，这种绑定意味着我们还需要使用圆括号来消除类型和表达式的歧义。</p>
 <p>尽管如此，我们还是相信 Go 的类型语法比 C 语言更容易理解，特别是当声明变得复杂的时候。</p>
-<h2>总结</h2>
-<p>总而言之，Go 语言的声明语法是从左读到右。有人认为 C 语言的声明语法有些混乱，详情请看 David Anderson 写的<a href="http://c-faq.com/decl/spiral.anderson.html" target="_blank" rel="noopener">这篇</a>。</p>
+<h2 id="总结">总结</h2>
+<p>总而言之，Go 语言的声明语法是从左读到右。有人认为 C 语言的声明语法有些混乱，详情请看 David Anderson 写的<a href="http://c-faq.com/decl/spiral.anderson.html">这篇</a>。</p>
 <hr>
-<p>另外，腾讯云区块链方向在大量招人，包括前端、后端、架构师、产品等诸多岗位，如果感兴趣，请把简历投过来 rayjun0412@gmail.com。</p>
+<p>另外，腾讯云区块链方向在大量招人，包括前端、后端、架构师、产品等诸多岗位，如果感兴趣，请把简历投过来 <a href="mailto:rayjun0412@gmail.com">rayjun0412@gmail.com</a>。</p>
 <p>文 / Rayjun</p>
 
 </div>
@@ -192,7 +192,7 @@ x = p^
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

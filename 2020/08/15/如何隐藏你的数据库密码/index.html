@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -79,33 +79,33 @@
 <p>这个接口可以通过 Http 接口，也可以通过 RPC 接口，可以根据具体的情况来确定。虽然每个框架的实现不一样，但是原理总是类似的。</p>
 <p>找到每个框架启动时候用于加载配置文件的流程，然后对这个流程中的某个节点做一点修改，就可以完成对加密配置的解密。</p>
 <p>以 Spring 框架为例，来实现这个解密过程，只需要继承 <code>PropertyPlaceholderConfigurer</code> 类，重写其中的 <code>convertProperties</code> 方法，将加密的信息通过解密接口解密，将解密后的值重新赋值给这些配置，整个过程就完成了。</p>
-<pre><code class="language-java">public class CustomerPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
+<pre><code class="language-java">public class CustomerPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer &#123;
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerPropertyPlaceholderConfigurer.class);
     
     @Override
-    protected void convertProperties(Properties props) {
+    protected void convertProperties(Properties props) &#123;
         Enumeration propertyNames = props.propertyNames();
 
-        while(propertyNames.hasMoreElements()) {
+        while(propertyNames.hasMoreElements()) &#123;
             String propertyName = (String)propertyNames.nextElement();
             String propertyValue = props.getProperty(propertyName);
             String convertedValue = this.convertPropertyValue(propertyValue);
 
             convertedValue = decrypt(convertedValue);
 
-            if (!ObjectUtils.nullSafeEquals(propertyValue, convertedValue)) {
-                logger.info(&quot;Decrypt property: {}&quot;, propertyName);
+            if (!ObjectUtils.nullSafeEquals(propertyValue, convertedValue)) &#123;
+                logger.info(&quot;Decrypt property: &#123;&#125;&quot;, propertyName);
                 props.setProperty(propertyName, convertedValue);
-            }
-        }
-    }
+            &#125;
+        &#125;
+    &#125;
 
-    private String decrypt(String encryptValue) {
+    private String decrypt(String encryptValue) &#123;
         // 实现具体的解密服务调用
         return encryptValue;
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>当然这样做了之后，存储密钥的服务器也会存在风险，一个比较好的方式是将存储加密信息和密钥的数据库部署在内网，无法通过外网进行访问。</p>
 
@@ -128,7 +128,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

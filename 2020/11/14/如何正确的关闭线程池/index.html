@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -59,7 +59,7 @@
     <h1>如何正确的关闭线程池</h1>
     <p>线程池是 Java 开发中常用的组件之一，在应用程序关闭的时候，需要将线程池关闭。但关闭线程池时，要按照不同的情况来使用不同的方式。下面介绍几种关闭线程池的常用方法。</p>
 <p>本文基于 OpenJDK11</p>
-<h2>1. 线程池简介</h2>
+<h2 id="1-线程池简介">1. 线程池简介</h2>
 <p>Java 中的线程池都实现了 <code>Executor</code>接口，这个接口提供了执行任务的入口。ExecutorService 继承了 Executor，提供了对线程池生命周期的管理，在开发中用的最多。</p>
 <p>对于关闭线程池，ExecutorService 提供了三种方式：</p>
 <ul>
@@ -69,19 +69,19 @@
 </ul>
 <p>这几种方法都可以关闭线程池，但是每种方式之间有一些差别。</p>
 <p>现有如下任务：</p>
-<pre><code class="language-java">class Task implements Runnable {
+<pre><code class="language-java">class Task implements Runnable &#123;
 
     @Override
-    public void run() {
+    public void run() &#123;
         System.out.println(&quot;任务开始执行&quot;);
-        try {
+        try &#123;
             Thread.sleep(5000);
-        } catch (InterruptedException e) {
+        &#125; catch (InterruptedException e) &#123;
             e.printStackTrace();
-        }
+        &#125;
         System.out.println(&quot;任务执行结束&quot;);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>调用 <code>shutdown</code>方法之后，线程池就不会再接收新的任务，如果强行添加，就会报错。而线程池中的任务会继续执行，但是却不保证这些任务能够执行完成，具体原因，下文会说到。</p>
 <pre><code class="language-java">ExecutorService threadPool = Executors.newFixedThreadPool(2);
@@ -102,16 +102,16 @@ threadPool.shutdownNow();
 threadPool.submit(new Task());
 threadPool.awaitTermination(6, TimeUnit.SECONDS);
 </code></pre>
-<h2>2. 正确的关闭线程池</h2>
-<h3>执行简单任务</h3>
+<h2 id="2-正确的关闭线程池">2. 正确的关闭线程池</h2>
+<h3 id="执行简单任务">执行简单任务</h3>
 <p>还以上面的 Task 为例，这种 Task 不依赖外部的数据，执行这种任务的线程池在关闭时，只需要调用 shutdown 方法即可。</p>
-<pre><code class="language-java">public static void main(String[] args) {
+<pre><code class="language-java">public static void main(String[] args) &#123;
     ExecutorService threadPool = Executors.newFixedThreadPool(2);
     threadPool.submit(new Task());
     threadPool.submit(new Task());
     threadPool.shutdown();
     System.out.println(&quot;主线程结束&quot;);
-}
+&#125;
 </code></pre>
 <p>这时程序的输出如下，任务会在主线程结束之后继续执行。</p>
 <pre><code class="language-java">任务开始执行
@@ -120,29 +120,29 @@ threadPool.awaitTermination(6, TimeUnit.SECONDS);
 任务执行结束
 任务执行结束
 </code></pre>
-<h3>执行复杂任务</h3>
+<h3 id="执行复杂任务">执行复杂任务</h3>
 <p>在执行一些复杂任务时，任务需要依赖外部的数据，任务为下：</p>
-<pre><code class="language-java">class Task1 implements Runnable {
+<pre><code class="language-java">class Task1 implements Runnable &#123;
     public Map&lt;String, String&gt; data;
-    public Task1(Map&lt;String, String&gt; o) {
+    public Task1(Map&lt;String, String&gt; o) &#123;
         this.data = o;
-    }
+    &#125;
     @Override
-    public void run() {
-        while (data.containsKey(&quot;invoke&quot;)) {
+    public void run() &#123;
+        while (data.containsKey(&quot;invoke&quot;)) &#123;
             System.out.println(&quot;正常任务执行!&quot;);
-            try {
+            try &#123;
                 Thread.sleep(2000);
-            } catch (InterruptedException e) {
+            &#125; catch (InterruptedException e) &#123;
                 e.printStackTrace();
-            }
-        }
+            &#125;
+        &#125;
         System.out.println(&quot;正常任务结束&quot;);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>在线程池中执行这个任务：</p>
-<pre><code class="language-java">public static void main(String[] args) throws InterruptedException {
+<pre><code class="language-java">public static void main(String[] args) throws InterruptedException &#123;
     ExecutorService threadPool = Executors.newFixedThreadPool(2);
     Map&lt;String, String&gt; data = new HashMap&lt;&gt;();
     data.put(&quot;invoke&quot;, &quot;true&quot;);
@@ -151,7 +151,7 @@ threadPool.awaitTermination(6, TimeUnit.SECONDS);
     threadPool.shutdown();
     data.remove(&quot;invoke&quot;);
     System.out.println(&quot;主线程结束&quot;);
-}
+&#125;
 </code></pre>
 <p>程序执行结果如下，在外部数据依赖删除之后，程序也就执行结束了。</p>
 <pre><code class="language-java">正常任务执行!
@@ -159,38 +159,38 @@ threadPool.awaitTermination(6, TimeUnit.SECONDS);
 正常任务结束
 </code></pre>
 <p>如果这个依赖是一些网络连接，或者数据库连接，在主程序退出之后，这些连接就会被销毁，那么线程池中的任务就无法继续执行。所以这个时候需要阻塞主线程，给线程池中的任务一些执行的时间。</p>
-<pre><code class="language-java">public static void main(String[] args) throws InterruptedException {
+<pre><code class="language-java">public static void main(String[] args) throws InterruptedException &#123;
     ExecutorService threadPool = Executors.newFixedThreadPool(2);
     Map&lt;String, String&gt; data = new HashMap&lt;&gt;();
     data.put(&quot;invoke&quot;, &quot;true&quot;);
     threadPool.submit(new Task1(data));
     Thread.sleep(1000);
     threadPool.shutdown();
-    try {
-        if (!threadPool.awaitTermination(4, TimeUnit.SECONDS)) {
+    try &#123;
+        if (!threadPool.awaitTermination(4, TimeUnit.SECONDS)) &#123;
             System.out.println(&quot;任务还没结束&quot;);
-        }
-    } catch (InterruptedException e) {
+        &#125;
+    &#125; catch (InterruptedException e) &#123;
         e.printStackTrace();
-    }
+    &#125;
 
     data.remove(&quot;invoke&quot;);
     System.out.println(&quot;主线程结束&quot;);
-}
+&#125;
 </code></pre>
 <p>调用了 awaitTermination 方法之后，主线程就会被阻塞，等待线程池中的任务继续执行，但是也不会无限期的等下去，等待超时时间过了之后，主程序还是会退出。</p>
 <p>在关闭线程池时，一般是 shutdown 与 awaitTermination 方法配合使用。</p>
 <pre><code class="language-java">threadPool.shutdown();
-if (!threadPool.awaitTermination(5, TimeUnit.SECONDS)) {
+if (!threadPool.awaitTermination(5, TimeUnit.SECONDS)) &#123;
     System.out.println(&quot;任务还没结束&quot;);
-}
+&#125;
 </code></pre>
 <p>如果还想确认在线程池退出时，确保线程池中的任务全部结束，可以在阻塞时间过了之后使用 shutdownNow:</p>
 <pre><code class="language-java">threadPool.shutdown();
-if (!threadPool.awaitTermination(5, TimeUnit.SECONDS)) {
+if (!threadPool.awaitTermination(5, TimeUnit.SECONDS)) &#123;
     System.out.println(&quot;任务还没结束&quot;);
     threadPool.shutdownNow();
-}
+&#125;
 </code></pre>
 <p>这样就可以让线程池按照预想的结果关闭。</p>
 <p>文 / Rayjun</p>
@@ -214,7 +214,7 @@ if (!threadPool.awaitTermination(5, TimeUnit.SECONDS)) {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

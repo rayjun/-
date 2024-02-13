@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,17 +58,17 @@
                     <div class="post">
     <h1>从LeetCode371 理解位运算</h1>
     <p>在日常刷 LeetCode 的过程中，发现了 LeetCode371 这道题。题目的模板代码是这样的:</p>
-<pre><code class="language-java">    public int getSum(int a, int b) {
+<pre><code class="language-java">    public int getSum(int a, int b) &#123;
         
-    }
+    &#125;
 </code></pre>
 <p>看到这里的时候，内心是震惊的，这也能作为 LeetCode 的题，难道我的水平只能和小学生相当？激动两分钟发现问题并没有这么简单，这道题附带了另一个条件，那就是不能使用 <strong>+</strong> 和 <strong>-</strong> 操作符。看到之后更震惊，还有这种操作？</p>
 <p>分析了半天，最后想出了<strong>自增</strong>和<strong>自减</strong>的方式来解决了这道题，虽然被 <strong>AC</strong> 了，但是还是觉得不是很顺畅。于是 Google 了一下其他的解法，让我发现了一个更让我震惊的解法。</p>
-<h4>LeetCode371 的正确打开方式</h4>
+<h4 id="LeetCode371-的正确打开方式">LeetCode371 的正确打开方式</h4>
 <p>先贴上代码:</p>
-<pre><code class="language-java">public int getSum(int a, int b) {
+<pre><code class="language-java">public int getSum(int a, int b) &#123;
       return (b==0? a: getSum(a^b, (a&amp;b)&lt;&lt;1 ));
-}
+&#125;
 </code></pre>
 <p>这是一个递归的解法，不过这并不重要。重要的是 <strong>a^b</strong> 和 <strong>(a&amp;b)</strong> 这两个操作。我解决这个问题使用了十几行代码，这种方式只有了一行代码，玄机就在这两个运算上面。</p>
 <p>首先 <strong>^</strong> 是异或运算，<strong>a^b</strong> 会让 a 和 b 的二进制进行异或操作，两位相同为 0， 两位不同为 1，也就是说异或运行会将二进制运算中所有的进位都放弃，所以异或也称之为<strong>不进位加法</strong>。</p>
@@ -85,13 +85,13 @@
 <li>&gt;&gt; (右移操作)</li>
 <li>&gt;&gt;&gt;(逻辑右移操作)</li>
 </ul>
-<h4>位运算技巧</h4>
+<h4 id="位运算技巧">位运算技巧</h4>
 <p>位运算有很多的小技巧，我整理了一些：</p>
 <ol>
 <li><strong>与运算技巧</strong></li>
 </ol>
-<p>a&amp;(a-1) 去掉 a 的最后一个1。
-两个相同的数与运算是本身，其中一个减一后相与就取掉了 a 的最后一个1。
+<p>a&amp;(a-1) 去掉 a 的最后一个1。<br>
+两个相同的数与运算是本身，其中一个减一后相与就取掉了 a 的最后一个1。<br>
 可以用这个技巧判断一个数是不是 2 的 次幂:</p>
 <pre><code class="language-java">a &gt; 0 &amp;&amp; (a &amp; (a -1) == 0)
 </code></pre>
@@ -114,9 +114,9 @@ a = a^b;
 <p>还有这个问题，在一个数组 a 中，除了一个单独存在的数之外，其他的数都是两两存在的，找出这个单独的数，循环结束后，result 就是那个单独的数:</p>
 <pre><code class="language-java">
 for (int i = 0; i &lt; length; i++)
-{
+&#123;
      result ^= a[i];
-}
+&#125;
 </code></pre>
 <p>异或还可以用于加密，比如对与 <strong>Hello</strong> 对应的 char 的数值是 72、101、108、108、111。每个 char 都与 任意一个数字进行异或操作，比如 12，得到 68、105、96、96、99。这个就是加密后的结果，如果要得到原文，再与 12 <strong>左移做乘法</strong>异或一次就行了。</p>
 <p>异或还可以用于判断两个数的符号是不是一样:</p>
@@ -195,7 +195,7 @@ if(x == b)
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

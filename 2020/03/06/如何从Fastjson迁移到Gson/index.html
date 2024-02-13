@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -74,33 +74,33 @@
 <li>处理 泛型对象</li>
 </ul>
 <p>下面分别来看看 Gson 中如何实现这些。示例代码中使用的两个类如下(省略了 get 和 set 方法)：</p>
-<pre><code class="language-java">public class Student {
+<pre><code class="language-java">public class Student &#123;
     private long id;
     private String name;
     private String gender;
     private int age;
 
-    public Student(long id, String name, String gender, int age) {
+    public Student(long id, String name, String gender, int age) &#123;
         this.id = id;
         this.name = name;
         this.gender = gender;
         this.age = age;
-    }
-}
-public class ClassRoom {
+    &#125;
+&#125;
+public class ClassRoom &#123;
 
     private long id;
     private String className;
     private List&lt;Student&gt; students;
 
-    public ClassRoom(long id, String className, List&lt;Student&gt; students) {
+    public ClassRoom(long id, String className, List&lt;Student&gt; students) &#123;
         this.id = id;
         this.className = className;
         this.students = students;
-    }
-}
+    &#125;
+&#125;
 </code></pre>
-<h3>对象和 JSON 的互相转换</h3>
+<h3 id="对象和-JSON-的互相转换">对象和 JSON 的互相转换</h3>
 <p><strong>对象转 JSON</strong></p>
 <p>fastjson:</p>
 <pre><code class="language-java">Student s1 = new Student(1, &quot;小明&quot;, &quot;男&quot;, 12);
@@ -113,11 +113,11 @@ String studentJson = gson.toJson(s1);
 </code></pre>
 <p><strong>JSON 转对象</strong></p>
 <p>fastjson:</p>
-<pre><code class="language-java">String json = &quot;{\&quot;age\&quot;:12,\&quot;gender\&quot;:\&quot;男\&quot;,\&quot;id\&quot;:1,\&quot;name\&quot;:\&quot;小明\&quot;}&quot;;
+<pre><code class="language-java">String json = &quot;&#123;\&quot;age\&quot;:12,\&quot;gender\&quot;:\&quot;男\&quot;,\&quot;id\&quot;:1,\&quot;name\&quot;:\&quot;小明\&quot;&#125;&quot;;
 Student student = JSON.parseObject(json, Student.class);
 </code></pre>
 <p>gson:</p>
-<pre><code class="language-java"> String json = &quot;{\&quot;age\&quot;:12,\&quot;gender\&quot;:\&quot;男\&quot;,\&quot;id\&quot;:1,\&quot;name\&quot;:\&quot;小明\&quot;}&quot;;
+<pre><code class="language-java"> String json = &quot;&#123;\&quot;age\&quot;:12,\&quot;gender\&quot;:\&quot;男\&quot;,\&quot;id\&quot;:1,\&quot;name\&quot;:\&quot;小明\&quot;&#125;&quot;;
 Gson gson = new Gson();
 Student student = gson.fromJson(json, Student.class);
 </code></pre>
@@ -143,27 +143,27 @@ Gson gson = new Gson();
 String classRoomJson = gson.toJson(classRoom); // 将嵌套对象转成 JSON
 ClassRoom classRoom = gson.fromJson(json, ClassRoom.class); // 将 JSON 转成嵌套对象
 </code></pre>
-<h3>JSON 字符串解析</h3>
+<h3 id="JSON-字符串解析">JSON 字符串解析</h3>
 <p>上面的例子演示的是 JSON 和对象之间的相互转化，如果在有些情况下，JSON 没有对应的 Java 类型，这个时候该怎么处理：</p>
 <p>fastjson:</p>
-<pre><code class="language-java">String json = &quot;{\&quot;age\&quot;:18, \&quot;grade\&quot;: \&quot;六年级\&quot;, \&quot;name\&quot;: \&quot;小明\&quot;, \&quot;score\&quot;: 99}&quot;;
+<pre><code class="language-java">String json = &quot;&#123;\&quot;age\&quot;:18, \&quot;grade\&quot;: \&quot;六年级\&quot;, \&quot;name\&quot;: \&quot;小明\&quot;, \&quot;score\&quot;: 99&#125;&quot;;
 JSONObject jsonObject = JSON.parseObject(json);
 
 jsonObject.getString(&quot;name&quot;);  // 小明
 jsonObject.getInteger(&quot;score&quot;); // 99
 </code></pre>
 <p>gson:</p>
-<pre><code class="language-java">String json = &quot;{\&quot;age\&quot;:18, \&quot;grade\&quot;: \&quot;六年级\&quot;, \&quot;name\&quot;: \&quot;小明\&quot;, \&quot;score\&quot;: 99}&quot;;
+<pre><code class="language-java">String json = &quot;&#123;\&quot;age\&quot;:18, \&quot;grade\&quot;: \&quot;六年级\&quot;, \&quot;name\&quot;: \&quot;小明\&quot;, \&quot;score\&quot;: 99&#125;&quot;;
 
 Gson gson = new Gson();
 JsonObject jsonObject = gson.fromJson(json, JsonObject.class);
 jsonObject.get(&quot;name&quot;).getAsString(); // 小明
 jsonObject.get(&quot;score&quot;).getAsInt(); // 99
 </code></pre>
-<h3>JSON 数组处理</h3>
+<h3 id="JSON-数组处理">JSON 数组处理</h3>
 <p>对于更复杂一点的情况，json是一个数组，但没关系，处理起来同样简单：</p>
 <p>fastjson:</p>
-<pre><code class="language-java">String json = &quot;[{\&quot;age\&quot;:18, \&quot;grade\&quot;: \&quot;六年级\&quot;, \&quot;name\&quot;: \&quot;小明\&quot;, \&quot;score\&quot;: 99},{\&quot;age\&quot;:18, \&quot;grade\&quot;: \&quot;六年级\&quot;, \&quot;name\&quot;: \&quot;小芳\&quot;, \&quot;score\&quot;: 100}]&quot;;
+<pre><code class="language-java">String json = &quot;[&#123;\&quot;age\&quot;:18, \&quot;grade\&quot;: \&quot;六年级\&quot;, \&quot;name\&quot;: \&quot;小明\&quot;, \&quot;score\&quot;: 99&#125;,&#123;\&quot;age\&quot;:18, \&quot;grade\&quot;: \&quot;六年级\&quot;, \&quot;name\&quot;: \&quot;小芳\&quot;, \&quot;score\&quot;: 100&#125;]&quot;;
 
 JSONArray jsonArray = JSON.parseArray(json);
 
@@ -171,14 +171,14 @@ jsonArray.getJSONObject(0).getString(&quot;name&quot;); // 小明
 jsonArray.getJSONObject(1).getString(&quot;name&quot;); // 小芳
 </code></pre>
 <p>gson:</p>
-<pre><code class="language-java">String json = &quot;[{\&quot;age\&quot;:18, \&quot;grade\&quot;: \&quot;六年级\&quot;, \&quot;name\&quot;: \&quot;小明\&quot;, \&quot;score\&quot;: 99},{\&quot;age\&quot;:18, \&quot;grade\&quot;: \&quot;六年级\&quot;, \&quot;name\&quot;: \&quot;小芳\&quot;, \&quot;score\&quot;: 100}]&quot;;
+<pre><code class="language-java">String json = &quot;[&#123;\&quot;age\&quot;:18, \&quot;grade\&quot;: \&quot;六年级\&quot;, \&quot;name\&quot;: \&quot;小明\&quot;, \&quot;score\&quot;: 99&#125;,&#123;\&quot;age\&quot;:18, \&quot;grade\&quot;: \&quot;六年级\&quot;, \&quot;name\&quot;: \&quot;小芳\&quot;, \&quot;score\&quot;: 100&#125;]&quot;;
 Gson gson = new Gson();
 
 JsonArray jsonArray = gson.fromJson(json, JsonArray.class);
    jsonArray.get(0).getAsJsonObject().get(&quot;name&quot;).getAsString(); // 小明
 jsonArray.get(1).getAsJsonObject().get(&quot;name&quot;).getAsString(); // 小芳
 </code></pre>
-<h3>泛型对象处理</h3>
+<h3 id="泛型对象处理">泛型对象处理</h3>
 <p>泛型对象在日常开发中用的也挺多的，比如 List 和 Map，这两个类库也都提供了相应的方法：</p>
 <p>fastjson:</p>
 <pre><code class="language-java">Student s1 = new Student(1, &quot;小明&quot;, &quot;男&quot;, 12);
@@ -187,7 +187,7 @@ List&lt;Student&gt; students = Arrays.asList(s1,s2);
 
 String json = JSON.toJSONString(students);
 
-Type type = new TypeReference&lt;List&lt;Student&gt;&gt;(){}.getType(); // 在这里需要获取完整的泛型类型
+Type type = new TypeReference&lt;List&lt;Student&gt;&gt;()&#123;&#125;.getType(); // 在这里需要获取完整的泛型类型
 students = JSON.parseObject(json, type);
 </code></pre>
 <p>gson:</p>
@@ -195,7 +195,7 @@ students = JSON.parseObject(json, type);
 Student s2 = new Student(2, &quot;小芳&quot;, &quot;女&quot;, 12);
 List&lt;Student&gt; students = Arrays.asList(s1,s2);
 Gson gson = new Gson();
-Type type = new TypeToken&lt;List&lt;Student&gt;&gt;() {}.getType(); // 获取泛型类型
+Type type = new TypeToken&lt;List&lt;Student&gt;&gt;() &#123;&#125;.getType(); // 获取泛型类型
 
 String json = gson.toJson(students);
 students = gson.fromJson(json, type);
@@ -223,7 +223,7 @@ students = gson.fromJson(json, type);
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

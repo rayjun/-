@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -63,8 +63,8 @@
 <p>软硬件要求：</p>
 <ul>
 <li>一台电脑（系统不限，配置高一点更好）</li>
-<li><a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener">VirtualBox</a></li>
-<li><a href="http://mirrors.aliyun.com/centos/" target="_blank" rel="noopener">Centos7</a></li>
+<li><a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a></li>
+<li><a href="http://mirrors.aliyun.com/centos/">Centos7</a></li>
 </ul>
 <p>VirtualBox 提供了各个系统的安装版本，下载完成后，直接点击软件包进行安装即可，不再赘述。</p>
 <p>Centos 可以选择自己需要的版本，或者 Linux 的其他发行版本也行，注意要选择 Minimal 版本，用作服务器，不需要桌面之类的，这样服务器镜像的体积就可以很小。</p>
@@ -78,7 +78,7 @@
 <blockquote>
 <p>本文基于 Mac os 10.15.5，VirtualBox6.1.8，centos7，另外阅读本文需要有一些基本的网络知识</p>
 </blockquote>
-<h2>安装服务器</h2>
+<h2 id="安装服务器">安装服务器</h2>
 <p>在开始之前，需要在 VirtualBox 的全局配置上加一块网卡，如下图所示：</p>
 <p><img src="1.png" alt=""></p>
 <p>在这里需要注意的是 IPv4 的地址和网络掩码，IPv4 地址就会成为整个服务器集群的网关，通常情况下不需要修改（如果你对计算机网络如数家珍，那轻便，随便改），设置好网关和子网掩码之后，后续配置的虚拟机 IP 都需要在这个网段内。</p>
@@ -104,7 +104,7 @@
 <p><img src="12.png" alt=""></p>
 <p>点击 ok 保存配置，然后就可以启动虚拟，第一次启动会安装系统，安装的过程中设置 root 密码，虚拟机的安装就完成了。</p>
 <p>为了组成一个服务器集群，我们需要三个虚拟机，另外两台的安装方式和上面一样。</p>
-<h2>网络配置</h2>
+<h2 id="网络配置">网络配置</h2>
 <p>在本文中，我使用 NAT + host-only 的方式来完成虚拟机既能访问外部网络，宿主机也能访问虚拟机的网络配置，但这不是唯一的方式。</p>
 <p>刚安装好的虚拟机无法访问外部网络，这是因为虚拟机的网卡还没有开启，先进入到虚拟机开启网卡，让虚拟机可以通过 NAT 的方式访问外网，然后使用 host-only 的方式实现宿主机访问虚拟机。</p>
 <p>使用 root 身份登录进系统，进入到网络的配置目录:</p>
@@ -138,12 +138,12 @@ GATEWAY=192.168.56.2 # 这个值就是在配置 VirtualBox 全局网卡时的网
 <p><img src="17.png" alt=""></p>
 <p>单台的网络已经配置好了，另外两台按照同样的配置就行，但需要为虚拟机配置不同的 IP。</p>
 <blockquote>
-<p>在本文的例子中，三台虚拟机的 IP 为：
-192.168.56.3
-192.168.56.4
+<p>在本文的例子中，三台虚拟机的 IP 为：<br>
+192.168.56.3<br>
+192.168.56.4<br>
 192.168.56.5</p>
 </blockquote>
-<h2>服务器互联</h2>
+<h2 id="服务器互联">服务器互联</h2>
 <p>到这里，三台服务器都能够连接互联网，宿主机也可以访问虚拟机了，虚拟机之间也可以通过 ssh 连接输入密码后进行访问。</p>
 <p>但是很多时候服务器之间需要能够直接传输文件，如果每次还需要输入密码，那就太不方便了。</p>
 <p>机器之间登录还是使用 ssh，但是可以改良一下，每台服务器把其他两台设置为信任的机器，这样就可以直接登录，而不用每次都输入密码。</p>
@@ -177,7 +177,7 @@ ssh root@192.168.56.5
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

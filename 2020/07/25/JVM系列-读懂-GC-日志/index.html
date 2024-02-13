@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -80,7 +80,7 @@ $ java -Xcomp -version # 完全编译执行
 $ java -Xmixed -version # 混合执行
 </code></pre>
 <p>Client VM 和 Server VM 的 GC 机制不一样，这篇文章中，我们只关注 Server VM 的 GC。</p>
-<h2>JVM 内存模型</h2>
+<h2 id="JVM-内存模型">JVM 内存模型</h2>
 <p>下面这两张图很重要，只要提到 JVM，就会用到下面两张图（HotSpot 虚拟机）。</p>
 <p>JVM 内存模型如下：</p>
 <p><img src="1.png" alt=""></p>
@@ -88,13 +88,13 @@ $ java -Xmixed -version # 混合执行
 <p>堆内部的各个区域分布如下：</p>
 <p><img src="2.png" alt=""></p>
 <p>其中 Eden、from 和 to 区域称为新生代（Young）区域，这三个区域大小的比例默认为 8:1:1，整个新生代区域和老年代区域的比例为 1:2。</p>
-<h2>GC 基本分类</h2>
+<h2 id="GC-基本分类">GC 基本分类</h2>
 <p>GC 总体上可以分成两类，对部分区域的 GC 和整堆的 GC（Full GC），一般情况下，只会发生部分区域的 GC，如果经常发生整堆的 GC，可能存在内存泄漏等情况。</p>
 <p>对部分区域的 GC 有可能发生在新生代（Minor GC），也有可能发生老年代（Major GC）。</p>
 <p>也有一种特殊的情况，如果使用的是 G1 收集器，那么会同时对新生代和老年代进行 GC。</p>
 <p><img src="3.png" alt=""></p>
 <p>当我们在说到 JVM 的 GC 时，一般都指对 JVM 堆的回收，大多数情况下，只有堆内的内存才会被回收。</p>
-<h2>GC 参数</h2>
+<h2 id="GC-参数">GC 参数</h2>
 <p>默认情况下，Java 程序在运行时并不会打印 GC 日志，需要加上下面的 JVM 参数：</p>
 <pre><code class="language-bash">-verbose:gc # 控制台打印 gc 日志
 -XX:+PrintGCDetails # 打印 gc 过程的细节
@@ -109,7 +109,7 @@ $ java -Xmixed -version # 混合执行
 -XX:+PrintHeapAtGC # 打印 GC 前后的堆栈信息
 -XX:+PrintTenuringDistribution # 打印每次 minor GC 后新的存活周期的阈值
 </code></pre>
-<h2>认识 GC 日志</h2>
+<h2 id="认识-GC-日志">认识 GC 日志</h2>
 <p>首先来了看一段基本的日志，设置的参数为：</p>
 <pre><code class="language-bash">-Xms8m
 -Xmx8m
@@ -122,11 +122,11 @@ $ java -Xmixed -version # 混合执行
 -XX:+PrintTenuringDistribution
 </code></pre>
 <p>然后执行下面的代码：</p>
-<pre><code class="language-java">public class NoGC {
-    public static void main(String[] args) {
+<pre><code class="language-java">public class NoGC &#123;
+    public static void main(String[] args) &#123;
         System.out.println(&quot;No gc&quot;);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>产生的日志如下：</p>
 <pre><code class="language-bash">Heap
@@ -145,22 +145,22 @@ $ java -Xmixed -version # 混合执行
 <p>PSYoungGen  表示的是新生代，并且使用 <strong>Parallel Scavenge</strong> 收集器来 GC，ParOldGen 表示老年代，并且使用 <strong>Parallel old</strong> 收集器来 GC，Server VM 使用的就是这对收集器的组合。</p>
 <p>新生代分成 eden、from 和 to 三个区域，from 和 to 区域也称之为 Survivor 区域，在上面的日志中，我们可以看出每个区域所占的大小以及使用情况。</p>
 <p>老年代没有再细分为其他的区域，那些在新生代没有被淘汰的的对象会进入老年代。</p>
-<h3>发生部分 GC</h3>
+<h3 id="发生部分-GC">发生部分 GC</h3>
 <p>执行下面这段代码：</p>
-<pre><code class="language-java">public class NormalGC {
-    public static void main(String[] args) throws InterruptedException {
+<pre><code class="language-java">public class NormalGC &#123;
+    public static void main(String[] args) throws InterruptedException &#123;
 
         Object o  = new Object();
-        for (int i = 0; ;i++) {
+        for (int i = 0; ;i++) &#123;
             Thread.sleep(1000);
             byte[] b = new byte[1024 * 1024];
             b = null;
-        }
-    }
-}
+        &#125;
+    &#125;
+&#125;
 </code></pre>
 <p>产生的 GC 日志如下：</p>
-<pre><code class="language-bash">{Heap before GC invocations=1 (full 0):
+<pre><code class="language-bash">&#123;Heap before GC invocations=1 (full 0):
  PSYoungGen      total 2048K, used 1536K [0x00000000ffd80000, 0x0000000100000000, 0x0000000100000000)
   eden space 1536K, 100% used [0x00000000ffd80000,0x00000000fff00000,0x00000000fff00000)
   from space 512K, 0% used [0x00000000fff80000,0x00000000fff80000,0x0000000100000000)
@@ -181,7 +181,7 @@ Heap after GC invocations=1 (full 0):
   object space 5632K, 1% used [0x00000000ff800000,0x00000000ff810000,0x00000000ffd80000)
  Metaspace       used 3136K, capacity 4496K, committed 4864K, reserved 1056768K
   class space    used 333K, capacity 388K, committed 512K, reserved 1048576K
-}
+&#125;
 Total time for which application threads were stopped: 0.0029243 seconds, Stopping threads took: 0.0000297 seconds
 Application time: 1.0001808 seconds
 </code></pre>
@@ -204,18 +204,18 @@ Desired survivor size 524288 bytes, new threshold 7 (max 15)
 <li>0.0024873 secs：表示 GC 进行的时间，单位为秒</li>
 <li>Times: user=0.01 sys=0.00, real=0.01 secs： 这部分也是对 GC 时间进行统计，但是是从操作系统的角度来统计，分被表示用户态时间，内核态时间和时钟时间</li>
 </ul>
-<h3>发生 Full GC</h3>
+<h3 id="发生-Full-GC">发生 Full GC</h3>
 <p>执行下面的代码就会发生 Full GC：</p>
-<pre><code class="language-java">public class FullGC {
-    public static void main(String[] args) {
+<pre><code class="language-java">public class FullGC &#123;
+    public static void main(String[] args) &#123;
         int size = 1024 * 1024;
         byte[] b = new byte[size];
 
         b = null;
 
         System.gc();
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>Full GC 其他的部分与上面部分 GC 基本一致，下面重点来看发生 Full GC 时，各个区域的回收情况：</p>
 <pre><code class="language-bash">[Full GC (System.gc()) 
@@ -230,19 +230,19 @@ Desired survivor size 524288 bytes, new threshold 7 (max 15)
 <p>第二行和第三行分别表示对新生代和老年代的回收，回收先后各个区域占用的内存情况都会打印出来。</p>
 <p>第四行同样表示整个堆内存的回收情况。</p>
 <p>第五行表示对元空间也进行了垃圾回收，虽然什么也没有回收成功。</p>
-<h3>如果内存泄露或溢出</h3>
+<h3 id="如果内存泄露或溢出">如果内存泄露或溢出</h3>
 <p>OutOfMemoryError 是一种常见的错误，一般在抛出这个异常之前，都会出现一次 Full GC。</p>
-<pre><code class="language-java">public class Leak2GC {
-    public static void main(String[] args) {
+<pre><code class="language-java">public class Leak2GC &#123;
+    public static void main(String[] args) &#123;
          Vector strings = new Vector();
 
-        for (int i = 0;  ;i++) {
+        for (int i = 0;  ;i++) &#123;
             String str = new String(&quot;Hello gc&quot; + i);
             strings.add(str);
             str = null;
-        }
-    }
-}
+        &#125;
+    &#125;
+&#125;
 </code></pre>
 <p>执行上面的代码之后，就会出现下来的日志：</p>
 <pre><code class="language-bash">[Full GC (Allocation Failure) 
@@ -262,7 +262,7 @@ Desired survivor size 524288 bytes, new threshold 7 (max 15)
 	at java.util.Vector.add(Vector.java:782)
 	at cn.rayjun.java.java8.gc.Leak2GC.main(Leak2GC.java:12)
 </code></pre>
-<h2>GC 信息统计分析</h2>
+<h2 id="GC-信息统计分析">GC 信息统计分析</h2>
 <p>通过上面的内容，应该就可以看懂 GC 的日志信息了，在很多情况下，我们通过部分的日志无法判断问题。</p>
 <p>所以就有必要对整体的 GC 情况进行统计，一般会借助其他的统计工具来进行。</p>
 <p>最直接的方式就是使用 JDK 的内置工具，jstat ，具体使用如下，参数为 pid。</p>
@@ -290,8 +290,8 @@ S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU  
 <li>FGCT：老年代垃圾回收消耗时间</li>
 <li>GCT：垃圾回收的总时间</li>
 </ul>
-<p>也可以使用可视化的分析工具来对 CG 日志进行分析，比如 <a href="https://gceasy.io/" target="_blank" rel="noopener">https://gceasy.io/</a>。</p>
-<h2>如果使用其他的收集器</h2>
+<p>也可以使用可视化的分析工具来对 CG 日志进行分析，比如 <a href="https://gceasy.io/">https://gceasy.io/</a>。</p>
+<h2 id="如果使用其他的收集器">如果使用其他的收集器</h2>
 <p>在上面的日志中，GC 使用的是默认收集器组合，我们也可以使用其他的收集器来，比如使用 <code>UseConcMarkSweepGC</code> 参数来启用 CMS收集器。</p>
 <p>使用了这个收集器之后，日志如下：</p>
 <pre><code class="language-bash">[GC (Allocation Failure) [ParNew: 1384K-&gt;256K(2432K), 0.0022504 secs] 1384K-&gt;491K(7936K), 0.0022693 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
@@ -320,7 +320,7 @@ S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU  
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

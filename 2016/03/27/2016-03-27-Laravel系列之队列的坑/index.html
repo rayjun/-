@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,20 +57,20 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Laravel系列之队列的坑</h1>
-    <h3>Laravel 队列</h3>
-<p>Laravel 队列使用起来很方便，任何的 Event 和 Job 只要实现了 ShouldQueue 这个接口就代表着这些 Event 或者 Job 在
-触发的时候会被加入到队列中。本文中的队列是基于 redis 实现的，其他的配置方法可以查看<a href="https://laravel.com/docs/5.2/queues" target="_blank" rel="noopener">官网</a>。</p>
-<h3>队列监听</h3>
-<p>在测试的时候，队列的监听可以在命令行启动，但是在正式上线的时候，就需要将监听设置成后台的 deamon，让监听在后台持续的运行，确保队列正常的
-运作。linux 的 nohup 命令基本可以完成这一个需求，但是这个命令有个问题，在队列监听因为异常挂掉了之后，没有办法重启监听。这个对于实际的
-上线来说是有问题的。那么这个时候，使用 <a href="http://supervisord.org/" target="_blank" rel="noopener">supervisord</a> 就很有用。利用这个工具可以完成队列监听的开机启动
+    <h3 id="Laravel-队列">Laravel 队列</h3>
+<p>Laravel 队列使用起来很方便，任何的 Event 和 Job 只要实现了 ShouldQueue 这个接口就代表着这些 Event 或者 Job 在<br>
+触发的时候会被加入到队列中。本文中的队列是基于 redis 实现的，其他的配置方法可以查看<a href="https://laravel.com/docs/5.2/queues">官网</a>。</p>
+<h3 id="队列监听">队列监听</h3>
+<p>在测试的时候，队列的监听可以在命令行启动，但是在正式上线的时候，就需要将监听设置成后台的 deamon，让监听在后台持续的运行，确保队列正常的<br>
+运作。linux 的 nohup 命令基本可以完成这一个需求，但是这个命令有个问题，在队列监听因为异常挂掉了之后，没有办法重启监听。这个对于实际的<br>
+上线来说是有问题的。那么这个时候，使用 <a href="http://supervisord.org/">supervisord</a> 就很有用。利用这个工具可以完成队列监听的开机启动<br>
 以及自动重启。</p>
-<h3>队列中的坑</h3>
+<h3 id="队列中的坑">队列中的坑</h3>
 <p>通过以下的命令可以完成队列监听：</p>
 <pre><code>    php artisan queue:listen
 </code></pre>
-<p>将这个命令写入到 supervosird 的配置文件中基本就算完成配置了，但是这里有一个坑，这个命令有一个 --tries 的参数，这个参数的意思是在队列
-任务执行失败之后，需要重新执行多少次，它的默认值特别具有迷惑性，它的默认值是 0，这个0不是尝试0次，而是不断的尝试，之前就是因为没有配置这个
+<p>将这个命令写入到 supervosird 的配置文件中基本就算完成配置了，但是这里有一个坑，这个命令有一个 --tries 的参数，这个参数的意思是在队列<br>
+任务执行失败之后，需要重新执行多少次，它的默认值特别具有迷惑性，它的默认值是 0，这个0不是尝试0次，而是不断的尝试，之前就是因为没有配置这个<br>
 参数才导致微信的模板消息被消耗光。在不断尝试的时候，也不会发送队列执行失败的邮件。找了半天才发现这个bug。</p>
 
 </div>
@@ -92,7 +92,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

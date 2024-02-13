@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -63,8 +63,8 @@
 </blockquote>
 <p>我们经常会把关系型数据库（RDBMS，比如 MySQL）和 HBase 搞混，因为在这两个系统中都包含 table 和 base（HBase，Database）。</p>
 <p>这篇文章的目标是从概念上来说清楚 HBase 这个分布式的数据存储系统。读完后，你应该可以很清楚的知道什么情况下 HBase 更好，什么情况下传统的关系型数据库更好。</p>
-<h2>关于一些术语</h2>
-<p>幸运的是，<a href="https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/bigtable-osdi06.pdf" target="_blank" rel="noopener">Google 的 BigTable论文</a>清楚的解释了 BigTable 到底是什么。下面是论文中数据模型章节的第一句话：</p>
+<h2 id="关于一些术语">关于一些术语</h2>
+<p>幸运的是，<a href="https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/bigtable-osdi06.pdf">Google 的 BigTable论文</a>清楚的解释了 BigTable 到底是什么。下面是论文中数据模型章节的第一句话：</p>
 <p><strong>BigTable 是一个稀疏的、分布式的、可持久化的多维有序 map。</strong></p>
 <blockquote>
 <p>在这个节骨眼上，我想给读者一个机会，让他们在读到最后一行字时，能够收集到他们脑壳里的活动信息（这可能是个笑话，但我没懂^v^）。</p>
@@ -74,146 +74,146 @@
 <blockquote>
 <p>注：rowKey 是记录的主键，唯一标识一行记录</p>
 </blockquote>
-<p>在 <a href="https://hadoop.apache.org/" target="_blank" rel="noopener">Hadoop</a> 的官方文档中，也对 HBase 的架构做了说明：</p>
+<p>在 <a href="https://hadoop.apache.org/">Hadoop</a> 的官方文档中，也对 HBase 的架构做了说明：</p>
 <p><strong>HBase 使用了与 BigTable 非常类似的数据模型。用户存储数据行到特定的表中。一个数据行有一个可排序的 rowKey 和数量不定的列。这个表是稀疏的，只要用户愿意，这个表不同行可以有完全不同的列。</strong></p>
 <p>这些话看起来相当费解，让人摸不着头脑，但如果你把这些话拆成一个个词，意思就慢慢变的清晰了。我将按照以下的顺序来讨论这些词：map，持久化，分布式，有序的，多维的，稀疏。</p>
 <p>我发现循序渐进地建立一个思维框架要比一次性勾画一个完整的系统更加容易。</p>
-<h2>map</h2>
+<h2 id="map">map</h2>
 <p>从根本来上来，HBase/BigTable 是一个 map。map 在不同的编程语言中有不同的叫法，比如 PHP 中的 array，Python 的 dictionary，Ruby 中的 Hash，或者 JavaScript 中的 Object。</p>
 <p>维基百科上对于 map 的定义是：map 是一个抽象的数据类型，包含了一组 key 和一组 value，每个 key 关联一个 value。</p>
 <p>如果用 JavaScript 的对象来表示 map，这里有一个简单的例子，其中所有的 value 都是字符串：</p>
-<pre><code class="language-json">{
+<pre><code class="language-json">&#123;
   &quot;zzzzz&quot; : &quot;woot&quot;,
   &quot;xyz&quot; : &quot;hello&quot;,
   &quot;aaaab&quot; : &quot;world&quot;,
   &quot;1&quot; : &quot;x&quot;,
   &quot;aaaaa&quot; : &quot;y&quot;
-}
+&#125;
 </code></pre>
-<h2>持久化的</h2>
-<p>持久化的意思仅仅是指你放进这个特殊 map 的数据会在你的程序执行完成之后被保存下来。它和其他的持久化存储系统中持久化的概念没有任何区别，比如存一个文件到一个文件系统。我们继续...</p>
-<h2>分布式的</h2>
+<h2 id="持久化的">持久化的</h2>
+<p>持久化的意思仅仅是指你放进这个特殊 map 的数据会在你的程序执行完成之后被保存下来。它和其他的持久化存储系统中持久化的概念没有任何区别，比如存一个文件到一个文件系统。我们继续…</p>
+<h2 id="分布式的">分布式的</h2>
 <p>HBase 和 BigTable 都建立在分布式文件系统上，所以底层文件可以被分散存储到不同的机器上。</p>
-<p>HBase 可以存储到 HDFS（Hadoop's Distributed File System）上，也可以存储到 亚马逊的 S3（Simple Storage Service）上，而 BigTable 使用的是 GFS（Google File System）。</p>
+<p>HBase 可以存储到 HDFS（Hadoop’s Distributed File System）上，也可以存储到 亚马逊的 S3（Simple Storage Service）上，而 BigTable 使用的是 GFS（Google File System）。</p>
 <p>同一份数据会被复制存储到多个节点上，类似于 RAID（独立冗余磁盘阵列，利用冗余存储的数据使损坏数据得以恢复，从而保护数据不丢失）系统中数据在磁盘上的复制存储到多块磁盘的方式。</p>
 <p>在这篇文章中，我们不关心具体使用哪种分布式文件系统。重要的是，要理解这个文件系统是分布式的，即使集群中某个节点出现故障，也可以保证数据的完整性和安全性。</p>
-<h2>有序的</h2>
-<p>和其他大多数 map 的实现不同，HBase 和 BigTable 的键值对的顺序严格按照字母顺序来排列。所以 rowKey 为 &quot;aaaaa&quot; 的下一条记录的 rowKey 就是 &quot;aaaab&quot;，并且会离 “zzzz” 非常远。</p>
+<h2 id="有序的">有序的</h2>
+<p>和其他大多数 map 的实现不同，HBase 和 BigTable 的键值对的顺序严格按照字母顺序来排列。所以 rowKey 为 “aaaaa” 的下一条记录的 rowKey 就是 “aaaab”，并且会离 “zzzz” 非常远。</p>
 <p>继续看上面的那个 JSON 例子，排行序之后是下面这样的：</p>
-<pre><code class="language-json">{
+<pre><code class="language-json">&#123;
   &quot;1&quot; : &quot;x&quot;,
   &quot;aaaaa&quot; : &quot;y&quot;,
   &quot;aaaab&quot; : &quot;world&quot;,
   &quot;xyz&quot; : &quot;hello&quot;,
   &quot;zzzzz&quot; : &quot;woot&quot;
-}
+&#125;
 </code></pre>
 <p>因为这个系统是分布式的，而且会越来越大，因此排序这个特性非常重要。这样就会把 rowKey 相近的记录放在一起，在某些情况下，如果你必须要扫描表（通常不推荐），那就能保证你需要获取的记录都在一块。</p>
-<p>那么如何选择 rowKey 就非常重要。比如说，一个表的 rowKey 就是域名。一个比较好的方式就是将域名进行反转来作为 rowKey（使用 “com.jimbojw.www”，而不要使用 “www.jimbojw.com”），这样，同一个域名下的记录就可以存储在相邻的位置。</p>
-<p>继续上面的域名例子，rowKey 为 “mail.jimbojw.com” 行应该与 “www.jimbojw.com” 行更近，而不是 “mail.xyz.com”，如果不把域名反转存储，就会发生这种情况。</p>
+<p>那么如何选择 rowKey 就非常重要。比如说，一个表的 rowKey 就是域名。一个比较好的方式就是将域名进行反转来作为 rowKey（使用 “com.jimbojw.www”，而不要使用 “<a href="http://www.jimbojw.com">www.jimbojw.com</a>”），这样，同一个域名下的记录就可以存储在相邻的位置。</p>
+<p>继续上面的域名例子，rowKey 为 “<a href="http://mail.jimbojw.com">mail.jimbojw.com</a>” 行应该与 “<a href="http://www.jimbojw.com">www.jimbojw.com</a>” 行更近，而不是 “<a href="http://mail.xyz.com">mail.xyz.com</a>”，如果不把域名反转存储，就会发生这种情况。</p>
 <p>需要注意的是，在 HBase / BigTable 中，有序并不意味着值是有序的。除了 rowKey 以外，没有任内容会被排序，在这点上和普通 map 的实现一致。</p>
-<h2>多维的</h2>
+<h2 id="多维的">多维的</h2>
 <p>到目前为止，我们还没有提过任何关于<strong>列</strong>的概念，而是将<strong>表</strong>在概念上当做常规的 map。我是故意这么做的。列和表、base 等词一样，都带有传统关系型数据库多年的情感包袱。</p>
 <p>然而，我发现把 HBase 理解为一个多维的 map 会容易很多，map 的 map。给上面的 JSON 再加上一列：</p>
-<pre><code class="language-json">{
-  &quot;1&quot; : {
+<pre><code class="language-json">&#123;
+  &quot;1&quot; : &#123;
     &quot;A&quot; : &quot;x&quot;,
     &quot;B&quot; : &quot;z&quot;
-  },
-  &quot;aaaaa&quot; : {
+  &#125;,
+  &quot;aaaaa&quot; : &#123;
     &quot;A&quot; : &quot;y&quot;,
     &quot;B&quot; : &quot;w&quot;
-  },
-  &quot;aaaab&quot; : {
+  &#125;,
+  &quot;aaaab&quot; : &#123;
     &quot;A&quot; : &quot;world&quot;,
     &quot;B&quot; : &quot;ocean&quot;
-  },
-  &quot;xyz&quot; : {
+  &#125;,
+  &quot;xyz&quot; : &#123;
     &quot;A&quot; : &quot;hello&quot;,
     &quot;B&quot; : &quot;there&quot;
-  },
-  &quot;zzzzz&quot; : {
+  &#125;,
+  &quot;zzzzz&quot; : &#123;
     &quot;A&quot; : &quot;woot&quot;,
     &quot;B&quot; : &quot;1337&quot;
-  }
-}
+  &#125;
+&#125;
 </code></pre>
 <p>在上面的例子中你可以看到每个 key 都指向了另一个 map，其中包含着 A 和 B 两个 key。在这里，我们将最上面那层键值对称为<strong>行</strong>。并且在 HBase / BigTable 的术语表中，A 和 B 的映射称之为<strong>列族</strong>。</p>
 <p>一个表的列族在表创建的时候就会被创建好，而且后续修改很困难，添加一个新列族的开销同样也很大，所以在创建表的时候应当将后续会用到的所有列族创建好。</p>
 <p>好在一个列族可以有任意数量的列。称之为为列限定符（qualifier）或者标签（label）。</p>
 <p>下面是我们上面 JSON 例子的子集，这次加入了 qualifier 的维度：</p>
-<pre><code class="language-json">{
+<pre><code class="language-json">&#123;
   // ...
-  &quot;aaaaa&quot; : {
-    &quot;A&quot; : {
+  &quot;aaaaa&quot; : &#123;
+    &quot;A&quot; : &#123;
       &quot;foo&quot; : &quot;y&quot;,
       &quot;bar&quot; : &quot;d&quot;
-    },
-    &quot;B&quot; : {
+    &#125;,
+    &quot;B&quot; : &#123;
       &quot;&quot; : &quot;w&quot;
-    }
-  },
-  &quot;aaaab&quot; : {
-    &quot;A&quot; : {
+    &#125;
+  &#125;,
+  &quot;aaaab&quot; : &#123;
+    &quot;A&quot; : &#123;
       &quot;foo&quot; : &quot;world&quot;,
       &quot;bar&quot; : &quot;domination&quot;
-    },
-    &quot;B&quot; : {
+    &#125;,
+    &quot;B&quot; : &#123;
       &quot;&quot; : &quot;ocean&quot;
-    }
-  },
+    &#125;
+  &#125;,
   // ...
-}
+&#125;
 </code></pre>
 <p>注意在上面的两行数据中，A 列族有两列：foo 和 bar，B 列族只有一列，而且 qualifier 是一个空字符串。</p>
 <p>当访问 HBase / BigTable 中的数据时，你需要提供完整的列名：<code>&lt;family&gt;:&lt;qualifier&gt;</code>。举个例子，上面总共有三列，分别是：<code>A:foo</code>，<code>A:bar</code> 和 <code>B:</code>。</p>
 <p>列族虽然基本固定不变，但是列不是，来看下面的例子：</p>
-<pre><code class="language-json">{
+<pre><code class="language-json">&#123;
   // ...
-  &quot;zzzzz&quot; : {
-    &quot;A&quot; : {
+  &quot;zzzzz&quot; : &#123;
+    &quot;A&quot; : &#123;
       &quot;catch_phrase&quot; : &quot;woot&quot;,
-    }
-  }
-}
+    &#125;
+  &#125;
+&#125;
 </code></pre>
 <p>在这个例子中，<code>zzzzz</code> 行有一个列 A:catch_phrase。因为每一行可以有任意数量的列，所以没有内置方法可以从所有行中的所有列中查询出一个列表。为了获取到那些信息，你需要做全表扫描。但是你可以查询所有的列族，因为它们是不变的（基本不变）。</p>
 <p>HBase / BigTable 中最后的一个维度是时间。所有数据默认通过时间戳（1970年以来的秒数）来表示版本，或者你也可以指定一个其他的整数。客户端在插入数据的时候可以指定这个时间戳。</p>
 <p>在最新的例子中，我们使用任意的整数来作为版本标识：</p>
-<pre><code class="language-json">{
+<pre><code class="language-json">&#123;
   // ...
-  &quot;aaaaa&quot; : {
-    &quot;A&quot; : {
-      &quot;foo&quot; : {
+  &quot;aaaaa&quot; : &#123;
+    &quot;A&quot; : &#123;
+      &quot;foo&quot; : &#123;
         15 : &quot;y&quot;,
         4 : &quot;m&quot;
-      },
-      &quot;bar&quot; : {
+      &#125;,
+      &quot;bar&quot; : &#123;
         15 : &quot;d&quot;,
-      }
-    },
-    &quot;B&quot; : {
-      &quot;&quot; : {
+      &#125;
+    &#125;,
+    &quot;B&quot; : &#123;
+      &quot;&quot; : &#123;
         6 : &quot;w&quot;
         3 : &quot;o&quot;
         1 : &quot;w&quot;
-      }
-    }
-  },
+      &#125;
+    &#125;
+  &#125;,
   // ...
-}
+&#125;
 </code></pre>
 <p>每个列族可以自己指定一个 cell 中的数据可以保留多少个版本（cell 由 rowKey 和列进行标识）。在大多数情况下，应用会直接访问一个 cell 中的数据，而不会指定一个时间戳（版本），HBase / BigTable 会直接返回最近版本（时间戳最大的那个）的数据，因为它是按照时间倒序来存储数据的。</p>
 <p>如果应用在请求数据的时候指定了一个时间戳，那么 HBase 就会返回时间戳小于或者等于指定时间戳的一个 cell 中的数据。</p>
 <p>如果查询上面例子中的 HBase 表，查询 <code>aaaaa A:foo</code>，就会返回 y，如果带时间戳查询 <code>aaaaa A:foo 10</code>，就会返回 m，如果查询 <code>aaaaa A:foo 2</code>，就会返回 null。</p>
-<h2>稀疏的</h2>
+<h2 id="稀疏的">稀疏的</h2>
 <p>最后的一个关键词是<strong>稀疏的</strong>。就如上面所说的，一个给定的行在每个列族中可以有任意数量的列，0 或者任意大。行之间可以存在间隙，这也是另一种稀疏。</p>
 <p>如果你一直跟着本文在 map 的基础上来理解 HBase / BigTable，而没有与关系型数据库（RDBMS）的概念混淆，这样就很好了。</p>
-<h2>就这些了</h2>
+<h2 id="就这些了">就这些了</h2>
 <p>我希望上面说的那些可以帮助你在概念上理解 HBase 的数据模型是什么样的。</p>
 <p>像往常一样，我期待你们的想法、评论和建议。</p>
 <p>译 / Rayjun</p>
-<p>原文地址：https://dzone.com/articles/understanding-HBase-and-bigtab</p>
+<p>原文地址：<a href="https://dzone.com/articles/understanding-HBase-and-bigtab">https://dzone.com/articles/understanding-HBase-and-bigtab</a></p>
 
 </div>
 
@@ -234,7 +234,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

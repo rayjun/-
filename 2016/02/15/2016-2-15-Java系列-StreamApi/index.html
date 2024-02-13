@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,17 +57,17 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Java系列-StreamApi</h1>
-    <h4>Java Stream 简介</h4>
-<p>Java8 中的 <code>Stream</code> 是对集合(Collection) 对象功能的增强，它专注于对集合对象进行各种便利、高效的聚合操作，
-或者是大批量的数据操作。Stream Api 的引入是为了弥补 Java 函数式编程的不足。但是这些 Api 并没有在集合类实现，
+    <h4 id="Java-Stream-简介">Java Stream 简介</h4>
+<p>Java8 中的 <code>Stream</code> 是对集合(Collection) 对象功能的增强，它专注于对集合对象进行各种便利、高效的聚合操作，<br>
+或者是大批量的数据操作。Stream Api 的引入是为了弥补 Java 函数式编程的不足。但是这些 Api 并没有在集合类实现，<br>
 而是定义了全新的Stream APi。有几个重要的原因：</p>
 <ul>
 <li>
-<p>集合类的所有元素都存储在内存中，非常大的集合类将占据大量的内存，但是 Stream 只有在执行结束操作(terminal)的
+<p>集合类的所有元素都存储在内存中，非常大的集合类将占据大量的内存，但是 Stream 只有在执行结束操作(terminal)的<br>
 时候才会真正的进行计算(稍后会提到)。</p>
 </li>
 <li>
-<p>另外还有集合类的迭代逻辑通常是通过 <code>for</code> 来负责的，但是 Stream 的迭代是隐含在对 Stream 的各种操作中，例如
+<p>另外还有集合类的迭代逻辑通常是通过 <code>for</code> 来负责的，但是 Stream 的迭代是隐含在对 Stream 的各种操作中，例如<br>
 map(), reduce()。</p>
 </li>
 </ul>
@@ -81,26 +81,26 @@ map(), reduce()。</p>
 <p>一个流可以进行多种操作，总的来说，流的操作分为三类：</p>
 <ul>
 <li>
-<p>中间操作： 一个流可以有零个或者多个中间操作，是为了打开流，作出某种程度的数据映射和过滤，然后返回一个新的流(每次转
-换原有的 Stream 对象不变，会返回转变后的一个新的对象)，也就是说，进行这类操作并没有真正开始流的遍历，典型的中间操作
-有：map (mapToInt, flatMap 等)、 filter、 distinct、 sorted、 peek、 limit、 skip、 parallel、
+<p>中间操作： 一个流可以有零个或者多个中间操作，是为了打开流，作出某种程度的数据映射和过滤，然后返回一个新的流(每次转<br>
+换原有的 Stream 对象不变，会返回转变后的一个新的对象)，也就是说，进行这类操作并没有真正开始流的遍历，典型的中间操作<br>
+有：map (mapToInt, flatMap 等)、 filter、 distinct、 sorted、 peek、 limit、 skip、 parallel、<br>
 sequential、 unordered。</p>
 </li>
 <li>
-<p>结束操作: 一个流只能有一个结束操作，进行这个操作之后，这个流也就结束了，无法进行其他的中间操作或者结束操作，也就是
-说结束操作使得流进行了真正的遍历，典型的结束操作有：forEach、 forEachOrdered、 toArray、 reduce、 collect、
+<p>结束操作: 一个流只能有一个结束操作，进行这个操作之后，这个流也就结束了，无法进行其他的中间操作或者结束操作，也就是<br>
+说结束操作使得流进行了真正的遍历，典型的结束操作有：forEach、 forEachOrdered、 toArray、 reduce、 collect、<br>
 min、 max、 count、 anyMatch、 allMatch、 noneMatch、 findFirst、 findAny、 iterator。</p>
 </li>
 <li>
-<p>短路操作：因为 Stream 有另外的一个特性，就是 可以存在无限的流。而短路操作正是用来处理这些情况。对于中间操作，如果
-接受的是一个无限大的 Stream, 短路操作可以帮助返回一个有限的新的 Stream。对于结束操作，如果接受的十一个无限大的
-Stream，短路操作可以帮助在有限的时间内计算出结果，典型的短路操作有：anyMatch、 allMatch、 noneMatch、
+<p>短路操作：因为 Stream 有另外的一个特性，就是 可以存在无限的流。而短路操作正是用来处理这些情况。对于中间操作，如果<br>
+接受的是一个无限大的 Stream, 短路操作可以帮助返回一个有限的新的 Stream。对于结束操作，如果接受的十一个无限大的<br>
+Stream，短路操作可以帮助在有限的时间内计算出结果，典型的短路操作有：anyMatch、 allMatch、 noneMatch、<br>
 findFirst、 findAny、 limit。</p>
 </li>
 </ul>
-<h4>Java Stream 应用</h4>
+<h4 id="Java-Stream-应用">Java Stream 应用</h4>
 <p>一个简单的 Stream 例子：</p>
-<pre><code>    public static void main(String[] args) {
+<pre><code>    public static void main(String[] args) &#123;
 
         List&lt;Integer&gt; numbers = Arrays.asList(1,45,9,34,78,19,65,76);
 
@@ -108,29 +108,29 @@ findFirst、 findAny、 limit。</p>
                 .filter((i) -&gt; i%2 ==0)
                 .map((i) -&gt; i * i)
                 .forEach(System.out::println);
-    }
+    &#125;
 
 </code></pre>
 <p>生成一个无限流，并且取出有限的个数：</p>
-<pre><code>    public class NumberStream implements Supplier&lt;Long&gt; {
+<pre><code>    public class NumberStream implements Supplier&lt;Long&gt; &#123;
 
       long value = 0;
 
       @Override
-      public Long get() {
+      public Long get() &#123;
           this.value = this.value + 1;
 
           return this.value;
-      }
+      &#125;
 
 
-      public static void main(String[] args) {
+      public static void main(String[] args) &#123;
 
           Stream&lt;Long&gt; numbers = Stream.generate(new NumberStream());
 
           numbers.map((x) -&gt; x * x ).skip(100).limit(10).forEach(System.out::println);
-      }
-    }
+      &#125;
+    &#125;
 
 
 </code></pre>
@@ -154,7 +154,7 @@ findFirst、 findAny、 limit。</p>
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

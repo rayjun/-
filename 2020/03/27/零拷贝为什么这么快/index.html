@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,74 +58,74 @@
                     <div class="post">
     <h1>零拷贝为什么这么快</h1>
     <p>文件拷贝是一个很常见的需求，无论是在程序中，还是日常使用计算机。在 Java 中，经常需要实现文件拷贝，而且有一种叫做零拷贝的技术，拷贝文件的效率非常高，在这篇文章中，我来来看一下零拷贝技术是怎么实现的。</p>
-<h2>文件拷贝</h2>
+<h2 id="文件拷贝">文件拷贝</h2>
 <p>Java 中文件拷贝的方式有很多种：</p>
 <ul>
-<li>使用 java.io 中的 FileInputStream 和 FileOutputStream</li>
+<li>使用 <a href="http://java.io">java.io</a> 中的 FileInputStream 和 FileOutputStream</li>
 <li>使用 java.nio 中的 transferTo 或者 transferFrom</li>
 <li>Files.copy() 方法</li>
 <li>apache.common 中的 FileUtils.copyFile() 方法</li>
 </ul>
-<p><strong>使用 java.io</strong></p>
+<p><strong>使用 <a href="http://java.io">java.io</a></strong></p>
 <pre><code class="language-java">File originFile = new File(&quot;originFile.txt&quot;);
 File copyFile = new File(&quot;copyFile.txt&quot;);
 try (
     FileInputStream fis = new FileInputStream(originFile);
-    FileOutputStream fos = new FileOutputStream(copyFile);){
+    FileOutputStream fos = new FileOutputStream(copyFile);)&#123;
     
     byte[] data = new byte[1024];
     int len = 0;
-    while ((len = fis.read(data)) != -1) {
+    while ((len = fis.read(data)) != -1) &#123;
         fos.write(data, 0, len);
-    }
-} catch (IOException e) {
+    &#125;
+&#125; catch (IOException e) &#123;
     e.printStackTrace();
-}
+&#125;
 </code></pre>
 <p><strong>使用 java.nio</strong></p>
 <pre><code class="language-java">File originFile = new File(&quot;originFile.txt&quot;);
 File copyFile = new File(&quot;copyFile.txt&quot;);
 
 try (FileInputStream fis = new FileInputStream(originFile);
-     FileOutputStream  fos = new FileOutputStream(copyFile);) {
+     FileOutputStream  fos = new FileOutputStream(copyFile);) &#123;
 
     FileChannel inChannel = fis.getChannel();
     FileChannel outChannel = fos.getChannel();
     inChannel.transferTo(0, inChannel.size(), outChannel);
 
-} catch (IOException e) {
+&#125; catch (IOException e) &#123;
     System.out.println(e);
-}
+&#125;
 </code></pre>
 <p>而 Files.copy() 和 apache.common.FileUtils.copyFile() 则就是在这两种方式的基础上实现的。</p>
 <p>Files.copy() 的实现要复杂一些，在不同的操作系统上有不同的实现，可以认为是<strong>本地实现</strong>的用户态空间拷贝，用户态空间的概念下面会说到。</p>
-<p>Files.copy() 的可以理解为 java.io 中的实现，没有太大的差别。</p>
+<p>Files.copy() 的可以理解为 <a href="http://java.io">java.io</a> 中的实现，没有太大的差别。</p>
 <p>apache.common 中的 FileUtils.copyFile() 就是使用 NIO 中 transferFrom 来实现:</p>
 <pre><code class="language-java">try (FileInputStream fis = new FileInputStream(srcFile);
     FileChannel input = fis.getChannel();
     FileOutputStream fos = new FileOutputStream(destFile);
-    FileChannel output = fos.getChannel()) {
+    FileChannel output = fos.getChannel()) &#123;
     final long size = input.size(); 
     long pos = 0;
     long count = 0;
-    while (pos &lt; size) {
+    while (pos &lt; size) &#123;
         final long remain = size - pos;
         count = remain &gt; FILE_COPY_BUFFER_SIZE ? FILE_COPY_BUFFER_SIZE : remain;
         final long bytesCopied = output.transferFrom(input, pos, count);
-        if (bytesCopied == 0) { 
+        if (bytesCopied == 0) &#123; 
             break; 
-        }
+        &#125;
         pos += bytesCopied;
-    }
-}
+    &#125;
+&#125;
 </code></pre>
-<p>所以在 Java 中，实现文件复制的方法本质上只有两种，java.io 和 java.nio，那么这两种方式有什么区别呢？</p>
+<p>所以在 Java 中，实现文件复制的方法本质上只有两种，<a href="http://java.io">java.io</a> 和 java.nio，那么这两种方式有什么区别呢？</p>
 <p>在我 2015 年的 i5 8G 内存的 MacBook pro 上，用两种方式分别拷贝一个 12M 的 txt 文件， 5 次耗时（ms）如下：</p>
 <table>
 <thead>
 <tr>
 <th></th>
-<th>java.io</th>
+<th><a href="http://java.io">java.io</a></th>
 <th>java.nio</th>
 </tr>
 </thead>
@@ -157,14 +157,14 @@ try (FileInputStream fis = new FileInputStream(originFile);
 </tr>
 </tbody>
 </table>
-<p>从上面的测试可以发现，使用 java.io 和 java.nio 来进行文件拷贝有着很大的性能差异，java.nio 占据绝对的优势。</p>
-<h2>零拷贝技术</h2>
+<p>从上面的测试可以发现，使用 <a href="http://java.io">java.io</a> 和 java.nio 来进行文件拷贝有着很大的性能差异，java.nio 占据绝对的优势。</p>
+<h2 id="零拷贝技术">零拷贝技术</h2>
 <p>如果要搞清楚这种差异，就需要了解操作系统中的<strong>用户态空间</strong>和<strong>内核态空间</strong>。</p>
-<p>现代的操作系统中会将<a href="https://en.wikipedia.org/wiki/Virtual_memory" target="_blank" rel="noopener">虚拟内存</a>分成内核态空间和用户态空间两个部分，这样的划分方式是为了保护计算机不被恶意软件软件破坏。内核态空间中主要运行系统优先级比较高的应用，比如系统内核，硬件驱动等，而用户态空间中则主要运行普通的应用软件。</p>
+<p>现代的操作系统中会将<a href="https://en.wikipedia.org/wiki/Virtual_memory">虚拟内存</a>分成内核态空间和用户态空间两个部分，这样的划分方式是为了保护计算机不被恶意软件软件破坏。内核态空间中主要运行系统优先级比较高的应用，比如系统内核，硬件驱动等，而用户态空间中则主要运行普通的应用软件。</p>
 <p>那么上面文件拷贝的例子和系统的用户态和内核态有什么关系？</p>
 <p>我们都知道文件是存储在磁盘上的，如果我们要把文件从磁盘的一个位置拷贝到磁盘的另一个位置，是先需要将文件读取到计算机的内存当中，然后再把内存中的文件写入到指定的磁盘位置，这样才能完成拷贝。</p>
-<p>而计算机的内存并不是一整块，而是分成了上面我们所说的用户态空间和内核态空间，java.io 和 java.nio 在文件拷贝过程中，对这些空间的使用方式不同，具体的区别如下。</p>
-<p>如果我们使用 java.io 中的输入流来读取文件，那么整个过程是下面这样的：</p>
+<p>而计算机的内存并不是一整块，而是分成了上面我们所说的用户态空间和内核态空间，<a href="http://java.io">java.io</a> 和 java.nio 在文件拷贝过程中，对这些空间的使用方式不同，具体的区别如下。</p>
+<p>如果我们使用 <a href="http://java.io">java.io</a> 中的输入流来读取文件，那么整个过程是下面这样的：</p>
 <p><img src="space1.png" alt=""></p>
 <p>文件从磁盘读到内核态空间再读到用户空间的每一次切换过程都叫<strong>上下文切换</strong>，所以整个过程就是涉及到 4 次上下文切换。</p>
 <p>而使用 java.nio 则是这样的：</p>
@@ -191,7 +191,7 @@ try (FileInputStream fis = new FileInputStream(originFile);
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

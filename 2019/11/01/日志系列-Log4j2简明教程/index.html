@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -63,9 +63,9 @@
 <li>对采集下来的日志信息进行格式化</li>
 <li>将格式化好的日志信息写入目的地</li>
 </ul>
-<p>Log4j2 的架构也自然是按照这个来的，Log4j2 中有三个重要的组件分别实现了这些功能，分别是 <code>Logger</code> 、<code>Layout</code> 和<code>Appender</code>，日志数据流向图如下:
+<p>Log4j2 的架构也自然是按照这个来的，Log4j2 中有三个重要的组件分别实现了这些功能，分别是 <code>Logger</code> 、<code>Layout</code> 和<code>Appender</code>，日志数据流向图如下:<br>
 <img src="https://rayjun.oss-cn-beijing.aliyuncs.com/Java/log4j2/log4j2.jpg" alt=""></p>
-<h3>Log4j2 使用</h3>
+<h3 id="Log4j2-使用">Log4j2 使用</h3>
 <p>Log4j2 使用很简单，以 Maven 为例，只需要在 <code>pom.xml</code> 中添加:</p>
 <pre><code class="language-xml">&lt;dependencies&gt;
   &lt;dependency&gt;
@@ -83,19 +83,19 @@
 <p>然后就可以在 Java 代码中直接使用:</p>
 <pre><code class="language-java">import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-public class Log4j2HelloWorld {
+public class Log4j2HelloWorld &#123;
 
     private static final Logger logger = LogManager.getLogger(Log4j2HelloWorld.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) &#123;
         logger.error(&quot;Hello world&quot;);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <blockquote>
 <p>如果不加配置文件，默认的输出级别是 <code>ERROR</code></p>
 </blockquote>
-<h3>配置详解</h3>
+<h3 id="配置详解">配置详解</h3>
 <p>Log4j2 有两种配置方式:</p>
 <ul>
 <li>通过 <code>ConfigurationFactory</code> 使用编程的方式进行配置</li>
@@ -103,16 +103,16 @@ public class Log4j2HelloWorld {
 </ul>
 <p>通过编程实现的方式如下：</p>
 <pre><code class="language-java">@Plugin(name = &quot;CustomerConfigurationFactory&quot;, category = ConfigurationFactory.CATEGORY)
-public class CustomerConfigurationFactory extends ConfigurationFactory {
-    protected String[] getSupportedTypes() {
+public class CustomerConfigurationFactory extends ConfigurationFactory &#123;
+    protected String[] getSupportedTypes() &#123;
         return new String[0];
-    }
-    public Configuration getConfiguration(LoggerContext loggerContext, ConfigurationSource configurationSource) {
+    &#125;
+    public Configuration getConfiguration(LoggerContext loggerContext, ConfigurationSource configurationSource) &#123;
         ConfigurationBuilder&lt;BuiltConfiguration&gt; builder = newConfigurationBuilder();
         builder.setStatusLevel(Level.INFO);
         return builder.build();
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p><code>Log4j2</code> 在找不到配置文件的情况下会使用一个默认的配置，默认的配置只会在控制台打印日志，并且默认级别是 <code>Level.ERROR</code>。</p>
 <p>在 <code>Log4j2</code> 中，默认实现了四种 <code>ConfigurationFactory</code>，分别用来加载 <code>JSON</code> <code>YAML</code> <code>properties</code> <code>XML</code> 格式的配置文件。</p>
@@ -124,13 +124,13 @@ public class CustomerConfigurationFactory extends ConfigurationFactory {
 <blockquote>
 <p>XML 有两种配置模式，<strong>简约模式</strong> 和 <strong>严格模式</strong></p>
 </blockquote>
-<h4>Configuration</h4>
+<h4 id="Configuration">Configuration</h4>
 <p>Confirguration 是配置文件根元素，每个配置文件有且仅有一个。如果不使用配置文件使用<strong>默认配置</strong>，以下配置与默认配置等价:</p>
 <pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;Configuration status=&quot;WARN&quot;&gt;
   &lt;Appenders&gt;
     &lt;Console name=&quot;Console&quot; target=&quot;SYSTEM_OUT&quot;&gt;
-      &lt;PatternLayout pattern=&quot;%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n&quot;/&gt;
+      &lt;PatternLayout pattern=&quot;%d&#123;HH:mm:ss.SSS&#125; [%t] %-5level %logger&#123;36&#125; - %msg%n&quot;/&gt;
     &lt;/Console&gt;
   &lt;/Appenders&gt;
   &lt;Loggers&gt;
@@ -147,7 +147,7 @@ public class CustomerConfigurationFactory extends ConfigurationFactory {
 ....
 &lt;/Configuration&gt;
 </code></pre>
-<h4>Logger</h4>
+<h4 id="Logger">Logger</h4>
 <p>Logger 元素用于配置日志记录器。Logger 有两种形式，<code>Logger</code> 和 <code>Root</code>，两个区别在于 Root 没有 <code>name</code> 属性并且不支持 <code>additivity</code> 属性。</p>
 <p>假如我们要获取一个特定类的的某个级别的日志。调高日志的级别无法完成这样的需求。一种可行的方式是在 Loggers 中添加一个 Logger，配置方式如下:</p>
 <pre><code class="language-xml">&lt;Loggers&gt;
@@ -175,7 +175,7 @@ public class CustomerConfigurationFactory extends ConfigurationFactory {
     &lt;/Root&gt;
 &lt;/Loggers&gt;
 </code></pre>
-<p>默认情况下 Logger 都是同步的，但是也有异步的实现，Root 的异步版本是 <code>AsyncRoot</code>，Logger 的异步版本是 <code>AsyncLogger</code>，异步 Logger 依赖外部队列 <a href="http://lmax-exchange.github.io/disruptor/" target="_blank" rel="noopener">LMAX Disruptor</a>。</p>
+<p>默认情况下 Logger 都是同步的，但是也有异步的实现，Root 的异步版本是 <code>AsyncRoot</code>，Logger 的异步版本是 <code>AsyncLogger</code>，异步 Logger 依赖外部队列 <a href="http://lmax-exchange.github.io/disruptor/">LMAX Disruptor</a>。</p>
 <p>使用异步 Logger 需要加上外部依赖:</p>
 <pre><code class="language-xml">&lt;dependency&gt;
     &lt;groupId&gt;com.lmax&lt;/groupId&gt;
@@ -191,12 +191,12 @@ public class CustomerConfigurationFactory extends ConfigurationFactory {
 <p>Logger 在具体使用中需要声明一个 Logger 对象，官方推荐将 Logger 声明为一个静态变量，可以提高日志记录的性能:</p>
 <pre><code class="language-java"> private static final Logger logger = LogManager.getLogger(Log4j2HelloWorld.class);
 </code></pre>
-<h4>Appender 配置</h4>
+<h4 id="Appender-配置">Appender 配置</h4>
 <p><code>Appender</code> 负责将日志分发到相应的目的地。也就是说 <code>Appender</code> 决定日志以何种方式展示，上面使用到的就是 <code>ConsoleAppender</code>，这个 Appender 会将日志直接打印到控制台。同时还支持将日志输出到<code>文件</code>、<code>数据库</code>、<code>消息队列</code> 。</p>
 <p><code>FileAppender</code> 基本配置如下：</p>
 <pre><code class="language-xml">&lt;File name=&quot;MyFile&quot; fileName=&quot;logs/app.log&quot;&gt;
    &lt;PatternLayout&gt;
-     &lt;Pattern&gt;%d %p %c{1.} [%t] %m%n&lt;/Pattern&gt;
+     &lt;Pattern&gt;%d %p %c&#123;1.&#125; [%t] %m%n&lt;/Pattern&gt;
    &lt;/PatternLayout&gt;
 &lt;/File&gt;
 </code></pre>
@@ -207,14 +207,14 @@ public class CustomerConfigurationFactory extends ConfigurationFactory {
    &lt;Column name=&quot;level&quot; pattern=&quot;%level&quot; /&gt;
    &lt;Column name=&quot;logger&quot; pattern=&quot;%logger&quot; /&gt;
    &lt;Column name=&quot;message&quot; pattern=&quot;%message&quot; /&gt;
-   &lt;Column name=&quot;exception&quot; pattern=&quot;%ex{full}&quot; /&gt;
+   &lt;Column name=&quot;exception&quot; pattern=&quot;%ex&#123;full&#125;&quot; /&gt;
 &lt;/JDBC&gt;
 </code></pre>
 <p>默认情况下 Appender 都是同步的，就是说日志产生的时候就会进行处理。但是有时候会从程序性能的角度进行考虑，生成的日志不会立即进行刷盘或者进行传输，而是在一个合适的时间集中进行处理，配置方式如下，异步 Appender 使用 <code>ArrayBlockingQueue</code> 作为队列，与异步 Logger 不同，异步 Appender 不需要外部依赖，但是官方推荐使用异步 Logger 而不是异步 Appender：</p>
 <pre><code class="language-xml">&lt;Appenders&gt;
     &lt;File name=&quot;MyFile&quot; fileName=&quot;logs/app.log&quot;&gt;
        &lt;PatternLayout&gt;
-         &lt;Pattern&gt;%d %p %c{1.} [%t] %m%n&lt;/Pattern&gt;
+         &lt;Pattern&gt;%d %p %c&#123;1.&#125; [%t] %m%n&lt;/Pattern&gt;
        &lt;/PatternLayout&gt;
     &lt;/File&gt;
     &lt;Async name=&quot;Async&quot;&gt;
@@ -224,9 +224,9 @@ public class CustomerConfigurationFactory extends ConfigurationFactory {
 </code></pre>
 <p>把日志保存为文件是一个常用的操作，保存在文件中的日志以追加方式写入，但是单个文件不可能无限增大，也不可能手工来分割日志文件，所以需要通过自动的方式来分割日志。这就需要使用 <code>RollingFileAppender</code>，通过设定日志分割的条件。分割的条件可以从两个方面进行设定，以时间频率或者日志文件的大小来触发日志的分割。</p>
 <pre><code class="language-xml">&lt;RollingFile name=&quot;RollingFile&quot; fileName=&quot;logs/app.log&quot;
-                 filePattern=&quot;logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz&quot;&gt;
+                 filePattern=&quot;logs/$$&#123;date:yyyy-MM&#125;/app-%d&#123;MM-dd-yyyy&#125;-%i.log.gz&quot;&gt;
     &lt;PatternLayout&gt;
-        &lt;Pattern&gt;%d %p %c{1.} [%t] %m%n&lt;/Pattern&gt;
+        &lt;Pattern&gt;%d %p %c&#123;1.&#125; [%t] %m%n&lt;/Pattern&gt;
     &lt;/PatternLayout&gt;
     &lt;Policies&gt;
         &lt;TimeBasedTriggeringPolicy /&gt;
@@ -234,13 +234,13 @@ public class CustomerConfigurationFactory extends ConfigurationFactory {
     &lt;/Policies&gt;
 &lt;/RollingFile&gt;
 </code></pre>
-<p><code>TimeBasedTriggeringPolicy</code> 会与 filePattern 的配置相匹配，如果 filePattern 是 <code>{yyyy-MM-dd HH-mm}</code> ，最小的时间粒度是分钟，那么就会每隔一分钟生成一个文件，如果改成 <code>{yy-MM-dd HH}</code>，最小时间粒度是小时，那么就会每隔一个小时生成一个文件。<code>SizeBasedTriggeringPolicy</code> 表示设定日志的大小，上面的配置是指日志大小到 250M 后开始生成新的日志文件。</p>
+<p><code>TimeBasedTriggeringPolicy</code> 会与 filePattern 的配置相匹配，如果 filePattern 是 <code>&#123;yyyy-MM-dd HH-mm&#125;</code> ，最小的时间粒度是分钟，那么就会每隔一分钟生成一个文件，如果改成 <code>&#123;yy-MM-dd HH&#125;</code>，最小时间粒度是小时，那么就会每隔一个小时生成一个文件。<code>SizeBasedTriggeringPolicy</code> 表示设定日志的大小，上面的配置是指日志大小到 250M 后开始生成新的日志文件。</p>
 <p><code>RollingRandomAccessFileAppender</code> 与 <code>RollingFileAppender</code> 在功能上基本一致，但是底层的实现有所区别，RollingFileAppender 底层是 <code>BufferedOutputStream</code>，RollingRandomAccessFileAppender 底层是使用 <code>ByteBuffer</code> + <code>RandomAccessFile</code> ，性能上有了很大的提升。</p>
-<h4>Layouts</h4>
+<h4 id="Layouts">Layouts</h4>
 <p>Appender 会使用 <code>Layout</code> 来对日志进行格式化。Lo4j1 和 Logback 中的 Layout 会把日志转成 String，而在 Log4j2 中使用的则是 byte 数组，这是从性能的角度进行的优化。</p>
 <p>Layout 配置支持多种方式。用的最多的方式就是 <code>PatternLayout</code>，就是通过正则表达式来格式化日志，应用的也最多，基本配置如下：</p>
 <pre><code class="language-xml">&lt;PatternLayout&gt;
-    &lt;Pattern&gt;%d %p %c{1.} [%t] %m%n&lt;/Pattern&gt;
+    &lt;Pattern&gt;%d %p %c&#123;1.&#125; [%t] %m%n&lt;/Pattern&gt;
 &lt;/PatternLayout&gt;
 </code></pre>
 <ul>
@@ -252,22 +252,22 @@ public class CustomerConfigurationFactory extends ConfigurationFactory {
 <li>%n 表示换行符</li>
 <li>%L 表示打印日志的代码行数</li>
 </ul>
-<h4>Filter</h4>
+<h4 id="Filter">Filter</h4>
 <p>Filter 用于过滤一些日志信息，Filter 在过滤每一条日志时都会返回一个值 <code>ACCEPT</code>、 <code>DENY</code> 或者<code>NEUTRAL</code>。</p>
 <p>不同的 Filter 的有不同的用处，<code>BrustFilter</code> 用于防止日志流量过大，还可以使用 <code>DynamicThresholdFilter</code> 根据属性来过滤特定级别的日志。可以根据具体的需要选择相应的 Filter</p>
-<h4>完整配置示例</h4>
+<h4 id="完整配置示例">完整配置示例</h4>
 <p>假设现在有一个日志需求：日志以文件的形式进行保存，需要保存完整的日志信息，包括日志对应的类代码行数等，并且需要根据时间和日志文件的大小生成新的日志文件。</p>
 <pre><code class="language-xml">&lt;Configuration status=&quot;warn&quot;&gt;
     &lt;Appenders&gt;
         &lt;Console name=&quot;Console&quot; target=&quot;SYSTEM_OUT&quot;&gt;
-            &lt;PatternLayout pattern=&quot;[%-5p %d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] [%C.%M] [%m]%n&quot;/&gt;
+            &lt;PatternLayout pattern=&quot;[%-5p %d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125;] [%t] [%C.%M] [%m]%n&quot;/&gt;
         &lt;/Console&gt;
-        &lt;RollingRandomAccessFile name=&quot;${service_name}-log&quot;
-                                 fileName=&quot;~/${service_name}/${service_name}.log&quot;
-                                 filePattern=&quot;~/${service_name}/${service_name}.log.%d{yyyyMMddHH}&quot;
+        &lt;RollingRandomAccessFile name=&quot;$&#123;service_name&#125;-log&quot;
+                                 fileName=&quot;~/$&#123;service_name&#125;/$&#123;service_name&#125;.log&quot;
+                                 filePattern=&quot;~/$&#123;service_name&#125;/$&#123;service_name&#125;.log.%d&#123;yyyyMMddHH&#125;&quot;
                                  append=&quot;true&quot; immediateFlush=&quot;false&quot;&gt;
             &lt;PatternLayout
-                    pattern=&quot;[%-5p %d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] [%C.%M] [%m]%n&quot;/&gt;
+                    pattern=&quot;[%-5p %d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125;] [%t] [%C.%M] [%m]%n&quot;/&gt;
             &lt;Policies&gt;
                 &lt;TimeBasedTriggeringPolicy/&gt;
                 &lt;SizeBasedTriggeringPolicy size=&quot;250 MB&quot;/&gt;
@@ -275,9 +275,9 @@ public class CustomerConfigurationFactory extends ConfigurationFactory {
         &lt;/RollingRandomAccessFile&gt;
     &lt;/Appenders&gt;
     &lt;Loggers&gt;
-        &lt;AsyncRoot level=&quot;${log_level}&quot; includeLocation=&quot;true&quot;&gt;
+        &lt;AsyncRoot level=&quot;$&#123;log_level&#125;&quot; includeLocation=&quot;true&quot;&gt;
             &lt;AppenderRef ref=&quot;Console&quot;/&gt;
-            &lt;AppenderRef ref=&quot;${service_name}-log&quot; /&gt;
+            &lt;AppenderRef ref=&quot;$&#123;service_name&#125;-log&quot; /&gt;
         &lt;/AsyncRoot&gt;
     &lt;/Loggers&gt;
 &lt;/Configuration&gt;
@@ -285,7 +285,7 @@ public class CustomerConfigurationFactory extends ConfigurationFactory {
 <blockquote>
 <p>Logger 上如果加上了 includeLocation 后，日志性能会下降的很厉害，如果日志的位置信息不是必要的，就不需要加上</p>
 </blockquote>
-<h3>自定义日志级别</h3>
+<h3 id="自定义日志级别">自定义日志级别</h3>
 <p>Log4j2 中内置的日志级别有：</p>
 <table>
 <thead>
@@ -346,7 +346,7 @@ public class CustomerConfigurationFactory extends ConfigurationFactory {
 <p>在代码中使用就更加方便:</p>
 <pre><code class="language-java">logger.log(Level.forName(&quot;CUSTOMER_LEVEL&quot;, 350), &quot;customer level&quot;);
 </code></pre>
-<h3>配合 Slf4j 使用</h3>
+<h3 id="配合-Slf4j-使用">配合 Slf4j 使用</h3>
 <p>使用 <code>Slf4j</code> 非常简单，只需要在项目中加入以下依赖：</p>
 <pre><code class="language-xml">&lt;dependency&gt;
      &lt;groupId&gt;org.apache.logging.log4j&lt;/groupId&gt;
@@ -357,18 +357,18 @@ public class CustomerConfigurationFactory extends ConfigurationFactory {
 <p>然后就可以在代码中使用了：</p>
 <pre><code class="language-java">import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-public class Slf4jDemo {
+public class Slf4jDemo &#123;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) &#123;
         Logger logger = LoggerFactory.getLogger(Slf4jDemo.class);
 
         logger.info(&quot;Slf4j log info&quot;);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>（完）</p>
 <ul>
-<li>https://logging.apache.org/log4j/2.x/manual/index.html</li>
+<li><a href="https://logging.apache.org/log4j/2.x/manual/index.html">https://logging.apache.org/log4j/2.x/manual/index.html</a></li>
 </ul>
 
 </div>
@@ -390,7 +390,7 @@ public class Slf4jDemo {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

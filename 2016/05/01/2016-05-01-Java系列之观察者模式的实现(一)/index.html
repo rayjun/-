@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,43 +57,43 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Java系列之观察者模式的实现(一)</h1>
-    <p>在 Java 中，观察者模式是一个很重要的设计模式，在这篇文章中，我们来简单了解一下如何利用 Java 语言的特性来实现
+    <p>在 Java 中，观察者模式是一个很重要的设计模式，在这篇文章中，我们来简单了解一下如何利用 Java 语言的特性来实现<br>
 一个简单的观察者模式。</p>
-<h4>Java 中的 Obserable 与 Observer</h4>
+<h4 id="Java-中的-Obserable-与-Observer">Java 中的 Obserable 与 Observer</h4>
 <p>在 Java SE 中，有一个 Observer 接口和一个 Observer 类。在 api 文档中，描述如下：</p>
 <ul>
 <li><code>Observer</code> 一个类实现乐这个接口之后，被观察的对象如果有改变，那么这个类就可以接收到通知。实现这个接口必须要实现 <code>update</code> 方法。</li>
 <li><code>Obserable</code> 这个类代表一个可观察的对象，或者 model 层的一个实例，可以被认为是想被观察的对象的一个子类。一个可观察的对象可以有多个观察者。</li>
 </ul>
-<h4>实现简单的观察者模式</h4>
+<h4 id="实现简单的观察者模式">实现简单的观察者模式</h4>
 <p>首先需要定义一个可观察的对象,这个对象中有一个 data 变量，这个变量在被改变的时候会通知到观察者：</p>
-<pre><code>public class ObservableObject extends Observable{
+<pre><code>public class ObservableObject extends Observable&#123;
 
 	int data = 0;
 	
-	public void changeData(int change) {
+	public void changeData(int change) &#123;
 		data = change;
 		this.setChanged(); //标记对象被改变
 		this.notifyObservers();  //通知所有的观察者
-	}
-}
+	&#125;
+&#125;
 </code></pre>
 <p>定义观察者，观察者在接收到被观察者的改变之后，会将改变的值打印出来:</p>
-<pre><code>public class ObserverObject implements Observer {
+<pre><code>public class ObserverObject implements Observer &#123;
 
 	@Override
-	public void update(Observable o, Object arg) {
+	public void update(Observable o, Object arg) &#123;
 		ObservableObject oo = (ObservableObject) o;
 		
 		System.out.println(&quot;被观察者的数据被修改为：&quot;+ oo.data);
-	}
+	&#125;
 
-}
+&#125;
 </code></pre>
 <p>测试：</p>
-<pre><code>public class Main {
+<pre><code>public class Main &#123;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) &#123;
 		ObservableObject observableObject = new ObservableObject();
 		ObserverObject observerObject = new ObserverObject();
 	
@@ -103,8 +103,8 @@
 		
 		observableObject.deleteObserver(observerObject); //移除观察者
 		observableObject.changeData(200);
-	}
-}
+	&#125;
+&#125;
 </code></pre>
 <p>运行结果为：</p>
 <pre><code>被观察者的数据被修改为：1
@@ -131,7 +131,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -66,7 +66,7 @@
 <blockquote>
 <p>注意：这篇文章用于学习基础的 Git 操作，不能帮助你成为一个 Git 专家</p>
 </blockquote>
-<h3>创作的四个阶段</h3>
+<h3 id="创作的四个阶段">创作的四个阶段</h3>
 <ul>
 <li>思路整理</li>
 <li>内容创作</li>
@@ -81,8 +81,8 @@
 <li>迭代</li>
 </ul>
 <p>在开始一项创作之前，我们需要初始化一个 Git 项目来存放创作的相关文件，然后在项目里进行内容创作，每完成一部分内容就需要进行 commit 和 push。在完成一个阶段性的目标后，就需要打上一个版本号，宣告一个里程碑的诞生。然后在这个基础之上进行再次的创作和标签化。</p>
-<h3>Git 初级用法</h3>
-<h4>Git 专用名词</h4>
+<h3 id="Git-初级用法">Git 初级用法</h3>
+<h4 id="Git-专用名词">Git 专用名词</h4>
 <ul>
 <li>工作区</li>
 <li>暂存区</li>
@@ -91,23 +91,23 @@
 </ul>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/git/git.png" alt=""></p>
 <p>其实本地工作区、暂存区和本地仓库只是逻辑上的区分，对于 Git 的使用者来说基本是无感的，也就是说你记不住上面几个术语也不会影响使用。</p>
-<h4>Git 项目初始化</h4>
+<h4 id="Git-项目初始化">Git 项目初始化</h4>
 <p>项目的初始化分为两种情况，一种是<strong>重头开始创建一个新项目</strong>，二是<strong>从远程服务器获取一个现有的项目</strong>。</p>
-<h5>新建项目</h5>
+<h5 id="新建项目">新建项目</h5>
 <pre><code class="language-shell">$ mkdir project-name &amp;&amp; cd project-name
 $ git init
 </code></pre>
 <p>或者</p>
 <pre><code class="language-shell"> $ git init project-name
 </code></pre>
-<h5>拉取现有项目</h5>
+<h5 id="拉取现有项目">拉取现有项目</h5>
 <p>可以直接从远程仓库拉取一个项目到本地进行协作，url 就是远程仓库的项目地址。</p>
 <pre><code class="language-shell">$ git clone url
 </code></pre>
 <blockquote>
 <p>当前 Git 使用的最多的远程协议是 https 和 ssh，使用 https 时需要手动输入远程服务器的账号和密码，相对比较麻烦，而使用 ssh 使用起来则更加方便一些。</p>
 </blockquote>
-<h5>Git 配置</h5>
+<h5 id="Git-配置">Git 配置</h5>
 <p>Git 的配置分为<strong>当前项目配置</strong> 和<strong>全局配置</strong>，Git 会优先使用当前项目的配置，当前项目缺少的配置会使用全局的配置。</p>
 <p>使用以下的命令查看和修改当前 Git 的配置：</p>
 <pre><code class="language-shell"># 查看配置
@@ -116,14 +116,14 @@ $ git config --list
 # 修改配置，加上 --global 表示修改全局的配置
 $ git config -e [--global]
 </code></pre>
-<p>有 <strong>user.name</strong> 和 <strong>user.email</strong> 的配置需要单独说明，如果在项目中没有这两个配置，那么就会使用全局的配置，如果全局也没有，那就必须要配置，否则不能够进行提交。</p>
+<p>有 <strong><a href="http://user.name">user.name</a></strong> 和 <strong>user.email</strong> 的配置需要单独说明，如果在项目中没有这两个配置，那么就会使用全局的配置，如果全局也没有，那就必须要配置，否则不能够进行提交。</p>
 <pre><code class="language-shell"># 配置 user.name 和 user.email，不加 --global 表示当前项目配置，加上 --global 表示全局配置
 $ git config [--global] user.name &quot;ray&quot;
 $ git config [--global] user.email &quot;ray@gmail.com&quot;
 </code></pre>
 <p>到这里，Git 项目的初始化就完成了。</p>
-<h4>内容的 commit/push 与分支管理</h4>
-<h5>Git 的基本工作流</h5>
+<h4 id="内容的-commit-push-与分支管理">内容的 commit/push 与分支管理</h4>
+<h5 id="Git-的基本工作流">Git 的基本工作流</h5>
 <p>在创建了一个 Git 的项目之后，就可以在这个 Git 项目内进行创作了。</p>
 <pre><code class="language-shell"># 添加文件，可以向 Git 项目中添加任何文件
 $ touch reade.md
@@ -148,7 +148,7 @@ $ git remote add origin url
 <p>提交内容到远程仓库（这里涉及到一个分支的概念，下面马上讲到）:</p>
 <pre><code class="language-shell">$ git push origin master
 </code></pre>
-<h5>Git 分支管理</h5>
+<h5 id="Git-分支管理">Git 分支管理</h5>
 <p>分支是 Git 的一个很重要的特性。在使用 <strong>git init</strong>进行项目初始化时，Git 会默认创建一个 <strong>master</strong> 分支。为什么 Git 需要多个不同的分支呢？设想一个场景，你用 Git 作为版本管理创作了一本书，这本书是基于 master 分支进行创作的。你已经完成了这本书的第一个版本并且对外发布了，然后你开始准备写这本书的第二个版本，如果你还继续在 master 分支上进行修改的话，那么就会影响到当前正在读这本书的读者，这个时候分支就能很好的解决这个问题。</p>
 <p>只需要创建一个新的分支，然后新的工作在新分支上进行，而且不会影响原来分支上的内容，而且在新分支上的工作完成后，还可以直接将新的内容合并回原来的分支。</p>
 <p>分支的新建:</p>
@@ -182,7 +182,7 @@ $ git branch -dr remote/branch-name
 <pre><code class="language-shell"># 把其他分支的内容合并到当前分支
 $ git merge branch-name
 </code></pre>
-<h4>Git 标签管理</h4>
+<h4 id="Git-标签管理">Git 标签管理</h4>
 <p>在经过了很多次的 commit 和 push 后，你觉得创作的差不多了，是时候发布这些内容了。为了让这次发布的内容可以在以后很方便的找到，那就需要在当前这个点上打上一个标签，Git 会维护一个 标签列表，打过的标签都可以轻易的找到。</p>
 <pre><code class="language-shell"># 新建一个分支
 $ git tag tag-name
@@ -200,14 +200,14 @@ $ git push origin tag-name
 $ git push origin --delete tag-name
 </code></pre>
 <p>学会了这些命令后，就可以轻松的操作 git 的标签了。</p>
-<h4>迭代</h4>
-<p>Git 的命令的数量很大，每个命令又可以有很多的参数，所以不太可能记住所有的参数。
+<h4 id="迭代">迭代</h4>
+<p>Git 的命令的数量很大，每个命令又可以有很多的参数，所以不太可能记住所有的参数。<br>
 所以学习 Git 最好的方式就是用，先从基本的命令开始，在使用的创作中将 Git 使用起来，然后再进一步去探究 Git 内部的原理。</p>
 <p>上面介绍的命令基本已经够日常的使用了，你可以用这些工具去帮助你不断的优化自己的创作。当你可以把这些命令练成自己的本能反应时，你会对 Git 的高阶用法和内部原理感兴趣的。</p>
 <p>（完）</p>
 <ul>
-<li>https://github.com/progit</li>
-<li>http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html</li>
+<li><a href="https://github.com/progit">https://github.com/progit</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html">http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html</a></li>
 </ul>
 
 </div>
@@ -229,7 +229,7 @@ $ git push origin --delete tag-name
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

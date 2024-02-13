@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,9 +57,9 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Java基础系列-Stream简明教程</h1>
-    <p><code>Stream</code> 是 Java8 中一个重大的更新。Stream 为Java 真正带来了函数式编程的特性。对函数式编程不了解的人往往不知道如何动手，通过<a href="https://winterbe.com/posts/2014/07/31/java8-stream-tutorial-examples/" target="_blank" rel="noopener">Benjamin</a> 的教程来完整的学习一下 Java 的这个特性，学会这些技能会让你的代码看起来更酷。</p>
+    <p><code>Stream</code> 是 Java8 中一个重大的更新。Stream 为Java 真正带来了函数式编程的特性。对函数式编程不了解的人往往不知道如何动手，通过<a href="https://winterbe.com/posts/2014/07/31/java8-stream-tutorial-examples/">Benjamin</a> 的教程来完整的学习一下 Java 的这个特性，学会这些技能会让你的代码看起来更酷。</p>
 <hr>
-<p>这是一个通过代码示例来深度讲解 <code>Java8 Stream</code> 的教程。当我第一次看到 <code>Stream</code> 的 API 时，我感到很迷惑，因为这个名称听起来和 Java I/O 包中的 <code>InputStream</code> 和 <code>OutputStream</code> 有关系。但是实际上它们是完全不同的东西。 Stream 是 <a href="https://en.wikipedia.org/wiki/Monad_%28functional_programming%29" target="_blank" rel="noopener">Monad(函数式编程)</a>，它为 Java 带来了函数式编程的特性，下面是维基百科对 Monad 的解释:</p>
+<p>这是一个通过代码示例来深度讲解 <code>Java8 Stream</code> 的教程。当我第一次看到 <code>Stream</code> 的 API 时，我感到很迷惑，因为这个名称听起来和 Java I/O 包中的 <code>InputStream</code> 和 <code>OutputStream</code> 有关系。但是实际上它们是完全不同的东西。 Stream 是 <a href="https://en.wikipedia.org/wiki/Monad_%28functional_programming%29">Monad(函数式编程)</a>，它为 Java 带来了函数式编程的特性，下面是维基百科对 Monad 的解释:</p>
 <blockquote>
 <p>In functional programming, a monad is a structure that represents computations defined as sequences of steps. A type with a monad structure defines what it means to chain operations, or nest functions of that type together.</p>
 </blockquote>
@@ -67,8 +67,8 @@
 <blockquote>
 <p>注：Stream 中的 API 称之为操作</p>
 </blockquote>
-<p>如果你还不熟悉 Java8 的 lambda 表达式、函数式接口以及方法引用，可以先去读一下这份<a href="https://winterbe.com/posts/2014/03/16/java-8-tutorial/" target="_blank" rel="noopener">Java8 教程</a>。</p>
-<h3>Stream 原理</h3>
+<p>如果你还不熟悉 Java8 的 lambda 表达式、函数式接口以及方法引用，可以先去读一下这份<a href="https://winterbe.com/posts/2014/03/16/java-8-tutorial/">Java8 教程</a>。</p>
+<h3 id="Stream-原理">Stream 原理</h3>
 <p>一个 Stream 代表着一组元素以及支持对这些元素进行计算的不同<strong>操作</strong>：</p>
 <pre><code class="language-java">List&lt;String&gt; myList =
     Arrays.asList(&quot;a1&quot;, &quot;a2&quot;, &quot;b1&quot;, &quot;c2&quot;, &quot;c1&quot;);
@@ -83,14 +83,14 @@ myList
 // C1
 // C2
 </code></pre>
-<p>Stream 操作分为<strong>中间操作</strong>和<strong>终端操作</strong>。中间操作会返回一个 Stream 对象，所以可以对中间操作进行<strong>链式操作</strong>。终端操作会返回一个 <code>void</code> 或者非 Stream 的对象。在上面的例子中，<code>filter</code>、<code>map</code> 和 <code>sorted</code> 都是中间操作，而 <code>forEach</code> 则是一个终端操作。Stream 完整的操作 API 可以查看<a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html" target="_blank" rel="noopener">文档</a>。Stream 链式操作可以查看上面的例子，链式操作也称之为<strong>管道操作</strong>。</p>
+<p>Stream 操作分为<strong>中间操作</strong>和<strong>终端操作</strong>。中间操作会返回一个 Stream 对象，所以可以对中间操作进行<strong>链式操作</strong>。终端操作会返回一个 <code>void</code> 或者非 Stream 的对象。在上面的例子中，<code>filter</code>、<code>map</code> 和 <code>sorted</code> 都是中间操作，而 <code>forEach</code> 则是一个终端操作。Stream 完整的操作 API 可以查看<a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html">文档</a>。Stream 链式操作可以查看上面的例子，链式操作也称之为<strong>管道操作</strong>。</p>
 <p>许多 Stream 操作接受 Lambda 或者函数式接口来限定操作范围。这些操作中绝大多数都必须是<strong>non-interfering</strong>和<strong>无状态</strong>的，这是什么意思呢？</p>
 <blockquote>
 <p>注：在函数式编程中，函数本身是可以作为参数的</p>
 </blockquote>
 <p><strong>non-interfering</strong> 表示方法在执行的过程中不会改动流中原数据，比如在前面的例子中没有 lambda 表达式修改了 <code>myList</code> 中的元素。</p>
 <p><strong>无状态</strong>表示方法多次执行的结果是确定的，比如前面的例子中没有 lambda 表达式会依赖在执行过程中会被修改的外部作用域中的变量。</p>
-<h3>不同种类的 Stream</h3>
+<h3 id="不同种类的-Stream">不同种类的 Stream</h3>
 <p>Stream 可以通过多种方式创建，尤其是各种容器对象。List 和 Set 都支持 <code>stream()</code> 和 <code>parallelStream()</code> 方法来创建串行或者并行的 Stream。并行 Stream 可以同时运行在多个线程上，在下文会详细讲解，当前先通过串行 Stream 来演示：</p>
 <pre><code class="language-java">Arrays.asList(&quot;a1&quot;, &quot;a2&quot;, &quot;a3&quot;)
         .stream()
@@ -113,7 +113,7 @@ myList
 </code></pre>
 <p>所有的原生类型都可以和其他对象一样使用 Stream，但是所有的原生类型 Stream 都使用专门的 lambda 表达式，比如 int 使用 <code>IntFunction</code> 而不是 <code>Function</code>，使用 <code>IntPredicate</code> 而不是 <code>Predicate</code>。</p>
 <p>并且原生类型 Stream 还另外支持终端聚合操作 <code>sum()</code> 以及 <code>average()</code>:</p>
-<pre><code class="language-java">Arrays.stream(new int[] {1, 2, 3})
+<pre><code class="language-java">Arrays.stream(new int[] &#123;1, 2, 3&#125;)
     .map(n -&gt; 2 * n + 1)
     .average()
     .ifPresent(System.out::println);  // 5.0
@@ -144,22 +144,22 @@ myList
 // a2
 // a3
 </code></pre>
-<h3>处理次序</h3>
+<h3 id="处理次序">处理次序</h3>
 <p>上文中已经详细描述了如何创建和使用不同类型的 Stream，下面会深入研究 Stream 的操作是如何进行的。</p>
 <p>中间操作的一个重要特征是<strong>延迟</strong>，看下面这个没有终端操作的例子：</p>
 <pre><code class="language-java">Stream.of(&quot;d2&quot;, &quot;a2&quot;, &quot;b1&quot;, &quot;b3&quot;, &quot;c&quot;)
-    .filter(s -&gt; {
+    .filter(s -&gt; &#123;
         System.out.println(&quot;filter: &quot; + s);
         return true;
-    });
+    &#125;);
 </code></pre>
 <p>当上面的代码片段执行完成的时候，控制台并没有输出任何东西。这是因为中间操作在有终端操作的时候才会执行。</p>
 <p>给上面的例子加上终端操作 <code>forEach</code>:</p>
 <pre><code class="language-java">Stream.of(&quot;d2&quot;, &quot;a2&quot;, &quot;b1&quot;, &quot;b3&quot;, &quot;c&quot;)
-    .filter(s -&gt; {
+    .filter(s -&gt; &#123;
         System.out.println(&quot;filter: &quot; + s);
         return true;
-    })
+    &#125;)
     .forEach(s -&gt; System.out.println(&quot;forEach: &quot; + s));
 </code></pre>
 <p>执行这段代码会有如下的输出：</p>
@@ -177,32 +177,32 @@ forEach: c
 <p>输出结果的顺序可能会让人惊讶。之前你可能会认为 Stream 中的元素会在一个操作中全部处理完之后才会进入到下一个操作。但实际的情况是一个元素在所有的操作执行完成之后才会轮到下一个元素。<code>&quot;d2&quot;</code> 首先被 <code>filter</code> 和 <code>forEach</code> 的处理，然后 <code>&quot;a2&quot;</code> 才会被处理。</p>
 <p>这样可以减少每个操作实际处理元素的个数，看下面这个例子：</p>
 <pre><code class="language-java">Stream.of(&quot;d2&quot;, &quot;a2&quot;, &quot;b1&quot;, &quot;b3&quot;, &quot;c&quot;)
-    .map(s -&gt; {
+    .map(s -&gt; &#123;
         System.out.println(&quot;map: &quot; + s);
         return s.toUpperCase();
-    })
-    .anyMatch(s -&gt; {
+    &#125;)
+    .anyMatch(s -&gt; &#123;
         System.out.println(&quot;anyMatch: &quot; + s);
         return s.startsWith(&quot;A&quot;);
-    });
+    &#125;);
 
 // map:      d2
 // anyMatch: D2
 // map:      a2
 // anyMatch: A2
 </code></pre>
-<p>这个 <code>anyMatch</code> 操作只在输入元素满足条件的情况下才会返回 true。在上面的例子中，运行到第二个元素 &quot;a2&quot; 时就会返回 true，然后就会停止处理其他元素，所以 <code>map</code> 操作也只是执行了两次，这正是得益于 Stream 的链式处理次序。</p>
-<h4>为什么次序很关键</h4>
+<p>这个 <code>anyMatch</code> 操作只在输入元素满足条件的情况下才会返回 true。在上面的例子中，运行到第二个元素 “a2” 时就会返回 true，然后就会停止处理其他元素，所以 <code>map</code> 操作也只是执行了两次，这正是得益于 Stream 的链式处理次序。</p>
+<h4 id="为什么次序很关键">为什么次序很关键</h4>
 <p>下面的这个例子由两个中间操作 <code>map</code> 和 <code>filter</code> 以及一个终端操作 <code>forEach</code> 组成。再看一下这些操作是如何执行的：</p>
 <pre><code class="language-java">Stream.of(&quot;d2&quot;, &quot;a2&quot;, &quot;b1&quot;, &quot;b3&quot;, &quot;c&quot;)
-    .map(s -&gt; {
+    .map(s -&gt; &#123;
         System.out.println(&quot;map: &quot; + s);
         return s.toUpperCase();
-    })
-    .filter(s -&gt; {
+    &#125;)
+    .filter(s -&gt; &#123;
         System.out.println(&quot;filter: &quot; + s);
         return s.startsWith(&quot;A&quot;);
-    })
+    &#125;)
     .forEach(s -&gt; System.out.println(&quot;forEach: &quot; + s));
 
 // map:     d2
@@ -220,14 +220,14 @@ forEach: c
 <p>正如上面的例子所分析，map 和 filter 对每个字符串各执行了 5 次，而 forEach 仅仅执行了一次。</p>
 <p>可以简单的调整操作的顺序来减少操作执行的总次数，下面的例子中把 filter 操作放到了 map 前面：</p>
 <pre><code class="language-java">Stream.of(&quot;d2&quot;, &quot;a2&quot;, &quot;b1&quot;, &quot;b3&quot;, &quot;c&quot;)
-    .filter(s -&gt; {
+    .filter(s -&gt; &#123;
         System.out.println(&quot;filter: &quot; + s);
         return s.startsWith(&quot;a&quot;);
-    })
-    .map(s -&gt; {
+    &#125;)
+    .map(s -&gt; &#123;
         System.out.println(&quot;map: &quot; + s);
         return s.toUpperCase();
-    })
+    &#125;)
     .forEach(s -&gt; System.out.println(&quot;forEach: &quot; + s));
 
 // filter:  d2
@@ -241,18 +241,18 @@ forEach: c
 <p>调整后，map 只执行了一次，整个操作管道在输入大量元素时的执行速度会快很多。如果 Stream 有很多的操作，时序考虑一下能不能通过调整持续来优化。</p>
 <p>在上面的例子中另外加上 <code>sorted</code> 操作：</p>
 <pre><code class="language-java">Stream.of(&quot;d2&quot;, &quot;a2&quot;, &quot;b1&quot;, &quot;b3&quot;, &quot;c&quot;)
-    .sorted((s1, s2) -&gt; {
+    .sorted((s1, s2) -&gt; &#123;
         System.out.printf(&quot;sort: %s; %s\n&quot;, s1, s2);
         return s1.compareTo(s2);
-    })
-    .filter(s -&gt; {
+    &#125;)
+    .filter(s -&gt; &#123;
         System.out.println(&quot;filter: &quot; + s);
         return s.startsWith(&quot;a&quot;);
-    })
-    .map(s -&gt; {
+    &#125;)
+    .map(s -&gt; &#123;
         System.out.println(&quot;map: &quot; + s);
         return s.toUpperCase();
-    })
+    &#125;)
     .forEach(s -&gt; System.out.println(&quot;forEach: &quot; + s));
 </code></pre>
 <p>sotred 是一个另类的中间操作，它是有状态的。因为在排序的过程中必须要维护数据的状态。</p>
@@ -276,18 +276,18 @@ filter:  d2
 <p>首先，sorted 会把输入的所有元素排好序之后才会进入下一个操作，和其他操作不同，sorted 是水平执行的。所以在上面的例子中 sorted 才会被执行 8 次。</p>
 <p>通过调整操作的次序可以再一次提升执行的性能：</p>
 <pre><code class="language-java">Stream.of(&quot;d2&quot;, &quot;a2&quot;, &quot;b1&quot;, &quot;b3&quot;, &quot;c&quot;)
-    .filter(s -&gt; {
+    .filter(s -&gt; &#123;
         System.out.println(&quot;filter: &quot; + s);
         return s.startsWith(&quot;a&quot;);
-    })
-    .sorted((s1, s2) -&gt; {
+    &#125;)
+    .sorted((s1, s2) -&gt; &#123;
         System.out.printf(&quot;sort: %s; %s\n&quot;, s1, s2);
         return s1.compareTo(s2);
-    })
-    .map(s -&gt; {
+    &#125;)
+    .map(s -&gt; &#123;
         System.out.println(&quot;map: &quot; + s);
         return s.toUpperCase();
-    })
+    &#125;)
     .forEach(s -&gt; System.out.println(&quot;forEach: &quot; + s));
 
 // filter:  d2
@@ -299,7 +299,7 @@ filter:  d2
 // forEach: A2
 </code></pre>
 <p>在这个例子中 sorted 永远也不会被执行，在 filter 执行完了之后就剩下一个元素，也就没有排序的必要。在输入大量元素的情况下，性能也会得到极大的提升。</p>
-<h3>重用 Stream</h3>
+<h3 id="重用-Stream">重用 Stream</h3>
 <p>Java8 中的 Stream 是不能被重用的。一旦执行了终端操作，那么 Stream 就会被关闭：</p>
 <pre><code class="language-java">Stream&lt;String&gt; stream =
     Stream.of(&quot;d2&quot;, &quot;a2&quot;, &quot;b1&quot;, &quot;b3&quot;, &quot;c&quot;)
@@ -324,23 +324,23 @@ streamSupplier.get().anyMatch(s -&gt; true);   // ok
 streamSupplier.get().noneMatch(s -&gt; true);  // ok
 </code></pre>
 <p>每调用一次 <code>get()</code> 方法都会创建一个新的 Stream，然后就可以执行需要执行的终端操作了。</p>
-<h3>进阶操作</h3>
-<p>Stream 支持大量不同的操作，在上面的例子中已经介绍了最重要的操作如 <code>filter</code> 和 <code>map</code>。完整的操作可以在<a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html" target="_blank" rel="noopener">官方文档</a>中查看。下面会重点介绍更加复杂的操作 <code>collect</code>、<code>flatMap</code> 和 <code>reduce</code>。</p>
+<h3 id="进阶操作">进阶操作</h3>
+<p>Stream 支持大量不同的操作，在上面的例子中已经介绍了最重要的操作如 <code>filter</code> 和 <code>map</code>。完整的操作可以在<a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html">官方文档</a>中查看。下面会重点介绍更加复杂的操作 <code>collect</code>、<code>flatMap</code> 和 <code>reduce</code>。</p>
 <p>这节绝大部分的代码例子都会使用下面 <code>Person</code> list 作为演示数据：</p>
-<pre><code class="language-java">class Person {
+<pre><code class="language-java">class Person &#123;
     String name;
     int age;
 
-    Person(String name, int age) {
+    Person(String name, int age) &#123;
         this.name = name;
         this.age = age;
-    }
+    &#125;
 
     @Override
-    public String toString() {
+    public String toString() &#123;
         return name;
-    }
-}
+    &#125;
+&#125;
 
 List&lt;Person&gt; persons =
     Arrays.asList(
@@ -349,7 +349,7 @@ List&lt;Person&gt; persons =
         new Person(&quot;Pamela&quot;, 23),
         new Person(&quot;David&quot;, 12));
 </code></pre>
-<h4>Collect</h4>
+<h4 id="Collect">Collect</h4>
 <p>如果需要将 Stream 中运行的结果转成一个不同的类型，比如 List、Set 或者 Map，<code>collect</code> 就非常有用。<code>collect</code> 操作接受由 <code>suppiler</code>，<code>accumulator</code>，<code>combiner</code>，<code>finisher</code> 等四个部分组成的 <code>Collector</code> 对象。听起来很复杂，但 java8 中 <code>Collectors</code> 类中的大量方法开箱即用，对很多通用的操作并不需要自己去实现：</p>
 <blockquote>
 <p>注：suppiler, accumulator, combiner, finisher 都是函数式接口</p>
@@ -389,7 +389,7 @@ System.out.println(averageAge);     // 19.0
         .collect(Collectors.summarizingInt(p -&gt; p.age));
 
 System.out.println(ageSummary);
-// IntSummaryStatistics{count=4, sum=76, min=12, average=19.000000, max=23}
+// IntSummaryStatistics&#123;count=4, sum=76, min=12, average=19.000000, max=23&#125;
 </code></pre>
 <p>下面的例子中把所有 person 的名字拼成了一个字符串：</p>
 <pre><code class="language-java">String phrase = persons
@@ -411,7 +411,7 @@ System.out.println(phrase);
         (name1, name2) -&gt; name1 + &quot;;&quot; + name2));
 
 System.out.println(map);
-// {18=Max, 23=Peter;Pamela, 12=David}
+// &#123;18=Max, 23=Peter;Pamela, 12=David&#125;
 </code></pre>
 <p>上面介绍了一些很强大 Collectors 的内建方法。下面来实现一个自定义的 <code>collector</code>。将所有 Person 的名称转成大写并输入到一个字符串中，每个名字使用 <code>|</code> 来隔开。自定义的 collecotr 使用 <code>Collecotr.of()</code> 来实现，需要实现其中的四个部分：<code>supplier</code>、<code>accumulator</code>、<code>combiner</code> 和 <code>finisher</code>。</p>
 <pre><code class="language-java">Collector&lt;Person, StringJoiner, String&gt; personNameCollector =
@@ -428,26 +428,26 @@ String names = persons
 System.out.println(names);  // MAX | PETER | PAMELA | DAVID
 </code></pre>
 <p>在 Java 中，String 对象是不可变的。所以需要一个 <code>StringJoiner</code> 来组合字符串，<code>suppiler</code> 实例化一个带 <code>|</code> 分隔符的 StringJoiner 对象。<code>accumulator</code> 把字符串转成大写并且放进 StringJoiner 对象，<code>combiner</code> 将两个 StringJoiner 对象合成一个，最后 <code>finisher</code> 把 StringJoiner 对象输出为 String 对象。</p>
-<h4>flatMap</h4>
+<h4 id="flatMap">flatMap</h4>
 <p>在上面已经介绍了如何使用 map 将 Stream 中的对象转成另外一种类型的对象。<code>map</code> 只能把一种类型转成另外一种特定的类型，在把一种类型转成任意种类型的情况下，<code>map</code> 就有点受限制了。而 <code>flatMap</code> 正是来解决这个问题的。</p>
 <p>flatMap 会把 Stream 中的每个元素转成另一个 Stream 中的其他对象。所以每个元素依赖 STream 会被转成 0 个，1 个或者多个其他对象。这些生成的新的 stream 会在 flatMap 操作结束的时候返回。</p>
 <p>在使用 flatMap 之前，需要定义以下的数据结构：</p>
-<pre><code class="language-java">class Foo {
+<pre><code class="language-java">class Foo &#123;
     String name;
     List&lt;Bar&gt; bars = new ArrayList&lt;&gt;();
 
-    Foo(String name) {
+    Foo(String name) &#123;
         this.name = name;
-    }
-}
+    &#125;
+&#125;
 
-class Bar {
+class Bar &#123;
     String name;
 
-    Bar(String name) {
+    Bar(String name) &#123;
         this.name = name;
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>接下来，利用 Stream 初始化一些对象：</p>
 <pre><code class="language-java">List&lt;Foo&gt; foos = new ArrayList&lt;&gt;();
@@ -491,23 +491,23 @@ foos.forEach(f -&gt;
 </code></pre>
 <p>flatMap 操作对 java8 中的 <code>Optional</code> 对象也有用，Optional 对象的操作会返回另一个类型的 Optional 对象。所以这个特性可以用来消除空指针检查。</p>
 <p>定义类的抽象层次如下：</p>
-<pre><code class="language-java">class Outer {
+<pre><code class="language-java">class Outer &#123;
     Nested nested;
-}
+&#125;
 
-class Nested {
+class Nested &#123;
     Inner inner;
-}
+&#125;
 
-class Inner {
+class Inner &#123;
     String foo;
-}
+&#125;
 </code></pre>
 <p>为了从 Outer 对象中调用 Inner 对象中的 foo 字符串，需要做很多的空指针检查来避免潜在的空指针异常：</p>
 <pre><code class="language-java">Outer outer = new Outer();
-if (outer != null &amp;&amp; outer.nested != null &amp;&amp; outer.nested.inner != null) {
+if (outer != null &amp;&amp; outer.nested != null &amp;&amp; outer.nested.inner != null) &#123;
     System.out.println(outer.nested.inner.foo);
-}
+&#125;
 </code></pre>
 <p>这些操作可以通过 flatMap 来进行优化：</p>
 <pre><code class="language-java">Optional.of(new Outer())
@@ -517,7 +517,7 @@ if (outer != null &amp;&amp; outer.nested != null &amp;&amp; outer.nested.inner 
     .ifPresent(System.out::println);
 </code></pre>
 <p>每调用一次都会返回一个 Optional 对象，对象中包裹着目标对象或者 null。</p>
-<h4>Reduce</h4>
+<h4 id="Reduce">Reduce</h4>
 <p><code>Reduce</code> 组合 Stream 中所有的元素，然后产生一个单独的结果。Java8 支持三种 <code>reduce</code> 方法。第一种 reduce 对于每个 Stream 只会返回一个元素。下面这个例子计算除了年龄最大的人的名字：</p>
 <pre><code class="language-java">persons
     .stream()
@@ -529,11 +529,11 @@ if (outer != null &amp;&amp; outer.nested != null &amp;&amp; outer.nested.inner 
 <pre><code class="language-java">Person result =
     persons
         .stream()
-        .reduce(new Person(&quot;&quot;, 0), (p1, p2) -&gt; {
+        .reduce(new Person(&quot;&quot;, 0), (p1, p2) -&gt; &#123;
             p1.age += p2.age;
             p1.name += p2.name;
             return p1;
-        });
+        &#125;);
 
 System.out.format(&quot;name=%s; age=%s&quot;, result.name, result.age);
 // name=MaxPeterPamelaDavid; age=76
@@ -549,14 +549,14 @@ System.out.println(ageSum);  // 76
 <pre><code class="language-java">Integer ageSum = persons
     .stream()
     .reduce(0,
-        (sum, p) -&gt; {
+        (sum, p) -&gt; &#123;
             System.out.format(&quot;accumulator: sum=%s; person=%s\n&quot;, sum, p);
             return sum += p.age;
-        },
-        (sum1, sum2) -&gt; {
+        &#125;,
+        (sum1, sum2) -&gt; &#123;
             System.out.format(&quot;combiner: sum1=%s; sum2=%s\n&quot;, sum1, sum2);
             return sum1 + sum2;
-        });
+        &#125;);
 
 // accumulator: sum=0; person=Max
 // accumulator: sum=18; person=Peter
@@ -568,14 +568,14 @@ System.out.println(ageSum);  // 76
 <pre><code class="language-java">Integer ageSum = persons
     .parallelStream()
     .reduce(0,
-        (sum, p) -&gt; {
+        (sum, p) -&gt; &#123;
             System.out.format(&quot;accumulator: sum=%s; person=%s\n&quot;, sum, p);
             return sum += p.age;
-        },
-        (sum1, sum2) -&gt; {
+        &#125;,
+        (sum1, sum2) -&gt; &#123;
             System.out.format(&quot;combiner: sum1=%s; sum2=%s\n&quot;, sum1, sum2);
             return sum1 + sum2;
-        });
+        &#125;);
 
 // accumulator: sum=0; person=Pamela
 // accumulator: sum=0; person=David
@@ -587,7 +587,7 @@ System.out.println(ageSum);  // 76
 </code></pre>
 <p>在并行执行的情况下有着完全不同的执行行为。在这里 combiner 执行了，accumulator 在并行情况下被执行的时候，combiner 用来累加 accumulator 的执行结果。</p>
 <p>在下一节会详细分析并行 Stream。</p>
-<h3>并行 Stream</h3>
+<h3 id="并行-Stream">并行 Stream</h3>
 <p>在输入元素数量很多的情况下，通过并行执行 Stream 可以提升执行性能。并行 Stream 使用了 <code>ForkJoinPool</code>，这个对象可以通过 <code>ForkJoinPool.commonPool()</code> 来得到。底层的线程池最多可以有五个线程，取决于物理机器可以用的 CPU 有几个。</p>
 <pre><code class="language-java">ForkJoinPool commonPool = ForkJoinPool.commonPool();
 System.out.println(commonPool.getParallelism());    // 3
@@ -599,16 +599,16 @@ System.out.println(commonPool.getParallelism());    // 3
 <p>为了理解 Stream 是如何并行执行的，下面这个例子把线程的情况都打印出来了：</p>
 <pre><code class="language-java">Arrays.asList(&quot;a1&quot;, &quot;a2&quot;, &quot;b1&quot;, &quot;c2&quot;, &quot;c1&quot;)
     .parallelStream()
-    .filter(s -&gt; {
+    .filter(s -&gt; &#123;
         System.out.format(&quot;filter: %s [%s]\n&quot;,
             s, Thread.currentThread().getName());
         return true;
-    })
-    .map(s -&gt; {
+    &#125;)
+    .map(s -&gt; &#123;
         System.out.format(&quot;map: %s [%s]\n&quot;,
             s, Thread.currentThread().getName());
         return s.toUpperCase();
-    })
+    &#125;)
     .forEach(s -&gt; System.out.format(&quot;forEach: %s [%s]\n&quot;,
         s, Thread.currentThread().getName()));
 </code></pre>
@@ -633,21 +633,21 @@ forEach: C1 [ForkJoinPool.commonPool-worker-2]
 <p>给上面的例子加上 <code>sort</code> 操作：</p>
 <pre><code class="language-java">Arrays.asList(&quot;a1&quot;, &quot;a2&quot;, &quot;b1&quot;, &quot;c2&quot;, &quot;c1&quot;)
     .parallelStream()
-    .filter(s -&gt; {
+    .filter(s -&gt; &#123;
         System.out.format(&quot;filter: %s [%s]\n&quot;,
             s, Thread.currentThread().getName());
         return true;
-    })
-    .map(s -&gt; {
+    &#125;)
+    .map(s -&gt; &#123;
         System.out.format(&quot;map: %s [%s]\n&quot;,
             s, Thread.currentThread().getName());
         return s.toUpperCase();
-    })
-    .sorted((s1, s2) -&gt; {
+    &#125;)
+    .sorted((s1, s2) -&gt; &#123;
         System.out.format(&quot;sort: %s &lt;&gt; %s [%s]\n&quot;,
             s1, s2, Thread.currentThread().getName());
         return s1.compareTo(s2);
-    })
+    &#125;)
     .forEach(s -&gt; System.out.format(&quot;forEach: %s [%s]\n&quot;,
         s, Thread.currentThread().getName()));
 </code></pre>
@@ -674,7 +674,7 @@ forEach: B1 [main]
 forEach: A2 [ForkJoinPool.commonPool-worker-2]
 forEach: C1 [ForkJoinPool.commonPool-worker-1]
 </code></pre>
-<p>可以看到了 sort 操作只会在主线程中执行。并行 Stream 中的 sort 操作实际用到了 Java8 中的新接口 <code>Arrays.parallelSort()</code>。在 <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html#parallelSort-T:A-" target="_blank" rel="noopener">Javadoc</a> 中说明了数组的长度决定了这个排序操作是串行还是并行执行：</p>
+<p>可以看到了 sort 操作只会在主线程中执行。并行 Stream 中的 sort 操作实际用到了 Java8 中的新接口 <code>Arrays.parallelSort()</code>。在 <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html#parallelSort-T:A-">Javadoc</a> 中说明了数组的长度决定了这个排序操作是串行还是并行执行：</p>
 <blockquote>
 <p>If the length of the specified array is less than the minimum granularity, then it is sorted using the appropriate Arrays.sort method.</p>
 </blockquote>
@@ -688,16 +688,16 @@ forEach: C1 [ForkJoinPool.commonPool-worker-1]
 persons
     .parallelStream()
     .reduce(0,
-        (sum, p) -&gt; {
+        (sum, p) -&gt; &#123;
             System.out.format(&quot;accumulator: sum=%s; person=%s [%s]\n&quot;,
                 sum, p, Thread.currentThread().getName());
             return sum += p.age;
-        },
-        (sum1, sum2) -&gt; {
+        &#125;,
+        (sum1, sum2) -&gt; &#123;
             System.out.format(&quot;combiner: sum1=%s; sum2=%s [%s]\n&quot;,
                 sum1, sum2, Thread.currentThread().getName());
             return sum1 + sum2;
-        });
+        &#125;);
 </code></pre>
 <p>上面例子的输出说明了 accumulator 和 combiner 在并行 Stream 中会在所有的可用线程上执行：</p>
 <pre><code class="language-java">accumulator: sum=0; person=Pamela; [main]
@@ -731,7 +731,7 @@ combiner:    sum1=41; sum2=35;     [ForkJoinPool.commonPool-worker-2]
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

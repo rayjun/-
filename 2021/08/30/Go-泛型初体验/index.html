@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -59,7 +59,7 @@
     <h1>Go 泛型初体验</h1>
     <p>在 Go1.17 中，千呼万唤的泛型终于出来了，但又没有完全出来。在 Go1.17 的发布文档中，并没有提到泛型，但是眼见的网友发现，泛型相关的代码其实已经合并了，只是没有默认启用。目前来说，泛型的玩玩就行，不要用到生产中。</p>
 <p>泛型有望在 Go1.18 版本中发布。</p>
-<h2>1. 启用泛型</h2>
+<h2 id="1-启用泛型">1. 启用泛型</h2>
 <p>泛型的功能虽然添加到 Go.1.17 中了，如果要使用，需要添加一些参数开启，首先需要安装 Go1.17:</p>
 <pre><code class="language-bash">$ go version                                                                                                                                                                                                                                                                       ~
 go version go1.17 darwin/amd64
@@ -84,22 +84,22 @@ import (
     &quot;fmt&quot;
 )
 
-type Addable interface {
+type Addable interface &#123;
 	type int, int8, int16, int32, int64,
 		uint, uint8, uint16, uint32, uint64, uintptr,
 		float32, float64, complex64, complex128,
 		string
-}
+&#125;
 
-func add[T Addable](a, b T) T {
+func add[T Addable](a, b T) T &#123;
     return a + b
-}
+&#125;
 
-func main() {
+func main() &#123;
     fmt.Println(add(1,2))
 
     fmt.Println(add(&quot;foo&quot;,&quot;bar&quot;))
-}
+&#125;
 </code></pre>
 <p>如果直接运行上面的代码，会报下面的错误，这也说明 Go1.17 默认是不支持泛型的：</p>
 <pre><code class="language-bash">$ go run main.go                                                                                                                                                                                                                       
@@ -114,17 +114,17 @@ func main() {
 foobar
 </code></pre>
 <p>第一个泛型程序成功运行了。</p>
-<h2>2. 类型参数和约束</h2>
+<h2 id="2-类型参数和约束">2. 类型参数和约束</h2>
 <p>在 Go 泛型中，增加了两个新概念，一个是 type parameters，下面代码中的 T 就是类型参数，用来表示泛型：</p>
-<pre><code class="language-go">func add[T Addable](a, b T) T {
+<pre><code class="language-go">func add[T Addable](a, b T) T &#123;
     return a + b
-}
+&#125;
 </code></pre>
 <p>可以说 type parameters 在 Go 中就是泛型的意思。</p>
 <p>再看一下下面这段代码，这里泛型的类型是 any，上面的代码则是自定义的 Addable。</p>
-<pre><code class="language-go">func print[T any](a T) {
+<pre><code class="language-go">func print[T any](a T) &#123;
      fmt.Printf(&quot;%v&quot;, a)
-}
+&#125;
 </code></pre>
 <p>上面的 add 函数是有约束的，只能使用 Addable 中定义的类型，如果我们把 Addable 中的 string 去掉，代码就会报下面的错误：</p>
 <pre><code class="language-bash">$ go run -gcflags=-G=3 main.go
@@ -133,7 +133,7 @@ foobar
 </code></pre>
 <p>而 print 函数则可以接受任何类型的参数。</p>
 <p>这就是 Go 中泛型最重要的两个概念：<strong>类型参数</strong> 和 <strong>约束</strong>。</p>
-<h2>3. 类型推断</h2>
+<h2 id="3-类型推断">3. 类型推断</h2>
 <p>正常使用泛型的时候，其实要使用下面这种方式来调用的，以 add 方法为例：</p>
 <pre><code class="language-go">add[int](1,2)
 add[string](&quot;foo&quot;,&quot;bar&quot;)
@@ -144,10 +144,10 @@ add(&quot;foo&quot;,&quot;bar&quot;)
 </code></pre>
 <p>可以把泛型参数省略调，这不部分的工作其实是 Go 编译器来完成的，编译器会根据传入的实际类型来推断，而不用每次写代码的时候都指明泛型的类型。</p>
 <p>类型推断可以让代码简洁不少。</p>
-<h2>4. 小结</h2>
+<h2 id="4-小结">4. 小结</h2>
 <p>Go 泛型涉及到的内容大致就是上面这些了，当然泛型也可以写出很复杂的代码，但实际上涉及到的内容也就是上面那些。总体来说还是比较简洁的，这也与 Go 的设计理念符合。</p>
 <p>Go 泛型目前还没有正式发布，上面的内容在正式发布的时候可能也会有所调整，所以不要在生产中区使用泛型。</p>
-<p>本文例子来源于：<a href="https://github.com/mattn/go-generics-example" target="_blank" rel="noopener">https://github.com/mattn/go-generics-example</a></p>
+<p>本文例子来源于：<a href="https://github.com/mattn/go-generics-example">https://github.com/mattn/go-generics-example</a></p>
 <p>文 / Rayjun</p>
 
 </div>
@@ -169,7 +169,7 @@ add(&quot;foo&quot;,&quot;bar&quot;)
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

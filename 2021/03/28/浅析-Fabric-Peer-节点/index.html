@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,13 +57,13 @@
                     <div id="div-body">
                     <div class="post">
     <h1>浅析 Fabric Peer 节点</h1>
-    <h2>1. Fabric 简介</h2>
+    <h2 id="1-Fabric-简介">1. Fabric 简介</h2>
 <p>Hyperledger Fabric，也称之为超级账本，是由 IBM 发起，后成为 Linux 基金会 Hyperledger 中的区块链项目之一。</p>
 <p>Fabric 是一个提供分布式账本解决方案的平台，底层的账本数据存储使用了区块链。区块链平台通常可以分为公有链、联盟链和私有链。公有链典型的代表是比特币这些公开的区块链网络，谁都可以加入到这个网络中。联盟链则有准入机制，无法随意加入到网络中，联盟链的典型例子就是 Fabric。</p>
 <p>Fabric 不需要发币来激励参与方，也不需要挖矿来防止有人作恶，所以 Fabric 有着更好的性能。在Fabric 网络中，也有着诸多不同类型的节点来组成网络。其中 Peer 节点承载着账本和智能合约，是整个区块链网络的基础。在这篇文章中，会详细分析 Peer 的结构及其运行方式。</p>
 <p>在本文中，假设读者已经了解区块链、智能合约等概念。</p>
 <p>本文基于 Fabric1.4 LTS。</p>
-<h2>2. 网络结构</h2>
+<h2 id="2-网络结构">2. 网络结构</h2>
 <p>区块链网络是一个分布式的网络，Fabric 也是如此，由于 Fabric 是联盟链，需要准入机制，所以在网络结构上会复杂很多，下面是一个简化的 Fabric 网络：</p>
 <p><img src="0.png" alt=""></p>
 <p>各个元素的含义如下：</p>
@@ -86,18 +86,18 @@
 <p>Orderer 节点是整个 Fabric 网络共有的，用来为所有的交易排序、打包。比如上面网络中 O4 节点。本文不会对 Orderer 节点进行详细说明，可以把这个功能理解为比特币网络中的挖矿过程。</p>
 <p>Peer 节点表示网络中的节点，通常一个 Peer 就表示一个组织，Peer 是整个区块链网络的基础，是智能合约和账本的载体，Peer 也是本文讨论的重点。</p>
 <p>一个 Peer 节点可以承载多套账本和智能合约，比如 P2 节点，既维护了 C1 的账本和智能合约，也维护了 C2 的账本和智能合约。</p>
-<h2>3. 交易流程</h2>
+<h2 id="3-交易流程">3. 交易流程</h2>
 <p>为了可以更深入了解 Peer 节点的作用，先了解一下 Fabric 整体的交易流程。整体的交易流程图如下：</p>
 <p><img src="1.png" alt=""></p>
 <p>Peer 节点按照功能来分可以分为<strong>背书节点</strong>和<strong>记账节点</strong>。</p>
 <p>客户端会提交交易请求到背书节点，背书节点开始模拟执行交易，在模拟执行之后，背书节点并不会去更新账本数据，而是把这个交易进行加密和签名，然后返回给客户端。</p>
 <p>客户端收到这个响应之后就会把响应提交到 Orderer 节点，Orderer 节点会对这些交易进行排序，并打包成区块，然后分发到记账节点，记账节点就会对交易进行验证，验证结束之后，就会把交易记录到账本里面。</p>
 <p>一笔交易是否能成功是根据背书策略来指定的，每一个智能合约都会指定一个背书策略。</p>
-<h2>4. Peer 节点</h2>
+<h2 id="4-Peer-节点">4. Peer 节点</h2>
 <p>Peer 节点代表着联盟链中的各个组织，区块链网络也是由 Peer 节点来组成的，而且也是账本和智能合约的载体。</p>
 <p>通过对上面交易过程的了解可以知道，Peer 节点是主要的参与方。如果用户想要访问账本资源，都必须要和 peer 节点进行交互。在一个 Peer 节点中，可以同时维护多个账本，这些账本属于不同的 Channel 。每个 Peer 节点都会维护一套冗余账本，这样就避免了单点故障。</p>
 <p>Peer 节点根据在交易中的不同角色，可以分成背书节点（Endorser）和记账节点（Committer），背书节点会对交易进行模拟执行，记账节点才会真正将数据存储到账本中。</p>
-<h3>账本</h3>
+<h3 id="账本">账本</h3>
 <p>账本可以分成两个部分，一部分是区块链，另一部分是 Current State，也被称之为 World State。</p>
 <p>区块链上只能追加，不能对过去的数据进行修改，链上也包含两部分信息，一部分是通道的配置信息，另一部分是不可修改，序列化的记录。每一个区块记录前一个区块的信息，然后连成链，如下图所示：</p>
 <p><img src="2.png" alt=""></p>
@@ -108,7 +108,7 @@
 <p>WorldState中维护了账本的当前状态，数据以 Key-Value 的形式存储，可以快速查询和修改，每一次对 WorldState 的修改都会被记录到区块链中。WorldState 中的数据需要依赖外部的存储，通常使用 LevelDB 或者 CouchDB。</p>
 <p>区块链和 WorldState 组成了一个完整的账本，World State 保证的业务数据的灵活变化，而区块链则保证了所有的修改是可追溯和不可篡改的。</p>
 <p>在交易完成之后，数据已经写入账本，就需要将这些数据同步到其他的 Peer，Fabric 中使用的是 Gossip 协议。Gossip 也是 Channel 隔离的，只会在 Channel 中的 Peer 中广播和同步账本数据。</p>
-<h3>智能合约</h3>
+<h3 id="智能合约">智能合约</h3>
 <p>智能合约需要安装到 Peer 节点上，智能合约是访问账本的唯一方式。智能合约可以通过 Go、Java  等变成语言进行编写。</p>
 <p>智能合约编写完成之后，需要打包到 ChainCode 中，每个 ChainCode 中可以包含多个智能合约。ChainCode 需要安装，ChainCode 需要安装到 Peer 节点上。安装好了之后，ChainCode 需要在 Channel 上实例化，实例化的时候需要指定背书策略。</p>
 <p><img src="5.png" alt=""></p>
@@ -118,13 +118,13 @@
 <p>区块链上的信息可以通过智能合约访问，也可以在客户端应用通过 API 直接访问。</p>
 <p>Event 是客户端应用和 Fabric 网络交互的一种方式，客户端应用可以订阅 Event，当 Event 发生时，客户端应用就会接受到消息。</p>
 <p>事件源可以两类，一类是智能合约发出的 Event，另一类是账本变更触发的 Event。用户可以从 Event 中获取到交易的信息，比如区块高度等信息。</p>
-<h2>5. 小结</h2>
+<h2 id="5-小结">5. 小结</h2>
 <p>在这篇文章中，首先介绍了 Fabric 整体的网络架构，通过对 Fabric 交易流程的分析，讨论了 peer 节点在交易中的作用，然后详细分析了 peer 节点所维护的账本和智能合约，并分析了 peer 节点维护账本以及 peer 节点执行智能合约的流程。</p>
 <p>文 / Rayjun</p>
-<h3>REF</h3>
-<p>[1] <a href="https://hyperledger-fabric.readthedocs.io/zh_CN/release-1.4/whatis.html" target="_blank" rel="noopener">https://hyperledger-fabric.readthedocs.io/zh_CN/release-1.4/whatis.html</a></p>
-<p>[2] <a href="https://developer.ibm.com/zh/technologies/blockchain/series/os-academy-hyperledger-fabric/" target="_blank" rel="noopener">https://developer.ibm.com/zh/technologies/blockchain/series/os-academy-hyperledger-fabric/</a></p>
-<p>[3] <a href="https://en.wikipedia.org/wiki/Gossip_protocol" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Gossip_protocol</a></p>
+<h3 id="REF">REF</h3>
+<p>[1] <a href="https://hyperledger-fabric.readthedocs.io/zh_CN/release-1.4/whatis.html">https://hyperledger-fabric.readthedocs.io/zh_CN/release-1.4/whatis.html</a></p>
+<p>[2] <a href="https://developer.ibm.com/zh/technologies/blockchain/series/os-academy-hyperledger-fabric/">https://developer.ibm.com/zh/technologies/blockchain/series/os-academy-hyperledger-fabric/</a></p>
+<p>[3] <a href="https://en.wikipedia.org/wiki/Gossip_protocol">https://en.wikipedia.org/wiki/Gossip_protocol</a></p>
 
 </div>
 
@@ -145,7 +145,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

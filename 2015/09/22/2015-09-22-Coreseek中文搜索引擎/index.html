@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,19 +57,19 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Coreseek 中文搜索引擎</h1>
-    <h3>Coreseek 中文搜索引擎</h3>
+    <h3 id="Coreseek-中文搜索引擎">Coreseek 中文搜索引擎</h3>
 <p>如今在一个网站或者一个 <strong>APP</strong> 中，站内搜索的功能很大程度上已经是必不可少的功能了。在这篇文章中我会详细的介绍如何为网站或者 <strong>APP</strong> 开发一个站内搜索的功能。</p>
-<h4>Coreseek 简述</h4>
+<h4 id="Coreseek-简述">Coreseek 简述</h4>
 <p><strong>Coreseek</strong> 是一个基于 <strong>Sphinx</strong> 开发的支持中文搜索的搜索引擎。具有强大的分词模式，而且支持多种模式的匹配。而且可以支持多种数据源。将这个嵌入到引用中也是非常便捷的，下面来说以下详细的配置方式。本文的配置环境为 <strong>Ubuntu 14.04</strong>，安装的软件以 <strong>Sphinx-2.1.3</strong> 和 <strong>coreseek-4.1</strong> 为例。安装包可自行去官网下载。</p>
-<h4>安装 Sphinx 与 Coreseek</h4>
-<h5>安装 Sphinx</h5>
+<h4 id="安装-Sphinx-与-Coreseek">安装 Sphinx 与 Coreseek</h4>
+<h5 id="安装-Sphinx">安装 Sphinx</h5>
 <pre><code>tar zxvf sphinx-2.1.3.tar.gz
 cd sphinx-2.1.3
 ./configure --prefix=/usr/local/sphinx --with-mysql=/usr/local/mysql
 
 sudo make &amp; make install
 </code></pre>
-<p>其中 <strong>--prefix</strong> 是指定安装路径，<strong>--with-mysql</strong> 是指mysql的安装路径。在这个地方需要特别注意如果 <strong>mysql</strong> 是编译安装在 <strong>/usr/local/mysql</strong> ，按照以上的方法可以顺利安装，如果是采用 <strong>apt-get</strong> 方法进行安装的，则上面的安装方法会失败，那么就得采用以下的安装方法:</p>
+<p>其中 <strong>–prefix</strong> 是指定安装路径，<strong>–with-mysql</strong> 是指mysql的安装路径。在这个地方需要特别注意如果 <strong>mysql</strong> 是编译安装在 <strong>/usr/local/mysql</strong> ，按照以上的方法可以顺利安装，如果是采用 <strong>apt-get</strong> 方法进行安装的，则上面的安装方法会失败，那么就得采用以下的安装方法:</p>
 <pre><code>--with-mysql-includes=/usr/include/mysql
 --with-mysql-libs=/usr/lib/mysql
 </code></pre>
@@ -81,14 +81,14 @@ search #命令行搜索命令
 <p>然后在 <strong>/usr/local/sphinx/ect</strong> 目录下修改配置文件</p>
 <pre><code>sudo cp sphinx.conf.dist sphinx.conf
 </code></pre>
-<h5>Coreseek 安装</h5>
+<h5 id="Coreseek-安装">Coreseek 安装</h5>
 <pre><code>tar zxvf coreseek-4.1.tar.gz
 </code></pre>
 <p>在解压完成之后，将会出现两个文件夹：csft-4.1、mmseg-3.2.14。其中 <strong>mmseg</strong> 是一个非常棒的中文分词算法，中文搜索也是建立在这个分词算法之上的。先来安装 <strong>mmseg</strong> ：</p>
 <pre><code>cd mmseg-3.2.14
 ./configure --prefix=/usr/local/mmseg
 </code></pre>
-<p>一般来说上述会出现一个编译错误: &quot;config.status: error: cannot find input file: src/Makefile.in&quot;。这个错误是因为没有安装 <strong>automake</strong>，在安装完成之后，依次执行以下的命令：</p>
+<p>一般来说上述会出现一个编译错误: “config.status: error: cannot find input file: src/Makefile.in”。这个错误是因为没有安装 <strong>automake</strong>，在安装完成之后，依次执行以下的命令：</p>
 <pre><code>sudo apt-get install automake
 aclocal
 libtoolize --force
@@ -109,7 +109,7 @@ sudo make &amp;&amp; make install
 <p>安装完成之后，修改 <strong>/usr/local/coreseek/etc</strong> 中的配置文件：</p>
 <pre><code>sudo cp sphinx.conf.dist csft.conf
 </code></pre>
-<p>然后在上面安装的过程当中，也会有一些坑，具体解决方法见<a href="http://blog.csdn.net/jcjc918/article/details/39032689" target="_blank" rel="noopener">这篇文章</a>。基本上，配置到这里就完成了，如果需要在程序中使用这些，就需要做一些额外的配置。具体见之前的参考文章，这篇文章主要是用来解决编译安装过程中的一些坑。在安装完成之后，如果要使用这个搜索引擎则需要做以下的事情:</p>
+<p>然后在上面安装的过程当中，也会有一些坑，具体解决方法见<a href="http://blog.csdn.net/jcjc918/article/details/39032689">这篇文章</a>。基本上，配置到这里就完成了，如果需要在程序中使用这些，就需要做一些额外的配置。具体见之前的参考文章，这篇文章主要是用来解决编译安装过程中的一些坑。在安装完成之后，如果要使用这个搜索引擎则需要做以下的事情:</p>
 <ul>
 <li>有数据源</li>
 <li>建立 <strong>sphinx</strong>配置文件</li>
@@ -117,11 +117,11 @@ sudo make &amp;&amp; make install
 <li>启动 <strong>searchd</strong> 服务进程，默认端口是9312</li>
 <li>使用<strong>php</strong>(以php为例)去连接 sphinx 服务。</li>
 </ul>
-<h4>参考资料</h4>
+<h4 id="参考资料">参考资料</h4>
 <ul>
-<li><a href="http://www.coreseek.cn/" target="_blank" rel="noopener">官方文档</a></li>
-<li><a href="http://nonfu.me/p/6347.html" target="_blank" rel="noopener">安装参考</a></li>
-<li><a href="http://blog.csdn.net/jcjc918/article/details/39032689" target="_blank" rel="noopener">去坑参考</a></li>
+<li><a href="http://www.coreseek.cn/">官方文档</a></li>
+<li><a href="http://nonfu.me/p/6347.html">安装参考</a></li>
+<li><a href="http://blog.csdn.net/jcjc918/article/details/39032689">去坑参考</a></li>
 </ul>
 
 </div>
@@ -143,7 +143,7 @@ sudo make &amp;&amp; make install
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

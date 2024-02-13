@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,35 +58,35 @@
                     <div class="post">
     <h1>泛型中的 super 和 extends</h1>
     <p>很多人对 <code>&lt;? extends T&gt;</code> 和 <code>&lt;? super T&gt;</code> 这两个泛型<strong>通配符</strong>的用法不清楚，经常会出现理解无法，下面来看一下到底如何正确的使用这个组合。</p>
-<h2>&lt;? extends T&gt;</h2>
+<h2 id="extends-T">&lt;? extends T&gt;</h2>
 <p>先来看一段代码，以下的这段代码用来遍历一个装有 Integer 数据的 list:</p>
-<pre><code class="language-java">public void printNumberList(List&lt;Integer&gt; integerList) {
-    for (Integer i : integerList) {
+<pre><code class="language-java">public void printNumberList(List&lt;Integer&gt; integerList) &#123;
+    for (Integer i : integerList) &#123;
         System.out.println(i);
-    }
-}
+    &#125;
+&#125;
 
 // 遍历一个 Integer List
 List&lt;Integer&gt; integerList = Arrays.asList(1,2,3,4,5,6);
 printNumberList(integerList);
 </code></pre>
 <p>如果我还想遍历另外一个装有 Double 数据的 list，我得写另外一段代码：</p>
-<pre><code class="language-java">public void printNumberList(List&lt;Double&gt; doubleList) {
-    for (Double d : doubleList) {
+<pre><code class="language-java">public void printNumberList(List&lt;Double&gt; doubleList) &#123;
+    for (Double d : doubleList) &#123;
         System.out.println(d);
-    }
-}
+    &#125;
+&#125;
 
 // 遍历一个 Double List
 List&lt;Double&gt; doubleList = Arrays.asList(1.1,2.2,3.3,4.4,5.5,6.6);
 printNumberList(doubleList);
 </code></pre>
 <p>在工作中这样写代码怕是不行吧？很简单就可以想到使用<code>泛型</code>来对这个代码进行优化：</p>
-<pre><code class="language-java">public &lt;T&gt; void printNumberGenericsList(List&lt;T&gt; list) {
-    for (T l : list) {
+<pre><code class="language-java">public &lt;T&gt; void printNumberGenericsList(List&lt;T&gt; list) &#123;
+    for (T l : list) &#123;
         System.out.println(l);
-    }
-}
+    &#125;
+&#125;
 // 利用泛型来遍历多种类型的 List
 List&lt;Integer&gt; integerList = Arrays.asList(1,2,3,4,5,6);
 List&lt;Double&gt; doubleList = Arrays.asList(1.1, 2.2, 3.3, 4.4, 5.5, 6.6);
@@ -98,11 +98,11 @@ printNumberGenericsList(doubleList);
 printNumberGenericsList(strList);
 </code></pre>
 <p>本来这个方法是想用来打印数字类型的 List，而我放进了一个 String 类型的 List，也能够正常的跑起来，对于这个方法没有什么问题，但是比如说后续把这个方法内部实现改了，加上了数字的运算，再传输 String 类型的 List 就会出错了，所以在这里我想只想接受数字类型的 List，代码修改如下：</p>
-<pre><code class="language-java">public void printNumberGenericsExtendsList(List&lt;? extends Number&gt; list) {
-    for (Number l : list) {
+<pre><code class="language-java">public void printNumberGenericsExtendsList(List&lt;? extends Number&gt; list) &#123;
+    for (Number l : list) &#123;
         System.out.println(l);
-    }
-}
+    &#125;
+&#125;
 List&lt;Integer&gt; integerList = Arrays.asList(1,2,3,4,5,6);
 List&lt;Double&gt; doubleList = Arrays.asList(1.1, 2.2, 3.3, 4.4, 5.5, 6.6);
 printNumberGenericsExtendsList(integerList);
@@ -124,7 +124,7 @@ l3.add(3); // 编译不通过
 <p>在上面的代码中，我们声明了 3 个 list，这没什么问题，但是当我们分别向 3 个 list 中添加元素的时候，居然会报错。因为 <code>&lt;? extends Number&gt;</code> 只能保证这个 List 中的内容都是 <code>Number</code> 类型的，当你添加一个 Integer 时，list 实际有可能指向 <code>List&lt;Double&gt;</code>，所以编译器不允许向 list 中添加元素，也就是说 <code>&lt;? extends T&gt;</code> 类型的 List 是<strong>只读</strong>的。</p>
 <p>同样从 list 中获取值时，它也只能保证是 Number 类型的，所以无法从中获取 Integer 或者 Double 等类型的数据（可以取出来之后进行强制类型转换）。</p>
 <p><strong>也就是说 &lt;? extends T&gt; 中只能放 T 类型或其子类的对象。</strong></p>
-<h2>&lt;? super T&gt;</h2>
+<h2 id="super-T">&lt;? super T&gt;</h2>
 <p>搞懂了 <code>extends</code> ，那么 super 这个就不难懂了，看下面的代码：</p>
 <pre><code class="language-java">List&lt;? super Number&gt; l1 = new ArrayList&lt;Number&gt;();
 List&lt;? super Number&gt; l2 = new ArrayList&lt;Object&gt;();
@@ -134,37 +134,50 @@ l2.add(2.2); // 编译通过
 </code></pre>
 <p>这里的 list 可以添加元素，只能添加 Number 或者 Number 的子类对象。但是不能向 list 中添加 Object 的类型，因为这个 list 的实际类型有可能是 <code>List&lt;Number&gt;</code>。</p>
 <p>从 list 取值的时候，只能取出 Object 类型的值，因为只能保证取出来的值是 Object 的子类对象。</p>
-<p>&lt;? super T&gt; 和 &lt;? extends T&gt; 可以组合起来使用（Collections.copy()，删减了一些代码），如下例子：</p>
-<pre><code class="language-java">public static &lt;T&gt; void copy(List&lt;? super T&gt; dest, List&lt;? extends T&gt; src) {
-    for (int i=0; i&lt; src.size(); i++)
+<? super T> 和 <? extends T> 可以组合起来使用（Collections.copy()，删减了一些代码），如下例子：
+
+```java
+public static <T> void copy(List<? super T> dest, List<? extends T> src) {
+    for (int i=0; i< src.size(); i++)
         dest.set(i, src.get(i));
 }
-</code></pre>
-<h2>PECS</h2>
-<p>PECS 的全称是：Producer extends and Consumer super。</p>
-<p>可以认为 PECS 说明了这两个通配符的使用场景。</p>
-<p>这里以 List 为例：</p>
-<ul>
-<li>Producer extends：如果你需要一个 List 来为你生成 T 类型的数据（也就从 list 中读取 T 类型的数据），那就把这个 List 声明为 &lt;? extends T&gt;，比如 <code>List&lt;? extends Integer&gt;</code>。但是无法向 list 中添加元素。</li>
-<li>Consumer super：如果你需要一个 List 来消费 T 类型的数据（也就是将 T 类型的数据写入到 list中），那就把这个 List 声明为 &lt;? super T&gt;，如 <code>List&lt;? super Integer&gt;</code>，但是只能从中取出 Object 类型的数据（需要自己进行强制转换）。</li>
-<li>如果你需要对一个 List 同时进行读和写，那就不要使用通配符。如：<code>List&lt;Integer&gt;</code></li>
-</ul>
-<h2>泛型擦除问题</h2>
-<p>&lt;? extends T&gt; 和 &lt;? super T&gt; 除了上面的用法之外，还能部分解决<strong>泛型擦除</strong>所带来的问题。</p>
-<p>泛型信息只存在于代码编译阶段，在进入 JVM 之前，与泛型相关的信息会被擦除掉，所以最后泛型数据其实就是被保存成了 Object，这样会带来一些问题，看下面的代码：</p>
-<pre><code class="language-java">List&lt;String&gt; strList = new ArrayList&lt;String&gt;();
+```
+
+## PECS
+PECS 的全称是：Producer extends and Consumer super。
+
+可以认为 PECS 说明了这两个通配符的使用场景。
+
+这里以 List 为例：
+
+- Producer extends：如果你需要一个 List 来为你生成 T 类型的数据（也就从 list 中读取 T 类型的数据），那就把这个 List 声明为 <? extends T>，比如 `List<? extends Integer>`。但是无法向 list 中添加元素。
+- Consumer super：如果你需要一个 List 来消费 T 类型的数据（也就是将 T 类型的数据写入到 list中），那就把这个 List 声明为 <? super T>，如 `List<? super Integer>`，但是只能从中取出 Object 类型的数据（需要自己进行强制转换）。
+- 如果你需要对一个 List 同时进行读和写，那就不要使用通配符。如：`List<Integer>`
+
+
+## 泛型擦除问题
+
+<? extends T> 和 <? super T> 除了上面的用法之外，还能部分解决**泛型擦除**所带来的问题。
+
+泛型信息只存在于代码编译阶段，在进入 JVM 之前，与泛型相关的信息会被擦除掉，所以最后泛型数据其实就是被保存成了 Object，这样会带来一些问题，看下面的代码：
+
+```java
+List<String> strList = new ArrayList<String>();
 
 try {
-    strList.getClass().getMethod(&quot;add&quot;, Object.class).invoke(strList, 1);
+    strList.getClass().getMethod("add", Object.class).invoke(strList, 1);
 } catch (Exception e) {
     e.printStackTrace();
 }
 
-System.out.println(&quot;strList size: &quot;+ strList.size()); // strList size: 1
-</code></pre>
-<p>是的，没错，利用反射机制把 Integer 类型的数据插入到了 List&lt;String&gt; 中，这肯定是有问题的，在获取数据时就会发生<strong>强制类型转换错误</strong>。</p>
-<p>这当然是一个比较极端的情况，而且 Java 目前也没有办法完全把这个问题解决。但是使用 <code>&lt;? extends T&gt;</code> 让避免对象被擦除成 Object，如下：</p>
-<pre><code class="language-java">class Demo &lt;T extends String&gt; {     
+System.out.println("strList size: "+ strList.size()); // strList size: 1
+```
+
+是的，没错，利用反射机制把 Integer 类型的数据插入到了 List<String> 中，这肯定是有问题的，在获取数据时就会发生**强制类型转换错误**。
+
+这当然是一个比较极端的情况，而且 Java 目前也没有办法完全把这个问题解决。但是使用 `<? extends T>` 让避免对象被擦除成 Object，如下：
+```java
+class Demo <T extends String> {     
     public void method(T param) {
         System.out.println(param);
     }
@@ -173,11 +186,10 @@ System.out.println(&quot;strList size: &quot;+ strList.size()); // strList size:
 Class clazz = Demo.class;
 Field[] fs = clazz.getDeclaredFields();
 for ( Field f:fs) {
-    System.out.println(&quot;Field name: &quot;+f.getName()+&quot;, field type:&quot;+f.getType().getName());
+    System.out.println("Field name: "+f.getName()+", field type:"+f.getType().getName());
     // Field name: data, field type:java.lang.String
 }
-</code></pre>
-
+```
 </div>
 
                     </div>
@@ -197,7 +209,7 @@ for ( Field f:fs) {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -60,16 +60,16 @@
     <p>HBase 是一个开源的分布式非关系型数据库，在大数据行业中应用很广泛。Google 的三篇论文奠定了大数据的理论基础，其中 HBase 就可以看做是 BigTable 的实现，用来存储大规模的数据。</p>
 <p>HBase 的命令很多，这篇文章总结了 HBase 最常用的 shell 命令，作为日常开发的手册。</p>
 <blockquote>
-<p>本文基于 JDK1.8 HBase2.2.5
+<p>本文基于 JDK1.8 HBase2.2.5<br>
 本文假设你已经了解 HBase 的基本概念</p>
 </blockquote>
-<h2>HBase 单机版安装</h2>
-<p>本文基于单机版的 HBase 进行操作，单机版的 HBase 使用起来非常方便，不要配置 HDFS，直接就可以使用，在这里下载 <a href="https://hbase.apache.org/downloads.html" target="_blank" rel="noopener">HBase</a>。</p>
+<h2 id="HBase-单机版安装">HBase 单机版安装</h2>
+<p>本文基于单机版的 HBase 进行操作，单机版的 HBase 使用起来非常方便，不要配置 HDFS，直接就可以使用，在这里下载 <a href="https://hbase.apache.org/downloads.html">HBase</a>。</p>
 <p>下载完成之后，直接解压：</p>
 <pre><code class="language-shell">tar xzvf hbase-2.2.5-bin.tar.gz
 cd hbase-2.2.5
 </code></pre>
-<p>然后进入 conf 目录，编辑 hbase-env.sh，找到下面这行，配置上 JDK 的目录（HBase 2.2.5 需要 JDK1.8 以上）：</p>
+<p>然后进入 conf 目录，编辑 <a href="http://hbase-env.sh">hbase-env.sh</a>，找到下面这行，配置上 JDK 的目录（HBase 2.2.5 需要 JDK1.8 以上）：</p>
 <pre><code class="language-shell"># export JAVA_HOME=/usr/java/jdk1.8.0/
 # 改成你的 jdk 目录
 export JAVA_HOME=your jdk dir
@@ -84,7 +84,7 @@ export JAVA_HOME=your jdk dir
 <blockquote>
 <p>HBase 虽然经常和 HDFS 一起出现，但并不是非得使用 HDFS 作为底层文件系统，也可以选择其他的文件系统，比如电脑的本地文件系统。</p>
 </blockquote>
-<h2>基本操作</h2>
+<h2 id="基本操作">基本操作</h2>
 <p>连上 HBase 之后，就可以对 HBase 进行操作了，HBase 有一些基本的命令来查看 HBase 当前的状态和属性。</p>
 <p>连接上 HBase 之后，查看当前连接的用户是谁：</p>
 <pre><code class="language-shell">whoami
@@ -101,13 +101,13 @@ export JAVA_HOME=your jdk dir
 <p>查看其他命令使用，比如查看 list 命令的详细信息（注意要加引号）：</p>
 <pre><code class="language-shell">help 'list'
 </code></pre>
-<h2>表操作</h2>
+<h2 id="表操作">表操作</h2>
 <p>HBase 的建表和 MySQL 等关系型数据库不一样，需要提前创建表结构，对于 HBase 来说，建表很简单，下面全程使用 students 表为例，students 表有两个列族 <code>NO</code> 和 <code>Info</code>，分别表示学生的学号和详细信息。</p>
 <p>创建 namespace：</p>
 <pre><code class="language-shell">create_namespace 's_school'
 </code></pre>
 <p>修改 namespace：</p>
-<pre><code class="language-shell">alter_namespace 's_school', {METHOD=&gt;'set', NAME =&gt; 'school'}
+<pre><code class="language-shell">alter_namespace 's_school', &#123;METHOD=&gt;'set', NAME =&gt; 'school'&#125;
 </code></pre>
 <p>删除 namespace，只有在 namespce 为空时才能删除：</p>
 <pre><code class="language-shell">drop_namespace 's_school'
@@ -136,13 +136,13 @@ is_disabled 'students' # 表是否禁用
 <pre><code class="language-shell">alter 'students', 'Extra'
 </code></pre>
 <p>删除一个列族：</p>
-<pre><code class="language-shell">alter 'students', {NAME=&gt;'Extra', METHOD=&gt;'delete'}
+<pre><code class="language-shell">alter 'students', &#123;NAME=&gt;'Extra', METHOD=&gt;'delete'&#125;
 </code></pre>
 <p>删除表，需要注意，删除表之前要先禁用表:</p>
 <pre><code class="language-shell">disable 'students'
 drop 'students'
 </code></pre>
-<h2>增</h2>
+<h2 id="增">增</h2>
 <p>表创建好了就可以往表里面写数据了，添加数据使用 put 命令。</p>
 <p>插入学生 ID：</p>
 <pre><code class="language-shell">put 'students', '100001', 'No', '100001'
@@ -158,7 +158,7 @@ drop 'students'
 <p>HBase 中更新数据使用的也是 put 命令：</p>
 <pre><code class="language-shell">put 'students', '100001', 'Info:age', '24'
 </code></pre>
-<h2>查</h2>
+<h2 id="查">查</h2>
 <p>HBase 中查询数据有两种方式 get 和 scan，get 直接通过 rowkey 获取数据，因为有索引的加持，速度非常快，而 scan 则需要通过扫描区间来获取数据，性能会低很多。</p>
 <p>通过 get 获取数据:</p>
 <pre><code class="language-shell">get 'students', '100001'
@@ -174,21 +174,21 @@ drop 'students'
 <pre><code class="language-shell">scan 'students'
 </code></pre>
 <p>也可以指定返回结果的行数：</p>
-<pre><code class="language-shell">scan 'students', {LIMIT=&gt;10}
+<pre><code class="language-shell">scan 'students', &#123;LIMIT=&gt;10&#125;
 </code></pre>
 <p>还可以获得指定列族或者列的数据:</p>
-<pre><code class="language-shell">scan 'students', {COLUMNS=&gt;'Info:age'}
+<pre><code class="language-shell">scan 'students', &#123;COLUMNS=&gt;'Info:age'&#125;
 </code></pre>
 <p>如果获取多个列族，或者多个列：</p>
-<pre><code class="language-shell">scan 'students', {COLUMNS=&gt;['Info:age', 'No']}
+<pre><code class="language-shell">scan 'students', &#123;COLUMNS=&gt;['Info:age', 'No']&#125;
 </code></pre>
 <p>还可以通过制定 rowkey 的前缀查询，这个功能很常用，这样查询的速度会快很多：</p>
-<pre><code class="language-shell">scan 'students', {STARTROW =&gt; '100'}
+<pre><code class="language-shell">scan 'students', &#123;STARTROW =&gt; '100'&#125;
 </code></pre>
 <p>如果要统计整个表中数据的行数:</p>
 <pre><code class="language-shell">count 'students'
 </code></pre>
-<h2>删</h2>
+<h2 id="删">删</h2>
 <p>删除数据也很简单，可以删除一个列或者一个列族或者一行：</p>
 <p>删除一个列族的最新数据：</p>
 <pre><code class="language-shell">delete 'students', '100001', 'No'
@@ -224,7 +224,7 @@ drop 'students'
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

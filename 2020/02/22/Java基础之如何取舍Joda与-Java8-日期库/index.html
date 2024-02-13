@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -60,9 +60,9 @@
     <p>在 Java8 以前，时间和日期的类库很难用，而且有线程安全等诸多问题。</p>
 <p>Joda time 弥补了 Java 在这方面的不足，但是在 Java8 时，增加了 <code>java.time</code> 包，对 Java 在日期 API 方面的进行了增强，这些代码实现了 JSR-310 的标准。Joda 的官方推荐迁移到 Java8 的时间类库上来。</p>
 <p>下面来详细对比对比一下两个类库，看看 Java8 的日期 API 是否能真正替代 Joda time。</p>
-<h2>基础概念对比</h2>
+<h2 id="基础概念对比">基础概念对比</h2>
 <p>Joda Date 的核心概念，这些概念在 java time 中基本也能找到对应：</p>
-<h3>instant</h3>
+<h3 id="instant">instant</h3>
 <p>表示一个时刻，使用从 1970-01-01 00:00:00 至今的毫秒数表示</p>
 <p><strong>Joda time:</strong></p>
 <pre><code class="language-java">DateTime dt = new DateTime();
@@ -72,7 +72,7 @@ Instant instant = dt.toInstant();
 <pre><code class="language-java">Clock clock = Clock.systemDefaultZone();
 Instant instant = clock.instant();
 </code></pre>
-<h3>interval</h3>
+<h3 id="interval">interval</h3>
 <p>表示两个 instant 之间的间隔，左闭右开。</p>
 <p><strong>Joda time:</strong></p>
 <pre><code class="language-java">DateTime dt = new DateTime();
@@ -80,8 +80,8 @@ DateTime dt1 = new DateTime();
 Interval interval = new Interval(dt.toInstant(), dt1.toInstant());
 </code></pre>
 <p>java time 中没有提供类似的 API，因为 JSR-310 标准中没有这个概念。</p>
-<h3>duration</h3>
-<p>用毫秒表示的时间段，通常从 interval 获得
+<h3 id="duration">duration</h3>
+<p>用毫秒表示的时间段，通常从 interval 获得<br>
 <strong>Joda time:</strong></p>
 <pre><code class="language-java">DateTime dt = new DateTime();
 DateTime dt1 = new DateTime();
@@ -93,7 +93,7 @@ Duration duration = interval.toInstant();
 LocalDateTime l2 = LocalDateTime.now();
 Period period = Period.between(l1.toLocalDate(), l2.toLocalDate());
 </code></pre>
-<h3>period</h3>
+<h3 id="period">period</h3>
 <p>同样表示时间段，比如 3年，5个月，而 duration 使用毫秒表示</p>
 <p><strong>Joda time:</strong></p>
 <pre><code class="language-java">DateTime dt1 = new DateTime();
@@ -105,7 +105,7 @@ Period period = Period.fieldDifference(dt1.toLocalDateTime(), dt2.toLocalDateTim
 LocalDateTime l2 = LocalDateTime.now();
 Period period = Period.between(l1.toLocalDate(), l2.toLocalDate());
 </code></pre>
-<h3>chronology</h3>
+<h3 id="chronology">chronology</h3>
 <p>年表，这是 joda-time 设计的基础</p>
 <p><strong>Joda time:</strong></p>
 <pre><code class="language-java">DateTime dt = new DateTime();
@@ -115,7 +115,7 @@ Chronology chronology = dt.getChronology();
 <pre><code class="language-java">LocalDateTime localDateTime = LocalDateTime.now();
 Chronology ch = localDateTime.getChronology();
 </code></pre>
-<h3>timezones</h3>
+<h3 id="timezones">timezones</h3>
 <p>表示时区。</p>
 <p><strong>Joda time</strong>:</p>
 <pre><code class="language-java">DateTime dt = new DateTime();
@@ -131,7 +131,7 @@ Set&lt;String&gt; zones = ZoneId.getAvailableZoneIds();
 <blockquote>
 <p>因为 Unix 系统从 1970-01-01 00:00:00 开始计时，这个时间也称之为 Epoch Time，后续使用 Unix 的这种计时方式。</p>
 </blockquote>
-<h2>具体使用</h2>
+<h2 id="具体使用">具体使用</h2>
 <p>Joda time 依赖 JDK5 及后续版本，没有额外的依赖。</p>
 <p>为了起到对比的效果，挑几个比较常用的场景进行对比：</p>
 <ul>
@@ -141,7 +141,7 @@ Set&lt;String&gt; zones = ZoneId.getAvailableZoneIds();
 <li>日期的增减</li>
 <li>日期的格式化</li>
 </ul>
-<h3>获取时间戳</h3>
+<h3 id="获取时间戳">获取时间戳</h3>
 <p>在代码中，经常会使用这个功能来表示唯一性：</p>
 <p><strong>Joda time:</strong></p>
 <pre><code class="language-java">DateTime dt = new DateTime();
@@ -151,7 +151,7 @@ long mills = dt.getMillis();
 <pre><code class="language-java">Clock clock = Clock.systemDefaultZone();
 long mills = clock.millis();
 </code></pre>
-<h3>获取当前时间</h3>
+<h3 id="获取当前时间">获取当前时间</h3>
 <p>这块两个库没有太大的差异：</p>
 <p><strong>Joda time:</strong></p>
 <pre><code class="language-java">DateTime dt = new DateTime();
@@ -160,7 +160,7 @@ LocalDateTime localDateTime = dt.toLocalDateTime();
 <p><strong>Java time:</strong></p>
 <pre><code class="language-java">LocalDateTime localDateTime = LocalDateTime.now();
 </code></pre>
-<h3>获取年、月、日、星期几</h3>
+<h3 id="获取年、月、日、星期几">获取年、月、日、星期几</h3>
 <p><strong>Joda time:</strong></p>
 <pre><code class="language-java">DateTime dt = new DateTime();
 int dayOfYear = dt.getDayOfYear();
@@ -176,10 +176,10 @@ int dayOfMonth = localDateTime.getDayOfMonth();
 int dayOfWeek = localDateTime.getDayOfWeek().getValue();
 int hourOfDay = localDateTime.getHour();
 </code></pre>
-<p>获取这些值两个库也没有太大的差异，但是对于一些场景，比如我想获得 &quot;星期四&quot; 这个字符串。
+<p>获取这些值两个库也没有太大的差异，但是对于一些场景，比如我想获得 “星期四” 这个字符串。<br>
 在 Joda 库中，可以 <code>dt.dayOfWeek().getAsShortText(); // 星期四</code> 这样获得。在 Java 中，<code>localDateTime.getDayOfWeek().name(); //THURSDAY</code> 只能获取到英文。</p>
 <p>Joda time 在本地化方面比 Java time做的更好。</p>
-<h3>日期增减</h3>
+<h3 id="日期增减">日期增减</h3>
 <p><strong>Joda time</strong></p>
 <pre><code class="language-java">DateTime dt = new DateTime();
 dt = dt.plusDays(2); //当前日期添加两天
@@ -194,7 +194,7 @@ localDateTime = localDateTime.plusHours(2); // 增加两个小时
 localDateTime = localDateTime.minusDays(1); //减少一天
 localDateTime = localDateTime.minusHours(1); // 减少一个小时
 </code></pre>
-<h3>日期的格式化</h3>
+<h3 id="日期的格式化">日期的格式化</h3>
 <p>日期格式化是日常使用最频繁的功能，下面来对比一下这两者的区别。</p>
 <p><strong>Joda time</strong></p>
 <pre><code class="language-java">// 方式一
@@ -241,7 +241,7 @@ GregorianCalendar jdkGCal = dt.toGregorianCalendar();
 // from JDK to Joda
 dt = new DateTime(jdkGCal);
 </code></pre>
-<h2>设计思想</h2>
+<h2 id="设计思想">设计思想</h2>
 <p>Joda time 与 Java time 在功能上已经相差不大，常用的功能这两个类库都可以完成，而且两个库都是线程安全的。</p>
 <p>但我认为 Joda time 的 API 更加简洁一些，Joda time 的使用可以直接从 DateTime 这个类开始。而 Java time 的使用则更加繁琐。</p>
 <p>从设计上来说 Java time 都不再使用 new 来创建实例，而是使用工厂方法来创建实例。这点上比 Joda time 的设计要更好，而且更加安全。</p>
@@ -266,7 +266,7 @@ dt = new DateTime(jdkGCal);
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

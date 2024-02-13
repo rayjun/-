@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,18 +57,18 @@
                     <div id="div-body">
                     <div class="post">
     <h1>redis 注册服务</h1>
-    <h3>redis 注册为为服务</h3>
+    <h3 id="redis-注册为为服务">redis 注册为为服务</h3>
 <p>在 redis 安装完成之后，需要将 redis 注册为服务，这样做有多个好处:</p>
 <ul>
 <li>可以利用 service 命令方便的控制服务的启动和停止。</li>
 <li>可以利用 chkconfig 命令来控制程序的运行级别。</li>
 <li>可以让服务在开机时启动。</li>
 </ul>
-<h4>redis 安装</h4>
+<h4 id="redis-安装">redis 安装</h4>
 <p>redis 的安装有多种方式，既可以通过源码安装，也可以通过操作系统的报管理器安装。这个就不详细说明了。</p>
-<h4>redis 注册服务</h4>
+<h4 id="redis-注册服务">redis 注册服务</h4>
 <ul>
-<li>安装完成了之后，将源码中 /utils/redis_init_script (不知道文件在哪的可以通过 find / -name redis_init_script 来查找)
+<li>安装完成了之后，将源码中 /utils/redis_init_script (不知道文件在哪的可以通过 find / -name redis_init_script 来查找)<br>
 文件复制到 /etc/init.d/redisd 文件。</li>
 <li>然后在 /etc 目录下创建 /etc/redis 目录(这个目录可以随便建)，并将修改的 redis.conf 复制到 redis目录下。</li>
 <li>然后修改 /etc/init.d/redisd 文件，在文件开始的地方添加服务的运行级别。</li>
@@ -103,7 +103,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

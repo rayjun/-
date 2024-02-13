@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,8 +57,8 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Laravel系列-redis使用</h1>
-    <h3>Redis</h3>
-<p><a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 是一个开源的 key-value 数据库。在某些场合上可以对关系型数据库进行很好的补充。<a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 的命令使用起来非常方便，例如对于字符串的存取</p>
+    <h3 id="Redis">Redis</h3>
+<p><a href="http://www.redis.net.cn/">Redis</a> 是一个开源的 key-value 数据库。在某些场合上可以对关系型数据库进行很好的补充。<a href="http://www.redis.net.cn/">Redis</a> 的命令使用起来非常方便，例如对于字符串的存取</p>
 <pre><code>//存入字符串
 127.0.0.1:6379&gt; set name key
 OK
@@ -67,71 +67,71 @@ OK
 127.0.0.1:6379&gt; get name
 &quot;key&quot;
 </code></pre>
-<p>更多的 <a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 相关的内容可以访问官网。</p>
-<h3>Laravel 中使用 Redis</h3>
-<p><a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 可以支持诸多语言。例如 Java，Php，Ruby，Python 等。在 Laravel 中可以很方便的集成 <a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a>，只需要通过 Composer 安装一个扩展包就行：</p>
-<pre><code>&quot;require&quot;: {
+<p>更多的 <a href="http://www.redis.net.cn/">Redis</a> 相关的内容可以访问官网。</p>
+<h3 id="Laravel-中使用-Redis">Laravel 中使用 Redis</h3>
+<p><a href="http://www.redis.net.cn/">Redis</a> 可以支持诸多语言。例如 Java，Php，Ruby，Python 等。在 Laravel 中可以很方便的集成 <a href="http://www.redis.net.cn/">Redis</a>，只需要通过 Composer 安装一个扩展包就行：</p>
+<pre><code>&quot;require&quot;: &#123;
         &quot;predis/predis&quot;: &quot;~1.0&quot;,
- }
+ &#125;
         
 </code></pre>
-<p>好了，然后就可以在 <a href="http://www.golaravel.com/laravel/docs/5.1/" target="_blank" rel="noopener">Laravel</a> 中使用 <a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 了。可以将 <a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 当作队列来使用，也可以将 <a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 作为缓存来使用。</p>
-<p>这些简单的用法在 <a href="http://www.golaravel.com/laravel/docs/5.1/" target="_blank" rel="noopener">Laravel</a> 的官方文档中都可以找到很详细的文档。就不多说，今天要说的是使用过程当中的一个坑。</p>
-<h4>Redis 坑</h4>
-<p><a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 中的发布/订阅是一个很棒的工具，有着很广的用处。但是找个特性在使用的过程中却是有些坑存在，看下面的代码：</p>
-<pre><code> Redis::subscribe(['test-channel'], function($message) {
+<p>好了，然后就可以在 <a href="http://www.golaravel.com/laravel/docs/5.1/">Laravel</a> 中使用 <a href="http://www.redis.net.cn/">Redis</a> 了。可以将 <a href="http://www.redis.net.cn/">Redis</a> 当作队列来使用，也可以将 <a href="http://www.redis.net.cn/">Redis</a> 作为缓存来使用。</p>
+<p>这些简单的用法在 <a href="http://www.golaravel.com/laravel/docs/5.1/">Laravel</a> 的官方文档中都可以找到很详细的文档。就不多说，今天要说的是使用过程当中的一个坑。</p>
+<h4 id="Redis-坑">Redis 坑</h4>
+<p><a href="http://www.redis.net.cn/">Redis</a> 中的发布/订阅是一个很棒的工具，有着很广的用处。但是找个特性在使用的过程中却是有些坑存在，看下面的代码：</p>
+<pre><code> Redis::subscribe(['test-channel'], function($message) &#123;
             echo $message;
- });
+ &#125;);
  
- Route::get('publish', function () {
+ Route::get('publish', function () &#123;
     // Route logic...
 
     Redis::publish('test-channel', json_encode(['foo' =&gt; 'bar']));
-});
+&#125;);
 </code></pre>
-<p>上面的代码就是 订阅模式在 <a href="http://www.golaravel.com/laravel/docs/5.1/" target="_blank" rel="noopener">Laravel</a> 中的使用，通过一个匿名的回调函数来接收发布的消息。这里要注意的是，<a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 的订阅的命令会在后台生成一个守护进程。而 <a href="http://www.redis.net.cn/" target="_blank" rel="noopener">Redis</a> 连接服务器使用的是 Socket，所以如果按照 php 的默认配置，在60秒后就会自动断开连接，订阅就没有办法继续了。所以需要在这里加一个防止超时方法，例如下面:</p>
+<p>上面的代码就是 订阅模式在 <a href="http://www.golaravel.com/laravel/docs/5.1/">Laravel</a> 中的使用，通过一个匿名的回调函数来接收发布的消息。这里要注意的是，<a href="http://www.redis.net.cn/">Redis</a> 的订阅的命令会在后台生成一个守护进程。而 <a href="http://www.redis.net.cn/">Redis</a> 连接服务器使用的是 Socket，所以如果按照 php 的默认配置，在60秒后就会自动断开连接，订阅就没有办法继续了。所以需要在这里加一个防止超时方法，例如下面:</p>
 <pre><code> ini_set('default_socket_timeout', -1); // 防止连接超时
- Redis::subscribe(['test-channel'], function($message) {
+ Redis::subscribe(['test-channel'], function($message) &#123;
             echo $message;
- });
+ &#125;);
  
- Route::get('publish', function () {
+ Route::get('publish', function () &#123;
     // Route logic...
 
     Redis::publish('test-channel', json_encode(['foo' =&gt; 'bar']));
-});
+&#125;);
 
 </code></pre>
 <p>除了上面的坑之外还有一个坑，依然看上面的代码，我做如下的修改：</p>
 <pre><code> ini_set('default_socket_timeout', -1); // 防止连接超时
- Redis::subscribe(['test-channel'], function($message) {
+ Redis::subscribe(['test-channel'], function($message) &#123;
             Redis::set('name', $message);
- });
+ &#125;);
  
- Route::get('publish', function () {
+ Route::get('publish', function () &#123;
     // Route logic...
 
     Redis::publish('test-channel', json_encode(['foo' =&gt; 'bar']));
-});
+&#125;);
 </code></pre>
 <p>如果按照上面的写法，则会报如下的错误:</p>
 <pre><code>exception 'Predis\Response\ServerException' with message 'ERR only (P)SUBSCRIBE / (P)UNSUBSCRIBE / QUIT allowed in this context'
 </code></pre>
 <p>找个错误的原因是在回调函数的范围内使用了 <code>Redis::set</code> 方法，通过看 <code>Github</code> 上的 issue，发现 <code>Redis::</code> 生成的是同一个客户端，而在同一个客户端内，只能使用上面错误里面列出的几个命令。上面的代码里面，我使用了 <code>Redis::set</code> 命令，于是就报了上面的错误。解决找个问题的方法就是生成一个不同的 <code>Redis</code> 客户端，如下代码:</p>
 <pre><code> ini_set('default_socket_timeout', -1); // 防止连接超时
- Redis::subscribe(['test-channel'], function($message) {
+ Redis::subscribe(['test-channel'], function($message) &#123;
  			  $redisClient = new Predis\Client();
             $redisClient-&gt;set('name', $message);
- });
+ &#125;);
  
- Route::get('publish', function () {
+ Route::get('publish', function () &#123;
     // Route logic...
 
     Redis::publish('test-channel', json_encode(['foo' =&gt; 'bar']));
-});
+&#125;);
 </code></pre>
 <p>通过上面的代码就可以解决那些问题了。</p>
-<p>总之，<a href="http://www.golaravel.com/laravel/docs/5.1/" target="_blank" rel="noopener">Laravel</a> 还是一个不错的框架的。</p>
+<p>总之，<a href="http://www.golaravel.com/laravel/docs/5.1/">Laravel</a> 还是一个不错的框架的。</p>
 
 </div>
 
@@ -152,7 +152,7 @@ OK
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

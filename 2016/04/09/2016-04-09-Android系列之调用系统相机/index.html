@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -68,36 +68,36 @@ imageUri = Uri.fromFile(outputImage);
 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
 
 </code></pre>
-<p>以上的代码虽然可以获取照片，但是却也什么都做不了，因为，我们可能需要对这些照片进行额外的操作，比如放到特定的文件夹，或者缩放，
+<p>以上的代码虽然可以获取照片，但是却也什么都做不了，因为，我们可能需要对这些照片进行额外的操作，比如放到特定的文件夹，或者缩放，<br>
 或者裁剪。</p>
-<h4>将照片放到特定的位置</h4>
-<p>如果只是调用 <code>Environment.getExternalStorageState()</code> ,这会将照片直接保存在 SD 卡的根目录，下面的代码可以将照片保存到 SD
+<h4 id="将照片放到特定的位置">将照片放到特定的位置</h4>
+<p>如果只是调用 <code>Environment.getExternalStorageState()</code> ,这会将照片直接保存在 SD 卡的根目录，下面的代码可以将照片保存到 SD<br>
 卡的任意地方，如果目录不存在，就会创建一个新的目录：</p>
-<pre><code>    private File createOutputFile(String path, String fileName) {
+<pre><code>    private File createOutputFile(String path, String fileName) &#123;
 
         String storageStatus = Environment.getExternalStorageState();
 
-        if(Environment.MEDIA_REMOVED.equals(storageStatus)) {
+        if(Environment.MEDIA_REMOVED.equals(storageStatus)) &#123;
             Log.i(TAG, &quot;SD 卡不存在&quot;);
             return null;
-        }
+        &#125;
 
         File pictureDir = new File(Environment.getExternalStorageDirectory(), path);
 
 
-        if(! pictureDir.exists()) {
+        if(! pictureDir.exists()) &#123;
 
-            if(! pictureDir.mkdirs()) {
+            if(! pictureDir.mkdirs()) &#123;
                 Log.i(TAG, &quot;目录创建失败&quot;);
-            }
-        }
+            &#125;
+        &#125;
 
         File file = new File(pictureDir, fileName);
 
         return file;
-    }
+    &#125;
 </code></pre>
-<h4>对照片进行裁剪</h4>
+<h4 id="对照片进行裁剪">对照片进行裁剪</h4>
 <p>以下的代码可以启动一个裁剪器，对刚刚拍好的照片利用系统相机的功能进行裁剪：</p>
 <pre><code> Intent intent = new Intent(&quot;com.android.camera.action.CROP&quot;);
  intent.setDataAndType(imageUri, &quot;image/*&quot;);
@@ -132,7 +132,7 @@ intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

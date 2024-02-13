@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -61,107 +61,107 @@
 <p>在 Java 中解决这个问题比较简单，可以使用 MDC，在一个进程内共享一个请求的 RequestId。</p>
 <p>在 Go 中实现链路追踪有两种思路：一种是在项目中使用一个全局的 map， key 是 goroutine 的唯一 Id，value 是 RequestId，另一种思路可以使用 context.Context 来实现。</p>
 <p>下面的代码基于 gin 框架来实现。</p>
-<h2>1. 使用全局 map 来实现</h2>
+<h2 id="1-使用全局-map-来实现">1. 使用全局 map 来实现</h2>
 <p>使用 map 方案需要在全局维护一个 map，在一个请求进来的时候，会为每一个请求生成 RequestId，然后在每次在打印日志的时候，从这个 Map 中通过 goid 获取到 RequestId，打印到日志中。</p>
 <p>代码的实现很简单：</p>
 <pre><code class="language-go">var requestIdMap = make(map[int64]string) // 全局的 Map
 
-func main() {
+func main() &#123;
 	r := gin.Default()
 	r.Use(Logger()) // 使用中间件
 
-	r.GET(&quot;/index&quot;, func(c *gin.Context) {
+	r.GET(&quot;/index&quot;, func(c *gin.Context) &#123;
 		Info(&quot;main goroutine&quot;) // 打印日志
 
-		c.JSON(200, gin.H{
+		c.JSON(200, gin.H&#123;
 			&quot;message&quot;: &quot;index&quot;,
-		})
-	})
+		&#125;)
+	&#125;)
 	r.Run()
-}
+&#125;
 
-func Logger() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func Logger() gin.HandlerFunc &#123;
+	return func(c *gin.Context) &#123;
 		requestIdMap[goid.Get()] = uuid.New().String() // 在日志中间件中为每个请求设定
 		c.Next()
-	}
-}
+	&#125;
+&#125;
 
-func Info(msg string)  {
+func Info(msg string)  &#123;
 	now := time.Now()
 	nowStr := now.Format(&quot;2006-01-02 15:04:05&quot;)
 	fmt.Printf(&quot;%s [%s] %s\n&quot;, nowStr, requestIdMap[goid.Get()], msg) // 打印日志
-}
+&#125;
 </code></pre>
 <p>这样的实现很简单，但是问题也很多。</p>
 <p>第一个问题就是，在 Go 程序中，一次请求可能会涉及到多个 goroutine，用这种方式很难在多个 gotoutine 之间传递 RequestId。</p>
 <p>在下面的代码中，如果新启动了一个 goroutine，就会导致日志中获取不到 RequestId：</p>
-<pre><code class="language-go">func main() {
+<pre><code class="language-go">func main() &#123;
 	r := gin.Default()
 	r.Use(Logger())
 
-	r.GET(&quot;/index&quot;, func(c *gin.Context) {
+	r.GET(&quot;/index&quot;, func(c *gin.Context) &#123;
 		Info(&quot;main goroutine&quot;)
 
-		go func() {  // 这里新启动了一个一个 goroutine
+		go func() &#123;  // 这里新启动了一个一个 goroutine
 			Info(&quot;goroutine1&quot;)
-		}()
+		&#125;()
 
-		c.JSON(200, gin.H{
+		c.JSON(200, gin.H&#123;
 			&quot;message&quot;: &quot;index&quot;,
-		})
-	})
+		&#125;)
+	&#125;)
 	r.Run()
-}
+&#125;
 </code></pre>
 <p>获取 goroutine id 也不是一种常规的做法，一般要通过 hack 的方式来获取，这种做法已经不推荐了。而且这个全局的 map 为了并发安全，在实际的使用中，可以还需要用到锁，在高并发的情况下必然会影响性能。</p>
 <p>在每个请求结束的时候，还需要手动的把 requestId 从 map 中删除，否则就会造成内存泄漏。</p>
 <p>总的来说，使用 map 这种方式来实现并不是很好。</p>
-<h2>2. 使用 Context 来实现</h2>
+<h2 id="2-使用-Context-来实现">2. 使用 Context 来实现</h2>
 <p>在上面的代码中，我们使用一个 hack 的方式去获取 goroutine id，这种方式早就不推荐使用，更推荐使用 Context，关于 Context 内容，可以去看我之前的文章，在这里就不多说了。</p>
 <p>在传递 RequestId 的场景中，同样也可以使用 Context 来实现，使用 Context 好处很明显，Context 生命周期与请求相同，不需要手动销毁。而且Context 是每个请求独享的，也不用担心并发安全的问题，Context 还可以在 goroutine 之间传递。</p>
 <p>使用 Context 实现的代码如下：</p>
-<pre><code class="language-go">func main() {
+<pre><code class="language-go">func main() &#123;
 	r := gin.Default()
 	r.Use(Logger())
 
-	r.GET(&quot;/index&quot;, func(c *gin.Context) {
+	r.GET(&quot;/index&quot;, func(c *gin.Context) &#123;
 
 		ctx, _ := c.Get(&quot;ctx&quot;)
 
 		Info(ctx.(context.Context) , &quot;main goroutine&quot;)
 
-		go func() {
+		go func() &#123;
 			Info(ctx.(context.Context), &quot;goroutine1&quot;)
-		}()
+		&#125;()
 
-		c.JSON(200, gin.H{
+		c.JSON(200, gin.H&#123;
 			&quot;message&quot;: &quot;index&quot;,
-		})
-	})
+		&#125;)
+	&#125;)
 	r.Run()
-}
+&#125;
 
-func Logger() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func Logger() gin.HandlerFunc &#123;
+	return func(c *gin.Context) &#123;
 		valueCtx := context.WithValue(c.Request.Context(), &quot;RequestId&quot;, uuid.New().String())
 		c.Set(&quot;ctx&quot;, valueCtx)
 		c.Next()
-	}
-}
+	&#125;
+&#125;
 
-func Info(ctx context.Context, msg string)  {
+func Info(ctx context.Context, msg string)  &#123;
 	now := time.Now()
 	nowStr := now.Format(&quot;2006-01-02 15:04:05&quot;)
 	fmt.Printf(&quot;%s [%s] %s\n&quot;, nowStr, ctx.Value(&quot;RequestId&quot;), msg)
-}
+&#125;
 </code></pre>
 <p>这样在一个请求中，所有的 gotroutine 都可以获取到同一个 RequestId，而且不用担心内存泄漏和并发安全。</p>
 <p>但是使用 Context 也有个问题就是需要每次传递 Context，很多人还不习惯使用这种方式。其实 Go 官方早就推荐使用 Context了，通常会把 Context 作为函数的第一个参数。如果函数使用结构体作为参数，也可以直接把 Context 作为结构体的一个字段。</p>
 <p>Context 除了使用可以同来传递 RequestId 之外，还可以用来控制 goroutine 的生命周期，这些内容在之前的 Context 文章中详细说明了，感兴趣的可以去看看。</p>
-<h2>3. 小结</h2>
+<h2 id="3-小结">3. 小结</h2>
 <p>获取 goroutine id 这种方式应该被抛弃，而是应该使用 Context, Go 官方也早就推荐使用这种方式，在上文中，我们使用 Context 来传递 RequestId，除此之外还可以用来传递单个请求范围的值，比如认证的 token 之类的，应该习惯在代码中使用 Context。</p>
-<p>[1] <a href="https://blog.golang.org/context" target="_blank" rel="noopener">https://blog.golang.org/context</a></p>
+<p>[1] <a href="https://blog.golang.org/context">https://blog.golang.org/context</a></p>
 <p>文 / Rayjun</p>
 
 </div>
@@ -183,7 +183,7 @@ func Info(ctx context.Context, msg string)  {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

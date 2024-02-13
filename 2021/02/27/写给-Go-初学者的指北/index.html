@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -63,23 +63,23 @@
 <p>Go 的语法很少，关键词也很简洁，但是对于长期写 Java 这种面向对象语言的人来说，需要抛弃 Java 中对于面向对象的固有想法，Go 在面向对象编程上给出了不一样的方案，没有类的概念，接口与 Java 中的也完全不一样。对于熟悉了 Java 的人来说，需要适应一段时间。</p>
 <p>这篇文章不会涉及 Go 的具体教程，可以认为这是一份路径图，是我认为快速上手 Go 语言比较好的方式。</p>
 <p>在看下面的内容之前，我会默认你已经掌握了一门开发语言，并且做过一些 Web 开发，熟悉 Git 的基本用法。</p>
-<h2>1. 入门</h2>
-<h3>1.1 基础入门</h3>
+<h2 id="1-入门">1. 入门</h2>
+<h3 id="1-1-基础入门">1.1 基础入门</h3>
 <p><strong>环境配置</strong></p>
-<p>写代码之前，需要先安装 Go，Go 支持 Linux、macOS、Windows 等平台，可以在这里<a href="https://golang.org/dl/" target="_blank" rel="noopener">下载</a>安装包。</p>
+<p>写代码之前，需要先安装 Go，Go 支持 Linux、macOS、Windows 等平台，可以在这里<a href="https://golang.org/dl/">下载</a>安装包。</p>
 <p>macOS 和 Windows 都提供了二进制安装包，Linux 则需要使用源码安装（在 Ubuntu，centos 这些发行版上也可以通过命令直接安装，但一般无法安装最新版本的 Go）。</p>
 <p>在写代码之前，需要了解一下 Go 中的两个重要概念：GOROOT、GOPATH。GOROOT 比较好理解，就是 Go 的安装目录，可以理解为 Java 中的 JAVA_HOME。</p>
 <p>GOPATH 通常会是 <code>~/go</code> 目录，在这个目录底下，通常有三个子目录：bin、pkg、src。bin 目录放的是可执行命令，pkg 目录下是编译时生成的一些中间件文件，src 则是存放源码的地方。</p>
 <p>在 Go Modules（下面会说到）出现之前，Go 的依赖库和源码都需要放在 GOPATH 的 src，否则会出现找不到依赖的情况。Go Modules 出现之后，Go 的依赖管理问题基本解决了大半，就不用把源码放在 GOPATH 中，GOPATH 基本只用来存放依赖。</p>
 <p><strong>基础语法</strong></p>
-<p>Go 的官网提供了一个入门的教程 <a href="https://tour.golang.org/welcome/1" target="_blank" rel="noopener">A Tour of Go</a>，这里面基本覆盖到了 Go 的全部语法。可以直接在<a href="https://tour.golang.org/welcome/1" target="_blank" rel="noopener">网页</a>上访问，也可以把这个应用下载到本地：</p>
+<p>Go 的官网提供了一个入门的教程 <a href="https://tour.golang.org/welcome/1">A Tour of Go</a>，这里面基本覆盖到了 Go 的全部语法。可以直接在<a href="https://tour.golang.org/welcome/1">网页</a>上访问，也可以把这个应用下载到本地：</p>
 <pre><code class="language-go">go get golang.org/x/tour
 </code></pre>
 <p>然后就可以在命令行输入（需要配置 GOPATH ）:</p>
 <pre><code class="language-go">tour
 </code></pre>
 <p>这样就可以打开一个本地的网页，加载的速度就会快很多，毕竟 Go 的官网在境外，直接访问的还是有点慢。</p>
-<p>类似的教程还有一个 <a href="https://gobyexample.com/" target="_blank" rel="noopener">Go By Example</a>，这两个教程可以选择一个学习。</p>
+<p>类似的教程还有一个 <a href="https://gobyexample.com/">Go By Example</a>，这两个教程可以选择一个学习。</p>
 <p>在把上面的练习做完了之后，就可以开始看 《Go 程序设计语言》，这本书可以说是 Go 最好的入门教材，虽然在内容上有一定的滞后，但整体上依然非常值得看。</p>
 <p><strong>常用命令工具</strong></p>
 <p>Go 命令（go cli command）非常重要，Go 整个开发的生命周期都需要使用这些工具。</p>
@@ -97,10 +97,10 @@
 <pre><code class="language-bash">go help
 </code></pre>
 <p>这些内容都看完之后，对于 go 基本语法和常用工具应该是比较熟练了，为了能够尽快使用上手 Go 的开发，接下来应该要学习一些常用的组件和框架。</p>
-<h3>1.2 常用框架</h3>
+<h3 id="1-2-常用框架">1.2 常用框架</h3>
 <p>如果要开发一个应用，基本都会涉及到 Web API 的开发，会使用 MySQL 和 Redis。下面就介绍一下 Go 语言中如何快速上手这些框架。</p>
 <p><strong>Web 框架</strong></p>
-<p>Go 中常用的 web 框架 有很多，我推荐 <a href="https://github.com/gin-gonic/gin" target="_blank" rel="noopener">gin</a>，这个框架简单易学，而且性能也很不错。</p>
+<p>Go 中常用的 web 框架 有很多，我推荐 <a href="https://github.com/gin-gonic/gin">gin</a>，这个框架简单易学，而且性能也很不错。</p>
 <pre><code class="language-go">go get -u github.com/gin-gonic/gin
 </code></pre>
 <p>可以快速创建一个基于 http 的 API 服务：</p>
@@ -108,20 +108,20 @@
 
 import &quot;github.com/gin-gonic/gin&quot;
 
-func main() {
+func main() &#123;
 	r := gin.Default()
-	r.GET(&quot;/ping&quot;, func(c *gin.Context) {
-		c.JSON(200, gin.H{
+	r.GET(&quot;/ping&quot;, func(c *gin.Context) &#123;
+		c.JSON(200, gin.H&#123;
 			&quot;message&quot;: &quot;pong&quot;,
-		})
-	})
+		&#125;)
+	&#125;)
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows &quot;localhost:8080&quot;)
-}**
+&#125;**
 </code></pre>
 <p><strong>MySQL 框架</strong></p>
 <p>在 Go 语言中，database/sql 包中定义了数据库操作的所有接口，但没有提供具体的实现。因为数据库的种类很多，这种只定义接口的屏蔽了数据库库的具体实现，便于我们更换和升级。</p>
 <p>所以在连接数据库的时候，需要自行选择数据库驱动，推荐那些完全实现了 database/sql 的驱动，这样利于代码的后续维护和升级。</p>
-<p>在这里以 MySQL 数据库为例，常用的驱动是  <a href="https://github.com/go-sql-driver" target="_blank" rel="noopener">go-sql-driver</a>/<a href="https://github.com/go-sql-driver/mysql" target="_blank" rel="noopener">mysql</a>，这个驱动完全实现了 database/sql 接口。</p>
+<p>在这里以 MySQL 数据库为例，常用的驱动是  <a href="https://github.com/go-sql-driver">go-sql-driver</a>/<a href="https://github.com/go-sql-driver/mysql">mysql</a>，这个驱动完全实现了 database/sql 接口。</p>
 <p>安装很方便：</p>
 <pre><code class="language-bash">$ go get -u github.com/go-sql-driver/mysql
 </code></pre>
@@ -132,46 +132,46 @@ func main() {
 )
 
 db, err := sql.Open(&quot;mysql&quot;, &quot;user:password@/dbname&quot;)
-if err != nil {
+if err != nil &#123;
 	panic(err)
-}
+&#125;
 </code></pre>
-<p>用原生的 MySQL 接口来写代码会产生很多的冗余代码，如果想让代码更加整洁一点，ORM 框架就是必须的了，那就需要学习一下 <a href="https://github.com/go-gorm/gorm" target="_blank" rel="noopener">gorm</a> 框架。</p>
+<p>用原生的 MySQL 接口来写代码会产生很多的冗余代码，如果想让代码更加整洁一点，ORM 框架就是必须的了，那就需要学习一下 <a href="https://github.com/go-gorm/gorm">gorm</a> 框架。</p>
 <pre><code class="language-go">go get -u gorm.io/gorm
 </code></pre>
 <p><strong>Redis 框架</strong></p>
-<p>在 Go 中使用 Redis 就需要使用 <a href="https://github.com/go-redis/redis" target="_blank" rel="noopener">go-redis/redis</a> 组件了。安装同样很简单：</p>
+<p>在 Go 中使用 Redis 就需要使用 <a href="https://github.com/go-redis/redis">go-redis/redis</a> 组件了。安装同样很简单：</p>
 <pre><code class="language-go">go get github.com/go-redis/redis/v8
 </code></pre>
-<p>除了这个组件之外，另一个 <a href="https://github.com/gomodule/redigo" target="_blank" rel="noopener">redigo</a> 使用的人也挺多的，可以自行探索一下。</p>
+<p>除了这个组件之外，另一个 <a href="https://github.com/gomodule/redigo">redigo</a> 使用的人也挺多的，可以自行探索一下。</p>
 <p>学完这些，就可以使用 Go 来日常的开发了。</p>
-<h2>2. 进阶</h2>
+<h2 id="2-进阶">2. 进阶</h2>
 <p>在学完上面的基础之后，就需要学习一些进阶的内容。</p>
 <p><strong>Go Modules</strong></p>
 <p>在学习上面的框架时，可能你还是在 GOPATH 写代码。从 Go1.11 之后，Go 推出了 Go Modules 作为官方的依赖管理工具。</p>
-<p>这个工具必须要学会，依赖管理一直是 Go 语言的短板，经历了多个非官方的解决方案之后，官方出手，推出了这个工具。学习的最好资料是 Go Blog 上的文章：<a href="https://blog.golang.org/using-go-modules" target="_blank" rel="noopener">https://blog.golang.org/using-go-modules</a>。如果英文的看起来不方便，这里有我翻译的<a href="https://rayjun.cn/2021/01/17/%E4%BD%BF%E7%94%A8Go-modules/" target="_blank" rel="noopener">版本</a>。</p>
+<p>这个工具必须要学会，依赖管理一直是 Go 语言的短板，经历了多个非官方的解决方案之后，官方出手，推出了这个工具。学习的最好资料是 Go Blog 上的文章：<a href="https://blog.golang.org/using-go-modules">https://blog.golang.org/using-go-modules</a>。如果英文的看起来不方便，这里有我翻译的<a href="https://rayjun.cn/2021/01/17/%E4%BD%BF%E7%94%A8Go-modules/">版本</a>。</p>
 <p>用了 Go Modules 之后，依赖管理会方便很多，也不用在 GOPATH 下开发了。</p>
 <p><strong>Go Blog</strong></p>
 <p>学习 Go 语言，Go blog 绝对是很重要的资料。官方推出的工具和特性，都会在第一时间有 blog 发布，看这些资料就能明白这些特性和工具的推出背景，就不会理解上的偏差。</p>
-<p>比如你在 Go blog 中可以学习到<a href="https://blog.golang.org/declaration-syntax" target="_blank" rel="noopener">为什么 Go 的声明语法是这样的</a>。</p>
+<p>比如你在 Go blog 中可以学习到<a href="https://blog.golang.org/declaration-syntax">为什么 Go 的声明语法是这样的</a>。</p>
 <p>Go 语言特性的更新都会在 Go blog 上说明，所以关注 Go blog 是跟进 Go 特性的好机会。毕竟现在 Go 语言还在不断的发展，会有很多特性在不断的更新。</p>
 <p>E<strong>ffective go</strong></p>
-<p>除了 Go blog 之外，Go 官方还有 <a href="https://golang.org/doc/effective_go#examples" target="_blank" rel="noopener">Effective go</a> 这份必看文档。</p>
+<p>除了 Go blog 之外，Go 官方还有 <a href="https://golang.org/doc/effective_go#examples">Effective go</a> 这份必看文档。</p>
 <p>这份文档可以看做是 Go 的避坑指南，其中指出了 Go 语言容易出错的地方，可以帮助我们写出更干净，结构更优美的代码，文档不长，非常值得阅读。</p>
-<h2>3. 其他资源</h2>
+<h2 id="3-其他资源">3. 其他资源</h2>
 <p>如今学习编程，Github 是无法忽略的一个资源库。下面的这些 Github 仓库中有大量的资源可以学习。</p>
 <ul>
-<li>avelino/awesome-go：Go 的轮子库也在逐渐完善，Github 上的<a href="https://github.com/avelino/awesome-go" target="_blank" rel="noopener">这个仓库</a>收集了 Go 的诸多库，要造轮子之前，记得先到这里来找一找</li>
-<li>Alikhll/golang-developer-roadmap：这里还有一份 Go 开发者的<a href="https://github.com/Alikhll/golang-developer-roadmap" target="_blank" rel="noopener">路线图</a></li>
-<li>talkgo/read：这个仓库有很多的 <a href="https://github.com/talkgo/read" target="_blank" rel="noopener">Go 的教程</a>，是中文版的，但里面的信息需要甄别一下，有些已经过时了</li>
-<li>go/wiki：go 项目的<a href="https://github.com/golang/go/wiki" target="_blank" rel="noopener">wiki</a>，这里有很多技术文档，和大牛的博客，如果后续想深入研究 Go，可以从这里下手</li>
+<li>avelino/awesome-go：Go 的轮子库也在逐渐完善，Github 上的<a href="https://github.com/avelino/awesome-go">这个仓库</a>收集了 Go 的诸多库，要造轮子之前，记得先到这里来找一找</li>
+<li>Alikhll/golang-developer-roadmap：这里还有一份 Go 开发者的<a href="https://github.com/Alikhll/golang-developer-roadmap">路线图</a></li>
+<li>talkgo/read：这个仓库有很多的 <a href="https://github.com/talkgo/read">Go 的教程</a>，是中文版的，但里面的信息需要甄别一下，有些已经过时了</li>
+<li>go/wiki：go 项目的<a href="https://github.com/golang/go/wiki">wiki</a>，这里有很多技术文档，和大牛的博客，如果后续想深入研究 Go，可以从这里下手</li>
 </ul>
-<h2>4. 开发工具</h2>
+<h2 id="4-开发工具">4. 开发工具</h2>
 <p>GoLand 也是由 JetBrains 出品的工具，这个工具需要付费。如果不想在这上面花钱，可以使用 VsCode，VsCode 上的插件很多，而且安装方便。</p>
-<p>如果自己愿意折腾，可以试试 Vim，Vim 配合 <a href="https://github.com/fatih/vim-go" target="_blank" rel="noopener">vim-go</a> 插件，体验也还不错，就是安装的过程中可能会踩一些坑。</p>
+<p>如果自己愿意折腾，可以试试 Vim，Vim 配合 <a href="https://github.com/fatih/vim-go">vim-go</a> 插件，体验也还不错，就是安装的过程中可能会踩一些坑。</p>
 <p>对于开发电脑的选择，我推荐 Mac，做开发，Mac 还是非常适合的，现在互联网公司的开发机标配就是 Mac，如果觉得新的 Mac 的价格比较贵，可以选择二手，或者官网的翻新机。如果不考虑便携性，可以选择 Mac mini，性价比贼高。</p>
 <p>在最近发布的 Go1.16 版本中，Go 已经开始支持 ARM 的架构，所以即使是 M1 芯片的 Mac，也可以用来做 Go 的开发（但这个要谨慎，可能会有其他的坑）。</p>
-<h2>5. 小结</h2>
+<h2 id="5-小结">5. 小结</h2>
 <p>当你把上面的内容都过了一遍时，你应该和我现在一样，算是入门了 Go 语言，Go 是一门非常有潜力的语言，云计算时代的首选，非常值得学习。</p>
 <p>后续我也会持续的更新这篇文章，以及更新这个系列的文档，如果有什么建议，欢迎告诉我。</p>
 <p>文 / Rayjun</p>
@@ -195,7 +195,7 @@ if err != nil {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

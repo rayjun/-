@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -67,8 +67,8 @@
 </ul>
 <p>减少日志量不是非常可行，在某些情况下，就是需要记录比较多的日志，而且这种方式需要依靠开发人员的自觉，很难完全控制。</p>
 <p>不使用字符串拼接的方式比较好实现，现在主流的日志框架中都实现了使用占位符的方式来记录日志信息，这样能够节省大量拼接字符串的时间，这种方式好实现，这种方式已经成为日志记录中的标配。</p>
-<p>而本文重点要说的是第三点，这种方式对性能的提升也是最大的，但不是所有的日志框架都支持，而 Log4j2 就支持，之前我写过一篇对 <a href="https://juejin.im/post/5dc62b6c51882506785746b2" target="_blank" rel="noopener">Log4j2 的简介</a>，可以点击查看。</p>
-<h2>Log4j2 工作流程</h2>
+<p>而本文重点要说的是第三点，这种方式对性能的提升也是最大的，但不是所有的日志框架都支持，而 Log4j2 就支持，之前我写过一篇对 <a href="https://juejin.im/post/5dc62b6c51882506785746b2">Log4j2 的简介</a>，可以点击查看。</p>
+<h2 id="Log4j2-工作流程">Log4j2 工作流程</h2>
 <p>Log4j2 运行的流程如下所示：</p>
 <p><img src="1.png" alt=""></p>
 <p>Log4j2 主要由三个组件组成，Logger、Layout、Appender。</p>
@@ -77,7 +77,7 @@
 </code></pre>
 <p>Layout 则用来对日志信息进行格式化：</p>
 <pre><code class="language-xml">&lt;PatternLayout&gt;
-    &lt;Pattern&gt;%d %p %c{1.} [%t] %m%n&lt;/Pattern&gt;
+    &lt;Pattern&gt;%d %p %c&#123;1.&#125; [%t] %m%n&lt;/Pattern&gt;
 &lt;/PatternLayout&gt;
 </code></pre>
 <p>Appender 用来配置日志的展现形式，可以将日志在控制台打印，也可以将存储到文件，数据库，或者外部的消息队列等等。</p>
@@ -85,7 +85,7 @@
 <p>所以 Logger 在获取到日志信息之后，不会立马进行日志格式化和存储，会先把日志信息放到一个队列中，如下图所示：</p>
 <p><img src="2.png" alt=""></p>
 <p>因为系统中日志产生的速度非常快，所以要求这个队列的性能很好，如果日志的处理跟不上日志的产生速度，那么就会造成日志的信息的丢失，这也是我们不希望看到的。</p>
-<h2>Disruptor 对 Log4j2 的改造</h2>
+<h2 id="Disruptor-对-Log4j2-的改造">Disruptor 对 Log4j2 的改造</h2>
 <p>Disruptor 有着非常好的性能，刚好满足上面我们所提到的要求，在 Log4j2 中加上 Disruptor 之后，我们的日志处理流程就变成了下面这样：</p>
 <p><img src="3.png" alt=""></p>
 <p>比较有意思的是，Log4j2 中只在 Logger 这块使用了 Disruptor，按照上面的思路，其实 Appender 也可以进行异步处理，Log4j2 也确实提供了异步的方式，但是是使用 <code>ArrayBlockingQueue</code>，而没有使用 Disruptor， 而且官方也不推荐使用异步 Appender。</p>
@@ -108,11 +108,11 @@ LongEventProducerWithTranslator producer = new LongEventProducerWithTranslator(r
 
 ByteBuffer bb = ByteBuffer.allocate(8);
 
-for (long l = 0; true; l++) {
+for (long l = 0; true; l++) &#123;
     bb.putLong(0, l);
     producer.onData(bb);
     Thread.sleep(1000);
-}
+&#125;
 </code></pre>
 <p>上面是官方的一个例子，从上面可以发现，使用 Disruptor 时，需要以下这些组件：</p>
 <ul>
@@ -128,27 +128,27 @@ for (long l = 0; true; l++) {
 <p>生成对象的工厂使用的是 <code>RingBufferLogEvent.FACTORY</code>，这是 RingBufferLogEvent 中的工厂单例，主要用来生成日志对象实例。</p>
 <p><code>RingBufferLogEventHandler</code> 是日志的消费者，用来处理日志信息，这里的实现很有意思，在 Handler 中，还是调用了 RingBufferLogEvent 的 execute 方法来进行日志的处理，而实际日志会被怎么处理，还是要看具体的配置，这在程序运行的时候才能决定。</p>
 <pre><code class="language-java">public void onEvent(final RingBufferLogEvent event, final long sequence,
-            final boolean endOfBatch) throws Exception {
-    try {
+            final boolean endOfBatch) throws Exception &#123;
+    try &#123;
         event.execute(endOfBatch);
-    }
-    finally {
-    }
-}
+    &#125;
+    finally &#123;
+    &#125;
+&#125;
 </code></pre>
 <p>使用过日志就知道，日志有很多的重载方法，这是为了应对更多的场景，所以对应 Disruptor 中的生产者也有很多的实现，生产者都在 <code>AsyncLogger</code> 中实现，</p>
-<pre><code class="language-java">private final TranslatorType threadLocalTranslatorType = new TranslatorType() {
+<pre><code class="language-java">private final TranslatorType threadLocalTranslatorType = new TranslatorType() &#123;
     @Override
     void log(String fqcn, StackTraceElement location, Level level, Marker marker, Message message,
-        Throwable thrown) {
+        Throwable thrown) &#123;
         logWithThreadLocalTranslator(fqcn, location, level, marker, message, thrown);
-    }
+    &#125;
 
     @Override
-    void log(String fqcn, Level level, Marker marker, Message message, Throwable thrown) {
+    void log(String fqcn, Level level, Marker marker, Message message, Throwable thrown) &#123;
         logWithThreadLocalTranslator(fqcn, level, marker, message, thrown);
-    }
-};
+    &#125;
+&#125;;
 </code></pre>
 <p>上面的代码就是生产者的一种实现。</p>
 <p>其实 Log4j2 中使用 Disruptor 也没有什么特别的地方，但是却把同步记录日志的机制换成了高性能的异步记录方式。</p>
@@ -172,7 +172,7 @@ for (long l = 0; true; l++) {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

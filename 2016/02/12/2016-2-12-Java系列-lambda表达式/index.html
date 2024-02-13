@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,44 +57,44 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Java系列-Lambda表达式</h1>
-    <h4>Lambda 表达式简介</h4>
-<p>可以说， Lambda 表达式是函数式编程的一个标志，现如今在 <code>Java</code> 中也加入了这一特性，虽然目前只能算是一个语法糖。
-其实在各个语言里面出现的各个 <code>Lamdba</code> 表达式与形式化的λ 演算还是有挺大的差别的。在编程语言中的 Lambda 表达式
-本质上是一个匿名函数。特别是对于那些只会使用一次的匿名函数，使用 Lamdba 表达式来表示可以大大提升代码的可读性，以
+    <h4 id="Lambda-表达式简介">Lambda 表达式简介</h4>
+<p>可以说， Lambda 表达式是函数式编程的一个标志，现如今在 <code>Java</code> 中也加入了这一特性，虽然目前只能算是一个语法糖。<br>
+其实在各个语言里面出现的各个 <code>Lamdba</code> 表达式与形式化的λ 演算还是有挺大的差别的。在编程语言中的 Lambda 表达式<br>
+本质上是一个匿名函数。特别是对于那些只会使用一次的匿名函数，使用 Lamdba 表达式来表示可以大大提升代码的可读性，以<br>
 及缩短代码量。</p>
-<p>Lambda 表达式在函数式编程中有着重要的应用。在函数式编程中，函数本身是可以作为一个参数进行传递的。虽然在 Java 中
+<p>Lambda 表达式在函数式编程中有着重要的应用。在函数式编程中，函数本身是可以作为一个参数进行传递的。虽然在 Java 中<br>
 目前并没有实现这一机制，但是至少在形式上已经迈出了这一步。</p>
-<h4>Lambda 在Java中的实现</h4>
-<p>说到 Lamdba 表达式在 Java 中的实现，首先就要介绍一下<code>函数接口</code>的概念，在 Java 中，函数接口是这样定义的：一个接
-口，如果只有一个显式声明的抽象方法，那么它就是一个函数接口。一般来说会使用 <code>@FunctionalInterface</code> 注解标示，当然
+<h4 id="Lambda-在Java中的实现">Lambda 在Java中的实现</h4>
+<p>说到 Lamdba 表达式在 Java 中的实现，首先就要介绍一下<code>函数接口</code>的概念，在 Java 中，函数接口是这样定义的：一个接<br>
+口，如果只有一个显式声明的抽象方法，那么它就是一个函数接口。一般来说会使用 <code>@FunctionalInterface</code> 注解标示，当然<br>
 这个注解也可以省略。如下：</p>
 <pre><code>    @FunctionalInterface
-    public interface Runnable { void run(); }
+    public interface Runnable &#123; void run(); &#125;
 
-    public interface Callable&lt;V&gt; { V call() throws Exception; }
+    public interface Callable&lt;V&gt; &#123; V call() throws Exception; &#125;
 
-    public interface ActionListener { void actionPerformed(ActionEvent e); }
+    public interface ActionListener &#123; void actionPerformed(ActionEvent e); &#125;
 
-    public interface Comparator&lt;T&gt; { int compare(T o1, T o2); boolean equals(Object obj); }
+    public interface Comparator&lt;T&gt; &#123; int compare(T o1, T o2); boolean equals(Object obj); &#125;
 </code></pre>
-<p>以上的接口都是函数接口，但是需要注意的是最后一个接口，虽然有两个抽象方法，但却也是一个函数接口，因为 <code>equals</code> 方法是
+<p>以上的接口都是函数接口，但是需要注意的是最后一个接口，虽然有两个抽象方法，但却也是一个函数接口，因为 <code>equals</code> 方法是<br>
 Object 的方法。</p>
 <p>Lambda 带来的最显著的改变就是对匿名函数的实现，先后实现方法的差别如下：</p>
-<pre><code>    public static void main(String[] args) {
+<pre><code>    public static void main(String[] args) &#123;
         List&lt;Integer&gt; numbers = Arrays.asList(12,43,10,56,45,90);
 
         //普通的实现方法
-        Collections.sort(numbers, new Comparator&lt;Integer&gt;() {
+        Collections.sort(numbers, new Comparator&lt;Integer&gt;() &#123;
             @Override
-            public int compare(Integer o1, Integer o2) {
+            public int compare(Integer o1, Integer o2) &#123;
                 return o1 - o2;
-            }
-        });
+            &#125;
+        &#125;);
 
         //第一种 Lambda 表达式的实现
-        Collections.sort(numbers, (Integer a, Integer b) -&gt; {
+        Collections.sort(numbers, (Integer a, Integer b) -&gt; &#123;
             return a - b;
-        });
+        &#125;);
 
         //第二种 Lambda 表达式的实现
         Collections.sort(numbers, (Integer a, Integer b) -&gt; a - b);
@@ -106,9 +106,9 @@ Object 的方法。</p>
         numbers.forEach(number -&gt; System.out.println(number));
 
         numbers.foeEach(System.out::println);
-    }
+    &#125;
 </code></pre>
-<p>通过上面的例子我们可以发现，其实每一个 Lamdba 事实上就是一个匿名函数的实现，就目前 Java 的 Lamdba 的实现来说，最终
+<p>通过上面的例子我们可以发现，其实每一个 Lamdba 事实上就是一个匿名函数的实现，就目前 Java 的 Lamdba 的实现来说，最终<br>
 每个 Lamdba 都会被编译成一个实现类。</p>
 
 </div>
@@ -130,7 +130,7 @@ Object 的方法。</p>
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -107,7 +107,7 @@ return stringWriter.toString();
 </code></pre>
 <p>相当于会把当前的元素放入 StringWriter 中，然后再调用 StringWriter 的 toString 方法，获得结果。</p>
 <p>到这里都没有问题，问题的关键在于对于字符串类型的值，在 JsonElement 中存储时，会在外面再加上一层引号。</p>
-<p>所以字符串 &quot;jun&quot; 会被存储为 &quot;&quot;jun&quot;&quot;，所以如果直接使用 toString 方法获得值时，字符串会多一层引号。</p>
+<p>所以字符串 “jun” 会被存储为 ““jun””，所以如果直接使用 toString 方法获得值时，字符串会多一层引号。</p>
 <p>对于其他非字符串类型的值，在调用 valueOf 时，反而可以获取到正确的值。</p>
 <p>但上面的用法其实都是错误的，如果需要获取特定的值，还是应该使用 Gson 提供的 getAsxx 系列方法。</p>
 <p>文 / Rayjun</p>
@@ -131,7 +131,7 @@ return stringWriter.toString();
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

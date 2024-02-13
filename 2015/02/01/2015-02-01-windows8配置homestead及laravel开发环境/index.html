@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,21 +57,21 @@
                     <div id="div-body">
                     <div class="post">
     <h1>windows8配置homestead及laravel开发环境</h1>
-    <h4>准备工具</h4>
+    <h4 id="准备工具">准备工具</h4>
 <p>一般来说，在windows上配置开发环境是一个很艰苦的事情。而vagrant的出现则是我们开发者的一个福利。大大的减轻了我们的配置的复杂新，但是虽然有所减轻，但还是要动手配一些的。话不多说，下面开始进入正题，首先来说下需要一些什么：</p>
 <ol>
-<li>windows已经装好了git，如果没装，<a href="http://git-scm.com/download/" target="_blank" rel="noopener">点这里</a></li>
+<li>windows已经装好了git，如果没装，<a href="http://git-scm.com/download/">点这里</a></li>
 <li>需要安装好php(只需要php，其他的都不需要，并且在php.ini里面开启openssl扩展)。</li>
-<li>然后需要<a href="https://getcomposer.org/Composer-Setup.exe" target="_blank" rel="noopener">composer</a> 和<a href="https://www.vagrantup.com/" target="_blank" rel="noopener">vagrant</a> 和 <a href="https://www.virtualbox.org/" target="_blank" rel="noopener">virtualbox</a> 以及一个<a href="http://pan.baidu.com/s/1qWjuVdq" target="_blank" rel="noopener">homestead</a>。
+<li>然后需要<a href="https://getcomposer.org/Composer-Setup.exe">composer</a> 和<a href="https://www.vagrantup.com/">vagrant</a> 和 <a href="https://www.virtualbox.org/">virtualbox</a> 以及一个<a href="http://pan.baidu.com/s/1qWjuVdq">homestead</a>。<br>
 以上就是配置环境所需的全部软件，下面我们来配环境。</li>
 </ol>
-<h4>配置流程</h4>
+<h4 id="配置流程">配置流程</h4>
 <p>简而言之，Homestead是laravel官方预封装好的一个基于virtualbox的linux虚拟机，在这个虚拟机里面安装好了一系列的软件Nginx、PHP 5.6、MySQL、Postgres、Redis、Memcached，足够laravel的开发。这个虚拟机可以很方便的启动，销毁，和重建。基本不会把你现有的操作系统搞得乱七八糟。下面简单说下安装流程：</p>
-<h4>Composer安装</h4>
+<h4 id="Composer安装">Composer安装</h4>
 <p>Composer是php的一个依赖管理的工具，可以很方便的管理laravel开发过程中所需的一系列的扩展。是一个很重要的工具。直接打开上面下载的安装包安装就行，如果出现了错误，估计是没有在php里面开启ssl，重新开启一下就可以安装成功。</p>
-<h4>Vagrant以及VirtualBox安装</h4>
+<h4 id="Vagrant以及VirtualBox安装">Vagrant以及VirtualBox安装</h4>
 <p>这两个也都是基于图形界面安装的，直接安装就行。需要说明的是要使用Virtualbox就需要开启硬件虚件支持(VT-X),在BIOS里面开启。</p>
-<h4>配置虚拟机</h4>
+<h4 id="配置虚拟机">配置虚拟机</h4>
 <p>所需要的软件基本都安装完成了，接下来就是需要配置虚拟机了。</p>
 <ol>
 <li>
@@ -81,47 +81,47 @@
 </li>
 <li>
 <p>安装homestead命令行工具：</p>
-<p>composer global require &quot;laravel/homestead=~2.0&quot;</p>
-<p>一般在这里会出现一个ssl错误，这个是由于咱们的特殊的国情造成的，你们懂得，解决办法是使用国内的镜像，按照<a href="https://phphub.org/topics/85" target="_blank" rel="noopener">这里</a> 的方式在composer.json里面增加国内的镜像，再次执行以上的代码，就能够顺利的完成安装了。</p>
+<p>composer global require “laravel/homestead=~2.0”</p>
+<p>一般在这里会出现一个ssl错误，这个是由于咱们的特殊的国情造成的，你们懂得，解决办法是使用国内的镜像，按照<a href="https://phphub.org/topics/85">这里</a> 的方式在composer.json里面增加国内的镜像，再次执行以上的代码，就能够顺利的完成安装了。</p>
 </li>
 <li>
 <p>初始化homestead</p>
-<p>homestead init
+<p>homestead init<br>
 执行后生成C:\Users&lt;username&gt;.homestead,homestead的配置文件就在里面了。</p>
 </li>
 <li>
 <p>修改Homestead.yaml</p>
-<p>ip: &quot;192.168.10.10&quot;
-memory: 2048
+<p>ip: “192.168.10.10”<br>
+memory: 2048<br>
 cpus: 2</p>
 <p>authorize: ~/.ssh/id_rsa.pub</p>
-<p>keys:
+<p>keys:<br>
 - ~/.ssh/id_rsa</p>
-<p>folders:
-- map: ~/LaravelWorkspace
+<p>folders:<br>
+- map: ~/LaravelWorkspace<br>
 to: /home/vagrant/Code</p>
-<p>sites:
-- map: homestead.app
-to: /home/vagrant/Code/laravel/public
+<p>sites:<br>
+- map: homestead.app<br>
+to: /home/vagrant/Code/laravel/public<br>
 hhvm: true</p>
-<p>databases:
+<p>databases:<br>
 - homestead</p>
-<p>variables:
-- key: APP_ENV
-value: local
-LaravelWorkspace是一个代码共享区，在这里所做的修改立马就能反映到虚拟机里面去。其他的是一些包括站点和数据库的配置，具体的一些细节大家可以去laravel的官网看看详细的细节介绍。
+<p>variables:<br>
+- key: APP_ENV<br>
+value: local<br>
+LaravelWorkspace是一个代码共享区，在这里所做的修改立马就能反映到虚拟机里面去。其他的是一些包括站点和数据库的配置，具体的一些细节大家可以去laravel的官网看看详细的细节介绍。<br>
 然后上面的那个ssh密钥是要通过gitbash生成的，如下:</p>
-<p>ssh-keygen -t rsa -C &quot;your@email.com&quot;
+<p>ssh-keygen -t rsa -C “<a href="mailto:your@email.com">your@email.com</a>”<br>
 那个站点需要在windows的C:\Windows\System32\drivers\etc\hosts文件里面添加如下配置：</p>
 <p>192.168.10.10  homestead.app</p>
 </li>
 <li>
 <p>启动虚拟机</p>
-<p>homestead up
+<p>homestead up<br>
 执行以上代码一段时间之后，就应该可以看到虚拟机被启动起来了，然后通过 <code>http://homestead.app:8000</code> 或者<code>192.168.10.10</code>去访问你的laravel项目的首页了。</p>
 </li>
 </ol>
-<h4>Homestead ssh问题</h4>
+<h4 id="Homestead-ssh问题">Homestead ssh问题</h4>
 <p>本来环境在上一步就已经配置完成了，可是在windows上，命令行能力实在是有限，没有办法支撑起开发需求，因为windows命令行不支持ssh访问。这个确实比较蛋疼。大家当然也可以使用其他的ssh工具来访问虚拟机(用户名和密码都是vagrant).这里给大家推荐一款更强大的工具，就是chrome的secure shell，在网页上的终端，见过没。用这个就能很方便的去访问ssh，咱们的开发需求到这里也基本被满足了。</p>
 
 </div>
@@ -143,7 +143,7 @@ LaravelWorkspace是一个代码共享区，在这里所做的修改立马就能�
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

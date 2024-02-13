@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -61,7 +61,7 @@
 <p>当然，如果你需要将 Git 使用的更强大以及更有效率。那么你就需要这篇文章。</p>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/git/git-flow.png" alt=""></p>
 <p>上图是 Git 的关键流程流转图，本文内容按照 Git 的关键流程进行。</p>
-<h3>本地操作</h3>
+<h3 id="本地操作">本地操作</h3>
 <p>在将修改的内容提交到远程仓库之前，我们所有的操作都在暂存区、工作区以及本地仓库之中进行。</p>
 <p>首先我们先来理解一下分支和 HEAD。HEAD 通常执行<strong>当前分支</strong>的最后一次提交。也就是说 HEAD 指向<strong>本地仓库</strong>的<strong>最新提交</strong>。</p>
 <p><strong>比较工作区和暂存区的文件差异</strong>：</p>
@@ -141,7 +141,7 @@
 <pre><code class="language-shell">$ git log --graph
 </code></pre>
 <p>上述的命令都可以组合使用。</p>
-<h3>多人协作环境</h3>
+<h3 id="多人协作环境">多人协作环境</h3>
 <p><strong>不同的人修改了相同文件的不同区域或者不同的文件</strong>:</p>
 <pre><code class="language-shell">$ git merge otherBranch
 </code></pre>
@@ -159,13 +159,13 @@
 <pre><code class="language-shell">$ git commit -am&quot;Resolved conflict&quot;
 </code></pre>
 <p><strong>集成分支</strong></p>
-<p>禁止向集成分支进行 git push -f
+<p>禁止向集成分支进行 git push -f<br>
 集成分支不能进行 git rebase 操作（修改历史）</p>
 <p>(完)</p>
 <p><strong>参考文献:</strong></p>
 <ol>
-<li>https://github.com/progit/progit2</li>
-<li>https://git-scm.com/docs</li>
+<li><a href="https://github.com/progit/progit2">https://github.com/progit/progit2</a></li>
+<li><a href="https://git-scm.com/docs">https://git-scm.com/docs</a></li>
 </ol>
 
 </div>
@@ -187,7 +187,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -75,13 +75,13 @@
 <blockquote>
 <p>本文实践的环境是 MySQL</p>
 </blockquote>
-<h3>DML 基础</h3>
+<h3 id="DML-基础">DML 基础</h3>
 <blockquote>
 <p>c 代表列名，v 代表值</p>
 </blockquote>
 <p><strong>SELECT</strong></p>
-<p>select 用于从数据库中查询数据。
-有两种使用方式，一种是将表中的<strong>列</strong>全部查询出来，一种只查询出来指定的列。
+<p>select 用于从数据库中查询数据。<br>
+有两种使用方式，一种是将表中的<strong>列</strong>全部查询出来，一种只查询出来指定的列。<br>
 查询全部列：</p>
 <pre><code class="language-sql">   select * from table_name
 </code></pre>
@@ -151,7 +151,7 @@
 <pre><code class="language-sql">select * from table_name where c1 = v1 order by c1 asc, c2 desc;
 </code></pre>
 <p><strong>INSERT INTO</strong></p>
-<p>insert into 用于向数据库中插入数据。
+<p>insert into 用于向数据库中插入数据。<br>
 两种使用方式，一种是直接插入表中，不指定列，这样需要为每一列都填充数据，否则会报错:</p>
 <pre><code class="language-sql">insert into table_name values (v1, v2, v3, v4);
 </code></pre>
@@ -176,7 +176,7 @@
 <p>但是这个特性在有的数据库中不支持，但是有相应的替代方案可以选择，在 MySQL 中可以这样实现：</p>
 <pre><code class="language-sql">    select * from table_name limit 2
 </code></pre>
-<p><strong>LIKE</strong>
+<p><strong>LIKE</strong><br>
 like 用于 where 子句中进行模糊查询。</p>
 <p>表示查询 c1 列以 bar 开头的记录。</p>
 <pre><code class="language-sql">   select * from table_name where c1 like 'bar%';
@@ -212,7 +212,7 @@ like 用于 where 子句中进行模糊查询。</p>
 <blockquote>
 <p>在 MySQL 中，还支持正则表达式，可以使用 <strong>REGEXP(RLIKE)</strong> 和 <strong>NOT REGEXP(NOT RLIKE)</strong></p>
 </blockquote>
-<p><strong>IN</strong>
+<p><strong>IN</strong><br>
 in 可以指定 where 子句中在固定范围的内进行查询:</p>
 <pre><code class="language-sql">select * from table_name where c1 in (v1, v2, v3);
 </code></pre>
@@ -270,7 +270,7 @@ in 可以指定 where 子句中在固定范围的内进行查询:</p>
 </tr>
 </tbody>
 </table>
-<p><strong>UNION</strong>
+<p><strong>UNION</strong><br>
 union 用于合并多个 select 的查询结果。使用 union 需要满足以下几个条件:</p>
 <ul>
 <li>所有的 select 语句必须要有相同数量的列</li>
@@ -285,7 +285,7 @@ union
 select c3,c4 from table2;
 </code></pre>
 <p>直接使用 union 返回的结果中不包含重复列，如果需要返回全部的结果，可以使用 <strong>UNION ALL</strong>。</p>
-<h3>DDL 基础</h3>
+<h3 id="DDL-基础">DDL 基础</h3>
 <p><strong>SELECT INTO</strong></p>
 <p>select into 可以用来创建表的备份，可以配合 where 、JOIN 等语句一起使用。</p>
 <pre><code class="language-sql">select * into new_table from lod_table where c1 = v1;
@@ -305,11 +305,11 @@ select c3,c4 from table2;
 </code></pre>
 <p><strong>CREATE TABLE</strong></p>
 <p>create table 用于创建数据库表。</p>
-<pre><code class="language-sql">create table table_name {
+<pre><code class="language-sql">create table table_name &#123;
     c1 datatype,
     c2 datatype,
     c3 datatype
-}
+&#125;
 </code></pre>
 <p>其中 datatype 是 SQL 支持的数据类型。</p>
 <p>上面的 SQL 展示了如何创建一个基本的数据库表，但是实际使用的过程中，创建数据表的语句不会这么简单，通常来说会给数据库中的列加上各种各样的<strong>约束</strong>来满足需要，下表是 SQL 支持的几种约束。</p>
@@ -352,27 +352,27 @@ select c3,c4 from table2;
 </tbody>
 </table>
 <p>not null 就是标识一个字段不能为 null，通常在建表时指定:</p>
-<pre><code class="language-sql">create table table_name {
+<pre><code class="language-sql">create table table_name &#123;
     c1 datatype not null,
     c2 datatype,
     c3 datatype
-}
+&#125;
 </code></pre>
 <p>unique 指定每条记录的唯一标识，每个表可以用多个 unique 标识。</p>
-<pre><code class="language-sql">create table table_name {
+<pre><code class="language-sql">create table table_name &#123;
     c1 datatype not null,
     c2 datatype,
     c3 datatype,
     unique(c1)
-}
+&#125;
 </code></pre>
 <p>也可以把多个字段组合成为唯一标识:</p>
-<pre><code class="language-sql">create table table_name {
+<pre><code class="language-sql">create table table_name &#123;
     c1 datatype not null,
     c2 datatype,
     c3 datatype,
     constraint uc_c1_c2 unique (c1, c2)
-}
+&#125;
 </code></pre>
 <p>对于已经创建的表添加 unique 约束以及删除现有的约束可以使用 <strong>alter table</strong> 来进行修改。</p>
 <p>删除表：</p>
@@ -417,7 +417,7 @@ where a.c1 = b.c2;
 <p>删除视图:</p>
 <pre><code class="language-sql">drop view view_name
 </code></pre>
-<h3>DCL 基础</h3>
+<h3 id="DCL-基础">DCL 基础</h3>
 <p>DCL 用于控制数据库中的授权和事务。</p>
 <p><strong>GRANT</strong></p>
 <p>给 user1 在 table1 上赋予 select 和 update 的权限。</p>
@@ -426,7 +426,7 @@ where a.c1 = b.c2;
 <p><strong>TRANSACTION</strong></p>
 <p>事务处理严格来说是 RDBMS 的功能，事务用来确保一组 SQL 要么全部执行，要么全部不执行。</p>
 <p>主要就是利用 <strong>COMMIT</strong> 来提交一个事务，利用 <strong>ROLLBACK</strong> 来回滚一个事务。</p>
-<h3>SQL 函数</h3>
+<h3 id="SQL-函数">SQL 函数</h3>
 <p>除了基本的 SQL 语法外，SQL 中还有很重要的一个部分就是<strong>函数</strong>。</p>
 <p>函数可以分成两类：</p>
 <ul>
@@ -495,7 +495,7 @@ where a.c1 = b.c2;
 </tr>
 </tbody>
 </table>
-<h3>SQL 中的数据类型</h3>
+<h3 id="SQL-中的数据类型">SQL 中的数据类型</h3>
 <p>SQL 是一种编程语言，自然也有其支持的数据类型。在不同的数据库中，数据类型的差异很大。在这里使用 MySQL 的数据类型为例来说明 SQL 中的数据类型。</p>
 <table>
 <thead>
@@ -543,7 +543,7 @@ where a.c1 = b.c2;
 </tr>
 <tr>
 <td>ENUM(x,y,z,etc.)</td>
-<td>允许你输入可能值的列表。可以在 ENUM 列表中列出最大 65535 个值。如果列表中不存在插入的值，则插入空值。注释：这些值是按照你输入的顺序存储的。可以按照此格式输入可能的值：ENUM('X','Y','Z')</td>
+<td>允许你输入可能值的列表。可以在 ENUM 列表中列出最大 65535 个值。如果列表中不存在插入的值，则插入空值。注释：这些值是按照你输入的顺序存储的。可以按照此格式输入可能的值：ENUM(‘X’,‘Y’,‘Z’)</td>
 </tr>
 <tr>
 <td>SET</td>
@@ -583,19 +583,19 @@ where a.c1 = b.c2;
 </tr>
 <tr>
 <td>DATE()</td>
-<td>日期。格式：YYYY-MM-DD注释：支持的范围是从 '1000-01-01' 到 '9999-12-31'</td>
+<td>日期。格式：YYYY-MM-DD注释：支持的范围是从 ‘1000-01-01’ 到 ‘9999-12-31’</td>
 </tr>
 <tr>
 <td>DATETIME()</td>
-<td>日期和时间的组合。格式：YYYY-MM-DD HH:MM:SS注释：支持的范围是从 '1000-01-01 00:00:00' 到 '9999-12-31 23:59:59'</td>
+<td>日期和时间的组合。格式：YYYY-MM-DD HH:MM:SS注释：支持的范围是从 ‘1000-01-01 00:00:00’ 到 ‘9999-12-31 23:59:59’</td>
 </tr>
 <tr>
 <td>TIMESTAMP()</td>
-<td>时间戳。TIMESTAMP 值使用 Unix 纪元('1970-01-01 00:00:00' UTC) 至今的描述来存储。格式：YYYY-MM-DD HH:MM:SS注释：支持的范围是从 '1970-01-01 00:00:01' UTC 到 '2038-01-09 03:14:07' UTC</td>
+<td>时间戳。TIMESTAMP 值使用 Unix 纪元(‘1970-01-01 00:00:00’ UTC) 至今的描述来存储。格式：YYYY-MM-DD HH:MM:SS注释：支持的范围是从 ‘1970-01-01 00:00:01’ UTC 到 ‘2038-01-09 03:14:07’ UTC</td>
 </tr>
 <tr>
 <td>TIME()</td>
-<td>时间。格式：HH:MM:SS 注释：支持的范围是从 '-838:59:59' 到 '838:59:59'</td>
+<td>时间。格式：HH:MM:SS 注释：支持的范围是从 ‘-838:59:59’ 到 ‘838:59:59’</td>
 </tr>
 <tr>
 <td>YEAR()</td>
@@ -605,7 +605,7 @@ where a.c1 = b.c2;
 </table>
 <p>（完）</p>
 <ol>
-<li>http://www.w3school.com.cn/sql</li>
+<li><a href="http://www.w3school.com.cn/sql">http://www.w3school.com.cn/sql</a></li>
 <li>MySQL必知必会（第四版）</li>
 <li>高性能MySQL（第三版）</li>
 </ol>
@@ -629,7 +629,7 @@ where a.c1 = b.c2;
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

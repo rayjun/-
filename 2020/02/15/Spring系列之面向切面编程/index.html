@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -65,63 +65,63 @@
 </ul>
 <p>通过下面这张图就可以表现 AOP 的核心之处。正常的逻辑代码都是从上往下写的，是纵向的。而 AOP 则是在这些纵向的代码中插入一个切面，在这个切面里面假如一些逻辑，这些代码是横向的，这样就不会影响现有的逻辑。</p>
 <p><img src="aop.png" alt=""></p>
-<h2>AOP 的基本概念</h2>
+<h2 id="AOP-的基本概念">AOP 的基本概念</h2>
 <p>在第一篇文章里面，简单介绍了一些 AOP 的相关概念。这里使用日志这个例子，来详细的说明 AOP 的概念。</p>
 <p>看下面这段代码，现在有一个 Soldier 类，类中有一个 fight 方法，这个类就是上图中的黄色部分，正常的逻辑代码，现在有一个需求，要记录下 fight 过程，正常来说，当然也可以在 fight 中使用 Logger 来记录日志，带上这样就需要修改原有的代码，而且代码中会充斥着各种记录日志的代码。</p>
 <p>这个问题可以使用 AOP 来解决，FightLog 就是上图中的紫色部分，这些代码不会影响到原有的逻辑，却可以完成记录 fight 日志的功能。</p>
-<pre><code class="language-java">public class Soldier {
+<pre><code class="language-java">public class Soldier &#123;
     private Weapon weapon;
 
-    public void Soldier(Weapon weapon) {
+    public void Soldier(Weapon weapon) &#123;
         this.weapon = weapon;
-    }
+    &#125;
 
-    public void fight() {
+    public void fight() &#123;
         weapon.attack();
-    }
-}
+    &#125;
+&#125;
 @Aspect
 @Component
-public class FightLog {
+public class FightLog &#123;
 
     @Pointcut(&quot;execution(* cn.rayjun.spring5demo.container.Soldier.fight(..))&quot;)
-    public void pointcut() {}
+    public void pointcut() &#123;&#125;
 
     @Before(&quot;pointcut()&quot;)
-    public static void fightLogBefore(JoinPoint j) {
+    public static void fightLogBefore(JoinPoint j) &#123;
         System.out.println(j);
         System.out.println(&quot;FightBefore&quot;);
-    }
+    &#125;
 
     @After(&quot;pointcut()&quot;)
-    public static void fightLogAfter() {
+    public static void fightLogAfter() &#123;
         System.out.println(&quot;FightAfter&quot;);
-    }
+    &#125;
 
     @AfterReturning(&quot;pointcut()&quot;)
-    public static void fightLogReturn() {
+    public static void fightLogReturn() &#123;
         System.out.println(&quot;FightReturn&quot;);
-    }
+    &#125;
 
     @AfterThrowing(&quot;pointcut()&quot;)
-    public static void fightLogThrowing() {
+    public static void fightLogThrowing() &#123;
         System.out.println(&quot;FightThrowing&quot;);
-    }
+    &#125;
 
 
     @Around(&quot;pointcut()&quot;)
-    public static void fightAround(ProceedingJoinPoint pr) {
-        try {
+    public static void fightAround(ProceedingJoinPoint pr) &#123;
+        try &#123;
             System.out.println(&quot;FightAroundBefore&quot;);
             pr.proceed();
             System.out.println(&quot;FightAroundAfter&quot;);
-        } catch (Throwable throwable) {
+        &#125; catch (Throwable throwable) &#123;
             throwable.printStackTrace();
             System.out.println(&quot;FightAroundThrowing&quot;);
-        }
+        &#125;
         System.out.println(&quot;FightAround&quot;);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>在上面的 FightLog 中，有 @Aspect，@Before，@After 这些注解都代表中特定的概念。</p>
 <p>AOP 中的关键概念如下：</p>
@@ -134,14 +134,14 @@ public class FightLog {
 <li>织入（Weaving）</li>
 </ul>
 <p>如果只看上面这些概念绝对让人很头疼，但是实际上，这些概念并不难，需要重点理解的也就切面、切点、通知三个。下面来详细看一下每个概念。</p>
-<p><strong>切面</strong>
+<p><strong>切面</strong><br>
 切面其实很简单，就是上面图中的紫色部分，代表着一个单独的类，使用 @Aspect 注解（当然也可以使用 xml 配置）来定义。在这个类中可以定义一系列操作，这些操作就是由切点和通知组成，新加的这些操作不会影响原有的代码。</p>
-<p><strong>连接点和切点</strong>
+<p><strong>连接点和切点</strong><br>
 其实连接点和切点表达的是同样的东西。如下图：</p>
 <p><img src="pointcut.png" alt=""></p>
 <p>在正常的逻辑代码中调用方法，修改属性的操作都可以作为一个连接点，这个连接点可以作为<strong>切面</strong>的<strong>切点</strong>。现在明白了，被切面所切入的连接点就叫做切点。</p>
 <p>在使用 AOP 的过程中，可以在切点上获取连接点的所有信息，包括方法名称，参数等等。</p>
-<p><strong>通知</strong>
+<p><strong>通知</strong><br>
 通知更好理解，通知就是在切点中进行的操作，通知有如下的种类：</p>
 <ul>
 <li>@Before: <strong>前置通知</strong>，在进入切点之前执行</li>
@@ -156,7 +156,7 @@ public class FightLog {
 <blockquote>
 <p>Spring AOP 默认是使用 JDK 的动态代理来实现，如果有必要，也款已换成 CGLIB 代理来实现。</p>
 </blockquote>
-<h2>AOP 的配置及使用</h2>
+<h2 id="AOP-的配置及使用">AOP 的配置及使用</h2>
 <p>Spring 容器默认是不启用 AOP 的，使用 AOP 需要引入额外的依赖，如下：</p>
 <pre><code class="language-java">&lt;dependency&gt;
     &lt;groupId&gt;org.springframework&lt;/groupId&gt;
@@ -196,15 +196,15 @@ public class FightLog {
 <pre><code class="language-java">@Configuration
 @EnableAspectJAutoProxy
 @ComponentScan(basePackages = &quot;cn.rayjun.spring5demo&quot;)
-public class SoldierConfig {
+public class SoldierConfig &#123;
 
-}
+&#125;
 </code></pre>
 <p>配置完成之后就可以定义切面，任意一个类，被 @Aspect 注解之后就可以作为一个切面了。</p>
 <pre><code class="language-java">@Aspect
 @Component
-public class FightLog {
-}
+public class FightLog &#123;
+&#125;
 </code></pre>
 <p>在定义好了切面之后，就可以定义切点来实现自定义的功能了，从上面我们知道了切点就是被选择的连接点，定义一个切点的方式如下：</p>
 <pre><code class="language-java">execution(* cn.rayjun.spring5demo.container.Soldier.fight(..))
@@ -218,44 +218,44 @@ public class FightLog {
 <p>这样一来，方法名称是 fight，以及这个方法的多个重载方法都可以被该切点切入。</p>
 <p>切点定义好了之后就需要给这个切点自定义操作：</p>
 <pre><code class="language-java">@Before(&quot;execution(* cn.rayjun.spring5demo.container.Soldier.fight(..))&quot;)
-public static void fightLogBefore() {
+public static void fightLogBefore() &#123;
     System.out.println(&quot;FightBefore&quot;);
-}
+&#125;
 </code></pre>
 <p>假如说这个切点要在多个通知上被使用，可以用如下的定义：</p>
 <pre><code class="language-java">@Pointcut(&quot;execution(* cn.rayjun.spring5demo.container.Soldier.fight(..))&quot;)
-public void pointcut() {}
+public void pointcut() &#123;&#125;
 
 @Before(&quot;pointcut()&quot;)
-public static void fightLogBefore() {
+public static void fightLogBefore() &#123;
     System.out.println(&quot;FightBefore&quot;);
-}
+&#125;
 
 @After(&quot;pointcut()&quot;)
-public static void fightLogAfter() {
+public static void fightLogAfter() &#123;
     System.out.println(&quot;FightAfter&quot;);
-}
+&#125;
 </code></pre>
 <p>上面说到了切点就是被选择的连接点，假如说现在需要在切点中获取连接点的一些信息和状态，直接就可以在切点中加上一个 JoinPoint 的参数，这个就表示连接点，通过这个连接点就可以做一些有意义的操作，根据当前连接点的状态来做一些操作，比如记日志，做统计</p>
 <pre><code class="language-java">@Before(&quot;pointcut()&quot;)
-public static void fightLogBefore(JoinPoint j) {
+public static void fightLogBefore(JoinPoint j) &#123;
     System.out.println(j);
     System.out.println(&quot;FightBefore&quot;);
-}
+&#125;
 </code></pre>
 <p>最后还需要说明的是环绕通知，这个比较特殊，这个通知的囊括了之前说的所有的通知，在这个通知中如果不调用 ProceedingJoinPoint 的 procceed 方法，原有的正常逻辑就无法执行，但是它的强大之处在于可以在这里自由的实现上述的各种通知，如下：</p>
 <pre><code class="language-java">@Around(&quot;pointcut()&quot;)
-public static void fightAround(ProceedingJoinPoint pr) {
-    try {
+public static void fightAround(ProceedingJoinPoint pr) &#123;
+    try &#123;
         System.out.println(&quot;FightAroundBefore&quot;);
         pr.proceed();
         System.out.println(&quot;FightAroundAfter&quot;);
-    } catch (Throwable throwable) {
+    &#125; catch (Throwable throwable) &#123;
         throwable.printStackTrace();
         System.out.println(&quot;FightAroundThrowing&quot;);
-    }
+    &#125;
     System.out.println(&quot;FightAround&quot;);
-}
+&#125;
 </code></pre>
 <p>AOP 是 Spring 重要的组成部分，除了生僻的概念比较多，其他的也不是很复杂。</p>
 
@@ -278,7 +278,7 @@ public static void fightAround(ProceedingJoinPoint pr) {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

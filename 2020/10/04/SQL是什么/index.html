@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -59,7 +59,7 @@
     <h1>SQL是什么</h1>
     <p>SQL 的全称是结构查询语言，这是第一个实现了关系模型的语言。是一种特定领域语言，如果你想开发一个软件，仅仅依靠 SQL 是无法完成的，它只能用于数据的查询和统计。与之相反，C 语言等就被称之为通用语言。</p>
 <p>SQL 是关系模型的实现，在被 Oracle，MySQL 等各大关系型数据库所采用，但 SQL 不仅仅在关系型数据库中使用的很广泛，在大数据领域中也有很大的使用空间，Spark、Flink 等前沿的计算框架也都提供了 SQL 接口。</p>
-<h2>1. SQL结构</h2>
+<h2 id="1-SQL结构">1. SQL结构</h2>
 <p>SQL 语言本身可以分成 DDL、DCL、DML等类型，每一类都有不同功能。</p>
 <p>在 SQL 中有大量的操作符可以使用，而且为了更方便的查询和统计数据，SQL 中还内置了很多函数。</p>
 <p>无论是上面三种类型的哪一种，都是由基础的元素构成，最基础的元素有三种：</p>
@@ -79,7 +79,7 @@
 <p>以 SQL 中的 UPDATE <strong>语句</strong>为例：</p>
 <p><img src="1.png" alt=""></p>
 <p>这里介绍的是 SQL 的标准语法，在不同数据库中的实现有所不同。</p>
-<h3>DDL</h3>
+<h3 id="DDL">DDL</h3>
 <p>DDL 全称是 data definition language，用于定义数据结构。</p>
 <p>因为如果要能使用 SQL，就要求数据是结构化的。结构化就是指数据的数据结构，有哪些字段，字段是哪种类型，都需要提前定义好。</p>
 <p>通俗来说，就是用来创建数据，创建表，修改表结构等等。</p>
@@ -90,13 +90,13 @@
  content varchar(50)
 );
 </code></pre>
-<h3>DCL</h3>
+<h3 id="DCL">DCL</h3>
 <p>每个数据库系统中都会涉及到权限和安全，DCL 就是用来维护系统访问权限，全称是 data control language。</p>
 <pre><code class="language-sql">GRANT SELECT, UPDATE
 ON book
 TO user1;
 </code></pre>
-<h3>DML</h3>
+<h3 id="DML">DML</h3>
 <p>DML 是日常使用最频繁的一类，全称是 data manipulation language。</p>
 <p>对数据表的增删改查都是属于这一类。</p>
 <pre><code class="language-sql">SELECT *
@@ -109,7 +109,7 @@ ORDER BY title;
 VALUES
 ('围城', '钱钟书', '城里的人想出来，墙外的人想进去');
 </code></pre>
-<h3>操作符</h3>
+<h3 id="操作符">操作符</h3>
 <p>SQL 中还提供了很多逻辑操作符操作符，这些逻辑操作符会和表达式组合形成一个谓词，用来过滤数据。</p>
 <ul>
 <li>=</li>
@@ -129,7 +129,7 @@ VALUES
 <li>is not distinct from (两个值相等或者都为空)</li>
 <li>as</li>
 </ul>
-<h3>内置函数</h3>
+<h3 id="内置函数">内置函数</h3>
 <p>在数据查询统计的需求中，通常会涉及到对数据的汇总和统计，SQL 中提供了很多内置的函数来帮助完成这个过程。</p>
 <p>比如时间类的函数：</p>
 <ul>
@@ -137,13 +137,13 @@ VALUES
 <li>MONTH</li>
 <li>WEEKDAY</li>
 <li>YEAR</li>
-<li>...</li>
+<li>…</li>
 </ul>
 <p>字符串函数：</p>
 <ul>
 <li>LOWER</li>
 <li>UPPER</li>
-<li>...</li>
+<li>…</li>
 </ul>
 <p>聚合函数：</p>
 <ul>
@@ -151,9 +151,9 @@ VALUES
 <li>AVG</li>
 <li>MAX</li>
 <li>MIN</li>
-<li>...</li>
+<li>…</li>
 </ul>
-<h2>2. SQL标准</h2>
+<h2 id="2-SQL标准">2. SQL标准</h2>
 <p>SQL 起源于 1970 年的一篇论文[5]，然后由 IBM 实现了这篇关系模型的论文，这就是 SQL 的前身，然后自家产品不断推出相关的产品。</p>
 <p>Oracle 看到了 SQL 的潜力，也加入竞争，经历了一段时间的野蛮生长之后，这两家公司共同促进了 SQL 的标准化。</p>
 <p>在 1986 年，SQL 成为了 ANSI 的标准，一年之后也成为了 ISO 的标准。</p>
@@ -174,12 +174,12 @@ VALUES
 <p>需要注意的是，SQL 标准与实际使用的 SQL 还是有很大区别的，比如在不同的数据库中，对 SQL 的实现不完全相同。</p>
 <p>也就是说，很有可能 SQL 标准中的某个特性在具体的数据库中不能使用，比如在 MySQL 中，就抛弃了很多功能，但不妨碍它受欢迎。就像网络的七层协议一样，最后的实现也并不是完整按照这七层协议来，而是选择最实用的方式来实现。</p>
 <p>文 / Rayjun</p>
-<h3>REF</h3>
-<p>[1] <a href="https://en.wikipedia.org/wiki/SQL" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/SQL</a></p>
-<p>[2] <a href="https://en.wikipedia.org/wiki/SQL_syntax" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/SQL_syntax</a></p>
-<p>[3] <a href="https://en.wikipedia.org/wiki/Domain-specific_language" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Domain-specific_language</a></p>
-<p>[4] <a href="https://en.wikipedia.org/wiki/General-purpose_language" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/General-purpose_language</a></p>
-<p>[5] <a href="https://dl.acm.org/doi/10.1145/362384.362685" target="_blank" rel="noopener">https://dl.acm.org/doi/10.1145/362384.362685</a></p>
+<h3 id="REF">REF</h3>
+<p>[1] <a href="https://en.wikipedia.org/wiki/SQL">https://en.wikipedia.org/wiki/SQL</a></p>
+<p>[2] <a href="https://en.wikipedia.org/wiki/SQL_syntax">https://en.wikipedia.org/wiki/SQL_syntax</a></p>
+<p>[3] <a href="https://en.wikipedia.org/wiki/Domain-specific_language">https://en.wikipedia.org/wiki/Domain-specific_language</a></p>
+<p>[4] <a href="https://en.wikipedia.org/wiki/General-purpose_language">https://en.wikipedia.org/wiki/General-purpose_language</a></p>
+<p>[5] <a href="https://dl.acm.org/doi/10.1145/362384.362685">https://dl.acm.org/doi/10.1145/362384.362685</a></p>
 
 </div>
 
@@ -200,7 +200,7 @@ VALUES
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

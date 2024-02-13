@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -60,7 +60,7 @@
     <p>在上一篇文章中，我们介绍了 Go 并发编程的基础—goroutine，同时也介绍 goroutine 的几种使用方式，但没有说明 goroutine 之间是如何通信的。</p>
 <p>Go 语言中有一句经典的话，<strong>不要通过共享内存来通信，而应该通过通信来共享内存</strong>。这个原则让 channel 成为了 Go 语言中非常重要的一个组件。</p>
 <p>goroutine 之间的通信主要是通过 channel 来完成的，这篇文章中，我们来认识一下 channel，以及channel 的基本使用。</p>
-<h2>1. 什么是通道（channel）</h2>
+<h2 id="1-什么是通道（channel）">1. 什么是通道（channel）</h2>
 <p>Go 语言中，并发模式有两种实现方式，一种是传统的通过锁和信号量等手段，来实现对个共享变量（内存）的同步访问，从而实现并发。还有一种通过 goroutine + channel 的组合方式，传递值的方式来实现并发。</p>
 <p>goroutine + channel 是对 CSP（Communicating Sequential Process）模式的一种实现。CSP 模式中，有两个核心的概念，process 和 channel，process 对应 groutine，所有的 process 之间的通信通过 channel 来实现。</p>
 <p>channel 是可以被单独创建的，可以用来连接任意两个 goroutine，channel 也有自己的数据类型，被称之为<strong>通道的元素类型</strong>。</p>
@@ -81,17 +81,17 @@ ch &lt;- x
 
 import &quot;fmt&quot;
 
-func main() {
+func main() &#123;
 	ch := make(chan int)
 
-	go func() {
+	go func() &#123;
 		x := 5
 		ch &lt;- x
-	}()
+	&#125;()
 
 	y := &lt;-ch
 	fmt.Println(y)
-}
+&#125;
 </code></pre>
 <p>在使用通道的过程中，可能会出现死锁，具体的原因我们下文再详细说。对于通道来说，还有一个操作，就是关闭通道，对于一个已经关闭的 channel，无法再发送数据，否则会发生 panic，但是可以进行接收操作，下面的程序可以正常运行：</p>
 <pre><code class="language-go">package main
@@ -100,42 +100,42 @@ import (
 	&quot;fmt&quot;
 )
 
-func main() {
+func main() &#123;
 	ch := make(chan int)
 
-	go func() {
+	go func() &#123;
 		x := 5
 		ch &lt;- x
 		close(ch)
-	}()
+	&#125;()
 
 	y := &lt;-ch
 	fmt.Println(y)
-}
+&#125;
 </code></pre>
-<h2>2.  无缓冲通道</h2>
+<h2 id="2-无缓冲通道">2.  无缓冲通道</h2>
 <p>上面用来创建通道的 make 其实还有第二个参数，用来指定通道容量。如果不指定这个参数或者指定的参数是 0，那么就表示这个通道是无缓冲通道：</p>
 <pre><code class="language-go">// 下面两种创建方式是等价的
 ch := make(chan int)
 ch := make(chan int, 0)
 </code></pre>
 <p><strong>在无缓冲通道上的发送操作会阻塞，直到接收端的接收操作完成，然后才会继续执行</strong>。在上一篇文章中，我们为了解决主 goroutine 等待子 goroutine 执行完成用的就是这个方法。代码如下：</p>
-<pre><code class="language-go">func goroutine2(isDone chan bool) {
+<pre><code class="language-go">func goroutine2(isDone chan bool) &#123;
 	fmt.Println(&quot;child goroutine begin...&quot;)
 	time.Sleep(2 * time.Second)
 	fmt.Println(&quot;child goroutine end...&quot;)
 	isDone &lt;- true
-}
+&#125;
 
-func main() {
+func main() &#123;
 	isDone := make(chan bool)
 	go goroutine2(isDone)
 	&lt;-isDone
 	fmt.Println(&quot;main goroutine end..&quot;)
-}
+&#125;
 </code></pre>
 <p>所以对于无缓冲通道来说，不能在同一个 goroutine 中使用，否则会造成死锁。关于死锁的问题，下文再详细讨论。</p>
-<h2>3. 缓冲通道</h2>
+<h2 id="3-缓冲通道">3. 缓冲通道</h2>
 <p>在创建缓冲通道时，需要指定通道的容量：</p>
 <pre><code class="language-go">ch := make(chan int, 3)
 </code></pre>
@@ -150,26 +150,26 @@ ch &lt;- 3
 len(ch) // 获取元素个数
 </code></pre>
 <p>对于一个缓冲通道，在同一个 goroutine 中使用也有造成死锁的风险，所以最好不要在同一个 goroutine 中使用通道。</p>
-<h2>4. 单向通道</h2>
+<h2 id="4-单向通道">4. 单向通道</h2>
 <p>在默认情况下，创建的通道可以发送数据，可以接受数据，但是在一些情况下，我们值需要通道的发送或者接收能力。这个时候，就需要单向通道。</p>
 <p>单向通道的表示起来很简单，把 &lt;- 放在 chan 前，表示只接收，放在 chan 后表示只发送：</p>
 <pre><code class="language-go">sendCh := male(chan&lt;- int) // 表示只发送的通道
 recCh := make(&lt;-chan int) // 表示只接收的通道
 </code></pre>
 <p>但实际的使用中，我们不需要去创建这种单向通道，只是在某些情况下，我们把通道转成单向通道就行。比如下面的代码中，在 sendData 方法中，我只需要用到通道的发送能力，所以可以通道改成发送的单向通道，其他人阅读代码的时候，也更能理解：</p>
-<pre><code class="language-go">func main() {
+<pre><code class="language-go">func main() &#123;
 	ch := make(chan int, 10)
 	sendData(ch)
-}
+&#125;
 
-func sendData(sendCh chan&lt;- int) {
-	for i := 0;i &lt; 10; i++ {
+func sendData(sendCh chan&lt;- int) &#123;
+	for i := 0;i &lt; 10; i++ &#123;
 		sendCh &lt;- i
-	}
-}
+	&#125;
+&#125;
 </code></pre>
 <p>双向通道可以转成转成单向通道，但反过来却不行。</p>
-<h2>5. 小结</h2>
+<h2 id="5-小结">5. 小结</h2>
 <p>这篇文章介绍了通道，通道对于 Go 语言来说很重要，是实现高并发的基础，通道为 goroutine 之间提供了一种高效安全的通信方式。但在使用通道的时候需要注意死锁问题。</p>
 <p>文 / Rayjun</p>
 
@@ -192,7 +192,7 @@ func sendData(sendCh chan&lt;- int) {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

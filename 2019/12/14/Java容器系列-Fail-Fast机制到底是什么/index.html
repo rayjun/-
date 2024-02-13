@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -69,17 +69,17 @@
 <blockquote>
 <p>本文基于 JDK1.8</p>
 </blockquote>
-<h3>fail-fast 具体实现</h3>
+<h3 id="fail-fast-具体实现">fail-fast 具体实现</h3>
 <p>看如下的代码：</p>
 <pre><code class="language-java">ArrayList&lt;Integer&gt; integers = new ArrayList&lt;&gt;();
 integers.add(1);
 integers.add(2);
 integers.add(3);
 Iterator&lt;Integer&gt; itr = integers.iterator();
-while (itr.hasNext()) {
+while (itr.hasNext()) &#123;
     Integer a = itr.next();
     integers.remove(a);
-}
+&#125;
 </code></pre>
 <p>上面使用 ArrayList 的代码会报 ConcurrentModificationException 异常。</p>
 <pre><code class="language-java">List&lt;Integer&gt; integers = new CopyOnWriteArrayList&lt;&gt;();
@@ -87,10 +87,10 @@ integers.add(1);
 integers.add(2);
 integers.add(3);
 Iterator&lt;Integer&gt; itr = integers.iterator();
-while (itr.hasNext()) {
+while (itr.hasNext()) &#123;
     Integer a = itr.next();
     integers.remove(a);
-}
+&#125;
 </code></pre>
 <p>而使用 CopyOnWriteArrayList 的代码则不会报异常。</p>
 <p>fail-fast 机制和 modCount 这个变量有关，这个变量会记录容器被修改的次数，可以理解为容器对象的版本号。</p>
@@ -113,11 +113,11 @@ while (itr.hasNext()) {
 </blockquote>
 <p>有没有办法在迭代的过程中删除某些元素？使用迭代器本身的 remove 方法就行，这样不会产生异常:</p>
 <pre><code class="language-java">Iterator&lt;Integer&gt; itr = integers.iterator();
-while (itr.hasNext()) {
-    if (itr.next() == 2) {
+while (itr.hasNext()) &#123;
+    if (itr.next() == 2) &#123;
         itr.remove();
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>不会产生异常的原因是在删除元素后，把最新的 modCount 的值赋值给了 expectedModCount，代码如下：</p>
 <pre><code class="language-java">// ListItr.remove() method
@@ -130,7 +130,7 @@ expectedModCount = modCount;
 <blockquote>
 <p>注：同步是并发编程中的一个术语，如果说一段代码是同步的，那就代表是线程安全的</p>
 </blockquote>
-<h3>fail-safe 具体实现</h3>
+<h3 id="fail-safe-具体实现">fail-safe 具体实现</h3>
 <p>和 fail-fast 不同的是，使用了 fail-safe 的容器则可以在迭代的过程中任意的修改容器的元素而不会报错。本质是因为迭代的是容器元素的副本，也就是说是将容器的元素拷贝了一份再进行遍历，这样即使原容器被修改，也不会影响到当前正在遍历的元素。</p>
 <p>CopyOnWriteArrayList 是一个支持 fail-safe 的容器，它获取迭代器的代码如下：</p>
 <pre><code class="language-java">// CopyOnWriteArrayList.listIterator() method
@@ -144,10 +144,10 @@ return new COWIterator&lt;E&gt;(es, index);
 private final Object[] snapshot;
 private int cursor;
 
-COWIterator(Object[] es, int initialCursor) {
+COWIterator(Object[] es, int initialCursor) &#123;
     cursor = initialCursor;
     snapshot = es;
-}
+&#125;
 </code></pre>
 <p>COWIterator 将容器的元素做了一个快照，后续的操作都是在这个快照上进行的。</p>
 <p>为了支持 fail-safe 特性，需要付出额外的代价：</p>
@@ -158,9 +158,9 @@ COWIterator(Object[] es, int initialCursor) {
 <p><code>java.util</code> 包下的容器都有 fail-fast 机制，而<code>java.util.concurrent</code> 包下的容器则都是 fail-safe 的。</p>
 <p>REF:</p>
 <ul>
-<li>https://medium.com/@mr.anmolsehgal/fail-fast-and-fail-safe-iterations-in-java-collections-11ce8ca4180e</li>
-<li>https://en.wikipedia.org/wiki/Fail-fast</li>
-<li>https://en.wikipedia.org/wiki/Fail-safe</li>
+<li><a href="https://medium.com/@mr.anmolsehgal/fail-fast-and-fail-safe-iterations-in-java-collections-11ce8ca4180e">https://medium.com/@mr.anmolsehgal/fail-fast-and-fail-safe-iterations-in-java-collections-11ce8ca4180e</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Fail-fast">https://en.wikipedia.org/wiki/Fail-fast</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Fail-safe">https://en.wikipedia.org/wiki/Fail-safe</a></li>
 <li>JDK document</li>
 </ul>
 
@@ -183,7 +183,7 @@ COWIterator(Object[] es, int initialCursor) {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

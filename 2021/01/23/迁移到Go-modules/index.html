@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,12 +58,12 @@
                     <div class="post">
     <h1>迁移到Go modules</h1>
     <p>这是 Go Modules 系列的第二篇文章，主要来说明如何从将现有的项目迁移到 Go Modules。</p>
-<p>原文地址：<a href="https://blog.golang.org/migrating-to-go-modules" target="_blank" rel="noopener">https://blog.golang.org/migrating-to-go-modules</a></p>
+<p>原文地址：<a href="https://blog.golang.org/migrating-to-go-modules">https://blog.golang.org/migrating-to-go-modules</a></p>
 <hr>
-<h2>简介</h2>
+<h2 id="简介">简介</h2>
 <p>这是 Go Modules 系列的第二篇文章：</p>
 <ul>
-<li><a href="https://rayjun.cn/2021/01/17/%E4%BD%BF%E7%94%A8Go-modules/" target="_blank" rel="noopener">使用 Go Modules</a></li>
+<li><a href="https://rayjun.cn/2021/01/17/%E4%BD%BF%E7%94%A8Go-modules/">使用 Go Modules</a></li>
 <li><strong>迁移到 Go Modules</strong></li>
 <li>发布 Go Modules</li>
 <li>Go Modules：V2 及后续版本</li>
@@ -72,37 +72,37 @@
 <p>Go 项目使用的依赖管理工具多种多样。像 dep 和 glide 这样的 vendor 工具很受欢迎，但这些工具在使用方式上有很大的差别，所以通常很难一起使用。有些项目将整个 GOPATH 目录存储在一个 Git 仓库下。而有的人仅仅依靠 go get 来安装依赖，并期望在 GOPATH 中安装最新版本的依赖。</p>
 <p>在 Go1.11 中，引入了 Go modules，这是一个官方的依赖管理方案，直接通过内建的 go 命令就可以使用。这篇文章介绍一些工具和方法来帮助项目迁移到 Go modules。</p>
 <p>请注意：如果你想项目版本标签已经到了 v2.0.0 或者更高，当你添加 go.mod 文件的时候，你需要更新你的模块路径。我们后续的文章将解释在 v2 或者更高版本中如何在不影响用户的情况下做到这一点。</p>
-<h2>把你的项目迁移到 Go Modules</h2>
+<h2 id="把你的项目迁移到-Go-Modules">把你的项目迁移到 Go Modules</h2>
 <p>在迁移到 Go Modules 之前，项目应该属于以下的三种状态之一：</p>
 <ul>
 <li>一个全新的 Go 项目</li>
 <li>一个已经创建的项目，使用了依赖管理，但不是 Go Modules</li>
 <li>一个已经创建的项目，没有任何依赖管理</li>
 </ul>
-<p>第一种情况直接使用上篇<a href="https://rayjun.cn/2021/01/17/%E4%BD%BF%E7%94%A8Go-modules/" target="_blank" rel="noopener">文章</a>中所说的方法来使用 Go Modules。下面来讨论后面的两种情况。</p>
-<h2>已经有依赖管理时</h2>
+<p>第一种情况直接使用上篇<a href="https://rayjun.cn/2021/01/17/%E4%BD%BF%E7%94%A8Go-modules/">文章</a>中所说的方法来使用 Go Modules。下面来讨论后面的两种情况。</p>
+<h2 id="已经有依赖管理时">已经有依赖管理时</h2>
 <p>转化一个已经使用了依赖管理工具的项目时，运行以下的命令:</p>
 <pre><code class="language-bash">$ git clone https://github.com/my/project
 [...]
 $ cd project
 $ cat Godeps/Godeps.json
-{
+&#123;
     &quot;ImportPath&quot;: &quot;github.com/my/project&quot;,
     &quot;GoVersion&quot;: &quot;go1.12&quot;,
     &quot;GodepVersion&quot;: &quot;v80&quot;,
     &quot;Deps&quot;: [
-        {
+        &#123;
             &quot;ImportPath&quot;: &quot;rsc.io/binaryregexp&quot;,
             &quot;Comment&quot;: &quot;v0.2.0-1-g545cabd&quot;,
             &quot;Rev&quot;: &quot;545cabda89ca36b48b8e681a30d9d769a30b3074&quot;
-        },
-        {
+        &#125;,
+        &#123;
             &quot;ImportPath&quot;: &quot;rsc.io/binaryregexp/syntax&quot;,
             &quot;Comment&quot;: &quot;v0.2.0-1-g545cabd&quot;,
             &quot;Rev&quot;: &quot;545cabda89ca36b48b8e681a30d9d769a30b3074&quot;
-        }
+        &#125;
     ]
-}
+&#125;
 $ go mod init github.com/my/project
 go: creating new go.mod: module github.com/my/project
 go: copying requirements from Godeps/Godeps.json
@@ -114,7 +114,7 @@ go 1.12
 require rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca
 $
 </code></pre>
-<p>go mod init 会创建一个新的 go.mod 文件并且会自动从 <code>Godeps.json</code> 、<code>Gopkg.lock</code>中导入依赖（或者其他<a href="https://go.googlesource.com/go/+/362625209b6cd2bc059b6b0a67712ddebab312d9/src/cmd/go/internal/modconv/modconv.go#9" target="_blank" rel="noopener">支持的格式</a>）。go mod init 的参数是可能找到模块位置的模块路径。</p>
+<p>go mod init 会创建一个新的 go.mod 文件并且会自动从 <code>Godeps.json</code> 、<code>Gopkg.lock</code>中导入依赖（或者其他<a href="https://go.googlesource.com/go/+/362625209b6cd2bc059b6b0a67712ddebab312d9/src/cmd/go/internal/modconv/modconv.go#9">支持的格式</a>）。go mod init 的参数是可能找到模块位置的模块路径。</p>
 <p>这是在继续后续步骤之前运行 <code>go build ./..</code> 和 <code>go test ./..</code> 的好时机。接下来可能需要修改你的 go.mod 文件，如果你更喜欢采用迭代方法，最好把 go.mod 文件作为你的预模块依赖规范。</p>
 <pre><code class="language-bash">$ go mod tidy
 go: downloading rsc.io/binaryregexp v0.2.1-0.20190524193500-545cabda89ca
@@ -146,7 +146,7 @@ $ go mod graph | grep rsc.io/binaryregexp
 $ go get rsc.io/binaryregexp@v0.2.0
 $
 </code></pre>
-<h2>没有依赖管理时</h2>
+<h2 id="没有依赖管理时">没有依赖管理时</h2>
 <p>对于一个没有依赖管理的项目，首先需要创建一个 go.mod 文件：</p>
 <pre><code class="language-bash">$ git clone https://go.googlesource.com/blog
 [...]
@@ -159,7 +159,7 @@ module golang.org/x/blog
 go 1.12
 $
 </code></pre>
-<p>由于没有之前版本管理工具的配置文件，go mod init 会创建一个 go.mod 文件，其中只有 module 和 go 的配置。在这个例子中，根据<a href="https://golang.org/cmd/go/#hdr-Remote_import_paths" target="_blank" rel="noopener">自定义导入路径</a>，我们将模块的路径设置为 golang.org/x/blog。用户可以通过这个路径来导入包，我们需要注意，不要改变这个路径。</p>
+<p>由于没有之前版本管理工具的配置文件，go mod init 会创建一个 go.mod 文件，其中只有 module 和 go 的配置。在这个例子中，根据<a href="https://golang.org/cmd/go/#hdr-Remote_import_paths">自定义导入路径</a>，我们将模块的路径设置为 <a href="http://golang.org/x/blog%E3%80%82%E7%94%A8%E6%88%B7%E5%8F%AF%E4%BB%A5%E9%80%9A%E8%BF%87%E8%BF%99%E4%B8%AA%E8%B7%AF%E5%BE%84%E6%9D%A5%E5%AF%BC%E5%85%A5%E5%8C%85%EF%BC%8C%E6%88%91%E4%BB%AC%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%EF%BC%8C%E4%B8%8D%E8%A6%81%E6%94%B9%E5%8F%98%E8%BF%99%E4%B8%AA%E8%B7%AF%E5%BE%84%E3%80%82">golang.org/x/blog。用户可以通过这个路径来导入包，我们需要注意，不要改变这个路径。</a></p>
 <p>module 关键字定义了模块路径，go 关键字定义了在这个模块中编译代码所需要的 Go 语言版本。</p>
 <p>接下来，运行 go mod tidy 添加模块的依赖：</p>
 <pre><code class="language-bash">$ go mod tidy
@@ -211,25 +211,25 @@ ok  	golang.org/x/blog/content/cover	0.040s
 ?   	golang.org/x/blog/support/racy	[no test files]
 $
 </code></pre>
-<p>注意当 go mod tidy 添加一个依赖时，会添加最新版本。如果你的 GOPATH 包含了一个旧版本的依赖项，并且发布了一个破坏性的更改，你可能会在执行 go mod tidy、go build 或 go test 时看到错误。如果发生了这种情况，你可以通过 go get 来降级版本（比如：go get github.com/broken/module@v1.1.0），或者花时间来确认你的模块中每个依赖最新版本的兼容性。</p>
-<h2>Go Modules 中的测试</h2>
+<p>注意当 go mod tidy 添加一个依赖时，会添加最新版本。如果你的 GOPATH 包含了一个旧版本的依赖项，并且发布了一个破坏性的更改，你可能会在执行 go mod tidy、go build 或 go test 时看到错误。如果发生了这种情况，你可以通过 go get 来降级版本（比如：go get <a href="http://github.com/broken/module@v1.1.0%EF%BC%89%EF%BC%8C%E6%88%96%E8%80%85%E8%8A%B1%E6%97%B6%E9%97%B4%E6%9D%A5%E7%A1%AE%E8%AE%A4%E4%BD%A0%E7%9A%84%E6%A8%A1%E5%9D%97%E4%B8%AD%E6%AF%8F%E4%B8%AA%E4%BE%9D%E8%B5%96%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%E7%9A%84%E5%85%BC%E5%AE%B9%E6%80%A7%E3%80%82">github.com/broken/module@v1.1.0），或者花时间来确认你的模块中每个依赖最新版本的兼容性。</a></p>
+<h2 id="Go-Modules-中的测试">Go Modules 中的测试</h2>
 <p>在迁移到 Go Modules 后，有些测试需要做些调整。</p>
 <p>如果测试需要写包目录下的文件，当包目录在只读的模块缓存中时，它可能会失败。特别是这可能会导致所有的 go test 失败。测试应该将需要写入的文件复制到一个临时目录中。</p>
-<p>如果一个测试依赖相对路径（../package-in-another-module）去其他包中定位和读取文件，如果这个包在其他的模块中，该模块将位于模块缓存的版本化子目录中或在 replace 指令中指定的路径中，测试就会失败。</p>
+<p>如果一个测试依赖相对路径（…/package-in-another-module）去其他包中定位和读取文件，如果这个包在其他的模块中，该模块将位于模块缓存的版本化子目录中或在 replace 指令中指定的路径中，测试就会失败。</p>
 <p>如果测试期望测试中的 go 命令在 GOPATH 模式下运行，那么它可能会失败。如果发生这种情况，你需要添加一个 go.mod 文件到需要被测试的文件目录下，或者显式设置 GO111MODULE=off。</p>
-<h2>发布一个版本</h2>
+<h2 id="发布一个版本">发布一个版本</h2>
 <p>最后，你应该给你的新模块打上一个标签，并发布一个新正式版本。这个操作是可选的，但是如果没有一个正式的版本，下游的用户就只能使用提交时产生的 pseudo 版本号，这样后续将很难继续支持。</p>
 <pre><code class="language-bash">$ git tag v1.2.0
 $ git push origin v1.2.0
 </code></pre>
-<p>你的 go.mod 文件中定义了明确的导入路径，并且添加了新的最小版本需求。如果你的用户已经使用了正确的导入路径，你的依赖也没有造成破坏性的变更，添加 go.mod 就是向后兼容的。但这是一个重要的改变，可能会暴露已经存在的问题。如果你已经打过标签了，你应该增量的发布<a href="https://semver.org/#spec-item-7" target="_blank" rel="noopener">次版本</a>。详情查看<a href="https://blog.golang.org/publishing-go-modules" target="_blank" rel="noopener">发布 Go Modules</a> 来学习如何增量发布版本。</p>
-<h2>导入和规范模块路径</h2>
-<p>每个模块都在 go.mod 文件中定义了模块路径。每个引用模块内的包的 import语句都必须以模块路径作为包路径的前缀。但是，go 命令可能会通过许多不同的远程导入路径解析到同一个包含该模块的仓库。比如 golang.org/x/lint 和 golang.org/x/lint 都会解析到存储这些代码的仓库 go.googlesource.com/lint。这个仓库中的 go.mod 文件声明了路径为 golang.org/x/lint，因此只有该路径对应于有效的模块。</p>
-<p>Go 1.4提供了一种使用 // import 注释声明规范导入路径的机制，但不是所有的包作者都会提供这些。因此，在模块出现之前编写的代码可能使用了模块的非规范导入路径，而不会出现不匹配的错误。当使用模块之后，导入路径必须与规范模块路径匹配，因此你可能需要更新导入语句，例如你可能需要更改 import &quot;github.com/golang/lint&quot; 以导入 &quot;golang.org/x/lint&quot;。</p>
-<p>在另一个场景中，主版本为 2 或更高版本的模块，模块的规范路径可能与其存储库路径不同。主版本高于 1 的模块必须在其模块路径中包含主版本后缀。例如，版本 v2.0.0 必须包含后缀 /v2。然而，import语句可能引用了模块中没有那个后缀的包。例如，在 v2.0.1 版本中github.com/russross/blackfriday/v2 的非模块用户可能将其导入为github.com/russross/blackfriday，这就需要加上 /v2后缀来更新导入路径。</p>
-<h2>结论</h2>
+<p>你的 go.mod 文件中定义了明确的导入路径，并且添加了新的最小版本需求。如果你的用户已经使用了正确的导入路径，你的依赖也没有造成破坏性的变更，添加 go.mod 就是向后兼容的。但这是一个重要的改变，可能会暴露已经存在的问题。如果你已经打过标签了，你应该增量的发布<a href="https://semver.org/#spec-item-7">次版本</a>。详情查看<a href="https://blog.golang.org/publishing-go-modules">发布 Go Modules</a> 来学习如何增量发布版本。</p>
+<h2 id="导入和规范模块路径">导入和规范模块路径</h2>
+<p>每个模块都在 go.mod 文件中定义了模块路径。每个引用模块内的包的 import语句都必须以模块路径作为包路径的前缀。但是，go 命令可能会通过许多不同的远程导入路径解析到同一个包含该模块的仓库。比如 <a href="http://golang.org/x/lint">golang.org/x/lint</a> 和 <a href="http://golang.org/x/lint">golang.org/x/lint</a> 都会解析到存储这些代码的仓库 <a href="http://go.googlesource.com/lint%E3%80%82%E8%BF%99%E4%B8%AA%E4%BB%93%E5%BA%93%E4%B8%AD%E7%9A%84">go.googlesource.com/lint。这个仓库中的</a> go.mod 文件声明了路径为 <a href="http://golang.org/x/lint%EF%BC%8C%E5%9B%A0%E6%AD%A4%E5%8F%AA%E6%9C%89%E8%AF%A5%E8%B7%AF%E5%BE%84%E5%AF%B9%E5%BA%94%E4%BA%8E%E6%9C%89%E6%95%88%E7%9A%84%E6%A8%A1%E5%9D%97%E3%80%82">golang.org/x/lint，因此只有该路径对应于有效的模块。</a></p>
+<p>Go 1.4提供了一种使用 // import 注释声明规范导入路径的机制，但不是所有的包作者都会提供这些。因此，在模块出现之前编写的代码可能使用了模块的非规范导入路径，而不会出现不匹配的错误。当使用模块之后，导入路径必须与规范模块路径匹配，因此你可能需要更新导入语句，例如你可能需要更改 import “<a href="http://github.com/golang/lint">github.com/golang/lint</a>” 以导入 “<a href="http://golang.org/x/lint">golang.org/x/lint</a>”。</p>
+<p>在另一个场景中，主版本为 2 或更高版本的模块，模块的规范路径可能与其存储库路径不同。主版本高于 1 的模块必须在其模块路径中包含主版本后缀。例如，版本 v2.0.0 必须包含后缀 /v2。然而，import语句可能引用了模块中没有那个后缀的包。例如，在 v2.0.1 <a href="http://xn--github-9v7il02ok5u.com/russross/blackfriday/v2">版本中github.com/russross/blackfriday/v2</a> <a href="http://xn--github-vy7ih0tmer7xbokzpoxdq87gie1at40b72e728c432f.com/russross/blackfriday%EF%BC%8C%E8%BF%99%E5%B0%B1%E9%9C%80%E8%A6%81%E5%8A%A0%E4%B8%8A">的非模块用户可能将其导入为github.com/russross/blackfriday，这就需要加上</a> /v2后缀来更新导入路径。</p>
+<h2 id="结论">结论</h2>
 <p>对于大多数用户来说，转换到Go模块应该是一个简单的过程。但由于非规范的导入路径或依赖项中的破坏性更改，偶尔会出现问题。后续的文章将探讨发布新版本问题，v2 后续版本的问题，以及调试奇怪情况的方法。</p>
-<p>请向我们发送<a href="https://github.com/golang/go/issues/new" target="_blank" rel="noopener">bug 报告</a>和<a href="https://github.com/golang/go/wiki/ExperienceReports" target="_blank" rel="noopener">体验报告</a>，帮助我们改善 Go 的依赖管理功能。</p>
+<p>请向我们发送<a href="https://github.com/golang/go/issues/new">bug 报告</a>和<a href="https://github.com/golang/go/wiki/ExperienceReports">体验报告</a>，帮助我们改善 Go 的依赖管理功能。</p>
 <p>感谢你所有的反馈和帮助改进模块的建议。</p>
 <hr>
 <p>另外，腾讯云区块链方向在大量招人，包括前端、后端、架构师、产品等诸多岗位，如果感兴趣，请把简历投过来 <a href="mailto:rayjun0412@gmail.com">rayjun0412@gmail.com</a>。</p>
@@ -254,7 +254,7 @@ $ git push origin v1.2.0
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -59,7 +59,7 @@
     <h1>Go Modules 常见使用陷阱</h1>
     <p>Go Modules 是 Go 官方推出的依赖管理工具，Go Modules 的使用可以参见我之前翻译的<a href="https://">官方博客</a>。</p>
 <p>Go Modules 在使用的过程中还是会有一些坑，这篇文章将会介绍一些我踩过的坑。</p>
-<h2>1. Go mod 命令详解</h2>
+<h2 id="1-Go-mod-命令详解">1. Go mod 命令详解</h2>
 <p>在 Go 中，提供了 <code>go mod</code> 命令来使用 Go Modules，可以通过 <code>go help mod</code> 来查看支持的命令：</p>
 <pre><code class="language-bash">$ go help mod
 
@@ -81,7 +81,7 @@ why      # 解释为什么需要这个包
 <p>go mod init 和 go mod tidy 最常用，分别用来初始化一个 Go Modules 以及添加和删除无用的依赖。</p>
 <p>go mod vendor 可以将项目的依赖打包放到当前项目的根目录下，这样可以防止项目的依赖被修改。</p>
 <p>go mod verify 和 go mod why 相对来说用的就比较少。</p>
-<h2>2. 如何获取新的依赖</h2>
+<h2 id="2-如何获取新的依赖">2. 如何获取新的依赖</h2>
 <p>在使用了 Go Modules 以后，go get 依然是获取依赖常用的方法。</p>
 <p>使用也很简单:</p>
 <pre><code class="language-bash">go get github.com/rayjun/go-mod-demo
@@ -95,8 +95,8 @@ why      # 解释为什么需要这个包
 <pre><code class="language-bash">go clean --modcache # 将本地缓存的所有依赖都清空
 go get -u github.com/rayjun/go-mod-demo@v1.0.1 # 获取最新的代码
 </code></pre>
-<h2>3. Go Modules 中的版本号</h2>
-<p>Go Modules 使用的是<a href="https://semver.org/" target="_blank" rel="noopener">语义版本号</a>来实现对代码版本的管理，语义版本号由三个部分组成:</p>
+<h2 id="3-Go-Modules-中的版本号">3. Go Modules 中的版本号</h2>
+<p>Go Modules 使用的是<a href="https://semver.org/">语义版本号</a>来实现对代码版本的管理，语义版本号由三个部分组成:</p>
 <pre><code class="language-bash">MAJOR.MINOR.PATCH # 主版本号.次版本号.补丁版本号
 </code></pre>
 <p>在一些情况下，还可以配置 alpha 等来表示一些先行版本:</p>
@@ -130,7 +130,7 @@ go get -u github.com/rayjun/go-mod-demo@v1.0.1 # 获取最新的代码
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

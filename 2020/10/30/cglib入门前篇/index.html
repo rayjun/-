@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -62,7 +62,7 @@
 <p>这是一个开源的库，cglib 本身的实现基于 asm 库。相比于 asm 库，cglib 的接口更友好，使用起来更简单。</p>
 <p>下面介绍 cglib 的主要接口和类以及基于 cglib 的动态代理实现。</p>
 <p>本文基于 OpenJDK11</p>
-<h2>1. Enhancer</h2>
+<h2 id="1-Enhancer">1. Enhancer</h2>
 <p>首先要说到的就是 Enhancer 这个类，这个是 cglib 中使用的最多的类。之前  JDK 中使用反射来实现动态代理时，必须要基于<strong>接口</strong>来生成动态代理类，而 Enhancer 可以直接基于类来代理类。</p>
 <p>Enhancer 可以生成被代理类的子类，并且拦截所有方法的调用，也就是通常所说的<strong>增强</strong>。</p>
 <p>需要注意，Enhancer 不能增强构造函数，也不能增强被 final 修饰的<strong>类</strong>，或者被 static 和 final 修饰的<strong>方法</strong>。</p>
@@ -84,17 +84,17 @@ enhancer.setCallback(...); // 设置回调
 <li>ProxyRefDispatcher：与 Dispatcher 功能类似，但是会多一个被代理对象的参数</li>
 <li>NoOp：什么也不做</li>
 </ul>
-<h3>FixedValue</h3>
+<h3 id="FixedValue">FixedValue</h3>
 <p>对于 FixedValue 类型的回调，调用所有的方法都会返回这个固定的值，如果类型不匹配，就会报错。</p>
 <pre><code class="language-java">Enhancer enhancer = new Enhancer();
 enhancer.setSuperclass(HelloImpl.class);
-enhancer.setCallback(new FixedValue() {
+enhancer.setCallback(new FixedValue() &#123;
     @Override
-    public Object loadObject() throws Exception {
+    public Object loadObject() throws Exception &#123;
         System.out.println(&quot;Hello cglib&quot;);
         return &quot;Hello cglib&quot;;
-    }
-});
+    &#125;
+&#125;);
 
 HelloImpl proxy = (HelloImpl) enhancer.create();
 proxy.sayHello(&quot;ray&quot;); // 会打印 Hello cglib
@@ -102,22 +102,22 @@ proxy.sayHello(&quot;ray&quot;); // 会打印 Hello cglib
 <p>除了 static 和 final 类型的方法，其他所有的方法都会执行上面的代码，打印 <code>Hello cglib</code>。但是需要注意的是，如果某个方法返回的类型和上面的代理行为不一致就会报错，java.lang.Object 中的方法也是一样。</p>
 <pre><code class="language-java">proxy.hashCode(); // java.lang.ClassCastException
 </code></pre>
-<h3>InvocationHandler</h3>
+<h3 id="InvocationHandler">InvocationHandler</h3>
 <p>看到这个是不是很熟悉，这个与 JDK 反射自带的 InvocationHandler 基本一致。</p>
 <pre><code class="language-java">Enhancer enhancer = new Enhancer();
 enhancer.setSuperclass(HelloImpl.class);
-enhancer.setCallback(new InvocationHandler() {
+enhancer.setCallback(new InvocationHandler() &#123;
     @Override
-    public Object invoke(Object proxy, Method method, Object[] objects) throws Throwable {
-        if (method.getReturnType() == String.class) {
+    public Object invoke(Object proxy, Method method, Object[] objects) throws Throwable &#123;
+        if (method.getReturnType() == String.class) &#123;
             System.out.println(&quot;Hello cglib&quot;);
             return &quot;Hello cglib&quot;;
-        } else {
+        &#125; else &#123;
             System.out.println(&quot;Invoke other method&quot;);
             return method.invoke(proxy, objects); // 这里可能会出现无限循环
-        }
-    }
-});
+        &#125;
+    &#125;
+&#125;);
 
 HelloImpl proxy = (HelloImpl) enhancer.create();
 proxy.sayHello(&quot;ray&quot;);
@@ -127,51 +127,51 @@ proxy.sayHello(&quot;ray&quot;);
 </code></pre>
 <p>这个代码并不会正常返回结果，而是进入无限循环，这是因为这个代理对象的每一个可以被代理的方法都被代理了，在调用被代理了的方法时，会重复进入到 <code>InvocationHandler#invoke</code> 这个方法中，然后进入死循环。</p>
 <p>解决办法如下。</p>
-<h3>MethodInterceptor</h3>
+<h3 id="MethodInterceptor">MethodInterceptor</h3>
 <p>在 MethodInterceptor 中，有一个 <code>MethodProxy</code> 参数，这个就可以用来执行父类方法。</p>
 <pre><code class="language-java">Enhancer enhancer = new Enhancer();
 enhancer.setSuperclass(HelloImpl.class);
-enhancer.setCallback(new MethodInterceptor() {
+enhancer.setCallback(new MethodInterceptor() &#123;
     @Override
-    public Object intercept(Object o, Method method, Object[] params, MethodProxy methodProxy) throws Throwable {
-        if (method.getReturnType() == String.class) {
+    public Object intercept(Object o, Method method, Object[] params, MethodProxy methodProxy) throws Throwable &#123;
+        if (method.getReturnType() == String.class) &#123;
             System.out.println(&quot;Hello cglib&quot;);
             return &quot;Hello cglib&quot;;
-        } else {
+        &#125; else &#123;
             return methodProxy.invokeSuper(o, params); // 对上面无限问题的改善
-        }
-    }
-});
+        &#125;
+    &#125;
+&#125;);
 
 HelloImpl proxy = (HelloImpl) enhancer.create();
 proxy.sayHello(&quot;ray&quot;);
 proxy.hashCode(); // 这个时候，调用 hashcode 方法就可以正常工作了
 </code></pre>
-<h3>LazyLoader</h3>
+<h3 id="LazyLoader">LazyLoader</h3>
 <p>用来延迟加载对象。</p>
 <p>在下面这个例子中，使用 LazyLoader 来延迟加载一个 ArrayList 对象。</p>
-<pre><code class="language-java">public class HelloImpl implements Hello {
+<pre><code class="language-java">public class HelloImpl implements Hello &#123;
 
     private ArrayList&lt;String&gt; data;
 
-    public ArrayList&lt;String&gt; getData() {
+    public ArrayList&lt;String&gt; getData() &#123;
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(ArrayList.class);
-        enhancer.setCallback(new LazyLoader() {
+        enhancer.setCallback(new LazyLoader() &#123;
             @Override
-            public Object loadObject() throws Exception {
+            public Object loadObject() throws Exception &#123;
                 System.out.println(&quot;Begin invoke lazyloader&quot;);
                 ArrayList&lt;String&gt; data = new ArrayList&lt;&gt;();
                 data.add(&quot;hello&quot;);
                 data.add(&quot;cglib&quot;);
                 System.out.println(&quot;End invoke lazyloader&quot;);
                 return data;
-            }
-        });
+            &#125;
+        &#125;);
 
         return (ArrayList&lt;String&gt;) enhancer.create();
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <pre><code class="language-java">HelloImpl helloImpl = new HelloImpl();
 ArrayList&lt;String&gt; data = helloImpl.getData(); // 在调用这个方法的时候，ArrayList 不会被创建
@@ -185,29 +185,29 @@ hello
 cglib
 </code></pre>
 <p>在执行 data.get(0) 的时候，ArrayList 才会被创建，也就是说只有在被使用的，才会去创建对象，而且每个对象只会被创建一次。</p>
-<h3>Dispatcher</h3>
+<h3 id="Dispatcher">Dispatcher</h3>
 <p>Dispatcher 与 LazyLoader 的不同之处在于，每次去获取对象的时候都会创建一个新的对象，而不是复用同一个对象。</p>
-<pre><code class="language-java">public class HelloImpl implements Hello {
+<pre><code class="language-java">public class HelloImpl implements Hello &#123;
 
     private ArrayList&lt;String&gt; data;
 
-    public ArrayList&lt;String&gt; getDataDispatcher() {
+    public ArrayList&lt;String&gt; getDataDispatcher() &#123;
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(ArrayList.class);
-        enhancer.setCallback(new Dispatcher() {
+        enhancer.setCallback(new Dispatcher() &#123;
             @Override
-            public Object loadObject() throws Exception {
+            public Object loadObject() throws Exception &#123;
                 System.out.println(&quot;Begin invoke dispatcher&quot;);
                 ArrayList&lt;String&gt; data = new ArrayList&lt;&gt;();
                 data.add(&quot;hello&quot;);
                 data.add(&quot;cglib&quot;);
                 System.out.println(&quot;End invoke Dispatcher&quot;);
                 return data;
-            }
-        });
+            &#125;
+        &#125;);
         return (ArrayList&lt;String&gt;) enhancer.create();
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <pre><code class="language-java">HelloImpl helloimpl = new HelloImpl();
 ArrayList&lt;String&gt; data = helloimpl.getDataDispatcher();
@@ -222,57 +222,57 @@ Begin invoke dispatcher
 End invoke Dispatcher
 cglib
 </code></pre>
-<h3>ProxyRefDispatcher</h3>
+<h3 id="ProxyRefDispatcher">ProxyRefDispatcher</h3>
 <p>ProxyRefDispatcher 与 Dispatcher 功能类似，但是多了一个参数，使用这个回调同样要注意无限循环的问题。</p>
 <pre><code class="language-java">Enhancer enhancer = new Enhancer();
 enhancer.setSuperclass(HelloImpl.class);
-enhancer.setCallback(new ProxyRefDispatcher() {
+enhancer.setCallback(new ProxyRefDispatcher() &#123;
     @Override
-    public Object loadObject(Object proxy) throws Exception {
+    public Object loadObject(Object proxy) throws Exception &#123;
         System.out.println(&quot;Invoke&quot;);
         return proxy.hashCode(); // 同样可能会导致无限循环
-    }
-});
+    &#125;
+&#125;);
 
 HelloImpl proxy = (HelloImpl) enhancer.create();
 proxy.hashCode(); // 这样调用会无限循环
 </code></pre>
-<h3>NoOp</h3>
+<h3 id="NoOp">NoOp</h3>
 <p>这个回调什么也不做，会完全继承被代理类的功能，所以 NoOp 不能使用接口来创建代理，只能使用类。</p>
 <pre><code class="language-java">Enhancer enhancer = new Enhancer();
 enhancer.setSuperclass(HelloImpl.class);
 //enhancer.setInterfaces(HelloImpl.class.getInterfaces()); //不能使用接口，只能使用类
-enhancer.setCallback(new NoOp() {
-});
+enhancer.setCallback(new NoOp() &#123;
+&#125;);
 
 Hello proxy = (Hello) enhancer.create();
 proxy.sayHello(&quot;Ray&quot;);
 </code></pre>
 <p>这个回调在一些特定的情况下还是挺有用的，看下面的例子。</p>
-<h3>CallbackFilter</h3>
+<h3 id="CallbackFilter">CallbackFilter</h3>
 <p>在上面的例子中，都是给 Enhancer 设置了单个回调，其实每个 Enhancer 可以设置多个回调，这里就需要用到 <code>CallbackFilter</code>。</p>
 <p>比如现在就需要对 <code>sayHello</code> 方法进行处理，其他的方法保持父类的行为就可以，按照这个要求，实现的 CallbackFilter 如下：</p>
-<pre><code class="language-java">public class CallbackHelperImpl extends CallbackHelper {
-    public CallbackHelperImpl(Class superclass, Class[] interfaces) {
+<pre><code class="language-java">public class CallbackHelperImpl extends CallbackHelper &#123;
+    public CallbackHelperImpl(Class superclass, Class[] interfaces) &#123;
         super(superclass, interfaces);
-    }
+    &#125;
 
     @Override
-    protected Object getCallback(Method method) {
-        if (method.getName() == &quot;sayHello&quot;) { // 对这个方法就行增强，其他的方法不改变
-            return new FixedValue() {
+    protected Object getCallback(Method method) &#123;
+        if (method.getName() == &quot;sayHello&quot;) &#123; // 对这个方法就行增强，其他的方法不改变
+            return new FixedValue() &#123;
                 @Override
-                public Object loadObject() throws Exception {
+                public Object loadObject() throws Exception &#123;
                     System.out.println(&quot;Hello cglib&quot;);
                     return &quot;Hello cglib&quot;;
-                }
-            };
-        } else { // NoOp 就可以在这种情况下使用
-            return new NoOp() {
-            };
-        }
-    }
-}
+                &#125;
+            &#125;;
+        &#125; else &#123; // NoOp 就可以在这种情况下使用
+            return new NoOp() &#123;
+            &#125;;
+        &#125;
+    &#125;
+&#125;
 </code></pre>
 <pre><code class="language-java">Enhancer enhancer = new Enhancer();
 enhancer.setSuperclass(HelloImpl.class);
@@ -290,31 +290,31 @@ proxy.hashCode(); // 其他方法的调用不受影响
 <pre><code class="language-java">Hello cglib
 1647766367
 </code></pre>
-<h2>2. 实现动态代理</h2>
+<h2 id="2-实现动态代理">2. 实现动态代理</h2>
 <p>上面介绍了 Enhancer 之后，实现动态代理应该就不难了。</p>
 <p>InvocationHandler 和 MethodInterceptor 都可以用来实现动态代理，下面是两种实现。</p>
-<h3>InvocationHandler 实现</h3>
-<pre><code class="language-java">public class CGlibHelloProxyInvocationHandler implements InvocationHandler {
+<h3 id="InvocationHandler-实现">InvocationHandler 实现</h3>
+<pre><code class="language-java">public class CGlibHelloProxyInvocationHandler implements InvocationHandler &#123;
 
     private Object target;
 
-    public Object bind(Object obj) {
+    public Object bind(Object obj) &#123;
         Enhancer enhancer = new Enhancer();
         enhancer.setInterfaces(obj.getClass().getInterfaces());
         //enhancer.setSuperclass(obj.getClass().getSuperclass());
         this.target = obj;
         enhancer.setCallback(this);
         return enhancer.create(); // 生成代理类
-    }
+    &#125;
 
     @Override
-    public Object invoke(Object o, Method method, Object[] params) throws Throwable {
+    public Object invoke(Object o, Method method, Object[] params) throws Throwable &#123;
         long begin = System.currentTimeMillis();
         Object result = method.invoke(target, params);
         System.out.printf(&quot;Invoke time &quot; + (System.currentTimeMillis() - begin) + &quot; ms&quot;);
         return result;
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>使用上面的实现来创建代理并调用方法：</p>
 <pre><code class="language-java">HelloImpl helloImpl = new HelloImpl();
@@ -325,28 +325,28 @@ Hello proxy = (Hello) helloProxyInvocationHandler.bind(helloImpl);
 proxy.sayHello(&quot;ray&quot;);
 </code></pre>
 <p>这里需要注意，如果使用接口创建代理对象，第一行代码使用 <code>Hello helloImpl = new HelloImpl()</code> 或者 <code>HelloImpl helloImpl = new HelloImpl()</code> 创建对象传入都可以，如果使用是父类创建代理对象，那么只能使用第二种。</p>
-<h3>MethodInceptor 实现</h3>
-<pre><code class="language-java">public class CGlibHelloProxyMethodInterceptor implements MethodInterceptor {
+<h3 id="MethodInceptor-实现">MethodInceptor 实现</h3>
+<pre><code class="language-java">public class CGlibHelloProxyMethodInterceptor implements MethodInterceptor &#123;
 
     private Object target;
 
-    public Object bind(Object obj) {
+    public Object bind(Object obj) &#123;
         Enhancer enhancer = new Enhancer();
         enhancer.setInterfaces(obj.getClass().getInterfaces());
         //enhancer.setSuperclass(obj.getClass());
         this.target = obj;
         enhancer.setCallback(this);
         return enhancer.create();
-    }
+    &#125;
 
     @Override
-    public Object intercept(Object o, Method method, Object[] params, MethodProxy methodProxy) throws Throwable {
+    public Object intercept(Object o, Method method, Object[] params, MethodProxy methodProxy) throws Throwable &#123;
         long begin = System.currentTimeMillis();
         Object result = method.invoke(target, params);
         System.out.printf(&quot;Invoke time &quot; + (System.currentTimeMillis() - begin) + &quot; ms&quot;);
         return result;
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>然后创建代理对象并调用：</p>
 <pre><code class="language-java">HelloImpl hello = new HelloImpl();
@@ -358,14 +358,14 @@ proxyObject.sayHello(&quot;ray&quot;);
 </code></pre>
 <p>通常来说，使用 MethodInceptor 方式来实现更好，因为可以避免出现上面说到的无限循环的问题。</p>
 <p>cglib 相比于 Java 反射实现动态代理的优势就是不受类的限制，可以自由的选择根据接口或者类来生成新的代理对象。</p>
-<h3>cglib 中的 Proxy</h3>
+<h3 id="cglib-中的-Proxy">cglib 中的 Proxy</h3>
 <p>在 JDK 中，动态代理主要由 <code>java.lang.reflect.Proxy</code> 来实现，在 cglib 中，同样也实现了 Proxy，功能于 JDK 中的功能基本一致，其中用到的 <code>InvocationHandler</code> 就是前面介绍的回调。</p>
 <p>这样做是为了 JDK1.3 以前的版本也能使用动态代理的功能。</p>
-<h2>3. 总结</h2>
+<h2 id="3-总结">3. 总结</h2>
 <p>这篇文章主要介绍了 cglib 的如果通过 Enhancer 去生成代理类，可以同时支持<strong>接口</strong>和<strong>子类的</strong>两种方式**。**同时也介绍了通过 Enhancer 来实现动态代理。</p>
 <p>cglib 的能力远不止这些，下篇文章将介绍 cglib 的其他功能。</p>
-<h2>REF</h2>
-<p>[1] <a href="https://dzone.com/articles/cglib-missing-manual" target="_blank" rel="noopener">https://dzone.com/articles/cglib-missing-manual</a></p>
+<h2 id="REF">REF</h2>
+<p>[1] <a href="https://dzone.com/articles/cglib-missing-manual">https://dzone.com/articles/cglib-missing-manual</a></p>
 <p>文 / Rayjun</p>
 
 </div>
@@ -387,7 +387,7 @@ proxyObject.sayHello(&quot;ray&quot;);
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

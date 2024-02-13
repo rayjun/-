@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,44 +57,44 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Spring源码系列-Spring框架简介</h1>
-    <h4>Spring 整体架构</h4>
+    <h4 id="Spring-整体架构">Spring 整体架构</h4>
 <p>Spring 的架构图如下所示:</p>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/0AF05523-590D-4F6A-A1B0-ADA8CC4D5895.png" alt="spring基础架构"></p>
 <p>在 Spring 框架中，容器是核心部分，容器主要由以下几部分构成：spring-core spring-beans spring-context spring-context-support spring-expression 其中 spring-core 和 spring-brans 是构成Spring框架的基础，包括了IOC和DI的特性。 spring-context 负责容器中beans创建和管理。spring-context-support 负责集成第三方的包进入到框架中。spring-expression 是一组在运行时可以查询和操纵对象的表达式。</p>
-<h4>Spring 的依赖注入</h4>
+<h4 id="Spring-的依赖注入">Spring 的依赖注入</h4>
 <p>提到Spring容器，就不得不提到IOC(控制反转) 和 DI(依赖注入)，其实 IOC 和 DI描述的是同一个概念。依赖注入是指一个对象定义的依赖只通过构造函数参数或者setter方法来设置，容器在创建这个对象的时候会将该对象依赖的对象都注入进来。这个过程也称之为控制反转。对象本身可以通过构造对象或者 Service Locator 模式来实例化依赖。</p>
 <p>这个概念这样看起来还是太过于抽象了，那么来看一个具体的例子。 原来的开发模式:</p>
-<pre><code class="language-java">public class Foo {
+<pre><code class="language-java">public class Foo &#123;
 
 	private SpringIoc springIoc;
 
 
-	public Foo() {
+	public Foo() &#123;
 		this.springIoc = new SpringIoc();
-	}
-}
+	&#125;
+&#125;
 
 </code></pre>
 <p>依赖注入的模式是这样的：</p>
-<pre><code class="language-java">public class Foo {
+<pre><code class="language-java">public class Foo &#123;
 
 	private SpringIoc springIoc;
 
 
-	public Foo() {
+	public Foo() &#123;
 		this.springIoc = new SpringIoc();
-	}
-}
+	&#125;
+&#125;
 
 </code></pre>
 <p>完了？完了。看起来这是在逗你吧。但是实际上，依赖注入干的就是这件事，依赖注入的核心是每个对象都不要去控制自己的依赖，所有的依赖都通过外部注入进来。那有人就说那这件事没有 Spring 也可以干这件事呀， 如下：</p>
-<pre><code class="language-java">public class BarMain {
+<pre><code class="language-java">public class BarMain &#123;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) &#123;
 		SpringIoc springIoc = new SpringIoc();
 		Bar bar = new Bar(springIoc);
-	}
-}
+	&#125;
+&#125;
 </code></pre>
 <p>但是需要注意的是，在这个代码中。还是存在需要手动去新建对象的情况，也就是说，问题根本没有被解决。这个时候，Spring 容器的出现就是为了解决这个问题的。Spring容器的出现就是为了干掉这个手动生成对象的操作。</p>
 <p>Spring 容器的核心思想是所有的bean及其依赖都不需要手动去生成，都只需要通过Spring 容器来统一管理。需要实例化的时候直吴容器里面取就行了。Spring 容器这么强大，那么Spring容器到底是什么东西呢？</p>
@@ -107,9 +107,9 @@
 <li>基于java的配置</li>
 </ul>
 <p>这些配置方式都不是独立的，都可以结合起来使用，比如xml配置就经常与基于注解的配置方式结合起来使用。示例代码如下:</p>
-<pre><code class="language-java">public class Main {
+<pre><code class="language-java">public class Main &#123;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) &#123;
 
 		BeanFactory beanFactory = new ClassPathXmlApplicationContext(&quot;spring-ioc.xml&quot;).getBeanFactory();
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;spring-ioc.xml&quot;);
@@ -120,8 +120,8 @@
 
 		springIocFromBeanFactory.hellIoc();
 		springIocFromApplicationContext.hellIoc();
-	}
-}
+	&#125;
+&#125;
 
 </code></pre>
 <p>通常获取 ApplicationContext 对象来作为访问容器的接口。通过 ApplicationContext来获取 bean(当然实际的使用当中不会这么用)。 在容器初始化的过程中，容器会根据配置文件将大部分bean也实例化(设置了延迟加载的bean不会再启动阶段就初始化)。一个基于Spring的应用也算是启动起来了。 这些基本就是Spring框架最为核心的内容了，其他的Spring 模块都是在容器的基础之上构建出来的。</p>
@@ -145,7 +145,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

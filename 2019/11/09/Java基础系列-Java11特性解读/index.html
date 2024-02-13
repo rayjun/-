@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,10 +57,10 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Java基础系列-Java11特性解读</h1>
-    <p>Java11 是 Java8 之后的一个 LTS 版本。Java8 的 LTS 将在今年到期，在 Java8 之后，Java11 就是最好的选择了。Java9 到 Java11 的新特性虽然没有 Java8 的跨度大，但在虚拟机层面有了很大的升级。通过 <a href="https://winterbe.com/posts/2018/09/24/java-11-tutorial/" target="_blank" rel="noopener">Benjamin</a> 的这篇博客，我们来看看 Java11 有什么不同。</p>
+    <p>Java11 是 Java8 之后的一个 LTS 版本。Java8 的 LTS 将在今年到期，在 Java8 之后，Java11 就是最好的选择了。Java9 到 Java11 的新特性虽然没有 Java8 的跨度大，但在虚拟机层面有了很大的升级。通过 <a href="https://winterbe.com/posts/2018/09/24/java-11-tutorial/">Benjamin</a> 的这篇博客，我们来看看 Java11 有什么不同。</p>
 <hr>
 <p>Java11 一直都陷入困境中并且依然有很多的人在生产环境中使用 Java8。这篇文章会使用例子来讲解 Java9 到 Java11 中最重要的新特性。这篇文章使用代码来讲解新特性，不会有大段的文字。</p>
-<h4>本地变量类型推断</h4>
+<h4 id="本地变量类型推断">本地变量类型推断</h4>
 <p>Java 10 中新增了一个关键字 <code>var</code>，在声明本地变量的时候用 <code>var</code>  就不需要写明具体的数据类型（本地变量是指在<strong>方法</strong>中声明的变量）。</p>
 <p>在 Java 10 之前的版本中，你需要这样声明变量:</p>
 <pre><code class="language-java">String text = &quot;Hello Java 9&quot;;
@@ -84,9 +84,9 @@ var method = this::someMethod;
 </code></pre>
 <p>本地类型推断在处理泛型代码时很好用。在下面的例子中，<code>current</code>  的类型是 <code>Map&lt;String, List&lt;Integer&gt;&gt;</code>，如果使用 <code>var</code> 来替代 <code>Map&lt;String, List&lt;Integer&gt;&gt;</code>，就可以少些很多样本代码：</p>
 <pre><code class="language-java">var myList = new ArrayList&lt;Map&lt;String, List&lt;Integer&gt;&gt;&gt;();
-for (var current : myList) {
+for (var current : myList) &#123;
     System.out.println(current);
-}
+&#125;
 </code></pre>
 <p>在 Java 11 中 <code>var</code> 也可以用于 lambda 的参数，但是需要加上 <code>@Nullable</code> 注解：</p>
 <pre><code class="language-java">Predicate&lt;String&gt; predicate = (@Nullable var a ) -&gt; true;
@@ -94,7 +94,7 @@ for (var current : myList) {
 <blockquote>
 <p>Tip: 在 Intellij IDEA 中，可以通过选中一个变量，同时按下 <code>CMD/CTRL</code> 来显示变量的真实类型（对于键盘党可以使用 <code>CTRL + J</code>）。</p>
 </blockquote>
-<h4>HTTP Client</h4>
+<h4 id="HTTP-Client">HTTP Client</h4>
 <p><code>Java 9</code> 中隐藏一个处理 Http 请求的新 API，<code>HttpClient</code>。到 <code>Java11</code> 这个 API 已经很完善了，就在 JDK 的 <code>java.net</code> 包下。来看看这个 API 可以做点什么。</p>
 <p>这个新的 <code>HttpClient</code> 可以<strong>同步</strong>或者<strong>异步</strong>使用。同步的请求将会阻塞当前线程直到响应返回。<code>BodyHandlers</code> 定义了期望的返回数据类型。(e.g. 字符串、字节数组或者文件)：</p>
 <pre><code class="language-java">var request = HttpRequest.newBuilder()
@@ -132,17 +132,17 @@ System.out.println(response.statusCode());      // 200
     .uri(URI.create(&quot;https://postman-echo.com/basic-auth&quot;))
     .build();
 var client = HttpClient.newBuilder()
-    .authenticator(new Authenticator() {
+    .authenticator(new Authenticator() &#123;
         @Override
-        protected PasswordAuthentication getPasswordAuthentication() {
+        protected PasswordAuthentication getPasswordAuthentication() &#123;
             return new PasswordAuthentication(&quot;postman&quot;, &quot;password&quot;.toCharArray());
-        }
-    })
+        &#125;
+    &#125;)
     .build();
 var response = client.send(request, HttpResponse.BodyHandlers.ofString());
 System.out.println(response.statusCode());      // 200
 </code></pre>
-<h4>Collections</h4>
+<h4 id="Collections">Collections</h4>
 <p>Java 中的容器比如 <code>List</code> 、<code>Set</code>、<code>Map</code> 已经扩展了很多新的方法。<code>List.of</code> 会根据参数创建一个新的不可变的 <code>list</code>，<code>List.copy</code> 会创建这个 <code>list</code>  的不可变副本。</p>
 <pre><code class="language-java">var list = List.of(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;);
 var copy = List.copyOf(List);
@@ -160,9 +160,9 @@ System.out.println(map);
 <blockquote>
 <p>在 Java 11 中不可变容器的 API 没有变化。然而如果尝试对不可变的容器添加或者减少元素，就会抛出 <code>java.lang.UnsupportedOperationException</code> 异常。幸运的是 <code>Intellij IDEA</code> 会在你尝试修改不可变容器的时候发出一个警告。</p>
 </blockquote>
-<h4>Streams</h4>
-<p><code>Streams</code> 是在 Java8 中加入的新特性，在后面的又加入了 3 个新的方法。
-<code>Stream.ofNullable</code> 方法通过单个元素来构造流：</p>
+<h4 id="Streams">Streams</h4>
+<p><code>Streams</code> 是在 Java8 中加入的新特性，在后面的又加入了 3 个新的方法。<br>
+<code>Stream.ofNullable </code> 方法通过单个元素来构造流：</p>
 <pre><code class="language-java">Stream.ofNullable(null)
          .count();  // 0
 </code></pre>
@@ -170,7 +170,7 @@ System.out.println(map);
 <blockquote>
 <p>predicate 是一个函数式编程的接口</p>
 </blockquote>
-<h4>Optionals</h4>
+<h4 id="Optionals">Optionals</h4>
 <p><code>Optionals</code> 也接收了一些相当有用的方法。比如现在可以将 optinals 很简单转成 stream 或者为一个空的 optional 返回另一个备用的 optional。</p>
 <pre><code class="language-java">Optional.of(&quot;foo&quot;).orElseThrow();     // foo
 Optional.of(&quot;foo&quot;).stream().count();  // 1
@@ -178,7 +178,7 @@ Optional.ofNullable(null)
     .or(() -&gt; Optional.of(&quot;fallback&quot;))
     .get();                           // fallback
 </code></pre>
-<h4>Strings</h4>
+<h4 id="Strings">Strings</h4>
 <p><code>String</code> 这个基础的类也新增了一些方法来校验空格以及计算字符串的行数。</p>
 <pre><code class="language-java">&quot; &quot;.isBlank();                // true
 &quot; Foo Bar &quot;.strip();          // &quot;Foo Bar&quot;
@@ -187,33 +187,33 @@ Optional.ofNullable(null)
 &quot;Java&quot;.repeat(3);             // &quot;JavaJavaJava&quot;
 &quot;A\nB\nC&quot;.lines().count();    // 3
 </code></pre>
-<h4>InputStreams</h4>
+<h4 id="InputStreams">InputStreams</h4>
 <p>最后简单说一下 <code>InputStream</code> 提供了一个非常有用的方法来传输数据到 <code>OutputStream</code>，下面这个例子在传输原始数据的时候能经常看到。</p>
 <pre><code class="language-java">var classLoader = ClassLoader.getSystemClassLoader();
 var inputStream = classLoader.getResourceAsStream(&quot;myFile.txt&quot;);
 var tempFile = File.createTempFile(&quot;myFileCopy&quot;, &quot;txt&quot;);
-try (var outputStream = new FileOutputStream(tempFile)) {
+try (var outputStream = new FileOutputStream(tempFile)) &#123;
     inputStream.transferTo(outputStream);
-}
+&#125;
 </code></pre>
-<h4>其他的 JVM 特性</h4>
+<h4 id="其他的-JVM-特性">其他的 JVM 特性</h4>
 <p>上面的这些事我认为 Java8 到 Java11 中最有趣的新特性。但是新特性远远不止这些。下面的这些特性在最新的 Java 版本中都有：</p>
 <ul>
-<li><a href="https://community.oracle.com/docs/DOC-1006738" target="_blank" rel="noopener">Flow API for reactive programming</a></li>
-<li><a href="https://www.oracle.com/corporate/features/understanding-java-9-modules.html" target="_blank" rel="noopener">Java Module System</a></li>
-<li><a href="https://blog.codefx.org/java/application-class-data-sharing/" target="_blank" rel="noopener">Application Class Data Sharing</a></li>
-<li><a href="http://openjdk.java.net/jeps/309" target="_blank" rel="noopener">Dynamic Class-File Constants</a></li>
-<li><a href="https://docs.oracle.com/javase/10/jshell/introduction-jshell.htm#JSHEL-GUID-630F27C8-1195-4989-9F6B-2C51D46F52C8" target="_blank" rel="noopener">Java REPL (JShell)</a></li>
-<li><a href="http://openjdk.java.net/jeps/328" target="_blank" rel="noopener">Flight Recorder</a></li>
-<li><a href="http://openjdk.java.net/jeps/327" target="_blank" rel="noopener">Unicode 10</a></li>
-<li><a href="https://blog.idrsolutions.com/2018/04/java-10-improvements-to-garbage-collection-explained-in-5-minutes/" target="_blank" rel="noopener">G1: Full Parallel Garbage Collector</a></li>
-<li><a href="http://openjdk.java.net/jeps/333" target="_blank" rel="noopener">ZGC: Scalable Low-Latency Garbage Collector</a></li>
-<li><a href="http://openjdk.java.net/jeps/318" target="_blank" rel="noopener">Epsilon: No-Op Garbage Collector</a></li>
-<li><a href="http://openjdk.java.net/jeps/335" target="_blank" rel="noopener">Deprecate the Nashorn JavaScript Engine</a></li>
-<li>...</li>
+<li><a href="https://community.oracle.com/docs/DOC-1006738">Flow API for reactive programming</a></li>
+<li><a href="https://www.oracle.com/corporate/features/understanding-java-9-modules.html">Java Module System</a></li>
+<li><a href="https://blog.codefx.org/java/application-class-data-sharing/">Application Class Data Sharing</a></li>
+<li><a href="http://openjdk.java.net/jeps/309">Dynamic Class-File Constants</a></li>
+<li><a href="https://docs.oracle.com/javase/10/jshell/introduction-jshell.htm#JSHEL-GUID-630F27C8-1195-4989-9F6B-2C51D46F52C8">Java REPL (JShell)</a></li>
+<li><a href="http://openjdk.java.net/jeps/328">Flight Recorder</a></li>
+<li><a href="http://openjdk.java.net/jeps/327">Unicode 10</a></li>
+<li><a href="https://blog.idrsolutions.com/2018/04/java-10-improvements-to-garbage-collection-explained-in-5-minutes/">G1: Full Parallel Garbage Collector</a></li>
+<li><a href="http://openjdk.java.net/jeps/333">ZGC: Scalable Low-Latency Garbage Collector</a></li>
+<li><a href="http://openjdk.java.net/jeps/318">Epsilon: No-Op Garbage Collector</a></li>
+<li><a href="http://openjdk.java.net/jeps/335">Deprecate the Nashorn JavaScript Engine</a></li>
+<li>…</li>
 </ul>
-<h4>下一步</h4>
-<p>许多人（包括我）依然在生产环境中使用 Java8。然而到 2020 年，Java8 的 TLS 就结束了。所以现在是一个迁移到 Java11 的好机会。我写了一篇<a href="https://winterbe.com/posts/2018/08/29/migrate-maven-projects-to-java-11-jigsaw/" target="_blank" rel="noopener">迁移指南</a>来帮助你从 Java8 迁移到 Java11。同时你也应该读一下我的 <a href="https://winterbe.com/posts/2014/03/16/java-8-tutorial/" target="_blank" rel="noopener">Java8</a> 和 <a href="https://winterbe.com/posts/2014/07/31/java8-stream-tutorial-examples/" target="_blank" rel="noopener">Stream API</a> 的教程来学习如何使用更时髦的开发方式。这些源码都已经发布到 GitHub 上了，随便玩（如果喜欢的话，点一下 star）。</p>
+<h4 id="下一步">下一步</h4>
+<p>许多人（包括我）依然在生产环境中使用 Java8。然而到 2020 年，Java8 的 TLS 就结束了。所以现在是一个迁移到 Java11 的好机会。我写了一篇<a href="https://winterbe.com/posts/2018/08/29/migrate-maven-projects-to-java-11-jigsaw/">迁移指南</a>来帮助你从 Java8 迁移到 Java11。同时你也应该读一下我的 <a href="https://winterbe.com/posts/2014/03/16/java-8-tutorial/">Java8</a> 和 <a href="https://winterbe.com/posts/2014/07/31/java8-stream-tutorial-examples/">Stream API</a> 的教程来学习如何使用更时髦的开发方式。这些源码都已经发布到 GitHub 上了，随便玩（如果喜欢的话，点一下 star）。</p>
 <p>(完)</p>
 
 </div>
@@ -235,7 +235,7 @@ try (var outputStream = new FileOutputStream(tempFile)) {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

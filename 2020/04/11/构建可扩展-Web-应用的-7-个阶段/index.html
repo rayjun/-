@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,28 +57,28 @@
                     <div id="div-body">
                     <div class="post">
     <h1>构建可扩展 Web 应用的 7 个阶段</h1>
-    <p>这是一篇<a href="http://highscalability.com/blog/2008/9/23/the-7-stages-of-scaling-web-apps.html" target="_blank" rel="noopener">译文</a>。文章分享了构建一个可扩展 Web 应用的 7 个通用步骤。文章有点老，但是观点不过时。</p>
+    <p>这是一篇<a href="http://highscalability.com/blog/2008/9/23/the-7-stages-of-scaling-web-apps.html">译文</a>。文章分享了构建一个可扩展 Web 应用的 7 个通用步骤。文章有点老，但是观点不过时。</p>
 <hr>
 <p>John Engales 是 Rackspace（一家云计算公司）的 CTO。他说一个表现良好的网站通常要经历以下 7 个阶段：</p>
-<p><strong>阶段 1</strong>
+<p><strong>阶段 1</strong><br>
 刚开始：使用简单的架构，系统复杂度很低，没有冗余。只使用防火墙、负载均衡器、一对web服务器、数据库服务器和内部存储。</p>
-<p><strong>阶段 2</strong>
+<p><strong>阶段 2</strong><br>
 基本上没有什么变化，只是规模会更大。</p>
-<p><strong>阶段 3</strong>
+<p><strong>阶段 3</strong><br>
 痛苦的开始：媒体曝光度增加。开始使用反向代理，缓存静态资源，继续使用负载均衡和更多的数据库，并且开始重构代码。</p>
-<p><strong>阶段 4</strong>
+<p><strong>阶段 4</strong><br>
 痛苦加剧：开始 memcached 进行缓存，数据的写入和复制都太耗时，要开始对数据库进行分区，对有些内容进行共享存储，对数据库进行重大的架构调整。</p>
 <blockquote>
 <p>现在用 memcached 的少， redis 用的更多了</p>
 </blockquote>
-<p><strong>阶段 5</strong>
+<p><strong>阶段 5</strong><br>
 真的痛苦：重新思考整个应用架构，比如根据用户地理位置来进行区分等等，需要创建用户集群，使用哈希计算来确定用户属于哪个集群。</p>
 <blockquote>
 <p>这句话里面的信息量比较大，既可以说是在请求的分发阶段，也可以包括数据的存储阶段。</p>
 </blockquote>
-<p><strong>阶段 6</strong>
+<p><strong>阶段 6</strong><br>
 痛苦开始少了一些了：已经有了可扩展的应用和数据库的架构，可以接受的性能，开始在系统里面添加新的功能，并且优化一些代码，规模还在增长但是依然可控。</p>
-<p><strong>阶段 7</strong>
+<p><strong>阶段 7</strong><br>
 进入未知区域：剩下的瓶颈是什么（算力，空间，带宽，CDN，防火墙，负载均衡，存储，人力，进度，数据库），所有的鸡蛋还在一个篮子里（单个数据中心，单个数据备份）。</p>
 
 </div>
@@ -100,7 +100,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

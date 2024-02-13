@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,15 +57,15 @@
                     <div id="div-body">
                     <div class="post">
     <h1>git_workflow</h1>
-    <p>####ssh
+    <p>####ssh<br>
 在日常的开发中，我们已经不能够离开的了git了。而在团队开发的时候，可能会用到一个git服务器。这个时候，ssh 就有用了，ssh key帮助我们在自己的电脑于git服务器之间建立一个安全的连接。这样就不用在每次提交的时候都要输入密码。只要将生成ssh key放到服务起上就行。</p>
-<h5>在本机上生成ssh key</h5>
-<h6>linux和mac os上</h6>
+<h5 id="在本机上生成ssh-key">在本机上生成ssh key</h5>
+<h6 id="linux和mac-os上">linux和mac os上</h6>
 <p>在这两种系统上直接使用以下的命令就成：</p>
 <pre><code>  ssh-keygen -t rsa -C &quot;$your_email&quot;
 </code></pre>
 <p>在执行完上面的命令之后，在你的<code>~/.ssh/</code>目录下就会生成<code>id_rsa.pub</code>文件，这里面的内容就是生成的ssh key了，将里面的内容直接拷贝到服务器上就可以。</p>
-<h6>在windows</h6>
+<h6 id="在windows">在windows</h6>
 <p>windows永远都是特立独行的。在windows上用上面的办法是行不通的。得找其他的方法，首先确保在windows上安装了git。然后按照如下的步骤：</p>
 <ul>
 <li>从git的程序目录打开 <code>Git Bash</code></li>
@@ -73,24 +73,24 @@
 <li>在<code>C:\Users\$your_name\.ssh</code>文件夹下会生成ssh key。</li>
 <li>最后将这个ssh key放到服务器上就可行了。</li>
 </ul>
-<h5>在一台电脑上管理多个ssh key</h5>
-<p><a href="http://yijiebuyi.com/blog/f18d38eb7cfee860c117d629fdb16faf.html" target="_blank" rel="noopener">同一台电脑上管理多个ssh key</a></p>
-<h4>Git工作流</h4>
-<h5>克隆项目</h5>
+<h5 id="在一台电脑上管理多个ssh-key">在一台电脑上管理多个ssh key</h5>
+<p><a href="http://yijiebuyi.com/blog/f18d38eb7cfee860c117d629fdb16faf.html">同一台电脑上管理多个ssh key</a></p>
+<h4 id="Git工作流">Git工作流</h4>
+<h5 id="克隆项目">克隆项目</h5>
 <p>从服务器端将项目克隆到本地：</p>
 <pre><code>    git clone git@emample.com:project-name.git
 </code></pre>
-<h5>创建一个新的分支</h5>
+<h5 id="创建一个新的分支">创建一个新的分支</h5>
 <p>想要为了实现一个新的功能而开启的另一个分支：</p>
 <pre><code>    git checkout -b $feature_name
 </code></pre>
-<h5>完成代码后，提交它</h5>
+<h5 id="完成代码后，提交它">完成代码后，提交它</h5>
 <pre><code>    git commit -am &quot;My feature is ready&quot;
 </code></pre>
-<h5>将提交的新代码推送到服务器上</h5>
+<h5 id="将提交的新代码推送到服务器上">将提交的新代码推送到服务器上</h5>
 <pre><code>    git push origin $feature_name
 </code></pre>
-<h5>工作收尾</h5>
+<h5 id="工作收尾">工作收尾</h5>
 <p>在提交代码之后，就可以在页面上看到自己最新提交的代码。然后你就可以去创建一个合并的请求，你的team leader在看到这些请求之后就会去察看这些代码，如果没有问题，就可以顺利的合并了。在git的模式下，工作就是这么简单。</p>
 
 </div>
@@ -112,7 +112,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

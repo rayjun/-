@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,16 +58,16 @@
                     <div class="post">
     <h1>Context 详解</h1>
     <p>Go 中有一个 Context 接口，配合 goroutine 使用，主要是用来协调 goroutine 的执行，但是比较难理解，这篇文章中来详细分析一下。</p>
-<h2>1. Context 是什么</h2>
+<h2 id="1-Context-是什么">1. Context 是什么</h2>
 <p>在 Go 1.7 版本，引入了一个接口 context.Context。 Context 从字面意思来看，就是上下文的意思，可以理解为它就是某个请求的上下文。</p>
 <p>它主要的作用是在 Go 进程中<strong>传递信号</strong>。这里需要注意，虽然也可以传递参数，但主要传递信号，Context 不推荐用来传递大量的参数。</p>
 <p>Context 接口有四个方法：</p>
-<pre><code class="language-go">type Context interface {
+<pre><code class="language-go">type Context interface &#123;
 	Deadline() (deadline time.Time, ok bool)
-	Done() &lt;-chan struct{}
+	Done() &lt;-chan struct&#123;&#125;
 	Err() error
-	Value(key interface{}) interface{}
-}
+	Value(key interface&#123;&#125;) interface&#123;&#125;
+&#125;
 </code></pre>
 <p>这四个方法看起来有点抽象：</p>
 <ul>
@@ -76,66 +76,66 @@
 <li>Err：返回 Context 结束的原因，这里只会在 Done 方法返回的 channel 关闭之后才返回非空的值</li>
 <li>Value：从 Context 中获取对应 Key 的值，这里面最好放入不可变的值，因为 Context 会在多个 goroutine 中传递，如果值是经常变化的话，有可能会带来意外的结果</li>
 </ul>
-<h2>2. 为什么需要 Context</h2>
+<h2 id="2-为什么需要-Context">2. 为什么需要 Context</h2>
 <p>以服务端为例，服务端在接收一个请求之后，就需要启动新的 goroutine 来处理这个请求，有可能会启动多个 goroutine。</p>
 <p>多个 goroutine 启动之后，很难再去协调这些 goroutine，比如这个请求结束或者被终止，在这样的情况下，所有相关的 gouroutine 都应该被终止。</p>
-<p>下面是一个简单的 http 服务，访问 <code>[http://localhost:8080/index](http://localhost:8080/index)</code> 之后，请求很快就返回了，正常情况下，在代码中启动的 goroutine 都应该结束，但是实际上，里面的 goroutine 还是会执行，最后会打印 &quot;goroutine2 invoke&quot;。</p>
-<pre><code class="language-go">http.HandleFunc(&quot;/index&quot;, func(writer http.ResponseWriter, request *http.Request) {
-	go func() {
+<p>下面是一个简单的 http 服务，访问 <code>[http://localhost:8080/index](http://localhost:8080/index)</code> 之后，请求很快就返回了，正常情况下，在代码中启动的 goroutine 都应该结束，但是实际上，里面的 goroutine 还是会执行，最后会打印 “goroutine2 invoke”。</p>
+<pre><code class="language-go">http.HandleFunc(&quot;/index&quot;, func(writer http.ResponseWriter, request *http.Request) &#123;
+	go func() &#123;
 		fmt.Println(&quot;goroutine1 invoke&quot;)
-		go func() {
-			select {
+		go func() &#123;
+			select &#123;
 			// 模拟费时操作
 			case &lt;- time.After(2 * time.Second):
 				fmt.Println(&quot;goroutine2 invoke&quot;)
-			}
-		}()
-	}()
+			&#125;
+		&#125;()
+	&#125;()
 	writer.Write([]byte(&quot;index&quot;))
-})
+&#125;)
 
 fmt.Println(&quot;server starting&quot;)
 http.ListenAndServe(&quot;:8080&quot;, nil)
 </code></pre>
 <p>但这种情况不是我们希望看到的，理想的情况下一个请求的结束，那么这个请求启动的 goroutine 都应该结束。这里就需要通过 Context 来做到。</p>
-<h2>3. Context 能做什么</h2>
+<h2 id="3-Context-能做什么">3. Context 能做什么</h2>
 <p>可以使用 Context 来解决上面的问题，简单来说就是通过 Context 来串联所有的 goroutine，所有的goroutine 根据 Context 的状态来决定是否还要继续执行。</p>
 <p>在一个请求中，不使用 Context，执行的状态是这样的：</p>
 <p><img src="0.png" alt=""></p>
 <p>在使用 Context 之后，执行的状态是这样的：</p>
 <p><img src="1.png" alt=""></p>
-<h3>3.1 创建一个 Context</h3>
+<h3 id="3-1-创建一个-Context">3.1 创建一个 Context</h3>
 <p>在使用 goroutine 之前，需要先创建 Context，Go 提供了两种创建 Context 的方法，使用 <code>context.Background()</code> 或者 <code>context.ToDo()</code> 方法：</p>
-<pre><code class="language-go">func Background() Context {
+<pre><code class="language-go">func Background() Context &#123;
 	return background
-}
+&#125;
 
-func TODO() Context {
+func TODO() Context &#123;
 	return todo
-}
+&#125;
 </code></pre>
 <p>这两个方法生成的 Context 其实都是 emptyCtx，这是一个 Context 接口的空实现：</p>
 <pre><code class="language-go">type emptyCtx int
 
-func (*emptyCtx) Deadline() (deadline time.Time, ok bool) {
+func (*emptyCtx) Deadline() (deadline time.Time, ok bool) &#123;
 	return
-}
+&#125;
 
-func (*emptyCtx) Done() &lt;-chan struct{} {
+func (*emptyCtx) Done() &lt;-chan struct&#123;&#125; &#123;
 	return nil
-}
+&#125;
 
-func (*emptyCtx) Err() error {
+func (*emptyCtx) Err() error &#123;
 	return nil
-}
+&#125;
 
-func (*emptyCtx) Value(key interface{}) interface{} {
+func (*emptyCtx) Value(key interface&#123;&#125;) interface&#123;&#125; &#123;
 	return nil
-}
+&#125;
 </code></pre>
 <p>在功能的角度，context.Background 和 context.Todo 没有区别，只是用来表达不同的用途，Background 表示是最顶层的 Context，其他的 Context 都应该由 Background 衍生而来，关于衍生的概念我们下面会讲到。而 Todo 用于还不确定定使用哪个 Context。</p>
 <p>通常，如果没有通过参数接收到 Context，我们就会使用 Background 作为初始的 Context 向后传递。</p>
-<h3>3.2 衍生 Context</h3>
+<h3 id="3-2-衍生-Context">3.2 衍生 Context</h3>
 <p>通过上面的 Background 创建的 Context 实际上是一个空实现，无法用来执行具体的逻辑。那么就需要根据具体的场景，衍生出相应的 Context。</p>
 <p>每个衍生出来的 Context 都和父 Context 的状态保持一致，如果一个 Context 状态变化，那么通过这个 Context 衍生出来的所有 Context 都会改变。</p>
 <p>衍生 Context 可以通过 4 个方法来完成：</p>
@@ -149,18 +149,18 @@ func (*emptyCtx) Value(key interface{}) interface{} {
 <pre><code class="language-go">background := context.Background()
 child1, cancelFunc := context.WithCancel(background)
 
-go func() {
+go func() &#123;
 	// 继续衍生 Context
 	child2, _ := context.WithCancel(child1)
 	// 继续衍生 Context
 	child3, _ := context.WithCancel(child2)
 
-	select {
+	select &#123;
 	// 接收到取消信号
 	case &lt;- child3.Done():
 		fmt.Println(&quot;context canceled&quot;)
-	}
-}()
+	&#125;
+&#125;()
 
 // 调用取消方法
 cancelFunc()
@@ -172,7 +172,7 @@ time.Sleep(1 * time.Second)
 
 child1, _ := context.WithTimeout(background, 3 * time.Second)
 
-go func() {
+go func() &#123;
 	// 继续衍生 Context
 	child2, _ := context.WithCancel(child1)
 	// 继续衍生 Context
@@ -182,12 +182,12 @@ go func() {
 	timeout, _ := child3.Deadline()
 	fmt.Printf(&quot;timeout is %+v\n&quot;, timeout)
 
-	select {
+	select &#123;
 	// 接收到超时
 	case &lt;- child3.Done():
 		fmt.Println(&quot;context timeout&quot;)
-	}
-}()
+	&#125;
+&#125;()
 
 time.Sleep(5 * time.Second)
 </code></pre>
@@ -195,7 +195,7 @@ time.Sleep(5 * time.Second)
 <pre><code class="language-go">background := context.Background()
 child1, _ := context.WithDeadline(background, &lt;-time.After(3 * time.Second))
 
-go func() {
+go func() &#123;
 	// 继续衍生 Context
 	child2, _ := context.WithCancel(child1)
 	// 继续衍生 Context
@@ -205,12 +205,12 @@ go func() {
 	timeout, _ := child3.Deadline()
 	fmt.Printf(&quot;timeout is %+v\n&quot;, timeout)
 
-	select {
+	select &#123;
 	// 接收到超时
 	case &lt;- child3.Done():
 		fmt.Println(&quot;context timeout&quot;)
-	}
-}()
+	&#125;
+&#125;()
 
 time.Sleep(5 * time.Second)
 </code></pre>
@@ -218,97 +218,97 @@ time.Sleep(5 * time.Second)
 <pre><code class="language-go">background := context.Background()
 child1 := context.WithValue(background, &quot;ray&quot;,&quot;jun&quot;)
 
-go func() {
+go func() &#123;
 	v := child1.Value(&quot;ray&quot;)
 	fmt.Printf(&quot;values is %+v\n&quot;, v)
-}()
+&#125;()
 
 time.Sleep(5 * time.Second)
 </code></pre>
 <p>通过上面的代码可以看到，只要一个 Context 取消，或者设置了超时之后，后面衍生出来的所有 Context 都可以获取到这个状态，Context 是线程安全的，可以在多个 goroutine 之间使用。</p>
 <p>上面的 http 服务可以使用 Context 来结束内部的 goroutine 执行，每个 request 中都有一个 Context，可以直接使用：</p>
-<pre><code class="language-go">http.HandleFunc(&quot;/index&quot;, func(writer http.ResponseWriter, request *http.Request) {
+<pre><code class="language-go">http.HandleFunc(&quot;/index&quot;, func(writer http.ResponseWriter, request *http.Request) &#123;
 	c := request.Context()
 	cancelContext, cancelFunc := context.WithCancel(c)
 	defer cancelFunc()
 
-	go func() {
+	go func() &#123;
 		fmt.Println(&quot;index goroutine1&quot;)
-		go func() {
-			select {
+		go func() &#123;
+			select &#123;
 			    case &lt;-cancelContext.Done():
 				    fmt.Println(&quot;request is done&quot;)
 				return
 				case &lt;- time.After(2 * time.Second):
 					fmt.Println(&quot;goroutine is invoke&quot;)
-			}
-		}()
-	}()
+			&#125;
+		&#125;()
+	&#125;()
 
 	writer.Write([]byte(&quot;index&quot;))
-})
+&#125;)
 fmt.Println(&quot;server starting&quot;)
 http.ListenAndServe(&quot;:8080&quot;, nil)
 </code></pre>
 <p>请求结束之后，里面的 goroutine 就不会继续执行。</p>
-<h2>4. Context 内部实现</h2>
+<h2 id="4-Context-内部实现">4. Context 内部实现</h2>
 <p>下面来看一下，Context 是如果实现的，使用 Background 生成的 Context 是一个空实现。而且 Background 生成的 Context 无法被取消，也不会过期。</p>
 <p>通常在都会使用 With 系列方法来衍生 Context 来使用，下面就来看一下几个 With 方法的实现，四个方法的实现都差不多，这里我们以 WithCancel 方法为例：</p>
-<pre><code class="language-go">func WithCancel(parent Context) (ctx Context, cancel CancelFunc) {
+<pre><code class="language-go">func WithCancel(parent Context) (ctx Context, cancel CancelFunc) &#123;
 	c := newCancelCtx(parent)
 	propagateCancel(parent, &amp;c)
-	return &amp;c, func() { c.cancel(true, Canceled) }
-}
+	return &amp;c, func() &#123; c.cancel(true, Canceled) &#125;
+&#125;
 </code></pre>
 <p>进入到方法之后，首先会生成一个新的 cancelCtx，这是一个内部的结构体，另外 WithDeadline 会创建一个 timerCtx，WithTimeout 会直接调用 WithDeadline，WithValue 则会创建一个 valueCtx。</p>
-<pre><code class="language-go">type cancelCtx struct {
+<pre><code class="language-go">type cancelCtx struct &#123;
 	Context                        // 保存父 Context
 	mu       sync.Mutex            // 这个锁用来保证下面变量的方式是安全的
-	done     chan struct{}         // 用来表示 Context 是否结束
-	children map[canceler]struct{} // 保存衍生的 Context 
+	done     chan struct&#123;&#125;         // 用来表示 Context 是否结束
+	children map[canceler]struct&#123;&#125; // 保存衍生的 Context 
 	err      error                 // Context 结束时的错误信息
-}
+&#125;
 </code></pre>
 <p>然后会调用 propagateCancel 方法来构建子 Context 和父 Context 的关系：</p>
-<pre><code class="language-go">func propagateCancel(parent Context, child canceler) {
+<pre><code class="language-go">func propagateCancel(parent Context, child canceler) &#123;
 	done := parent.Done()
-	if done == nil {
+	if done == nil &#123;
 		return // 空的 Context 无法被取消
-	}
+	&#125;
 
-	select {
+	select &#123;
 	case &lt;-done:
 		// 这里表示父 Context 已经结束，直接返回错误
 		child.cancel(false, parent.Err())
 		return
 	default:
-	}
+	&#125;
     // 这里找出父 Context 是可取消的 Context
-	if p, ok := parentCancelCtx(parent); ok {
+	if p, ok := parentCancelCtx(parent); ok &#123;
 		p.mu.Lock()
-		if p.err != nil {
+		if p.err != nil &#123;
 			// 如果父 Context 已经结束，这里直接结束
 			child.cancel(false, p.err)
-		} else {
+		&#125; else &#123;
       // 否则就把这个当前的这个 Context 加入到 map 中
-			if p.children == nil {
-				p.children = make(map[canceler]struct{})
-			}
-			p.children[child] = struct{}{}
-		}
+			if p.children == nil &#123;
+				p.children = make(map[canceler]struct&#123;&#125;)
+			&#125;
+			p.children[child] = struct&#123;&#125;&#123;&#125;
+		&#125;
 		p.mu.Unlock()
-	} else {
+	&#125; else &#123;
     // 如果父类型不是可取消的类型，直接启动一个新的 goroutine 来监听父 Context 是否结束，以及监听当前 Context 是否已经结束
 		atomic.AddInt32(&amp;goroutines, +1)
-		go func() {
-			select {
+		go func() &#123;
+			select &#123;
 			case &lt;-parent.Done():
 				child.cancel(false, parent.Err())
 			case &lt;-child.Done():
-			}
-		}()
-	}
-}
+			&#125;
+		&#125;()
+	&#125;
+&#125;
 </code></pre>
 <ol>
 <li>当父 Context 是不可取消的类型，直接返回，否则检查父 Context 是否已经结束，如果结束，直接返回错误信息</li>
@@ -321,34 +321,34 @@ http.ListenAndServe(&quot;:8080&quot;, nil)
 <li>当父 Context 中没有可取消的 Context 时，直接监听父 Context 的状态，当父 Context 关闭时，直接取消当前的 Context</li>
 </ol>
 <p>与父 Context 建立联系后，会返回 Context 和一个 cancel 方法：</p>
-<pre><code class="language-go">func (c *cancelCtx) cancel(removeFromParent bool, err error) {
-	if err == nil {
+<pre><code class="language-go">func (c *cancelCtx) cancel(removeFromParent bool, err error) &#123;
+	if err == nil &#123;
 		panic(&quot;context: internal error: missing cancel error&quot;)
-	}
+	&#125;
 	c.mu.Lock()
-	if c.err != nil {
+	if c.err != nil &#123;
 		c.mu.Unlock()
 		return 
-	}
+	&#125;
 	c.err = err
-	if c.done == nil {
+	if c.done == nil &#123;
 		c.done = closedchan
-	} else {
+	&#125; else &#123;
 		close(c.done)
-	}
-	for child := range c.children {
+	&#125;
+	for child := range c.children &#123;
 		child.cancel(false, err)
-	}
+	&#125;
 	c.children = nil
 	c.mu.Unlock()
 
-	if removeFromParent {
+	if removeFromParent &#123;
 		removeChild(c.Context, c)
-	}
-}
+	&#125;
+&#125;
 </code></pre>
 <p>当在代码中主动调用 cancel 方法时，会关闭 Done 通道，同时会把由当前 Conetx 衍生出来的可取消的 Context 都关闭，同时将这个 Context 从父 Context 中移除。</p>
-<h2>5. 小结</h2>
+<h2 id="5-小结">5. 小结</h2>
 <p>Context 提供了一种协调多个 goroutine 的运行，可以在多个 goroutine 之间安全的传递，让那些没必要执行 goroutine 尽快停止，释放系统资源。Context 主要用来传递信号，虽然也提供了传递值的方法，但不推荐使用这个方法来传递大量的数据，通常只用来传递简单不可变的数据，比如用户的认证 token 和请求的 traceId。</p>
 <p>文 / Rayjun</p>
 
@@ -371,7 +371,7 @@ http.ListenAndServe(&quot;:8080&quot;, nil)
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

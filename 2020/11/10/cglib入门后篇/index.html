@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -60,9 +60,9 @@
     <p>在前面一篇文章中，详解介绍了 cglib 的 Enhancer 及配合使用的各种回调，然后使用 Enhancer 实现了动态代理。</p>
 <p>在这篇文章中， 再来介绍一下 cglib 的其他能力。</p>
 <p>本文基于 OpenJDK11</p>
-<h2>1. Bean 操作</h2>
+<h2 id="1-Bean-操作">1. Bean 操作</h2>
 <p>Java Bean 是最常用的类型，cglib 提供了很多工具来操作这些 Bean，以满足各类需求。</p>
-<h3>Immutable Bean</h3>
+<h3 id="Immutable-Bean">Immutable Bean</h3>
 <p><code>ImmutableBean</code> 用来生成不可变对象，如果强行修改，将会抛出 <code>IllegalStateException</code>。</p>
 <p>对原底线所有的改变都会反应到这个不可变对象。也就是可以通过修改原对象来修改这个不可变的对象。</p>
 <pre><code class="language-java">HelloImpl helloImpl = new HelloImpl();
@@ -73,7 +73,7 @@ System.out.println(helloImpl.getValue().equals(&quot;hello&quot;)); // true
 System.out.println(immutableBean.getValue().equals(&quot;hello&quot;)); // true
 immutableBean.setValue(&quot;Hello ray&quot;); //java.lang.IllegalStateException: Bean is immutable
 </code></pre>
-<h3>Bean Generator</h3>
+<h3 id="Bean-Generator">Bean Generator</h3>
 <p><code>BeanGenerator</code> 在运行时创建一个新的 Bean。在使用第三方库时，不确定类型，就可以使用这种方式来动态创建 Bean。</p>
 <pre><code class="language-java">BeanGenerator beanGenerator = new BeanGenerator();
 beanGenerator.addProperty(&quot;value&quot;, String.class);
@@ -84,7 +84,7 @@ setter.invoke(myBean, &quot;Hello cglib!&quot;);
 Method getter = myBean.getClass().getMethod(&quot;getValue&quot;);
 System.out.println(&quot;Hello cglib!&quot;.equals(getter.invoke(myBean))); // true
 </code></pre>
-<h3>Bean Copier</h3>
+<h3 id="Bean-Copier">Bean Copier</h3>
 <p><code>BeanCopier</code> 用来复制对象，可以复制同类型的 bean，也可以复制不同类型的 bean。</p>
 <pre><code class="language-java">BeanCopier copier = BeanCopier.create(HelloImpl.class, HelloImpl.class, false); // 这里也可以是在不同的 bean 之间复制
 HelloImpl bean = new HelloImpl();
@@ -98,43 +98,43 @@ System.out.println(&quot;Hello cglib!&quot;.equals(otherBean.getValue())); // tr
 HelloImpl bean = new HelloImpl();
 bean.setValue(&quot;Hello cglib!&quot;);
 HelloImpl otherBean = new HelloImpl();
-copier.copy(bean, otherBean, new Converter() {
+copier.copy(bean, otherBean, new Converter() &#123;
     @Override
-    public Object convert(Object value, Class target, Object context) {
+    public Object convert(Object value, Class target, Object context) &#123;
         return value;
-    }
-});
+    &#125;
+&#125;);
 System.out.println(&quot;Hello cglib!&quot;.equals(otherBean.getValue())); // true
 </code></pre>
-<h3>Bulk Bean</h3>
+<h3 id="Bulk-Bean">Bulk Bean</h3>
 <p><code>BulkBean</code> 可以通过传数数组的方式来传入 Bean 的 get 和 set 方法，以及各个属性的类型来访问对象，而不用通过方法调用的方式来完成。</p>
 <pre><code class="language-java">BulkBean bulkBean = BulkBean.create(HelloImpl.class,
-                new String[]{&quot;getValue&quot;},
-                new String[]{&quot;setValue&quot;},
-                new Class[]{String.class});
+                new String[]&#123;&quot;getValue&quot;&#125;,
+                new String[]&#123;&quot;setValue&quot;&#125;,
+                new Class[]&#123;String.class&#125;);
 HelloImpl bean = new HelloImpl();
 bean.setValue(&quot;Hello world!&quot;);
 System.out.println(1 == bulkBean.getPropertyValues(bean).length);
 System.out.println(&quot;Hello world!&quot;.equals(bulkBean.getPropertyValues(bean)[0]));
-bulkBean.setPropertyValues(bean, new Object[] {&quot;Hello cglib!&quot;});
+bulkBean.setPropertyValues(bean, new Object[] &#123;&quot;Hello cglib!&quot;&#125;);
 System.out.println(&quot;Hello cglib!&quot;.equals(bean.getValue())); // true
 </code></pre>
-<h3>Bean Map</h3>
+<h3 id="Bean-Map">Bean Map</h3>
 <p><code>BeanMap</code> 实现了 <code>java.util.Map</code>，可以把一个 Java 对象转化成 String-to-Object 键值对的 Map。</p>
 <pre><code class="language-java">HelloImpl bean = new HelloImpl();
 BeanMap map = BeanMap.create(bean);
 bean.setValue(&quot;Hello cglib!&quot;);
 System.out.println(&quot;Hello cglib!&quot;.equals(map.get(&quot;value&quot;)));
 </code></pre>
-<h2>2. 黑魔法</h2>
+<h2 id="2-黑魔法">2. 黑魔法</h2>
 <p>cglib 中提供了很多的工具类，可以用来实现一些不常用，但有时候又很重要的功能。</p>
-<h3>Key Factory</h3>
+<h3 id="Key-Factory">Key Factory</h3>
 <p><code>Key Factory</code> 可以用于动态创建对象，这个工厂方法只需要包含 <code>newInstance()</code> 方法，返回一个 Object，通过这种方法生成的对象动态实现了 equals 和 hashcode 方法，可以保证相同参数构造出来的对象是同一个。</p>
 <p>生成的对象可以用作 Map 的 key。</p>
 <p>这个工具类在 cglib 的内部被大量使用。</p>
-<pre><code class="language-java">public interface SampleKeyFactory {
+<pre><code class="language-java">public interface SampleKeyFactory &#123;
     Object newInstance(String first, int second);
-}
+&#125;
 </code></pre>
 <pre><code class="language-java">SampleKeyFactory keyFactory = (SampleKeyFactory) KeyFactory.create(SampleKeyFactory.class);
 Object key = keyFactory.newInstance(&quot;foo&quot;, 42);
@@ -142,50 +142,50 @@ Map&lt;Object, String&gt; map = new HashMap&lt;Object, String&gt;();
 map.put(key, &quot;Hello cglib!&quot;);
 System.out.println(&quot;Hello cglib!&quot;.equals(map.get(keyFactory.newInstance(&quot;foo&quot;, 42)))); // 如果传入的参数不变，每次创建的对象是一样的
 </code></pre>
-<h3>Mixin</h3>
+<h3 id="Mixin">Mixin</h3>
 <p>在 Scala 中， <code>Mixin</code> 已经很常见了，可以将多个对象组合到一个对象中，为了支持这个操作，要求这些对象都是基于接口来实现的。而且还需要声明一个额外的接口来生成组合对象。</p>
-<pre><code class="language-java">public interface Interface2 {
+<pre><code class="language-java">public interface Interface2 &#123;
     String second();
-}
+&#125;
 
-public class Class1 implements Interface1 {
+public class Class1 implements Interface1 &#123;
     @Override
-    public String first() {
+    public String first() &#123;
         return &quot;first&quot;;
-    }
-}
+    &#125;
+&#125;
 
-public class Class2 implements Interface2 {
+public class Class2 implements Interface2 &#123;
     @Override
-    public String second() {
+    public String second() &#123;
         return &quot;second&quot;;
-    }
-}
+    &#125;
+&#125;
 
 // 额外声明的接口
-public interface MixinInterface extends Interface1, Interface2 {
+public interface MixinInterface extends Interface1, Interface2 &#123;
     /* 为空 */
-}
+&#125;
 </code></pre>
-<pre><code class="language-java">Mixin mixin = Mixin.create(new Class[]{Interface1.class, Interface2.class, MixinInterface.class}, new Object[]{new Class1(), new Class2()});
+<pre><code class="language-java">Mixin mixin = Mixin.create(new Class[]&#123;Interface1.class, Interface2.class, MixinInterface.class&#125;, new Object[]&#123;new Class1(), new Class2()&#125;);
 MixinInterface mixinDelegate = (MixinInterface) mixin;
 System.out.println(&quot;first&quot;.equals(mixinDelegate.first()));
 System.out.println(&quot;second&quot;.equals(mixinDelegate.second()));
 </code></pre>
 <p>但 Mixin 这个功能模拟的不彻底，因为为了组合对象，还需要声明一个单独的接口，既然如此，为什么不直接使用 Java 的方法来实现。</p>
-<h3>String Switcher</h3>
+<h3 id="String-Switcher">String Switcher</h3>
 <p>这个工具类用来模拟  Java 中的 switch，并且可以接收 String，这点在 Java7 以后就支持了，对于 Java7 以前的版本，这个还有用。</p>
-<pre><code class="language-java">String[] strings = new String[]{&quot;one&quot;, &quot;two&quot;};
-int[] values = new int[]{10, 20};
+<pre><code class="language-java">String[] strings = new String[]&#123;&quot;one&quot;, &quot;two&quot;&#125;;
+int[] values = new int[]&#123;10, 20&#125;;
 StringSwitcher stringSwitcher = StringSwitcher.create(strings, values, true);
 System.out.println(10 == stringSwitcher.intValue(&quot;one&quot;)); // true
 System.out.println(20 == stringSwitcher.intValue(&quot;two&quot;)); // true
 System.out.println(-1 == stringSwitcher.intValue(&quot;three&quot;)); // true
 </code></pre>
-<h3>Interface Maker</h3>
+<h3 id="Interface-Maker">Interface Maker</h3>
 <p><code>InterfaceMaker</code> 可以用来动态生成一个<strong>接口</strong>。</p>
 <pre><code class="language-java">// 创建接口
-Signature signature = new Signature(&quot;foo&quot;, Type.DOUBLE_TYPE, new Type[]{Type.INT_TYPE}); // 设置方法签名
+Signature signature = new Signature(&quot;foo&quot;, Type.DOUBLE_TYPE, new Type[]&#123;Type.INT_TYPE&#125;); // 设置方法签名
 InterfaceMaker interfaceMaker = new InterfaceMaker();
 interfaceMaker.add(signature, new Type[0]);
 Class iface = interfaceMaker.create(); // 获得接口
@@ -193,7 +193,7 @@ System.out.println(1 == iface.getMethods().length); // true
 System.out.println(&quot;foo&quot;.equals(iface.getMethods()[0].getName())); // true
 System.out.println(double.class == iface.getMethods()[0].getReturnType()); // true
 </code></pre>
-<h3>Fast Class and Fast Members</h3>
+<h3 id="Fast-Class-and-Fast-Members">Fast Class and Fast Members</h3>
 <p><code>FastClass</code> 可以提供比 Java 中反射更快的执行速度。</p>
 <pre><code class="language-java">FastClass fastClass = FastClass.create(HelloImpl.class);
 FastMethod fastMethod = fastClass.getMethod(HelloImpl.class.getMethod(&quot;getValue&quot;));
@@ -204,13 +204,13 @@ System.out.println(&quot;Hello cglib!&quot;.equals(fastMethod.invoke(myBean, new
 <p>除了上面的 FastMethod，还可以使用 FastConstructor，但没有 FastField，这个好理解，对于一个属性，自然就不需要加速了。</p>
 <p>Java 中的反射是通过 JNI 本地调用来执行反射的代码，而 FastClass 则是直接生成字节码文件被 JVM 执行。</p>
 <p>但是在 Java1.5 之后，反射代码执行的性能已经提升了不少，在新版本的 JVM 上，就没必要使用 FastClass 了，但是在老版本的 JVM 上，对性能的提升还是很可观的。</p>
-<h2>3.方法委托</h2>
+<h2 id="3-方法委托">3.方法委托</h2>
 <p>方法委托这个概念来自于 C# 中，类似 C++ 中的函数指针，可以运行时改变委托的值。cglib 中也提供了相应的实现。</p>
-<h3>Method Delegate</h3>
+<h3 id="Method-Delegate">Method Delegate</h3>
 <p>Method Delagate 允许构造 C# 风格的方法委托，新建一个委托接口，然后将 HelloImpl 实例和 getValue 方法生成一个新的对象，就可以通过这个委托对象来调用方法。</p>
-<pre><code class="language-java">public interface BeanDelegate {
+<pre><code class="language-java">public interface BeanDelegate &#123;
     String getValueFromDelegate();
-}
+&#125;
 </code></pre>
 <pre><code class="language-java">HelloImpl bean = new HelloImpl();
 bean.setValue(&quot;Hello cglib!&quot;);
@@ -219,21 +219,21 @@ BeanDelegate delegate = (BeanDelegate) MethodDelegate.create(
 System.out.println(&quot;Hello cglib!&quot;.equals(delegate.getValueFromDelegate())); // true
 </code></pre>
 <p>在使用 <code>MethodDelegate.create</code> 工厂方法时，需要注意，<strong>它只能代理没有参数的方法</strong>。</p>
-<h3>Multicast Delegate</h3>
+<h3 id="Multicast-Delegate">Multicast Delegate</h3>
 <p><code>MulticastDelegate</code> 可以接收多个对象方法的委托，而且方法可以有参数。</p>
-<pre><code class="language-java">public interface DelegatationProvider {
+<pre><code class="language-java">public interface DelegatationProvider &#123;
     void setValue(String value);
-}
+&#125;
 
-public class SimpleMulticastBean implements DelegatationProvider {
+public class SimpleMulticastBean implements DelegatationProvider &#123;
     private String value;
-    public String getValue() {
+    public String getValue() &#123;
         return value;
-    }
-    public void setValue(String value) {
+    &#125;
+    public void setValue(String value) &#123;
         this.value = value;
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <pre><code class="language-java">MulticastDelegate multicastDelegate = MulticastDelegate.create(DelegatationProvider.class);
 SimpleMulticastBean first = new SimpleMulticastBean();
@@ -247,46 +247,46 @@ System.out.println(&quot;Hello cglib!&quot;.equals(second.getValue())); // true
 </code></pre>
 <p>MulticastDelegate 要求提供委托的接口只能有一个方法，这样在实现对第三方库进行委托代理的时候就会很困难，因为要创建很多委托代理接口。</p>
 <p>而且还有一点，如果这个被委托的方法有返回值，只能接收最后一个对象的返回值，其他的返回值都会丢失。</p>
-<h3>Constructor Delegate</h3>
+<h3 id="Constructor-Delegate">Constructor Delegate</h3>
 <p>构造函数的委托相对简单，只需要定义一个有 <code>newInstance()</code> 方法的接口，返回值是 <code>Object</code>，这个方法还可以有任意个参数。</p>
-<pre><code class="language-java">public interface SampleBeanConstructorDelegate {
+<pre><code class="language-java">public interface SampleBeanConstructorDelegate &#123;
     Object newInstance();
-}
+&#125;
 </code></pre>
 <pre><code class="language-java">SampleBeanConstructorDelegate constructorDelegate = (SampleBeanConstructorDelegate) ConstructorDelegate.create(
         HelloImpl.class, SampleBeanConstructorDelegate.class);
 HelloImpl bean = (HelloImpl) constructorDelegate.newInstance();
 System.out.print(HelloImpl.class.isAssignableFrom(bean.getClass()));
 </code></pre>
-<h2>4. 其他</h2>
-<h3>Parallel Sorter</h3>
+<h2 id="4-其他">4. 其他</h2>
+<h3 id="Parallel-Sorter">Parallel Sorter</h3>
 <p>cglib 中甚至提供了一个排序器，号称效率要超过 Java 自带的排序工具。</p>
 <p>这个排序器可以对多维数组进行排序，而且可以对不同行使用不同的排序规则，可以选择归并排序或者快速排序。</p>
 <p>使用方式如下：</p>
-<pre><code class="language-java">Integer[][] value = {
-        {4, 3, 9, 0},
-        {2, 1, 6, 0}
-};
+<pre><code class="language-java">Integer[][] value = &#123;
+        &#123;4, 3, 9, 0&#125;,
+        &#123;2, 1, 6, 0&#125;
+&#125;;
 ParallelSorter.create(value).mergeSort(0);
-for(Integer[] row : value) {
+for(Integer[] row : value) &#123;
     int former = -1;
-    for(int val : row) {
+    for(int val : row) &#123;
         System.out.println(former &lt; val); // true
         former = val;
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>以 <code>mergeSort</code> 为例，有四个重载方法，最多可以有四个参数。</p>
-<pre><code class="language-java">public void mergeSort(int index, int lo, int hi, Comparator cmp) {
+<pre><code class="language-java">public void mergeSort(int index, int lo, int hi, Comparator cmp) &#123;
     chooseComparer(index, cmp);
     super.mergeSort(lo, hi - 1);
-}
+&#125;
 </code></pre>
 <p>第一个表示从哪一列开始使用归并排序，第二个表示从哪一行（包括）开始，第三个表示截止到哪一行（不包含），第四个参数是自定义的比较器。</p>
 <p>看起来就不怎么好用。实际上，Java 自带的排序已经很好用了，这个排序工具不推荐使用。</p>
 <p>而且它还有一个明显的 bug，如果把上面的 <code>Integer[][]</code> 换成 <code>int[][]</code>，就会报 <code>java.lang.ClassCastException</code> 异常。</p>
-<h2>REF</h2>
-<p>[1] <a href="https://dzone.com/articles/cglib-missing-manual" target="_blank" rel="noopener">https://dzone.com/articles/cglib-missing-manual</a></p>
+<h2 id="REF">REF</h2>
+<p>[1] <a href="https://dzone.com/articles/cglib-missing-manual">https://dzone.com/articles/cglib-missing-manual</a></p>
 <p>文 / Rayjun</p>
 
 </div>
@@ -308,7 +308,7 @@ for(Integer[] row : value) {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

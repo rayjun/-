@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -66,12 +66,12 @@
 <li><code>-X</code>：非标准参数，默认 JVM 会实现这些参数的功能，但是不保证所有的 JVM 实现都满足，且不保证向后兼容</li>
 <li><code>-XX</code>：非 Stable 参数，这些参数在不同的 JVM 上会有不同的实现，这些参数不推荐在生成环境中使用，以后很有可能会被取消
 <ul>
-<li>对于布尔型参数：<code>-XX:+</code> 表示打开，<code>-XX:-</code> 表示关闭，比如: -XX:+PrintGCDetails</li>
+<li>对于布尔型参数：<code>-XX:+ </code> 表示打开，<code>-XX:-</code> 表示关闭，比如: -XX:+PrintGCDetails</li>
 <li>对于其他的数字或者字符参数：<code>-XX:</code> 表示设定一个值</li>
 </ul>
 </li>
 </ul>
-<h2>通用参数</h2>
+<h2 id="通用参数">通用参数</h2>
 <table>
 <thead>
 <tr>
@@ -183,7 +183,7 @@
 </tr>
 </tbody>
 </table>
-<h2>GC 参数</h2>
+<h2 id="GC-参数">GC 参数</h2>
 <p>在 JDK9 以后，日志相关的参数的都统一到了 <code>-Xlog</code> 中，注意，不仅仅 gc 的日志，是所有的日志，对于 -Xlog，配置方法如下：</p>
 <pre><code class="language-bash">-Xlog[:[selector][:output[:[decorators][:output-options]]]]
 </code></pre>
@@ -274,7 +274,7 @@
 <pre><code class="language-bash">-Xlog:gc*=info:file=gc.log:hostname,level,uptime,tags
 </code></pre>
 <p>常用的 GC 日志参数如下：</p>
-<h3>GC日志参数</h3>
+<h3 id="GC日志参数">GC日志参数</h3>
 <table>
 <thead>
 <tr>
@@ -336,7 +336,7 @@
 </tr>
 </tbody>
 </table>
-<h3>其他GC参数</h3>
+<h3 id="其他GC参数">其他GC参数</h3>
 <table>
 <thead>
 <tr>
@@ -418,11 +418,11 @@
 </tr>
 </tbody>
 </table>
-<h2>REF</h2>
-<p>[1] <a href="https://openjdk.java.net/jeps/158" target="_blank" rel="noopener">https://openjdk.java.net/jeps/158</a></p>
-<p>[2] <a href="https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE" target="_blank" rel="noopener">https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE</a></p>
-<p>[3] <a href="https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html" target="_blank" rel="noopener">https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html</a></p>
-<p>[4] <a href="https://segmentfault.com/a/1190000013475524" target="_blank" rel="noopener">https://segmentfault.com/a/1190000013475524</a></p>
+<h2 id="REF">REF</h2>
+<p>[1] <a href="https://openjdk.java.net/jeps/158">https://openjdk.java.net/jeps/158</a></p>
+<p>[2] <a href="https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE">https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE</a></p>
+<p>[3] <a href="https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html">https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html</a></p>
+<p>[4] <a href="https://segmentfault.com/a/1190000013475524">https://segmentfault.com/a/1190000013475524</a></p>
 <p>文 / Rayjun</p>
 
 </div>
@@ -444,7 +444,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

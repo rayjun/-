@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -60,7 +60,7 @@
     <p>在一些特定的情况下，我们需要为移动端实现一些功能，如果为每一个移动端编写代码，不仅工作量大，而且很难维护。</p>
 <p>我们使用的一个方案是编写 Go 代码，然后分别编译成不同平台的代码。Go 语言本身也提供了跨平台编译的方式，但是命令很复杂，需要配置很多参数，容易出错。目前有一些成熟的库可以直接使用，在这里使用的是 gomobile 框架。</p>
 <p>本文使用的是 Go1.14，Go 语言的安装不再赘述。</p>
-<h2>gomobile 安装</h2>
+<h2 id="gomobile-安装">gomobile 安装</h2>
 <p>gomobile 可以把 go 代码编译成<strong>移动端应用</strong>或者**移动端SDK，**本文演示的是编译成 SDK。</p>
 <p>安装 gomobile：</p>
 <pre><code class="language-go">go get golang.org/x/mobile/cmd/gomobile
@@ -73,11 +73,11 @@
 
 import &quot;fmt&quot;
 
-func Hello(name string) string {
+func Hello(name string) string &#123;
 	return fmt.Sprintf(&quot;Hello %s!&quot;, name)
-}
+&#125;
 </code></pre>
-<h2>Android 平台</h2>
+<h2 id="Android-平台">Android 平台</h2>
 <p>安装 Android Studio，下载最新版本就可以。</p>
 <p>通过 Android Studio 的 SDK manager 下载 NDK 和 CMake，选中右下角的 Show Package Details 可以下载特定版本。</p>
 <p>gomobile 对 NDK 的兼容性不好，我测试了 NDK 22 及以上版本都会失败，本文使用的 NDK 版本为 <code>21.4.7075529</code>，CMake 下载最新版本就可以。</p>
@@ -97,24 +97,24 @@ hello-sources.jar
 <p>然后直接吧 hello.aar 导入 到 android studio 中使用，就可以像使用普通 Java 包一样来调用 hello 方法，这一步就不再演示了，调用代码如下：</p>
 <pre><code class="language-java">import hello.Hello;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity &#123;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) &#123;
         // 省略无关代码
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() &#123;
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) &#123;
                 // 在这里调用 hello 方法
                 Snackbar.make(view, Hello.hello(&quot;ray&quot;), Snackbar.LENGTH_LONG)
                         .setAction(&quot;Action&quot;, null).show();
 
-            }
-        });
-    }
-}
+            &#125;
+        &#125;);
+    &#125;
+&#125;
 </code></pre>
-<h2>IOS 平台</h2>
+<h2 id="IOS-平台">IOS 平台</h2>
 <p>编译到 IOS 平台的需要安装 XCode 和配套的 Command Line Tools，整个流程会比 Android 平台简单不少。</p>
 <p>同样在项目的上级目录执行下面的命令：</p>
 <pre><code class="language-bash"># hello 是 go 项目的目录
@@ -126,15 +126,15 @@ $ gomobile bind -target=ios hello
 <p>到 xcode 中配置一下 Command Line Tools：</p>
 <p><img src="1.png" alt=""></p>
 <p>上面的命令执行成功之后，就会在本地生成一个 Hello.FrameWork 目录，这个就是 IOS 平台上的依赖库。可以直接把整个目录拷贝到 IOS 的目录底下，然后添加到项目的依赖中，就可以在代码中使用了：</p>
-<pre><code class="language-swift">struct ContentView: View {
-    var body: some View {
+<pre><code class="language-swift">struct ContentView: View &#123;
+    var body: some View &#123;
         // 在这里调用 hello 方法
         Text(HelloHello(&quot;ray&quot;))
             .padding()
-    }
-}
+    &#125;
+&#125;
 </code></pre>
-<h2>小结</h2>
+<h2 id="小结">小结</h2>
 <p>到这里，Go 代码在 Android 和 IOS 上都跑起来了，这个工具本质上还是对 Go 命令的封装。后续我会再写一篇文章来详细介绍 gomobile 的实现。</p>
 <p>文 / Rayjun</p>
 
@@ -157,7 +157,7 @@ $ gomobile bind -target=ios hello
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

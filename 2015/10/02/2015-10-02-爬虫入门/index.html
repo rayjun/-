@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,26 +58,26 @@
                     <div class="post">
     <h1>爬虫入门</h1>
     <p>最近在由于项目的需要，需要从一个网站上爬取一些数据，量不是特别大，于是就自己动手写了一个小爬虫。爬虫虽小，五脏具全，好歹是将整个过程体验了一下。下面是整个爬虫的开发过程。</p>
-<h3>开发准备</h3>
+<h3 id="开发准备">开发准备</h3>
 <p>对于写一个简单的爬虫来说，需要准备一些基础知识。实际来说，就是简单的获取网页的方法以及如何解析整个网页。在这篇文章中我们使用 <strong>php</strong> 来完成整个爬虫的开发。需要用到 php_curl 模块和 php 的多线程(虽然这不是 php 所擅长的)以及正则的基本知识。</p>
-<h3>获取网页</h3>
+<h3 id="获取网页">获取网页</h3>
 <p>这个是很基础的部分，主要是利用 <strong>php_curl</strong> 去获取整个页面的内容</p>
 <pre><code>// $url 是最初始的 url，爬虫从这里开始
 $content = cls_curl::get($url);
 </code></pre>
-<p>当然，整个方法被我封装过了，具体的 php_curl 的使用方法，见<a href="http://php.net/curl" target="_blank" rel="noopener">这里</a>。</p>
-<h3>获取目标 url</h3>
+<p>当然，整个方法被我封装过了，具体的 php_curl 的使用方法，见<a href="http://php.net/curl">这里</a>。</p>
+<h3 id="获取目标-url">获取目标 url</h3>
 <p>为了让爬虫自动去爬取我所需要的内容。我得从网页中获取到目标网页的 url，那么就需要从初始网页中不断的去爬取 目标内容：</p>
 <pre><code>preg_match_all('#href=\&quot;/shop/[0-9]*?\&quot;#', $content, $out);
 </code></pre>
-<p>在整个代码中，大家看到了一些很奇怪的符号，这些就是正则表达式，爬虫并不是非得使用正则表达式，但是正则表达式匹配的饿效率却不是其他的方法可以比的。大家不要被这些符号吓到，精通正则表达式当然不是一件简单的事情，但是初步的了解，简单的使用还是不难的。如果想详细的了解，这里有一篇不错的<a href="http://deerchao.net/tutorials/regex/regex.htm" target="_blank" rel="noopener">教程</a>。但是在这里，大家只需要了解以下的基本知识：</p>
+<p>在整个代码中，大家看到了一些很奇怪的符号，这些就是正则表达式，爬虫并不是非得使用正则表达式，但是正则表达式匹配的饿效率却不是其他的方法可以比的。大家不要被这些符号吓到，精通正则表达式当然不是一件简单的事情，但是初步的了解，简单的使用还是不难的。如果想详细的了解，这里有一篇不错的<a href="http://deerchao.net/tutorials/regex/regex.htm">教程</a>。但是在这里，大家只需要了解以下的基本知识：</p>
 <pre><code>+ [0-9] 是匹配到任意一个数字
 + * 表示重复零次或更多次
 + ? 表示重复另次或者一次
 + *? 表示的是非贪婪模式，表示整个匹配的长度不会无限匹配下去。
 </code></pre>
-<p>所以大家就能了解的到我想匹配到的是一个以 'shop' 开始，后面接着数字的链接了。这样我就获取到了我的目标链接了。</p>
-<h3>获取目标内容</h3>
+<p>所以大家就能了解的到我想匹配到的是一个以 ‘shop’ 开始，后面接着数字的链接了。这样我就获取到了我的目标链接了。</p>
+<h3 id="获取目标内容">获取目标内容</h3>
 <p>在获取到目标的网页 url 之后，我需要像之前那样获取到目标网页的内容，剩下的就是要获取目标网页的内容了：</p>
 <pre><code>preg_match_all('#&lt;h1 class=\&quot;shop-name\&quot;&gt;\s(.*?)\s&lt;/h1&gt;#s', $content, $shopname);
 </code></pre>
@@ -85,9 +85,9 @@ $content = cls_curl::get($url);
 <pre><code>$name = preg_replace(&quot;/&lt;(a.*?)&gt;(.*?)&lt;(\/a.*?)&gt;/si&quot;,&quot;&quot;,$shopname[0][0]);
 $name = preg_replace(&quot;/&lt;(\/?h1.*?)&gt;/si&quot;,&quot;&quot;,$name);
 </code></pre>
-<p>&quot;/&lt;(a.<em>?)&gt;(.</em>?)&lt;(/a.*?)&gt;/si/&quot; 是将整个 a 标签，包括标签里面的内容替换成&quot;&quot;,</p>
-<p>&quot;/&lt;(/?h1.*?)&gt;/si&quot; 则只是将 h1 标签去掉，把里面的内容留下。经过这两行代码后，我们所需要的内容其实就获取到了。没错，爬虫就是这么简单。</p>
-<h3>更高的爬取效率</h3>
+<p>“/&lt;(a.<em>?)&gt;(.</em>?)&lt;(/a.*?)&gt;/si/” 是将整个 a 标签，包括标签里面的内容替换成&quot;&quot;,</p>
+<p>“/&lt;(/?h1.*?)&gt;/si” 则只是将 h1 标签去掉，把里面的内容留下。经过这两行代码后，我们所需要的内容其实就获取到了。没错，爬虫就是这么简单。</p>
+<h3 id="更高的爬取效率">更高的爬取效率</h3>
 <p>上面的方法其实就已经是一个简单的爬虫了，但是网页的数量太多，如果一直安上面的方法来爬取的话，速度实在是太慢了。所以我们需要充分的将硬件利用起来，没错，就是利用多线程的方法同时使用多个爬虫去爬数据。这样就可以大大的提升爬虫的效率了。</p>
 <pre><code>$w = new worker();
 $w-&gt;count = 1;
@@ -95,13 +95,13 @@ $w-&gt;is_once = true;
 
 //利用后台线程来爬取数据，不能在 web 环境中运行
 $count = 200000;        // 每个进程循环多少次
-$w-&gt;on_worker_start = function($worker) use ($count) {
+$w-&gt;on_worker_start = function($worker) use ($count) &#123;
     //
-};
+&#125;;
 
 $w-&gt;run();
 </code></pre>
-<p>可以通过线程来控制每个爬虫的爬取次数，这个 worker 工具并不是我写的，参考<a href="https://github.com/owner888/phpspider/blob/master/phpspider/worker.php" target="_blank" rel="noopener">这里</a>。好了，到这里，一个简单的爬虫基本就完成了，将数据存入数据库的部分我并没有写出来，那个根本就不需要专门说了。对于爬虫，也还是需要慢慢的探索。</p>
+<p>可以通过线程来控制每个爬虫的爬取次数，这个 worker 工具并不是我写的，参考<a href="https://github.com/owner888/phpspider/blob/master/phpspider/worker.php">这里</a>。好了，到这里，一个简单的爬虫基本就完成了，将数据存入数据库的部分我并没有写出来，那个根本就不需要专门说了。对于爬虫，也还是需要慢慢的探索。</p>
 
 </div>
 
@@ -122,7 +122,7 @@ $w-&gt;run();
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

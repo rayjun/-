@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -60,14 +60,14 @@
     <p>线程池已经成为 Java 开发中必不可少的一个组件了，在使用 Spring 时，不需要自己重头去使用线程池。</p>
 <p>Spring 已经提供了非常完备的封装，可以直接使用 Spring 提供的接口。</p>
 <p>本文基于 Spring5.3 和 OpenJDK11</p>
-<h2>1. Spring 中的任务</h2>
+<h2 id="1-Spring-中的任务">1. Spring 中的任务</h2>
 <p>Spring 中对与任务的执行提供了两种抽象， <code>TaskExecutor</code> 和 <code>TaskScheduler</code>，分别表示执行异步任务和定时任务。</p>
 <p><code>Executor</code> 在 JDK 中是线程池的名称。一个 executor 用来表示执行任务的线程池，其中最少会有一个线程，每个线程都可以用来执行同步或者异步任务。</p>
 <p><code>Scheduler</code> 表示的是定时任务，定时任务的触发，支持 JDK 中的 <code>Timer</code> 和 <code>Quartz Scheduler</code> 。</p>
-<h2>2. TaskExecutor</h2>
+<h2 id="2-TaskExecutor">2. TaskExecutor</h2>
 <p>TaskExecutor 接口继承了 JDK 中的 Executor。在 JDK 中，ThreadPoolExecutor 继承了 Executor，也是一个很常用的接口。</p>
 <p>Spring 对这些实现屏蔽了细节，无论是开发 Java EE 应用还是 Java SE 应用，都可以直接使用 TaskExecutor。</p>
-<h3>TaskExecutor 的实现</h3>
+<h3 id="TaskExecutor-的实现">TaskExecutor 的实现</h3>
 <p>Spring 中已经实现了多种类型的 TaskExecutor，在绝大多数情况下，不需要自己去实现。</p>
 <ul>
 <li>SyncTaskExecutor：用来执行非异步的任务，通常用于不需要多线程的场景，实际用的比较少，通常用来执行测试用例</li>
@@ -77,37 +77,37 @@
 <li>WorkManagerTaskExecutor：这个用的就更少了，这个实现封装了 WebLogic 的 API，以便在 WebLogic 中间件上运行 Spring 程序</li>
 <li>DefaultManagedTaskExecutor：这个实现的目标是替代 WorkManagerTaskExecutor。</li>
 </ul>
-<h3>TaskExecutor 的使用</h3>
+<h3 id="TaskExecutor-的使用">TaskExecutor 的使用</h3>
 <p>下面以最常见的 ThreadPoolTaskExecutor 为例来演示 TaskExecutor 的使用。</p>
 <p>创建一个待执行的任务：</p>
-<pre><code class="language-java">public class TaskDemo implements Runnable{
+<pre><code class="language-java">public class TaskDemo implements Runnable&#123;
 
     private String message;
 
-    public TaskDemo(String message) {
+    public TaskDemo(String message) &#123;
         this.message = message;
-    }
+    &#125;
 
     @Override
-    public void run() {
+    public void run() &#123;
         System.out.println(message);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>再创建一个执行任务的执行器：</p>
-<pre><code class="language-java">public class SpringTaskDemo {
+<pre><code class="language-java">public class SpringTaskDemo &#123;
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
-    public void printMessage() {
-        for(int i = 0; i &lt; 10; i++) {
+    public void printMessage() &#123;
+        for(int i = 0; i &lt; 10; i++) &#123;
             threadPoolTaskExecutor.execute(new TaskDemo(&quot;Hello rayjun &quot; + i));
-        }
-    }
+        &#125;
+    &#125;
 
-    public void setThreadPoolTaskExecutor(ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+    public void setThreadPoolTaskExecutor(ThreadPoolTaskExecutor threadPoolTaskExecutor) &#123;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>然后在容器中注入这两个类：</p>
 <pre><code class="language-xml">&lt;bean id=&quot;taskExecutor&quot;
@@ -123,24 +123,24 @@
 <p>再通过单元测试来执行代码：</p>
 <pre><code class="language-java">@ExtendWith(SpringExtension.class)
 @ContextConfiguration(&quot;classpath:applicationContext.xml&quot;)
-class SpringTaskDemoTest {
+class SpringTaskDemoTest &#123;
 
     @Autowired
     private ApplicationContext context;
 
     @Test
-    public void test1() {
+    public void test1() &#123;
         SpringTaskDemo springTaskDemo = (SpringTaskDemo) context.getBean(&quot;springTaskDemo&quot;);
         springTaskDemo.printMessage();
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>控制台中会输出10条消息。</p>
-<h2>3. TaskScheduler</h2>
+<h2 id="3-TaskScheduler">3. TaskScheduler</h2>
 <p>TaskScheduler 用来执行定时任务，与 TaskExecutor 接口只提供了一个方法不同，TaskScheduler 接口提供了很多方法。</p>
 <p>这些方法都接收一个 Runnable 实例，以及表示时间或者频率的参数。定时任务可以配置为执行一次，也可以配置为重复执行。</p>
 <p>TaskSchduler 提供的方法如下：</p>
-<pre><code class="language-java">public interface TaskScheduler {
+<pre><code class="language-java">public interface TaskScheduler &#123;
       ScheduledFuture schedule(Runnable task, Trigger trigger);
       ScheduledFuture schedule(Runnable task, Instant startTime);
       ScheduledFuture schedule(Runnable task, Date startTime);
@@ -154,16 +154,16 @@ class SpringTaskDemoTest {
       ScheduledFuture scheduleWithFixedDelay(Runnable task, Date startTime, long delay);
       ScheduledFuture scheduleWithFixedDelay(Runnable task, Duration delay);
       ScheduledFuture scheduleWithFixedDelay(Runnable task, long delay);
-  }
+  &#125;
 </code></pre>
-<h3>TaskScheduler 实现</h3>
+<h3 id="TaskScheduler-实现">TaskScheduler 实现</h3>
 <p>TaskScheduler 有三个实现：</p>
 <ul>
 <li>ThreadPoolTaskScheduler：使用的比较多，是对 JDK中的 ScheduledThreadPoolExecutor 进行包装</li>
 <li>ConcurrentTaskScheduler：同样也是对 ScheduledThreadPoolExecutor 进行包装，但是同时也继承了 ConcurrentTaskExecutor 来提供更好的并发度</li>
 <li>DefaultManagedTaskScheduler：基于 JDNI 规范的实现，功能上与 ConcurrentTaskScheduler 相同</li>
 </ul>
-<h3>TaskScheduler 的使用</h3>
+<h3 id="TaskScheduler-的使用">TaskScheduler 的使用</h3>
 <p>TaskScheduler 的使用和 TaskScheduler 类似。</p>
 <pre><code class="language-xml">&lt;bean id=&quot;taskSchedulerExecutor&quot;
       class=&quot;org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler&quot;&gt;
@@ -173,23 +173,23 @@ class SpringTaskDemoTest {
     &lt;property name=&quot;threadPoolTaskScheduler&quot; ref=&quot;taskSchedulerExecutor&quot;/&gt;
 &lt;/bean&gt;
 </code></pre>
-<pre><code class="language-java">public class SpringSchedulerTaskDemo {
+<pre><code class="language-java">public class SpringSchedulerTaskDemo &#123;
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
-    public void printMessage() {
+    public void printMessage() &#123;
         threadPoolTaskScheduler.schedule(new TaskDemo(&quot;Ray&quot;), new CronTrigger(&quot;0/5 * * * * ?&quot;));
-    }
+    &#125;
 
-    public void setThreadPoolTaskScheduler(ThreadPoolTaskScheduler threadPoolTaskScheduler) {
+    public void setThreadPoolTaskScheduler(ThreadPoolTaskScheduler threadPoolTaskScheduler) &#123;
         this.threadPoolTaskScheduler = threadPoolTaskScheduler;
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <pre><code class="language-java">SpringSchedulerTaskDemo springTaskDemo = (SpringSchedulerTaskDemo) context.getBean(&quot;springSchedulerTaskDemo&quot;);
 springTaskDemo.printMessage();
 </code></pre>
 <p>执行上面的代码之后，每隔5 秒钟就会打印一次消息。</p>
-<h2>4. task namespace</h2>
+<h2 id="4-task-namespace">4. task namespace</h2>
 <p>在 Spring 中，提供了 task 的 namespace，这样就可以少写很多代码。</p>
 <p>在 xml 中假如如下 namespace:</p>
 <pre><code class="language-xml">xmlns:task=&quot;http://www.springframework.org/schema/task&quot;
@@ -222,7 +222,7 @@ xsi:schemaLocation=&quot;http://www.springframework.org/schema/task http://www.s
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

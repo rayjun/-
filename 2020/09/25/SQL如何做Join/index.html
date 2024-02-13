@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -73,7 +73,7 @@ create table t_b (
 );
 </code></pre>
 <p>下文的 SQL 只是伪代码，在不同的数据库系统中不同的表示， join 关系使用文氏图表示。</p>
-<h2>Cross Join</h2>
+<h2 id="Cross-Join">Cross Join</h2>
 <p>两个表做笛卡尔积，基本不会在正式的业务中使用，主要用来测试服务的性能。</p>
 <p><img src="0.png" alt=""></p>
 <p>笛卡尔积就是把两个集合中的每一项两两组合，得到一个新的集合，在数据库中，就是把两张表中的数据两两组合。</p>
@@ -82,17 +82,17 @@ create table t_b (
 <p>Cross jojn 还有一种写法：</p>
 <pre><code class="language-sql">select * from t_a, t_b;
 </code></pre>
-<h2>Inner Join</h2>
+<h2 id="Inner-Join">Inner Join</h2>
 <p>Innner join 表示只取两张表重合的部分，重合的部分也就是满足条件的记录。</p>
 <p><img src="1.png" alt=""></p>
 <p>Inner Join SQL 如下：</p>
 <pre><code class="language-sql">select * from t_a a inner join t_b b on a.key = b.key;
 </code></pre>
 <p>对于 Inner join，也可以看作是从上面的 Cross Join 中找出那些满足条件的记录。</p>
-<h2>Outer Join</h2>
+<h2 id="Outer-Join">Outer Join</h2>
 <p>下面将要说到的这些 Join 方式都可以统称为 Outer Join，Outer Join 是相对于 Inner Join ，Outer Join 会保留表的全部记录，至于保留哪部分，就取决于具体的 Join 方式。</p>
 <p>Left Join 就会保留左边表的全部记录，然后只取右边表的匹配记录。Right Join 就会保留右边表的全部记录，然后只取左边表的匹配记录。Full Join 则会把两个表的记录都取出来。</p>
-<h3>Left Join</h3>
+<h3 id="Left-Join">Left Join</h3>
 <p>Left join 也称之为 Left outer join。</p>
 <p>表示以 a 表为主，会将 a 表的数据全部查询出来，同时只查出 b 表中与 a 表相交的那部分。</p>
 <p><img src="2.png" alt=""></p>
@@ -105,7 +105,7 @@ create table t_b (
 <p><img src="3.png" alt=""></p>
 <pre><code class="language-sql">select * from t_a a left join t_b b on a.key = b.key where b.key is null;
 </code></pre>
-<h3>Right Join</h3>
+<h3 id="Right-Join">Right Join</h3>
 <p>Right join 也称之为 Right outer join。</p>
 <p>Right join 与 Left join 刚好相反，Right join 会以 b 表为主，会把 b 表中的数据都查询出来，同时只查询出 a 表中与表 b 相交的那部分。</p>
 <p><img src="4.png" alt=""></p>
@@ -118,7 +118,7 @@ create table t_b (
 <p><img src="5.png" alt=""></p>
 <pre><code class="language-sql">select * from t_a a right join t_b b on a.key = b.key where a.key is null;
 </code></pre>
-<h3>Full Join</h3>
+<h3 id="Full-Join">Full Join</h3>
 <p>Full join 也称之为 Full outer join。</p>
 <p><img src="6.png" alt=""></p>
 <p>Full join 比较特殊，会把两张表的中数据全部查询出来：</p>
@@ -131,15 +131,15 @@ create table t_b (
 <p><img src="7.png" alt=""></p>
 <pre><code class="language-sql">select * from t_a a full join t_b b on a.key = b.key where a.key is null or b.key is null;
 </code></pre>
-<h2>Self join</h2>
+<h2 id="Self-join">Self join</h2>
 <p>在实际场景中，还有一种比较特殊的需求，比如我们需要查出一张表中某个字段相同的所有记录，这个时候就需要用到 Self join 了。</p>
 <pre><code class="language-sql">select * from t_a a1 inner join t_a a2 on a1.key = a2.key;
 </code></pre>
 <p>文 / Rayjun</p>
-<h2>REF</h2>
-<p>[1] <a href="https://en.wikipedia.org/wiki/Join_(SQL)" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Join_(SQL)</a></p>
-<p>[2] <a href="https://en.wikipedia.org/wiki/Venn_diagram" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Venn_diagram</a></p>
-<p>[3] <a href="https://en.wikipedia.org/wiki/American_National_Standards_Institute" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/American_National_Standards_Institute</a></p>
+<h2 id="REF">REF</h2>
+<p>[1] <a href="https://en.wikipedia.org/wiki/Join_(SQL)">https://en.wikipedia.org/wiki/Join_(SQL)</a></p>
+<p>[2] <a href="https://en.wikipedia.org/wiki/Venn_diagram">https://en.wikipedia.org/wiki/Venn_diagram</a></p>
+<p>[3] <a href="https://en.wikipedia.org/wiki/American_National_Standards_Institute">https://en.wikipedia.org/wiki/American_National_Standards_Institute</a></p>
 
 </div>
 
@@ -160,7 +160,7 @@ create table t_b (
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

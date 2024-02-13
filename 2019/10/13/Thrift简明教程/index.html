@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,22 +58,22 @@
                     <div class="post">
     <h1>Thrift简明教程</h1>
     <p>现如今对于任何一个大型的服务，都不太可能是一个单体的服务。而是由诸多的子服务构成，具体的业务逻辑通过子服务之间的相互调用来完成。这种相互的调用称之为远程调用，也就是通常所说的 RPC。</p>
-<h4>什么是 RPC</h4>
+<h4 id="什么是-RPC">什么是 RPC</h4>
 <p>RPC(Remote Procedure Call)是指远程调用，这个和本地调用有很大的区别。下面在 <code>main</code> 方法中调用 <code>helloWorld</code> 就是本地调用。</p>
-<pre><code class="language-java">public class Main {
-    public static void final main(String[] args) {
+<pre><code class="language-java">public class Main &#123;
+    public static void final main(String[] args) &#123;
         helloWorld(); // 本地调用
-    }
-    public static void helloWorld() {
+    &#125;
+    public static void helloWorld() &#123;
         System.out.println(&quot;Hello World&quot;);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>现在假设 <code>helloWorld</code> 这个方法不在本地，没法直接调用，那么就需要通过远程调用来访问这个方法，在进行远程调用的过程中，就产生了客户端-服务端（Server-Client）模式，服务的提供方就是服务端，服务的调用方就是客户端，客户端和服务端并不是绝对不变的，要看具体的服务的调用流程来认定服务端和客户端。</p>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/thrift/cilent-server.png" alt=""></p>
 <p>远程调用的方式有很多，比如 Java 中的 RMI(Remote Method Invocation) 就是典型的 RPC， 还有 Http 也可以认为是一种 RPC。</p>
 <p>Thrift 是 FaceBook 实现的一种支持多语言的 RPC 框架，对于主流的编程语言 <code>Java</code> ,<code>C++</code>, <code>Python</code> 等都有很好的支持。 Thrift 会通过自身的 <code>IDL(Interface Description Language)</code> 语言来对接口进行定义，然后 Thrift 通过定义好的 IDL 文件生成相应的接口脚手架，然后只需要分别实现接口脚手架的 Server 端和 Client 端。并将 Server 端进行部署，Client 就可以访问 Server端的服务。</p>
-<h4>Thrift 特性简介</h4>
+<h4 id="Thrift-特性简介">Thrift 特性简介</h4>
 <p>下图是 Thrift 官方给出的架构图。Thrift 支持的语言多达 28 种，对于各类操作系统也都提供了支持，Thrift 将自身划为4层（不要和网络的四层协议混淆）,而且对于各个层已经做好干净的分层和实现。对于不同的业务场景就可以选择不同的协议进行组合。</p>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/thrift/thrift-arch.png" alt=""></p>
 <p>Thrift 整体上可以分成以下四层：</p>
@@ -91,9 +91,9 @@
 </ul>
 </li>
 </ul>
-<h5>Thrift 的性能</h5>
-<p>Thrift 的性能在现有的 RPC 框架中属于前列，这里有详细的 <a href="http://szelei.me/rpc-benchmark-part1/" target="_blank" rel="noopener">Benchmark</a>，如果特别关注性能，那么 Thrift 是一个很好的选择。</p>
-<h5>Thrift 的网络模型</h5>
+<h5 id="Thrift-的性能">Thrift 的性能</h5>
+<p>Thrift 的性能在现有的 RPC 框架中属于前列，这里有详细的 <a href="http://szelei.me/rpc-benchmark-part1/">Benchmark</a>，如果特别关注性能，那么 Thrift 是一个很好的选择。</p>
+<h5 id="Thrift-的网络模型">Thrift 的网络模型</h5>
 <p>而且 Thrift 提供了多种网络模型，支持<strong>阻塞服务模型</strong>和<strong>非阻塞服务模型</strong>，所有的网络处理模型都继承自 <strong>TServer</strong>。</p>
 <p><strong>阻塞服务模型</strong>：</p>
 <ul>
@@ -131,7 +131,7 @@
 </ul>
 </li>
 </ul>
-<h4>Thrift的序列化机制</h4>
+<h4 id="Thrift的序列化机制">Thrift的序列化机制</h4>
 <p>数据在网络的传输过程中，序列化和反序列化是一个很重要的过程，对于不同的系统，对序列化有着不同的要求，Thrift 提供了多种序列化的方式来满足不同的要求。传输协议总体上可以分成<strong>文本</strong>和<strong>二进制</strong>的两种协议。</p>
 <p>Thrift 有如下的传输协议：</p>
 <ul>
@@ -140,12 +140,12 @@
 <li>TJSONProtocol：使用 JSON 文本的数据编码协议进行数据传输</li>
 <li>TSimpleJSONProtocol：只提供 JSON 只写的协议，适用于通过脚本语言进行解析</li>
 </ul>
-<h4>Thrift demo 搭建</h4>
-<p>Thrift 的安装在<a href="https://thrift.apache.org/docs/install/" target="_blank" rel="noopener">官方文档</a>已经介绍的很清楚了。</p>
+<h4 id="Thrift-demo-搭建">Thrift demo 搭建</h4>
+<p>Thrift 的安装在<a href="https://thrift.apache.org/docs/install/">官方文档</a>已经介绍的很清楚了。</p>
 <p>Thrift 使用 <strong>IDL</strong> 来定义（Client-Server）之间的接口。假如需要定义一个 <strong>hello</strong> 的接口，那么就可以定义一个 <code>hello.thrift</code>  文件，文件的内容如下：</p>
-<pre><code class="language-thrift">service HelloWorldService {
+<pre><code class="language-thrift">service HelloWorldService &#123;
     string hello(1: string name)
-}
+&#125;
 </code></pre>
 <p>上面定义了一个名为 <code>HelloWorldService</code> 的服务，在这个服务器中有一个叫 <code>hello</code> 的接口，这个接口接受一个 <code>string</code>  类型的参数。</p>
 <p><code>service</code>  和 <code>string</code> 都是 IDL 的关键字，IDL 中的关键字包括：</p>
@@ -155,7 +155,7 @@
 <li>结构体</li>
 <li>枚举</li>
 </ul>
-<p>这些都是 IDL 的基本数据结构，也还有命名空间、异常、常量等关键字。完整的 IDL文档看<a href="https://thrift.apache.org/docs/idl" target="_blank" rel="noopener">这里</a></p>
+<p>这些都是 IDL 的基本数据结构，也还有命名空间、异常、常量等关键字。完整的 IDL文档看<a href="https://thrift.apache.org/docs/idl">这里</a></p>
 <p>上面的 IDL 代码定义好了一个 Thrift 接口的规则，Thrift 就可以根据这个规则生成相应的接口文件。通过这些接口文件，就可以方便的实现相应的业务逻辑，相当于 Thrift 通过 IDL 文件搭出了服务脚手架。</p>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/thrift/thrift-code.png" alt=""></p>
 <p>在生成的脚手架文件中，有两个 interface 非常重要：</p>
@@ -166,47 +166,47 @@
 <p><code>AsyncIface</code>  和 <code>AsyncClient</code> 是这两个 interface 的异步版本。</p>
 <p>下面使用 <code>SimpleServer</code> 来实现这个服务：</p>
 <p><strong>Iface 实现</strong>:</p>
-<pre><code class="language-java">public class HelloWorldServiceImpl implements HelloWorldService.Iface{
+<pre><code class="language-java">public class HelloWorldServiceImpl implements HelloWorldService.Iface&#123;
     @Override
-    public String say(String username) throws TException {
+    public String say(String username) throws TException &#123;
         return &quot;Hello &quot; + username;
-    }
-}
+    &#125;
+&#125;
 
 /**
 *创建一个服务器，向外暴露服务
 */
-public class HelloWorldServer {
-    public static void main(String[] args) throws TTransportException {
+public class HelloWorldServer &#123;
+    public static void main(String[] args) throws TTransportException &#123;
         TServerSocket serverSocket = new TServerSocket(9090);
         HelloWorldService.Processor processor = new HelloWorldService.Processor(new HelloWorldServiceImpl());
         TSimpleServer.Args tArgs = new TSimpleServer.Args(serverSocket);
         tArgs.processor(processor);
         TServer server = new TSimpleServer(tArgs);
         server.serve();
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p><strong>Client实现</strong></p>
 <pre><code class="language-java">/**
 * 客户端，连接服务器，并且发送消息
 */
-public class HelloWorldClient {
-    public static void main(String[] args) throws TTransportException, TException {
+public class HelloWorldClient &#123;
+    public static void main(String[] args) throws TTransportException, TException &#123;
         TTransport transport = new TSocket(&quot;127.0.0.1&quot;, 9090, 3000);
         TProtocol protocol = new TBinaryProtocol(transport);
         HelloWorldService.Client client = new HelloWorldService.Client(protocol);
-        try {
+        try &#123;
             transport.open();
             String result = client.say(&quot;Ray&quot;);
             System.out.println(result);
-        } finally {
-            if (null != transport) {
+        &#125; finally &#123;
+            if (null != transport) &#123;
                 transport.close();
-            }
-        }
-    }
-}
+            &#125;
+        &#125;
+    &#125;
+&#125;
 </code></pre>
 <p>一个简单的 Thrift 的服务也就实现了。</p>
 <p>（完）</p>
@@ -230,7 +230,7 @@ public class HelloWorldClient {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

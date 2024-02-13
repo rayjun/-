@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -64,7 +64,7 @@
 <p>停止一个进程只需要：</p>
 <pre><code class="language-shell">launchctl unload xxx.plist
 </code></pre>
-<h3>Plist 文件配置</h3>
+<h3 id="Plist-文件配置">Plist 文件配置</h3>
 <p>在 Mac 系统中，可以将需要处理的事情都写在 plist 文件中，plist 是一个 xml 格式的文件。plist 文件根据不同的需要可以放在不同的目录底下。Mac OS X 中支持放 plist 的目录如下：</p>
 <ul>
 <li>/Library/LaunchDaemons: 系统启动后就会执行</li>
@@ -106,7 +106,7 @@
 &lt;/plist&gt;
 </code></pre>
 <p>plist 脚本编写完成后放入到相应的目录底下即可，然后执行一下 <strong>launchctl load xx.plist</strong> 就可以启动任务。</p>
-<h3>定时任务配置</h3>
+<h3 id="定时任务配置">定时任务配置</h3>
 <p>在 Plist 中，支持两种定时任务的设置：</p>
 <ul>
 <li>StartInterval：定义任务多长时间（单位，秒）执行一次</li>
@@ -133,7 +133,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

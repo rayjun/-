@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -60,54 +60,54 @@
     <p>字符串是一个常见的数据类型，在 Go 语言在内的很多语言中，为了安全，都把字符串设计为不可变。每生成一个字符串都是在创建一个新的字符串，而不是在原有字符串的基础上修改。</p>
 <p>在 Go 中，字符串拼接的方式很多，可以直接使用 +，也可以使用 fmt.SPrintf，还可以使用 strings.Builder 和 bytes.Buffer。</p>
 <p>在这篇文章中，来讨论一下在代码中如何做字符串拼接效率最好。</p>
-<h2>1. 做一个基准测试</h2>
+<h2 id="1-做一个基准测试">1. 做一个基准测试</h2>
 <p>在开始分析每种拼接方法的优劣之前，先跑一个简单的基准测试，来看一下每种字符串拼接方法的性能。</p>
 <p>Go 中提供了基准测试框架，测试文件需要以 test 结尾，然后每个测试方法以 Benchmark 开头，这次对加号、fmt.SPrintf、和 strings.Builder 三种方式进行基准测试，代码如下：</p>
-<pre><code class="language-go">func BenchmarkPlus(b *testing.B) {
+<pre><code class="language-go">func BenchmarkPlus(b *testing.B) &#123;
 	str := &quot;this is just a string&quot;
 
-	for i := 0; i &lt; b.N; i++ {
+	for i := 0; i &lt; b.N; i++ &#123;
 		stringPlus(str)
-	}
-}
+	&#125;
+&#125;
 
-func BenchmarkSPrintf(b *testing.B) {
+func BenchmarkSPrintf(b *testing.B) &#123;
 	str := &quot;this is just a string&quot;
-	for i := 0; i &lt; b.N; i++ {
+	for i := 0; i &lt; b.N; i++ &#123;
 		stringSprintf(str)
-	}
-}
+	&#125;
+&#125;
 
-func BenchmarkStringBuilder(b *testing.B) {
+func BenchmarkStringBuilder(b *testing.B) &#123;
 	str := &quot;this is just a string&quot;
-	for i := 0; i &lt; b.N; i++ {
+	for i := 0; i &lt; b.N; i++ &#123;
 		stringBuilder(str)
-	}
-}
+	&#125;
+&#125;
 
-func stringPlus(str string) string {
+func stringPlus(str string) string &#123;
 	s := &quot;&quot;
-	for i := 0; i &lt; 10000; i++ {
+	for i := 0; i &lt; 10000; i++ &#123;
 		s += str
-	}
+	&#125;
 	return s
-}
+&#125;
 
-func stringSprintf(str string) string {
+func stringSprintf(str string) string &#123;
 	s := &quot;&quot;
-	for i :=0; i &lt; 10000; i++ {
+	for i :=0; i &lt; 10000; i++ &#123;
 		s += str
-	}
+	&#125;
 	return s
-}
+&#125;
 
-func stringBuilder(str string) string {
-	builder := strings.Builder{}
-	for i := 0; i &lt; 100000; i++ {
+func stringBuilder(str string) string &#123;
+	builder := strings.Builder&#123;&#125;
+	for i := 0; i &lt; 100000; i++ &#123;
 		builder.WriteString(str)
-	}
+	&#125;
 	return builder.String()
-}
+&#125;
 </code></pre>
 <p>基准测试需要使用 <code>*testing.B</code> ，其中 b.N 不是一个固定的值，这个值的大小由框架自己来决定。</p>
 <p>在这里，我们分别测试用不同的方式拼接一个固定的字符串 10000 次，然后统计平均的代码执行时间，内存消耗情况。使用如下的命令运行基准测试：</p>
@@ -125,38 +125,38 @@ ok      zxin.com/zx-demo/string_benchmark       6.186s
 </code></pre>
 <p>第一列表示基准测试的方法名称和所用的 GOMAXPROCS 的值，第二列表示这次测试循环的次数，第三列表示平均每次测试所用的时间，单位为纳秒，第四列表示平均每次运行所分配的内存，第五列表示每次运行所分配内存的次数。</p>
 <p>通过上面的测试，可以发现 strings.Builder 的表现是最好的，比直接使用加号来拼接字符串的内存消耗要小 100 倍。</p>
-<h2>2. 为什么性能的差异这么大</h2>
+<h2 id="2-为什么性能的差异这么大">2. 为什么性能的差异这么大</h2>
 <p>通过上面的基准测试可以发现，使用不同的方式来拼接字符串，性能差异很大。</p>
 <p>Go 的字符串是不可变的，如果使用加号的方式来拼接字符串，那么每次拼接都需要重新分配内存。而 strings.Builder 会对内存预分配，在字符串不断写入的过程中，会自动扩容长度。</p>
 <p>strings.Builder 的底层存储使用的是 []byte，初始的长度分配是 32，然后每次扩容时都会翻一倍。</p>
-<pre><code class="language-go">type Builder struct {
+<pre><code class="language-go">type Builder struct &#123;
 	addr *Builder
 	buf  []byte
-}
+&#125;
 </code></pre>
 <p>当长度到大 2048 时，再扩容就不会直接翻倍，而是每次增加 640 的倍数，第一次增加 640，第二次增加 1280，以此类推。</p>
 <p>在大量拼接字符串的时候 strings.Builder 会比直接拼接的效率更高。</p>
 <p>bytes.Buffer 是另一个类似的库，与 strings.Builder 性能相当，但如果是对于纯拼接字符串的场景，还是推荐使用 strings.Builder。</p>
-<h2>3. 拼字符串的最佳实践</h2>
+<h2 id="3-拼字符串的最佳实践">3. 拼字符串的最佳实践</h2>
 <p>虽然 strings.Builder 的性能很高，但并不是所有的场景都是合这个。如果只是一次简单的字符串拼接，直接使用加号就够了。</p>
 <p>如果涉及到一些字符串的格式化，那么使用 fmt.Sprintf 就更合适了。</p>
 <p>那么在大量拼接字符串的场景，直接使用 strings.Builder 就完事了么，其实还可以继续优化一下。在使用 strings.Builder 时，如果字符串在不断的增加，底层的存储还是要不断的扩容。如果可以预估字符串的长度，就可以提前分配好内存。减少扩容的次数。</p>
 <p>增加一个测试用例:</p>
-<pre><code class="language-bash">func BenchmarkStringBuilderPre(b *testing.B) {
+<pre><code class="language-bash">func BenchmarkStringBuilderPre(b *testing.B) &#123;
 	str := &quot;this is just a string&quot;
-	for i := 0; i &lt; b.N; i++ {
+	for i := 0; i &lt; b.N; i++ &#123;
 		stringBuilderPre(str)
-	}
-}
+	&#125;
+&#125;
 
-func stringBuilderPre(str string) string {
-	builder := strings.Builder{}
+func stringBuilderPre(str string) string &#123;
+	builder := strings.Builder&#123;&#125;
 	builder.Grow(1000000)
-	for i := 0; i &lt; 100000; i++ {
+	for i := 0; i &lt; 100000; i++ &#123;
 		builder.WriteString(str)
-	}
+	&#125;
 	return builder.String()
-}
+&#125;
 </code></pre>
 <p>下面是基准测试的结果：</p>
 <pre><code class="language-bash">pkg: zxin.com/zx-demo/string_benchmark
@@ -187,7 +187,7 @@ BenchmarkStringBuilderPre-12                 860           1393689 ns/op        
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

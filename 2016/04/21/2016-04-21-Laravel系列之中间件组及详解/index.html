@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,10 +57,10 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Laravel系列之中间件组及详解</h1>
-    <p>Laravel5.2 中出现了一个很有用的特性。这一特性是值得期待的，中间件组的出现可以提高中间件的复用，而且可以让中间件更好组织。
+    <p>Laravel5.2 中出现了一个很有用的特性。这一特性是值得期待的，中间件组的出现可以提高中间件的复用，而且可以让中间件更好组织。<br>
 这是 Laravel 在设计思想上的一个重大的提升，也就是 Laravel 在为无状态的开发，也就是前后端分离在做准备。</p>
-<h3>中间件组</h3>
-<p>在 app\Http\Kernel.php 文件中，出现一个新的配置选项 $middlewareGroups,该数组的键是中间件组的名称，值则是多个中间件
+<h3 id="中间件组">中间件组</h3>
+<p>在 app\Http\Kernel.php 文件中，出现一个新的配置选项 $middlewareGroups,该数组的键是中间件组的名称，值则是多个中间件<br>
 的集合。默认提供了 web 和 api 中间件组的配置:</p>
 <pre><code>protected $middlewareGroups = [
     'web' =&gt; [
@@ -94,11 +94,11 @@
 ];
 </code></pre>
 <p>中间件组的使用：</p>
-<pre><code>Route::group(['middleware' =&gt; ['web']], function () {
+<pre><code>Route::group(['middleware' =&gt; ['web']], function () &#123;
     //
-});
+&#125;);
 </code></pre>
-<h3>需要注意的地方</h3>
+<h3 id="需要注意的地方">需要注意的地方</h3>
 <p>在之前的版本中，app\Http\Kernel.php 文件中默认的中间件配置如下：</p>
 <pre><code> protected $middleware = [
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
@@ -127,8 +127,8 @@
         ],
     ];
 </code></pre>
-<p>对比可以发现，cookies,sessions, CSRF的功能，都从默认中间件中被移除了，加入到了 web 中间件组中了。也就是说，没有
-使用 web 中间件组的路由将没有 cookies，sessions，CSRF 的功能了，这也是为什么在 Laravel5.2 中使用默认的登录验证方式，在
+<p>对比可以发现，cookies,sessions, CSRF的功能，都从默认中间件中被移除了，加入到了 web 中间件组中了。也就是说，没有<br>
+使用 web 中间件组的路由将没有 cookies，sessions，CSRF 的功能了，这也是为什么在 Laravel5.2 中使用默认的登录验证方式，在<br>
 没有使用 web 中间件的情况下，登录状态是没有办法保持的。这是 Larvel 在设计思想上的一个重大的提升。</p>
 
 </div>
@@ -150,7 +150,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,7 +58,7 @@
                     <div class="post">
     <h1>插入排序</h1>
     <p>插入排序通过构建有序序列，对于未排序的数据，从已排序的序列从后向前扫描，并找到相应的位置插入。</p>
-<h4>算法描述</h4>
+<h4 id="算法描述">算法描述</h4>
 <ol>
 <li>从第一个元素开始，默认第一个元素已排序；</li>
 <li>取出下一个元素i，从已排序的元素序列中从后向前扫描；</li>
@@ -66,18 +66,18 @@
 <li>重复2-3直到遍历结束，排序完成；</li>
 </ol>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/849589-20171015225645277-1151100000.gif" alt=""></p>
-<h4>代码实现</h4>
-<pre><code class="language-java">public void sort(int[] arr, int n) {
-    for(int i = 1;i &lt; n; i++) {
-        for(j = i+1; j &gt; 0; j--) {
-            if(arr[j] &lt; arr[j-1]) {
+<h4 id="代码实现">代码实现</h4>
+<pre><code class="language-java">public void sort(int[] arr, int n) &#123;
+    for(int i = 1;i &lt; n; i++) &#123;
+        for(j = i+1; j &gt; 0; j--) &#123;
+            if(arr[j] &lt; arr[j-1]) &#123;
                 int temp = arr[j];
                 arr[j] = arr[j-1];
                 arr[j-1] = arr[j];
-            }
-        }
-    }
-}
+            &#125;
+        &#125;
+    &#125;
+&#125;
 </code></pre>
 
 </div>
@@ -99,7 +99,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

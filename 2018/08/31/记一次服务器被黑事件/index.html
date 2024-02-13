@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -59,14 +59,14 @@
     <h1>记一次服务器被黑事件</h1>
     <p>今天在使用 jenkins 部署一个项目的时候，感觉页面的速度加载很慢。于是登上服务器看了一下，使用 <code>top</code>看了一眼，出现了以下的情况：</p>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/20180808085419802.png" alt=""></p>
-<p>发现 <code>cpu</code> 的使用率基本为100%，这肯定不正常，发现主要是由一个叫 qW3xT.2 的进程占据着 <code>cpu</code>，于是上网查了一下，发现这个是一个专门用于挖矿的病毒，也就是说，我的服务器被人当作矿机了。em.....好像不是很能忍，那只能想办法干掉它了。</p>
+<p>发现 <code>cpu</code> 的使用率基本为100%，这肯定不正常，发现主要是由一个叫 qW3xT.2 的进程占据着 <code>cpu</code>，于是上网查了一下，发现这个是一个专门用于挖矿的病毒，也就是说，我的服务器被人当作矿机了。em…好像不是很能忍，那只能想办法干掉它了。</p>
 <p>网上也有一些解决办法，通常来说这个；病毒就是在服务器上不断的设置定时任务，然后通过 <code>curl</code> 不断获取脚本执行计算任务进行挖矿。杀死进程无效，定时任务会不断的重启服务。通常的解决办法就是，通过打印远程的脚本，看这个脚本是会下载什么内容，然后根据脚本的的执行情况去删除文件，最后杀死进程来解决问题。但是当我使用这个方法来解决问题的时候，有点不太对劲了。服务器上留下的定时任务如图所示：</p>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/1.png" alt=""></p>
 <p>然后我就通过打印脚本去获取内容：</p>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/2.png" alt=""></p>
 <p>有点不太对，这里面居然是另一条获取内容的脚本，和网上出现的情况都不太一样，于是顺藤摸瓜，再次获取一次，得到了下面的内容：</p>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/3.png" alt=""></p>
-<p>em.....居然直接就是一个可执行的文件。也根本没办法找出来这个程序执行的操作，这就有点难搞了。删除那是不可能的，手动删除的速度根本比不上程序的速度。稍微观察了一下，发现服务器的定时任务脚本删除后，它都会利用剩余的任何一份脚本去远程下载，也就是说只有将它的下载路径掐断之后，应该就可以解决问题了。于是通过 <code>wget</code>去获取远程下载脚本的服务器的地址：</p>
+<p>em…居然直接就是一个可执行的文件。也根本没办法找出来这个程序执行的操作，这就有点难搞了。删除那是不可能的，手动删除的速度根本比不上程序的速度。稍微观察了一下，发现服务器的定时任务脚本删除后，它都会利用剩余的任何一份脚本去远程下载，也就是说只有将它的下载路径掐断之后，应该就可以解决问题了。于是通过 <code>wget</code>去获取远程下载脚本的服务器的地址：</p>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/4.png" alt=""></p>
 <p>在这里不能使用 <code>ping</code>，因为它一个域名可能绑定了好几个 <code>ip</code>，使用 <code>ping</code>不能将所有的 <code>ip</code>都查出来，所以使用 <code>wget</code>靠谱一点。然后使用 <code>iptables</code>将 <code>ip</code> 封掉:</p>
 <pre><code class="language-shell"> iptables -I INPUT -s 104.20.209.21 -j DROP
@@ -95,7 +95,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

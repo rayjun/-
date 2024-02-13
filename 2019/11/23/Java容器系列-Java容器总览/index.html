@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -62,12 +62,12 @@
 <blockquote>
 <p>本文基于 JDK1.8</p>
 </blockquote>
-<h3>Collection</h3>
+<h3 id="Collection">Collection</h3>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/Java/collection/collection.jpg" alt=""></p>
 <p>上图中圆圈代表<strong>接口</strong>, 长方形代表<strong>类</strong>，包括抽象类和普通类。绿色代表线程安全，黄色代表不是线程安全。上面的类图中只包括了 <code>java.util</code> 下的类，<code>java.util.concurrent</code> 下面的容器类从功能的角度上来说并没有太大不同，但是这个包下的类都是线程安全的。</p>
 <p>从类图中可以看到 Collection 继承了 Iterator 接口,说明所有的 Collection 都可以通过<strong>迭代器</strong>来进行访问。</p>
 <p>Collection 接口有三个子接口，<code>List</code>、<code>Set</code> 和 <code>Queue</code>。List 会按照元素的插入顺序保存元素，Set 中的元素都不能重复。Collection 中定义了一些公共的方法，都是一些基础的工具方法，比如获取容器的大小、判断容器时候为空、清空容器、迭代容器元素等方法。在 JDK1.8 以后，在 Collection 接口中加入了 default 方法，这些方法都是用于支持 Java8 的函数式编程。</p>
-<pre><code class="language-java">interface Collection&lt;E&gt; extends Iterable&lt;E&gt; {
+<pre><code class="language-java">interface Collection&lt;E&gt; extends Iterable&lt;E&gt; &#123;
     
     int size();
     
@@ -81,9 +81,9 @@
 
     &lt;T&gt; T[] toArray(T[] a);
 
-    default &lt;T&gt; T[] toArray(IntFunction&lt;T[]&gt; generator) {
+    default &lt;T&gt; T[] toArray(IntFunction&lt;T[]&gt; generator) &#123;
         return toArray(generator.apply(0));
-    }
+    &#125;
 
     boolean add(E e);
 
@@ -95,18 +95,18 @@
 
     boolean removeAll(java.util.Collection&lt;?&gt; c);
 
-    default boolean removeIf(Predicate&lt;? super E&gt; filter) {
+    default boolean removeIf(Predicate&lt;? super E&gt; filter) &#123;
         Objects.requireNonNull(filter);
         boolean removed = false;
         final Iterator&lt;E&gt; each = iterator();
-        while (each.hasNext()) {
-            if (filter.test(each.next())) {
+        while (each.hasNext()) &#123;
+            if (filter.test(each.next())) &#123;
                 each.remove();
                 removed = true;
-            }
-        }
+            &#125;
+        &#125;
         return removed;
-    }
+    &#125;
 
     boolean retainAll(java.util.Collection&lt;?&gt; c);
     void clear();
@@ -115,31 +115,31 @@
     int hashCode();
 
     @Override
-    default Spliterator&lt;E&gt; spliterator() {
+    default Spliterator&lt;E&gt; spliterator() &#123;
         return Spliterators.spliterator(this, 0);
-    }
+    &#125;
 
-    default Stream&lt;E&gt; stream() {
+    default Stream&lt;E&gt; stream() &#123;
         return StreamSupport.stream(spliterator(), false);
-    }
+    &#125;
 
-    default Stream&lt;E&gt; parallelStream() {
+    default Stream&lt;E&gt; parallelStream() &#123;
         return StreamSupport.stream(spliterator(), true);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
-<h4>List</h4>
+<h4 id="List">List</h4>
 <p><code>List</code> 接口下的 ArrayList 日常写代码使用的很多。ArrayList 的部分代码如下。从代码中可以看到，ArrayList 底层的数据结构就是一个数组，而且 ArrayList 实现了 RandomAccess 来支持随机访问。</p>
 <pre><code class="language-java">class ArrayList&lt;E&gt; extends AbstractList&lt;E&gt;
-        implements List&lt;E&gt;, RandomAccess, Cloneable, java.io.Serializable {
+        implements List&lt;E&gt;, RandomAccess, Cloneable, java.io.Serializable &#123;
 
     transient Object[] elementData;
-}
+&#125;
 </code></pre>
 <p>ArrayList 与数组的功能很像，但是提供了更多便利的操作。Vector 与 ArrayList 的功能基本一致，但是是线程安全的，Vector 的子类 Stack 同样也是线程安全的，但是这些类基本都不推荐再使用了。如果要使用线程安全的类，java.util.concurrent 中的 <code>CopyOnWriteArrayList</code> 是一种更好的选择。</p>
 <p>LinkedList 与 ArrayList 功能也比较相近，从功能的角度上来说，它们之间最大的区别在于 ArrayList 支持<strong>随机访问</strong>，而 LinkedList 则不支持。LinkedList 部分代码如下，可以看到 LinkedList 底层使用的是双向链表的数据结构。而且还实现了 Deque 接口，所以除了可以作为列表容器来使用之外，还可以作为队列或者双端队列来使用。</p>
 <pre><code class="language-java">class LinkedList&lt;E&gt; extends AbstractSequentialList&lt;E&gt;
-        implements List&lt;E&gt;, Deque&lt;E&gt;, Cloneable, java.io.Serializable {
+        implements List&lt;E&gt;, Deque&lt;E&gt;, Cloneable, java.io.Serializable &#123;
     
     transient int size = 0;
 
@@ -147,38 +147,38 @@
     
     transient Node&lt;E&gt; last;
 
-}
+&#125;
 </code></pre>
 <p>LinkedList 同样在 java.util.concurrent 中提供 LinkedBlockingQueue 和 LinkedBlockingDeque 来实现同样的功能，除了在多线程环境比 LinkedList 更有优势外，功能方面基本没有差别。</p>
-<h4>Set</h4>
+<h4 id="Set">Set</h4>
 <p>各类 <code>Set</code> 的共同点在于 set 的元素是不重复的，这一特性在一些情况下非常有用，HashSet 是用的最多的 Set 类。以下是 HashSet 的部分代码，比较有意思的是 HashSet 底层是使用 HashMap 实现的，所有的值都存着在 HashMap 的 Key 中，Value 的位置就放一个固定的对象 PRESENT。</p>
 <pre><code class="language-java">class HashSet&lt;E&gt;
         extends AbstractSet&lt;E&gt;
-        implements Set&lt;E&gt;, Cloneable, java.io.Serializable {
+        implements Set&lt;E&gt;, Cloneable, java.io.Serializable &#123;
 
     private transient HashMap&lt;E, Object&gt; map;
 
     private static final Object PRESENT = new Object();
 
-    public HashSet() {
+    public HashSet() &#123;
         map = new HashMap&lt;&gt;();
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>HashSet 里面的元素是无序的，如果需要让 set 中元素有序，那么就可以使用 LinkedHashSet，LinkedHashSet 中通过构造一个双向链表来记录插入顺序。而 TreeSet 则是通过底层的红黑树结构提供了排序顺序的访问方式，具体用哪种可以看具体的需求。同样 Set 也有线程安全的版本 <code>CopyOnWriteArraySet</code>。</p>
-<h4>Queue</h4>
+<h4 id="Queue">Queue</h4>
 <p><code>Queue/Deque</code> 是 Java 中的提供的 队列接口。ArrayQueue 是具体可以使用的队列类，可以作为普通队列或则双端队列来使用。但是队列在并发情况使用的更多一点，使用 LinkedBlockingQueue 或者 LinkedBlockingDeque 会是更好的选择。有时候除了顺序队列之外，可能还需要通过优先级来调度的队列，PriorityQueue 就是为这个需求而生的，在并发情况下与之对应的就是 PriorityBlockingQueue。</p>
-<h3>Map</h3>
+<h3 id="Map">Map</h3>
 <p><img src="https://rayjun.oss-cn-beijing.aliyuncs.com/Java/collection/map.jpg" alt=""></p>
 <p>Map 的类图结构相对来说就简单很多。所有的 Map 类都继承了 Map 接口。HashMap 是使用的最多的 Map 类，HashMap 也是无序的，和 Set 类似，LinkedHashMap 和 TreeMap 也从不同的方面保证顺序，LinkedHashMap 通过双向链表来记录插入顺序。TreeMap 则是对其中的元素进行排序，可以按照排序的顺序进行访问。</p>
 <p>作为 Map 的典型实现，HashMap 代码结构就复杂的多，HashMap 号称是有着 $O(1)$ 的访问速度（只是近似，在极端情况下可能退化成 $O(N)$）。这么快速的关键在于哈希函数的实现，哈希函数好的实现可以帮助键值对均匀的分布，从而有 $O(1)$ 的访问速度，以下是 HashMap 的哈希函数的实现，而且 HashMap 的扩容和处理哈希碰撞等问题的处理也很复杂。</p>
-<pre><code class="language-java">static final int hash(Object key) {
+<pre><code class="language-java">static final int hash(Object key) &#123;
         int h;
         return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);
-    }
+    &#125;
 </code></pre>
 <p>与 Collection 中的结构类似，HashTable 也与 HashMap 功能类似，但是 HashTable 是线程安全的。同样因为 HashTable 实现的方式不如 java.util.concurrent 中提供的性能好，所以不推荐使用 HashTable。在并发情况下推荐使用 ConcurrentHashMap，ConcurrentHashMap 通过分段锁的机制，在并发情况下也能有较好的性能。如果在并发情况下也需要保证 Map 的顺序，那就使用 ConcurrentNavigableMap。</p>
-<h3>Collections 工具类</h3>
+<h3 id="Collections-工具类">Collections 工具类</h3>
 <p>在 java.util 包下有一个 Collections 类，这是一个工具类，里面所有的方法都是静态的，而且类不能被实例化。里面提供了各种方法，可以用来更有效率的操作各类容器对象。</p>
 <p>比如对 List 排序：</p>
 <pre><code class="language-java">ArrayList&lt;Integer&gt; list = new ArrayList();
@@ -190,12 +190,12 @@ list.add(8);
 Collections.sort(list);
 </code></pre>
 <p>当然还可以自定义排序的规则，自己实现一个 <code>Comparator</code> 然后作为参数传入就好了。</p>
-<pre><code class="language-java">Collections.sort(list, new Comparator&lt;Integer&gt;() { 
+<pre><code class="language-java">Collections.sort(list, new Comparator&lt;Integer&gt;() &#123; 
     @Override   
-    public int compare(Integer o1, Integer o2) {
+    public int compare(Integer o1, Integer o2) &#123;
         return o1 &gt; o2 ? 1 : 0;    
-    }
- });
+    &#125;
+ &#125;);
 </code></pre>
 <p>还有开箱即用的二分查找算法:</p>
 <pre><code class="language-java">Collections.binarySearch(list, 2);
@@ -235,7 +235,7 @@ Collections.sort(list);
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

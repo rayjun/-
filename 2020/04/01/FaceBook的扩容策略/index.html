@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,7 +57,7 @@
                     <div id="div-body">
                     <div class="post">
     <h1>FaceBook的扩容策略</h1>
-    <p>这是一篇<a href="http://highscalability.com/blog/2010/8/2/7-scaling-strategies-facebook-used-to-grow-to-500-million-us.html" target="_blank" rel="noopener">译文</a>，虽然写这篇文章时， Facebook 用户才增长到 5 亿，但是文章依然值得参考，毕竟即使在如今，用户能到 5 亿的应用依然凤毛麟角。</p>
+    <p>这是一篇<a href="http://highscalability.com/blog/2010/8/2/7-scaling-strategies-facebook-used-to-grow-to-500-million-us.html">译文</a>，虽然写这篇文章时， Facebook 用户才增长到 5 亿，但是文章依然值得参考，毕竟即使在如今，用户能到 5 亿的应用依然凤毛麟角。</p>
 <hr>
 <p>在 2010 年，Facebook 达到了一个里程碑，用户数超过了 5 亿。</p>
 <blockquote>
@@ -75,23 +75,23 @@
 <p>Facebook 是如何处理这个情况的：</p>
 <ol>
 <li>
-<p>人最重要
+<p>人最重要<br>
 系统是通过人来构建和运行的，最好的扩容工具是工程和运维团队，他们可以处理一切事情。</p>
 </li>
 <li>
-<p>水平扩容
+<p>水平扩容<br>
 处理指数级增长的流量需要在许多机器上任意分配负载。对帐户和用户信息等表使用不同的数据库只能使容量增加一倍。这种方法会影响效率，但是效率是与可伸缩性无关的，效率本身不会对可伸缩性产生实质性的影响。</p>
 </li>
 <li>
-<p>快速行动
+<p>快速行动<br>
 在扩容的每一个层面上都会有意外。对于这些意外的情况，需要一个可以处理任何问题的高度水平的、灵活的、足够熟练的跨项目团队。灵活性比任何单独的技术决策都重要。Facebook 通过快速行动也能快速试错，然后找出最好的方法。</p>
 </li>
 <li>
-<p>增量变更
+<p>增量变更<br>
 做出小的改变并且量化结果是快速行动的关键。大的事情需要分解成不同的部分，变更不能成批的出现。这些小变更可以通过少量机器向少量的用户推送。新的系统可以和旧系统并存，通过对新系统结果的量化，慢慢将流量向新系统迁移。整个系统的稳定性会通过增量变更来提高，因为你可以快速的知道一个特定的策略是否有效果。使用较小的增量变化，更容易找到出错的地方。</p>
 </li>
 <li>
-<p>量化一切
+<p>量化一切<br>
 线上环境时收集有用数据的好地方。量化系统和应用程序级别的数据就可以了解发生了什么。检查第95或第99百分位的情况，因为平均值隐藏了重要的问题。</p>
 </li>
 </ol>
@@ -100,11 +100,11 @@
 </blockquote>
 <ol start="6">
 <li>
-<p>小而独立的团队
+<p>小而独立的团队<br>
 小团队可以高效、快速、谨慎地完成工作。举例来说，在最大的照片网站上（<strong>指 Facebook</strong>），只有三个人在负责照片方面的工作。</p>
 </li>
 <li>
-<p>职责控制
+<p>职责控制<br>
 控制职责。如果一个团队为某事负责，他们必须能够控制它。举例来说，Facebook 每天都会向生产环境中发布代码。那么编写代码的人就需要负责修复任何出错的地方。如果写代码和发布代码的职责是分离的，那么写代码的人就无法感受到坏代码会对系统造成什么样的影响。罗伯特（Facebook 的工程主管）说的很好：我们所知道的为 5 亿人做一个好软件的最好方法是让工程师理解他们所做事情的重要性，从而让他们在可以控制的范围内做出好的决定。</p>
 </li>
 </ol>
@@ -133,7 +133,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

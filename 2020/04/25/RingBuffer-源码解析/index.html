@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,21 +58,21 @@
                     <div class="post">
     <h1>RingBuffer 源码解析</h1>
     <p>RingBuffer 主要用于在生产者和消费者之间传递数据。至于核心的控制机制已经被转移到 <code>Sequencer</code> 中了，具体的控制机制后续会有写专门的文章，这里先聚焦 RingBuffer。</p>
-<h2>RingBuffer 基本结构</h2>
+<h2 id="RingBuffer-基本结构">RingBuffer 基本结构</h2>
 <p>缓存行填充技术在 Disruptor 中被大量使用，在这里同样也用到了，关于缓存行填充在上一篇文章中已经姜的很详细了，就是为了将 RingBuffer 中不会修改的值一直缓存在 CPU 缓存中，减少访问内存的次数。</p>
 <p>而且 RingBuffer 中的对象在 Disruptor 启动时就会被创建后，后续会对这些对象进行重复利用，而不用创建新的对象，所以 Disruptor 中也基本不用进行垃圾回收，以下的代码就是用来初始化对象：</p>
-<pre><code class="language-java">private void fill(EventFactory&lt;E&gt; eventFactory){    
-    for (int i = 0; i &lt; bufferSize; i++)    {        
+<pre><code class="language-java">private void fill(EventFactory&lt;E&gt; eventFactory)&#123;    
+    for (int i = 0; i &lt; bufferSize; i++)    &#123;        
         entries[BUFFER_PAD + i] = eventFactory.newInstance();    
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>在初始化 RingBuffer 时，需要指定三个参数，EventFactory，bufferSize 和 WaitStrategy。EventFactory 就是用来生成数组中元素的工厂，如上代码。</p>
 <p>bufferSize 是用来存储消息的数组的容量， 必须是 2 的次方，在 Java 的 HashMap 中，也需要保证容量是 2 的次方，这两个地方的设计是相同的，都是为了可以快速找到目标地址。</p>
 <p>我们知道 RingBuffer 中是使用循环数组来存储消息，获取元素位置的时候一般会使用 &amp; 来获取元素位置，如下：</p>
-<pre><code class="language-java">protected final E elementAt(long sequence){   
+<pre><code class="language-java">protected final E elementAt(long sequence)&#123;   
       return (E) UNSAFE.getObject(entries, REF_ARRAY_BASE + ((sequence &amp; indexMask) &lt;&lt; REF_ELEMENT_SHIFT));
-}
+&#125;
 </code></pre>
 <p>sequence 就是当前消息的序列号，indexMask 的值是 bufferSize - 1。在 bufferSize 的值为 2 的 N 次方的情况下，sequence &amp; indexMask 的值就是元素的位置。在 HashMap 中，如果传入的值不是 2 的 N 次方，会被自动转成最接近传入值的 2 的 N 次方，而在 Disruptor 中，则会直接报错。</p>
 <p>其实利用取余操作也可以获取到元素的位置，但是取余的操作效率是比 &amp; 操作效率低，对于 Disruptor 这么最求性能极致的框架来说，怎么会放过这个压榨性能的机会。</p>
@@ -80,86 +80,86 @@
 <p>创建 RingBuffer 时，可以指定是一个生产者还是多个生产者，但实际就是创建不同的 Sequencer，Sequencer 的原理我们下篇文章再讲：</p>
 <pre><code class="language-java">// 生成支持多个生产者的 RingBuffer， 实际是创建不同的 Sequencer
 public static &lt;E&gt; RingBuffer&lt;E&gt; createMultiProducer( EventFactory&lt;E&gt; factory, int bufferSize, WaitStrategy waitStrategy)
-{
+&#123;
     MultiProducerSequencer sequencer = new MultiProducerSequencer(bufferSize, waitStrategy);
 
     return new RingBuffer&lt;E&gt;(factory, sequencer);
-}
+&#125;
 
 // 生成支持单个生产者的 RingBuffer
 public static &lt;E&gt; RingBuffer&lt;E&gt; createSingleProducer(EventFactory&lt;E&gt; factory, int bufferSize, WaitStrategy waitStrategy)
-{
+&#123;
     SingleProducerSequencer sequencer = new SingleProducerSequencer(bufferSize, waitStrategy);
 
     return new RingBuffer&lt;E&gt;(factory, sequencer);
-}
+&#125;
 </code></pre>
 <p>除了上面两种默认的方式之外，还可以通过 create 方法来创建指定类型的 RingBuffer。</p>
 <p>RingBuffer 的核心功能就是存储和传输消息，其他功能已经被抽离到其他组件中。</p>
-<h2>RingBuffer 如何传输数据</h2>
+<h2 id="RingBuffer-如何传输数据">RingBuffer 如何传输数据</h2>
 <p>RingBuffer 的核心功能就是将消息从生产者取过来，然后给消费者处理。</p>
-<h3>生产者生产数据</h3>
+<h3 id="生产者生产数据">生产者生产数据</h3>
 <p>在 RingBuffer 中有很多 translateAndPublish 重载方法，支持不同的参数，但是核心都是传入一个 <code>EventTranslator</code> 的实现类，并且需要实现 <code>translateTo</code> 方法，也就是说，如何将数据放进 RingBuffer 操作又回到了用户的手上。</p>
 <pre><code class="language-java">private &lt;A&gt; void translateAndPublish(EventTranslatorOneArg&lt;E, A&gt; translator, long sequence, A arg0)
-{
+&#123;
     try
-    {
+    &#123;
         translator.translateTo(get(sequence), sequence, arg0);
-    }
+    &#125;
     finally
-    {
+    &#123;
         sequencer.publish(sequence);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>简单的 EventTranslator 实现如下：</p>
 <pre><code class="language-java">EventTranslatorOneArg&lt;LongEvent, ByteBuffer&gt; TRANSLATOR =
             new EventTranslatorOneArg&lt;LongEvent, ByteBuffer&gt;()
-            {
+            &#123;
                 public void translateTo(LongEvent event, long sequence, ByteBuffer bb)
-                {
+                &#123;
                     event.set(bb.getLong(0));
-                }
-            };
+                &#125;
+            &#125;;
 </code></pre>
 <p>除了利用 EventTranslator，我们也可以自己来实现完整的生产者，如下：</p>
-<pre><code class="language-java">public class LongEventProducer {
+<pre><code class="language-java">public class LongEventProducer &#123;
     private final RingBuffer&lt;LongEvent&gt; ringBuffer;
 
     public LongEventProducer(RingBuffer&lt;LongEvent&gt; ringBuffer)
-    {
+    &#123;
         this.ringBuffer = ringBuffer;
-    }
+    &#125;
 
     public void onData(ByteBuffer bb)
-    {
+    &#123;
         long sequence = ringBuffer.next();  
         try
-        {
+        &#123;
             LongEvent event = ringBuffer.get(sequence); 
             event.set(bb.getLong(0));  
-        }
+        &#125;
         finally
-        {
+        &#123;
             ringBuffer.publish(sequence);
-        }
-    }
-}
+        &#125;
+    &#125;
+&#125;
 </code></pre>
 <p>对比这两种不同的实现可以发现，在将消息存入 RingBuffer 时，需要获取一个 sequence，并且在存入数据后需要调用 publish 方法。</p>
 <p>获取 sequence 表示的就是当前可以存入数据的位置，在存入数据之后，需要通过 publish 方法高速消费者这个位置的消息可用。</p>
-<h3>消费者处理数据</h3>
+<h3 id="消费者处理数据">消费者处理数据</h3>
 <p>在实例化 Disruptor 时，需要配置 Handler：</p>
 <pre><code class="language-java">Disruptor&lt;LongEvent&gt; disruptor = new Disruptor&lt;LongEvent&gt;(factory, bufferSize, DaemonThreadFactory.INSTANCE);
 disruptor.handleEventsWith(new LongEventHandler());
 </code></pre>
 <p>同样，数据具体如何处理，也由用户自己来决定：</p>
-<pre><code class="language-java">public class LongEventHandler implements EventHandler&lt;LongEvent&gt; {
+<pre><code class="language-java">public class LongEventHandler implements EventHandler&lt;LongEvent&gt; &#123;
     public void onEvent(LongEvent event, long sequence, boolean endOfBatch)
-    {
+    &#123;
         System.out.println(&quot;Event: &quot; + event);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>Disruptor 支持多个消费者，所以可以添加多个消费者:</p>
 <pre><code class="language-java">disruptor.handleEventsWith(new LongEventHandler(), new AnotherLongEventHandler());
@@ -188,7 +188,7 @@ disruptor.handleEventsWith(new LongEventHandler());
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,7 +57,7 @@
                     <div id="div-body">
                     <div class="post">
     <h1>使用go开发一个API</h1>
-    <h4>内容准备</h4>
+    <h4 id="内容准备">内容准备</h4>
 <ul>
 <li>
 <p>go1.11</p>
@@ -81,7 +81,7 @@
 <p>nginx</p>
 </li>
 </ul>
-<h4>Govendor</h4>
+<h4 id="Govendor">Govendor</h4>
 <p>项目使用 <code>govendor</code> 作为项目的包管理器,项目的代码结构如下:</p>
 <ul>
 <li>projectname
@@ -91,7 +91,7 @@
 <li>vendor
 <ul>
 <li>vendor.json</li>
-<li>...</li>
+<li>…</li>
 </ul>
 </li>
 <li>tests</li>
@@ -110,11 +110,11 @@
 <blockquote>
 <p>需要注意的是，使用 <code>govendor</code> 所有的代码需要放在 <code>$GOPATH/src/</code> 目录下。</p>
 </blockquote>
-<h4>gin+jwt+xorm 编写api</h4>
+<h4 id="gin-jwt-xorm-编写api">gin+jwt+xorm 编写api</h4>
 <p>项目的<code>api</code>部分使用<code>gin</code>和<code>jwt</code>以及<code>xrom</code>编写。</p>
-<h4>部署</h4>
+<h4 id="部署">部署</h4>
 <p>部署的阶段使用 <code>nginx</code> + <code>supervisord</code> 来完成。将编译完的程序使用 <code>supervisord</code> 管理起来，确保程序不会断线，然后使用 <code>nginx</code> 通过反向代理的方式开放接口，配置方式如下:</p>
-<pre><code class="language-shell">server { 
+<pre><code class="language-shell">server &#123; 
 
 listen 80; 
 
@@ -122,15 +122,15 @@ server_name xxxx;
 
 return 301 https://$host$request_uri; 
 
-} 
+&#125; 
 
-server{ 
+server&#123; 
 
 listen 443; 
 
 server_name xxxx; 
 
-location / { 
+location / &#123; 
 
 proxy_pass http://localhost:8080; 
 
@@ -140,11 +140,11 @@ proxy_buffers 32 32k;
 
 proxy_busy_buffers_size 128k; 
 
-} 
+&#125; 
 
 \#ssl 配置 
 
-} 
+&#125; 
 </code></pre>
 <p>这样就完成了使用 <code>gin</code> 来完成最小的<code>api</code>的发布。</p>
 
@@ -167,7 +167,7 @@ proxy_busy_buffers_size 128k;
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

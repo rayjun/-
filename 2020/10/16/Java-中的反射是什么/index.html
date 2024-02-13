@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -63,20 +63,20 @@
 <p>再到后续的 Java，C# 等语言中都自带了反射框架，这些语言就可以通过反射来实现通用的框架，比如在 Java 的 Spring 中就大量使用了反射。</p>
 <p>这篇文章重点介绍 Java 中的反射。</p>
 <p>本文基于 OpenJDK11</p>
-<h2>1. 反射能干什么</h2>
+<h2 id="1-反射能干什么">1. 反射能干什么</h2>
 <p>在 Java 中，反射可以获取类的定义、属性和方法，并且可以调用这些方法，或者构造对象，甚至可以在运行时修改类的定义。</p>
 <p>先来看一个简单的例子，通过这个例子可以知道反射能做什么，例子中的代码下面会详细讲解：</p>
 <pre><code class="language-java">// 利用反射来执行方法
-public Object methodInvoke(Object o, Method method, Object[] params) {
-    try {
+public Object methodInvoke(Object o, Method method, Object[] params) &#123;
+    try &#123;
         return method.invoke(o, params);
-    } catch (IllegalAccessException e) {
+    &#125; catch (IllegalAccessException e) &#123;
         e.printStackTrace();
-    } catch (InvocationTargetException e) {
+    &#125; catch (InvocationTargetException e) &#123;
         e.printStackTrace();
-    }
+    &#125;
     return null;
-}
+&#125;
 </code></pre>
 <p>使用反射来生成 <code>ArrayList</code> 对象并调用方法：</p>
 <pre><code class="language-java">// 获取 ArrayList 的 Class 对象和构造函数，并生成对象
@@ -86,12 +86,12 @@ ArrayList instance = constructor.newInstance();
 
 // 获取 add 方法，并调用 add 方法添加元素
 Method add = clazz.getDeclaredMethod(&quot;add&quot;, Object.class);
-Object[] params = {&quot;reflection&quot;};
+Object[] params = &#123;&quot;reflection&quot;&#125;;
 methodInvoke(instance, add, params);
 
 // 获取 get 方法，并调用 get 方法获取刚刚添加的元素
 Method get = clazz.getDeclaredMethod(&quot;get&quot;, int.class);
-Object[] params1 = {0};
+Object[] params1 = &#123;0&#125;;
 System.out.println(methodInvoke(instance, get, params1));
 </code></pre>
 <p>如果不使用反射，这个代码很简单：</p>
@@ -102,7 +102,7 @@ System.out.println(list.get(0));
 <p>反射这么麻烦，为什么还要使用它？</p>
 <p>观察一下上面利用反射来执行方法的代码可以发现，<strong>执行任何类的方法，那段代码都不需要修改，而且更重要的是，具体执行的方法还可以在程序运行的过程中改变</strong>。</p>
 <p>反射用起来虽然麻烦，但是反射的动态性提高了 Java 的灵活性，很多框架都依赖反射。</p>
-<h2>2. 相关概念</h2>
+<h2 id="2-相关概念">2. 相关概念</h2>
 <p>在 Java 中，有很多的类，每个类都有自己的属性，方法，构造函数等等信息，这些信息都需要通过一种方式表示，在 Java 中就是通过 Class 对象来表示。</p>
 <p>这里不要把 Class 与 Object 混在一起，Object 是所有类的父类，而 Class 类则不一样，在每个类中，都有一个 Class <strong>对象</strong>来保存类的信息。即使对于 Java 中的原生数据类型，也有自己的 class 对象。</p>
 <pre><code class="language-java">Class clazz = int.class;
@@ -124,9 +124,9 @@ add.getDeclaredAnnotations(); // 获取该方法所有的注解
 <p>还可以获取方法的参数，返回值的类型等等信息。</p>
 <p>所以总的来说，<strong>反射是一个框架，可以帮助获取程序内部的信息</strong>，至于获取这些信息来做什么，就看开发人员的发挥。</p>
 <p>反射虽然很强大，但是性能上相比于普通方式性能上难免会有一些损失，需要注意，在程序执行的过程中，需要尽量少用反射。而且反射连私有方法都可以访问，如果滥用就可能造成程序的不安全。</p>
-<h2>3. 反射的基本用法</h2>
+<h2 id="3-反射的基本用法">3. 反射的基本用法</h2>
 <p>使用行业的第一步，就是获取目标类型的 Class 对象，如果获取不到，那就说明目标类型无法完成类加载，也就不能进行后续的反射操作。</p>
-<h3>获取 Class 对象的方法</h3>
+<h3 id="获取-Class-对象的方法">获取 Class 对象的方法</h3>
 <p>有 4 种方法可以获取 Class 对象。</p>
 <p>通过类的 class 属性:</p>
 <pre><code class="language-java">Class clazz1 = String.class;
@@ -140,7 +140,7 @@ add.getDeclaredAnnotations(); // 获取该方法所有的注解
 <p>对于基本类型的包装类，还有一种方法可以获取 Class 对象：</p>
 <pre><code class="language-java">Class clazz4 = Integer.TYPE;
 </code></pre>
-<h3>创建对象</h3>
+<h3 id="创建对象">创建对象</h3>
 <p>在获取到 Class 对象之后就可以创建对象了，创建对象有两种方式。</p>
 <p>通过 Class 对象直接生成：</p>
 <pre><code class="language-java">Class clazz = String.class;
@@ -154,7 +154,7 @@ String str1 = constructor.newInstance();
 <pre><code class="language-java">Constructor&lt;String&gt; constructor2 = clazz.getConstructor(String.class);
 String str2 = constructor2.newInstance(&quot;String&quot;);
 </code></pre>
-<h3>调用方法</h3>
+<h3 id="调用方法">调用方法</h3>
 <p>在生成了对象之后，自然就可以调用方法，调用的方式和上面的代码一样。</p>
 <p>首先获取 Method，如果方法没有参数，直接获取执行就可以：</p>
 <pre><code class="language-java">Method lengthMethod = clazz.getMethod(&quot;length&quot;);
@@ -164,7 +164,7 @@ lengthMethod.invoke(str2);
 <pre><code class="language-java">Method substringMethod = clazz.getMethod(&quot;substring&quot;, int.class, int.class);
 substringMethod.invoke(str2, 1,2);
 </code></pre>
-<h3>其他工具方法</h3>
+<h3 id="其他工具方法">其他工具方法</h3>
 <p>上面是反射的一些基本用法，当然反射也提供了其他的一些工具方法。</p>
 <p>获取所有已经声明的属性、方法和构造函数，包括 <code>private</code> 的也会被获取出来：</p>
 <pre><code class="language-java">Field[] fields = clazz.getDeclaredFields();
@@ -176,8 +176,8 @@ Constructor[] constructors = clazz.getDeclaredConstructors();
 </code></pre>
 <p>还有其他判断是否接口、注解，获取类的泛型信息等等方法。</p>
 <p>文 / Rayjun</p>
-<h2>REF</h2>
-<p>[1] <a href="https://en.wikipedia.org/wiki/Reflection_(computer_programming)" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Reflection_(computer_programming)</a></p>
+<h2 id="REF">REF</h2>
+<p>[1] <a href="https://en.wikipedia.org/wiki/Reflection_(computer_programming)">https://en.wikipedia.org/wiki/Reflection_(computer_programming)</a></p>
 
 </div>
 
@@ -198,7 +198,7 @@ Constructor[] constructors = clazz.getDeclaredConstructors();
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

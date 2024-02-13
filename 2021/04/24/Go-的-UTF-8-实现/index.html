@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -69,7 +69,7 @@
 </ul>
 <p>通过识别每个字符串的头部来判断占几个字节。</p>
 <p>每个 Unicode 字符都对应一个码点，在字符串中，可以对码点进行转义，使用 <code>\uhhhh</code> 表示 16 位码点，使用 <code>\Uhhhhhhhh</code> 来表示 32 位码点，每一个 h 都代表一个十六进制的数字。</p>
-<p>这里有一点比较特殊，对于码点值小于 256 的文字符号可以使用单个十六进制的数字来表示，比如 'A' 可以使用 '\x41' 来表示，对于大于 256 的码点，就必须使用 \u 或者 \U 来转义。</p>
+<p>这里有一点比较特殊，对于码点值小于 256 的文字符号可以使用单个十六进制的数字来表示，比如 ‘A’ 可以使用 ‘\x41’ 来表示，对于大于 256 的码点，就必须使用 \u 或者 \U 来转义。</p>
 <p>Go 语言对于 UTF-8 的支持很好，这里有一点很有意思，Go 语言的两位作者 Ken Thompson 和  Rob Pike 同时也是 UTF-8 的发明者，Go 语言对 UTF-8 的支持赢在起跑线。</p>
 <p>Go 语言总是使用 UTF-8 来处理源文件，同时也是优先使用 UTF-8 来处理字符串。所以上面说到的那些 Unicode 字符的转义被 Go 直接处理，比如下面三个字符串在 Go 语言中是等价的:</p>
 <pre><code class="language-go">&quot;世界&quot;
@@ -170,7 +170,7 @@ fmt.Println(result) // true
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

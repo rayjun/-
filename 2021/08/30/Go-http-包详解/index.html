@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -58,8 +58,8 @@
                     <div class="post">
     <h1>Go http 包详解</h1>
     <p>Go 语言中的 http 包提供了创建 http 服务或者访问 http 服务所需要的能力，不需要额外的依赖。在这篇文章中，我们会介绍这些功能的使用，以及看一下 http 包的设计思路。</p>
-<h2>1. http 的客户端</h2>
-<h3>1.1 发送普通请求</h3>
+<h2 id="1-http-的客户端">1. http 的客户端</h2>
+<h3 id="1-1-发送普通请求">1.1 发送普通请求</h3>
 <p>在 Go 语言中发送请求很简单，如果不需要额外的配置，可以直接使用 http 包封装的 http Client 发送请求，比如发送 GET 请求：</p>
 <pre><code class="language-go">resp, _ := http.Get(&quot;https://golang.org&quot;)
 defer resp.Body.Close()
@@ -73,118 +73,118 @@ resp, _ := http.Post(&quot;https://golang.org&quot;, &quot;application/json;char
 defer resp.Body.Close()
 </code></pre>
 <p>发送 POST 表单请求：</p>
-<pre><code class="language-go">resp, _ := http.PostForm(&quot;https://golang.org&quot;, url.Values{&quot;username&quot;:{&quot;rayjun&quot;}, &quot;password&quot;:{&quot;password&quot;}})
+<pre><code class="language-go">resp, _ := http.PostForm(&quot;https://golang.org&quot;, url.Values&#123;&quot;username&quot;:&#123;&quot;rayjun&quot;&#125;, &quot;password&quot;:&#123;&quot;password&quot;&#125;&#125;)
 defer resp.Body.Close()
 </code></pre>
 <p><strong>在每个请求发完之后，需要手动关闭响应。</strong></p>
-<h3>1.2 客户端配置</h3>
+<h3 id="1-2-客户端配置">1.2 客户端配置</h3>
 <p>在实际使用的过程中，我们通常不会直接上面的方法，而是会自己做一些 Client 的配置，比如调整超时时间：</p>
-<pre><code class="language-go">client := &amp;http.Client{
+<pre><code class="language-go">client := &amp;http.Client&#123;
 	Timeout: 5 * time.Second,
-}
+&#125;
 resp, _ := client.Get(&quot;https://golang.org&quot;)
 defer resp.Body.Close()
 </code></pre>
 <p>另外在很多时候，我们需要使用 GET 和 POST 之外的 http 方法，那就需要下面这样的配置：</p>
-<pre><code class="language-go">client := &amp;http.Client{
+<pre><code class="language-go">client := &amp;http.Client&#123;
 	Timeout: 5 * time.Second,
-}
+&#125;
 
 req, _ := http.NewRequest(&quot;PUT&quot;, &quot;https://golang.org&quot;, nil)
 resp, _ := client.Do(req)
 defer resp.Body.Close()
 </code></pre>
 <p>比如还需要在请求的 Header 中增加一些字段：</p>
-<pre><code class="language-go">client := &amp;http.Client{
+<pre><code class="language-go">client := &amp;http.Client&#123;
 	Timeout: 5 * time.Second,
-}
+&#125;
 req, _ := http.NewRequest(&quot;GET&quot;, &quot;https://golang.org&quot;, nil)
 req.Header.Add(&quot;User-Id&quot;, &quot;userid123456&quot;)
 resp, _ := client.Do(req)
 defer resp.Body.Close()
 </code></pre>
 <p>或者更进一步，我们需要自定义<strong>传输层</strong>的一些配置：</p>
-<pre><code class="language-go">tr := &amp;http.Transport{
+<pre><code class="language-go">tr := &amp;http.Transport&#123;
 	MaxIdleConns:       10,
 	IdleConnTimeout:    30 * time.Second,
 	DisableCompression: true,
-}
-client := &amp;http.Client{Transport: tr}
+&#125;
+client := &amp;http.Client&#123;Transport: tr&#125;
 resp, _ := client.Get(&quot;https://golang.org&quot;)
 defer resp.Body.Close()
 </code></pre>
 <p>http 包中发送请求，提供了不同层次的配置，满足不同场景的使用。</p>
-<h2>2. http 的服务端</h2>
+<h2 id="2-http-的服务端">2. http 的服务端</h2>
 <p>除了客户端，使用 http 包来创建 http 服务也很方便。</p>
-<h3>2.1 一行代码创建 http 服务</h3>
+<h3 id="2-1-一行代码创建-http-服务">2.1 一行代码创建 http 服务</h3>
 <p>创建一个 http 服务，在 Go 代码中，只需要一行代码：</p>
-<pre><code class="language-go">func main() {
+<pre><code class="language-go">func main() &#123;
 	http.ListenAndServe(&quot;:8080&quot;, nil)
-}
+&#125;
 </code></pre>
 <p>在 main 方法中，写下上面那行代码，然后运行 main 方法，端口号为 8080 的 http 服务就运行起来了， 但目前还处理不了任何请求。</p>
-<h3>2.2 添加请求路径</h3>
+<h3 id="2-2-添加请求路径">2.2 添加请求路径</h3>
 <p>在上面代码的基础上，需要添加一个路径，这样服务才可以开始处理请求：</p>
-<pre><code class="language-go">func main() {
-  http.Handle(&quot;/index&quot;, &amp;CustomerHandler{})
+<pre><code class="language-go">func main() &#123;
+  http.Handle(&quot;/index&quot;, &amp;CustomerHandler&#123;&#125;)
 	http.ListenAndServe(&quot;:8080&quot;, nil)
-}
+&#125;
 
-type CustomerHandler struct {
+type CustomerHandler struct &#123;
 
-}
+&#125;
 
-func (c *CustomerHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+func (c *CustomerHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) &#123;
 	fmt.Println(&quot;implement http server by self&quot;)
 	writer.Write([]byte(&quot;server echo&quot;))
-}
+&#125;
 </code></pre>
 <p>添加了 <code>/index</code> 路径，在这种方式下，需要为每一个请求都定义一个 Handler，然后 Handler 需要实现 ServeHttp 方法。</p>
 <p>Handler 是一个请求处理器，我们如果使用这种方式，就需要为每一个请求的 url 实现一个 Handler，这样实现很繁琐。</p>
 <p>但我们还有另一个选择，就是使用 HandlerFunc，添加另外一个路径：</p>
-<pre><code class="language-go">func main() {
-	http.HandleFunc(&quot;/index&quot;, func(writer http.ResponseWriter, request *http.Request) {
+<pre><code class="language-go">func main() &#123;
+	http.HandleFunc(&quot;/index&quot;, func(writer http.ResponseWriter, request *http.Request) &#123;
 		writer.Write([]byte(&quot;HandleFunc implement&quot;))
-	})
+	&#125;)
 	http.ListenAndServe(&quot;:8080&quot;, nil)
-}
+&#125;
 </code></pre>
 <p>使用这种方式很简洁，值需要实现 HandlerFunc 类型的一个匿名方法就可以了，HandlerFunc 是一个适配器，可以让我们把一个与 ServeHTTP 签名相同的函数作为一个处理器。</p>
 <p>Handler 和 HandlerFunc 都是通过 DefaultServeMux 来实现的。 DefaultServeMux 才是上面服务的核心。</p>
 <p>在上面的代码，http.ListenAndServe 的第二个参数传入的是 nil，通常情况下，这个参数都是 nil，跟进代码，发现这个参数为 nil 的时候，就是使用 DefaultServeMux 来作为服务端的实现：</p>
 <pre><code class="language-go">// server.go
-func (sh serverHandler) ServeHTTP(rw ResponseWriter, req *Request) {
+func (sh serverHandler) ServeHTTP(rw ResponseWriter, req *Request) &#123;
 	handler := sh.srv.Handler
-	if handler == nil {
+	if handler == nil &#123;
 		handler = DefaultServeMux
-	}
-	if req.RequestURI == &quot;*&quot; &amp;&amp; req.Method == &quot;OPTIONS&quot; {
-		handler = globalOptionsHandler{}
-	}
+	&#125;
+	if req.RequestURI == &quot;*&quot; &amp;&amp; req.Method == &quot;OPTIONS&quot; &#123;
+		handler = globalOptionsHandler&#123;&#125;
+	&#125;
 	handler.ServeHTTP(rw, req)
-}
+&#125;
 </code></pre>
 <p>DefaultServeMux 的类型是 ServeMux，这是 Go 语言原生包中 http 服务端的默认实现。ServeMux 同样实现了ServeHttp 这个方法。</p>
 <p>ServeHttp 方法才是整个 http 服务的核心，只要需要处理请求，就必须实现这个方法。Handler 和 HandlerFunc 只是 Go 语言提供的两种实现。</p>
-<h2>3. http 的反向代理</h2>
+<h2 id="3-http-的反向代理">3. http 的反向代理</h2>
 <p>反向代理在开发 Web 应用，特别是开发网关类应用的时候会经常用到， Go 也提供了实现，基本上开箱即用。</p>
-<pre><code class="language-go">func main() {
-	http.HandleFunc(&quot;/formawd&quot;, func(writer http.ResponseWriter, request *http.Request) {
-		director := func(req *http.Request) {
+<pre><code class="language-go">func main() &#123;
+	http.HandleFunc(&quot;/formawd&quot;, func(writer http.ResponseWriter, request *http.Request) &#123;
+		director := func(req *http.Request) &#123;
 			req.URL.Scheme = &quot;https&quot;
 			req.URL.Host = &quot;golang.org&quot;
 			req.URL.Path = &quot;upload&quot;
-		}
+		&#125;
 
-		proxy := &amp;httputil.ReverseProxy{Director: director}
+		proxy := &amp;httputil.ReverseProxy&#123;Director: director&#125;
 		proxy.ServeHTTP(writer, request)
-	})
+	&#125;)
 	
 	http.ListenAndServe(&quot;:8080&quot;, nil)
-}
+&#125;
 </code></pre>
 <p>上面的代码会把所有的请求都转发到一个地方，当然也可以通过配置，将请求转发到不同的地方。</p>
-<h2>4. 小结</h2>
+<h2 id="4-小结">4. 小结</h2>
 <p>Go 语言原生的包就自带了 http 包，这个包提供 http 编程所需要的基础能力，开箱即用，不需要额外的依赖。在实际项目中使用，做个简单的封装即可。而且还自带反向代理的能力，可以很方便的写出一个 API 网关。</p>
 <p>文 / Rayjun</p>
 
@@ -207,7 +207,7 @@ func (sh serverHandler) ServeHTTP(rw ResponseWriter, req *Request) {
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

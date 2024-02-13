@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,31 +57,31 @@
                     <div id="div-body">
                     <div class="post">
     <h1>API系列之JSON-API最新标准</h1>
-    <h3>简介</h3>
+    <h3 id="简介">简介</h3>
 <p>JSON API 是一个客户端应该如何如何请求或者修改资源，以及服务器端如何对这些请求作出回应。</p>
 <p>JSON API 是为了最小化客户端以及服务器端的请求数量以及大量的数据交换。在不牺牲可读性和灵活性的前提下来提升效率。</p>
 <p>JSON API 需要使用 <code>application/vnd.api+json</code> 协议来传输数据。</p>
-<h3>约定</h3>
-<p>文中的这些关键字 &quot;MUST&quot;,&quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHOULD&quot;,&quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;,&quot;NAY&quot; 以及
-&quot;OPTINAL&quot; 都可以在 RFC 2119 标准中可以找到解释。</p>
-<h3>内容限定</h3>
-<h4>客户端职责</h4>
+<h3 id="约定">约定</h3>
+<p>文中的这些关键字 “MUST”,“MUST NOT”, “REQUIRED”, “SHALL”, “SHOULD”,“SHOULD NOT”, “RECOMMENDED”,“NAY” 以及<br>
+“OPTINAL” 都可以在 RFC 2119 标准中可以找到解释。</p>
+<h3 id="内容限定">内容限定</h3>
+<h4 id="客户端职责">客户端职责</h4>
 <p>客户端必须(MUST)在 JSON API 请求的时候都要在请求的头部加上 <code>Content-Type:application/vnd.api+json</code>,不带其他的任何参数。</p>
 <p>客户端在 JSON API 请求的头部的 <code>Accept</code> 中必须(MUST)至少指明一次协议的类型而不带任何的参数。</p>
 <p>客户端必须(MUST)忽略收到的响应为 <code>application/vnd.api+json</code> 类型中 <code>Content-Type</code>所携带的任何参数。</p>
-<h4>服务器端职责</h4>
+<h4 id="服务器端职责">服务器端职责</h4>
 <p>服务器必须(MUST)发送不携带任何参数的 <code>application/vnd.api+json</code> 类型的响应。</p>
 <p>服务器必须(MUST)响应 <code>415 Unsupported Media Type</code> 状态码，如果请求 <code>Content-Type:application/vnd.api+json</code> 中携带任何参数的话。</p>
 <p>服务器必须(MUST)响应 <code>406 Not Acceptable</code> 状态码，如果一个请求的头部的 <code>Accept</code> 的加上了参数的话。</p>
 <pre><code>注意：这个内容协定要求在当前和未来的使用这个协议以及相关扩展的版本中都会存在。
 </code></pre>
-<h3>文档结构</h3>
+<h3 id="文档结构">文档结构</h3>
 <p>这个小节讨论 JSON API 文档的结构。这个协议已经被定义为 <code>application/vnd.api+json</code>。JSON API 文档已经被定义在 JavaScript Object Notation(JSON)[RFC7159]。</p>
 <p>尽管请求和响应使用的是相同的协议类型，某些方面只适合其中的一个，这其中的区别在稍后会谈到。</p>
 <p>除非特殊情况，否则通过这个规格定义的对象不能(MUST NOT)包含其他的任何成员。客户端和服务器的实现必须(MUST)忽略不在这个规范范围内的其他成员。</p>
 <pre><code>注意：这些条件允许规格通过添加改变的方法来进化。
 </code></pre>
-<h4>顶层</h4>
+<h4 id="顶层">顶层</h4>
 <p>一个 JSON 对象必须(MUST)是任何的 JSON API 请求和响应所携带数据的根结构，这个对象定义文档的顶层。</p>
 <p>一个文档必须(MUST)至少包含一个以下的顶层成员:</p>
 <ul>
@@ -110,30 +110,30 @@
 <li>资源对象数组，资源标识对象的数组或者一个 null 的数组，为了请求目标资源集合</li>
 </ul>
 <p>举个例子，下面的数据就是一个单独的资源对象:</p>
-<pre><code>{
-  &quot;data&quot;: {
+<pre><code>&#123;
+  &quot;data&quot;: &#123;
     &quot;type&quot;: &quot;articles&quot;,
     &quot;id&quot;: &quot;1&quot;,
-    &quot;attributes&quot;: {
+    &quot;attributes&quot;: &#123;
       // ... this article's attributes
-    },
-    &quot;relationships&quot;: {
+    &#125;,
+    &quot;relationships&quot;: &#123;
       // ... this article's relationships
-    }
-  }
-}
+    &#125;
+  &#125;
+&#125;
 </code></pre>
 <p>下面就是一个资源的标识对象，指代一些资源:</p>
-<pre><code>{
-  &quot;data&quot;: {
+<pre><code>&#123;
+  &quot;data&quot;: &#123;
     &quot;type&quot;: &quot;articles&quot;,
     &quot;id&quot;: &quot;1&quot;
-  }
-}
+  &#125;
+&#125;
 
 </code></pre>
 <p>一个资源的集合必须用一个数组来表现，即使只有一项内容或者为空。</p>
-<h4>资源对象</h4>
+<h4 id="资源对象">资源对象</h4>
 <p><code>资源对象</code> 在 JSON API 的文档中代表资源。</p>
 <p>一个资源必须(MUST)包含至少以下两个顶层成员:</p>
 <ul>
@@ -149,25 +149,25 @@
 <li><code>meta</code>: 包含对象非属性数据的 <code>meta 对象</code></li>
 </ul>
 <p>一个 <code>article</code> 对象可能是如下的表示:</p>
-<pre><code>{
+<pre><code>&#123;
   &quot;type&quot;: &quot;articles&quot;,
   &quot;id&quot;: &quot;1&quot;,
-  &quot;attributes&quot;: {
+  &quot;attributes&quot;: &#123;
     &quot;title&quot;: &quot;Rails is Omakase&quot;
-  },
-  &quot;relationships&quot;: {
-    &quot;author&quot;: {
-      &quot;links&quot;: {
+  &#125;,
+  &quot;relationships&quot;: &#123;
+    &quot;author&quot;: &#123;
+      &quot;links&quot;: &#123;
         &quot;self&quot;: &quot;/articles/1/relationships/author&quot;,
         &quot;related&quot;: &quot;/articles/1/author&quot;
-      },
-      &quot;data&quot;: { &quot;type&quot;: &quot;people&quot;, &quot;id&quot;: &quot;9&quot; }
-    }
-  }
-}
+      &#125;,
+      &quot;data&quot;: &#123; &quot;type&quot;: &quot;people&quot;, &quot;id&quot;: &quot;9&quot; &#125;
+    &#125;
+  &#125;
+&#125;
 
 </code></pre>
-<h5>唯一标识</h5>
+<h5 id="唯一标识">唯一标识</h5>
 
 </div>
 
@@ -188,7 +188,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

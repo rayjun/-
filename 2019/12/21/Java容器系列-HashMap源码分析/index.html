@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -63,10 +63,10 @@
 <blockquote>
 <p>本文基于 JDK1.8</p>
 </blockquote>
-<h2>成员变量及常量</h2>
+<h2 id="成员变量及常量">成员变量及常量</h2>
 <p>HashMap 是一个 <code>Node[]</code> 数组，每一个下标称之为一个<strong>桶</strong>。</p>
 <p>每一个键值对都是使用 <code>Node</code> 来存储，这是一个单链表的数据结构。每个桶上可以通过链表来存储多个键值对。</p>
-<h3>常量</h3>
+<h3 id="常量">常量</h3>
 <p>HashMap 中用到的常量及其意义如下：</p>
 <pre><code class="language-java">// 初始容量（桶的个数） 2^4 
 static final int DEFAULT_INITIAL_CAPACITY = 1 &lt;&lt; 4; 
@@ -81,7 +81,7 @@ static final int UNTREEIFY_THRESHOLD = 6;
 // 只有桶的个数大于这个值时，树化操作才会真正执行
 static final int MIN_TREEIFY_CAPACITY = 64;
 </code></pre>
-<h3>成员变量</h3>
+<h3 id="成员变量">成员变量</h3>
 <p>HashMap 中用到的成员变量如下：</p>
 <pre><code class="language-java">// HashMap 中的 table，也就是桶
 transient Node&lt;K,V&gt;[] table;
@@ -97,7 +97,7 @@ int threshold;
 final float loadFactor;
 </code></pre>
 <p>table 是一个 Node 数组，<code>length</code> 通常是 $2^n$，但也可以为 0。</p>
-<h2>初始化</h2>
+<h2 id="初始化">初始化</h2>
 <p>HashMap 的初始化其实就只干了两件事：</p>
 <ul>
 <li>确定 threadhold 的值</li>
@@ -123,7 +123,7 @@ return (n &lt; 0) ? 1 : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
 <p>HashMap 在初始化的时候也可以接受一个 Map 对象，然后把传入的 Map 对象中的元素放入当前的容器中。</p>
 <p>除了传入 Map 对象的实例化方式，都不会实际去创建桶数组，这是一种延迟初始化的方式，在插入第一个键值对的时候，会调用 <code>resize()</code> 方法去初始化桶。</p>
 <p>下面来详细看看 <code>resize()</code> 操作。</p>
-<h2>扩容机制</h2>
+<h2 id="扩容机制">扩容机制</h2>
 <p>与 ArrayList 不同，HashMap 没有手动扩容的过程，只会根据容器当前的情况自动扩容。</p>
 <p>扩容操作由 <code>resize()</code> 方法来完成，扩容操作主要干三件事：</p>
 <ul>
@@ -132,18 +132,18 @@ return (n &lt; 0) ? 1 : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
 <li>将所有的元素移到新的桶中</li>
 </ul>
 <blockquote>
-<p><strong>参数说明</strong>
-oldCap: 扩容前桶的个数
-oldThr: 扩容前 threshold 的值
-newCap: 扩容后桶的个数
+<p><strong>参数说明</strong><br>
+oldCap: 扩容前桶的个数<br>
+oldThr: 扩容前 threshold 的值<br>
+newCap: 扩容后桶的个数<br>
 newThr: 扩容后 threshold 的值</p>
 </blockquote>
-<p>扩容流程如下：
+<p>扩容流程如下：<br>
 <img src="hashmap-resize.png" alt=""></p>
 <p>扩容时会新建一个 Node（桶）数组，然后把原容器中的键值对重新作 hash 操作，然后放到新的桶中。</p>
 <p>HashMap 的容量有上限，为 $2^{30}$，也就是 1073741824，桶的个数不会超过这个数，threshold 的最大值是 2147483647，是最大容量的两倍少1。</p>
 <p>这样设置代表这个如果桶的个数达到了最大容量，就不会再进行扩容操作了。</p>
-<h2>具体实现</h2>
+<h2 id="具体实现">具体实现</h2>
 <p><img src="hashmap-con.png" alt=""></p>
 <p>HashMap 的结构图如上，每个桶都是一个链表的头结点，对于 hash 值相同（哈希冲突）的 key，会放在同一个桶上。这也是 HashMap 解决哈希冲突的方法称之为<strong>拉链法</strong>。在 JDK1.8 以后，在插入键值对时，使用的是<strong>尾插法</strong>，而不再是头插法。</p>
 <p>HashMap 与 Hashtable 的功能大致上一致。HashMap 的 key 和 value 都可以为 null。下面是主流 Map 的键值对是否可以为 null 的对比：</p>
@@ -180,7 +180,7 @@ newThr: 扩容后 threshold 的值</p>
 </table>
 <p>HashMap 不是线程安全的。在多线程环境中，需要使用额外的同步机制，比如使用 <code>Map m = Collections.synchronizedMap(new HashMap(...));</code>。</p>
 <p>HashMap 也支持 fail-fast 机制。</p>
-<h3>hash 方法</h3>
+<h3 id="hash-方法">hash 方法</h3>
 <p>hash 方法对 HashMap 非常重要，直接会影响到性能。键值对插入位置由 hash 方法来决定。假设 hash 方法可以让元素在桶上均匀分布，基本操作如 <code>get</code> 和 <code>put</code> 操作就是常量操作时间（$O(1)$）。</p>
 <p>hash 方法需要有两个特点：</p>
 <ul>
@@ -188,12 +188,12 @@ newThr: 扩容后 threshold 的值</p>
 <li>计算量不能太大</li>
 </ul>
 <p>HashMap 中具体实现如下：</p>
-<pre><code class="language-java">static final int hash(Object key) {
+<pre><code class="language-java">static final int hash(Object key) &#123;
     int h;
     return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);
-}
+&#125;
 </code></pre>
-<p><code>&gt;&gt;&gt;</code> 是无符号右移操作，上面已经说到。假设现在有个 key 是 &quot;name&quot;，在我电脑上计算出来的值是：3373707，转变成二进制就是：</p>
+<p><code>&gt;&gt;&gt;</code> 是无符号右移操作，上面已经说到。假设现在有个 key 是 “name”，在我电脑上计算出来的值是：3373707，转变成二进制就是：</p>
 <pre><code class="language-java">0000 0000 0011 0011 0111 1010 1000 1011
 </code></pre>
 <p>右移 16 位后：</p>
@@ -206,79 +206,79 @@ newThr: 扩容后 threshold 的值</p>
 <pre><code class="language-java">index = (n - 1) &amp; hash
 </code></pre>
 <p>index 就是键值对的插入位置。</p>
-<p>hash() 函数其实就是用来使键值对的插入位置足够随机，称之为<strong>扰动函数</strong>，如果对具体的策略感兴趣，可以参考这篇<a href="https://www.todaysoftmag.com/article/1663/an-introduction-to-optimising-a-hashing-strategy" target="_blank" rel="noopener">文章</a>。</p>
+<p>hash() 函数其实就是用来使键值对的插入位置足够随机，称之为<strong>扰动函数</strong>，如果对具体的策略感兴趣，可以参考这篇<a href="https://www.todaysoftmag.com/article/1663/an-introduction-to-optimising-a-hashing-strategy">文章</a>。</p>
 <blockquote>
 <p>注：Object.hashcode() 是一个本地方法，返回对象的内存地址。Object.equals() 方法默认比较对象的内存地址，如果某个类修改了 equals 方法，那么 hashcode 方法也需要修改，要让 equals 和 hascode 的行为是一致的。否在在查找键值对的过程中就会出现 equals 结果是 true， hashcode 却不一样，这样就无法找到键值对。</p>
 </blockquote>
-<h3>容量和装载因子</h3>
+<h3 id="容量和装载因子">容量和装载因子</h3>
 <p>使用 HashMap 时，有两个参数会影响它的性能：<strong>初始容量</strong>和<strong>装载因子</strong>。</p>
 <p>容量是指 HashMap 中桶的个数，初始容量是在创建实例时候所初始化桶的个数。</p>
 <p>装载因子用来决定扩容的<strong>时机</strong>，进行扩容操作时，会把桶的数量设为原来的<strong>两倍</strong>，容器中所有的元素都会重新分配位置，扩容的代价很大，应该尽可能减少扩容操作。</p>
 <p>装载因子的默认值是 0.75，这是权衡<strong>时间性能</strong>和<strong>空间开销</strong>的一个值。装载因子设置的越大，那么空间的开销就会降低，但查找等操作的性能就会下降，反之亦然。</p>
 <p>在初始化 HashMap 的时候，初始容量和装载因子的值必须仔细衡量，以便尽可能减少扩容操作，如果没有特殊的情况，使用默认的参数就可以。</p>
 <p>遍历 HashMap 所需的时间与容器的容量（桶的个数）及元素的数量成正比。如果迭代的时间性能很重要，就不要把<strong>初始容量</strong>设置的太大，也不要把<strong>装载因子</strong>设置的很小。</p>
-<h3>树化操作</h3>
+<h3 id="树化操作">树化操作</h3>
 <p>在讲解具体的方法前，需要了解 HashMap 中一个重要的内部操作：<strong>树化</strong>。</p>
 <p>HashMap 使用拉链法来解决哈希冲突问题。多个键值对被分配到同一个桶的时候，是以链表的方式连接起来。但这样会面临一个问题，如果链表过长，那么 HashMap 的很多操作就无法保持 $O(1)$ 的操作时间。</p>
 <p>极端情况下，所有的键值对在一个桶中。那么 get、remove 等操作的时间复杂度度就都是 $O(n)$。HashMap 的解决方法是用<strong>红黑树</strong>来替代链表，红黑树查询的时间复杂度稳定在 $O(logn)$。</p>
 <p>HashMap 在单个桶的的元素的个数超过 8(TREEIFY_THRESHOLD) 且桶的个数大于 64(MIN_TREEIFY_CAPACITY) 时，会把桶后面的链表转成树（类似于 <code>TreeMap</code>），这个操作称之为树化操作。</p>
 <p>需要注意的是，当单个桶上的元素超过了8个，但桶的个数少于 64 时，不会进行树化操作，而是会进行<strong>扩容</strong>操作，代码如下：</p>
 <pre><code class="language-java">// HashMap.treeifyBin() method
-final void treeifyBin(Node&lt;K,V&gt;[] tab, int hash) {
+final void treeifyBin(Node&lt;K,V&gt;[] tab, int hash) &#123;
     int n, index; Node&lt;K,V&gt; e;
     if (tab == null || (n = tab.length) &lt; MIN_TREEIFY_CAPACITY)
         resize();
     // other code...
-}
+&#125;
 </code></pre>
-<p>树化的过程是把链表的所有节点都替换成 TreeNode，然后再组成一棵红黑树（红黑树的具体构建过程可以查看这篇<a href="https://time.geekbang.org/column/article/68976" target="_blank" rel="noopener">文章</a>）。而且在链表转成树的过程中，每个节点之间的相对关系不会变化，通过节点的 <code>next</code> 变量来保持这个关系。</p>
+<p>树化的过程是把链表的所有节点都替换成 TreeNode，然后再组成一棵红黑树（红黑树的具体构建过程可以查看这篇<a href="https://time.geekbang.org/column/article/68976">文章</a>）。而且在链表转成树的过程中，每个节点之间的相对关系不会变化，通过节点的 <code>next</code> 变量来保持这个关系。</p>
 <p>当树上的节点树少于 6(UNTREEIFY_THRESHOLD) 时，树结构会重新转化成链表。把树的每一个节点换成链表的节点，通过 next 重新组成一个链表：</p>
 <pre><code class="language-java">// HashMap.ubtreeify()
-final Node&lt;K,V&gt; untreeify(HashMap&lt;K,V&gt; map) {
+final Node&lt;K,V&gt; untreeify(HashMap&lt;K,V&gt; map) &#123;
     Node&lt;K,V&gt; hd = null, tl = null;
-    for (Node&lt;K,V&gt; q = this; q != null; q = q.next) {
+    for (Node&lt;K,V&gt; q = this; q != null; q = q.next) &#123;
         Node&lt;K,V&gt; p = map.replacementNode(q, null);
         if (tl == null)
             hd = p;
         else
             tl.next = p;
             tl = p;
-    }
+    &#125;
     return hd;
-}
+&#125;
 </code></pre>
 <p>即使遇到极端情况（所有的键值对在一个桶上），树化操作也会保证 HashMap 的性能也不会退化太多。</p>
-<h3>增删改查操作</h3>
-<p><strong>get 方法：</strong>
+<h3 id="增删改查操作">增删改查操作</h3>
+<p><strong>get 方法：</strong><br>
 get 方法的实际操作是使用 getNode 方法来完成的。</p>
 <pre><code class="language-java">// HashMap.getNode()
-final Node&lt;K,V&gt; getNode(int hash, Object key) {
+final Node&lt;K,V&gt; getNode(int hash, Object key) &#123;
     // 首先检查容器是否为 null 以及 key 在容器中是否存在
     if ((tab = table) != null &amp;&amp; (n = tab.length) &gt; 0 &amp;&amp;
-        (first = tab[(n - 1) &amp; hash]) != null) {
+        (first = tab[(n - 1) &amp; hash]) != null) &#123;
         // 找到相应的桶，从第一个节点开始查找，如果第一个节点不是要找的，后续节点就分成链表或者红黑树进行查找
         if (first.hash == hash &amp;&amp;
             ((k = first.key) == key || (key != null &amp;&amp; key.equals(k))))
             return first;
-        if ((e = first.next) != null) {
+        if ((e = first.next) != null) &#123;
             // 如果链表已经转成了红黑树，则在红黑树中查找
             if (first instanceof TreeNode)
                return ((TreeNode&lt;K,V&gt;)first).getTreeNode(hash, key);
-            do {
+            do &#123;
                 // 如果不是树，则在链表中查找
                 if (e.hash == hash &amp;&amp;
                    ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
                    return e;
-            } while ((e = e.next) != null);
-        }
-    }
-}
+            &#125; while ((e = e.next) != null);
+        &#125;
+    &#125;
+&#125;
 </code></pre>
-<p><strong>put 方法：</strong>
+<p><strong>put 方法：</strong><br>
 用于插入或者更新键值对，实际使用的是 <code>HashMap.putVal()</code> 方法来实现。如果是第一次插入键值对，会触发<strong>扩容</strong>操作。</p>
 <pre><code class="language-java">// HashMap.putVal() 删减了部分代码
 final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
-                   boolean evict) {
+                   boolean evict) &#123;
     Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;
     // 如果是第一次插入键值对，首先会进行扩容操作
     if ((tab = table) == null || (n = tab.length) == 0)
@@ -286,7 +286,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
     // 如果一个桶的还没有插入键值对，则对第一个节点进行初始化
     if ((p = tab[i = (n - 1) &amp; hash]) == null)
         tab[i] = newNode(hash, key, value, null);
-    else {
+    else &#123;
         Node&lt;K,V&gt; e; K k;
         if (p.hash == hash &amp;&amp;
             ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))
@@ -295,43 +295,43 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
         else if (p instanceof TreeNode)
             e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);
         // 否则按照链表的方式插入或者更新节点
-        else {
-            for (int binCount = 0; ; ++binCount) {
-                if ((e = p.next) == null) {
+        else &#123;
+            for (int binCount = 0; ; ++binCount) &#123;
+                if ((e = p.next) == null) &#123;
                    // 如果没有找到键值对，则新建一个节点，把键值对插入
                    p.next = newNode(hash, key, value, null);
                    // 如果链表的长度大于等于 8，就会尝试进行树化操作
                    if (binCount &gt;= TREEIFY_THRESHOLD - 1)
                         treeifyBin(tab, hash);
                         break;
-                }
+                &#125;
                 // 如果找到了 key，则跳出循环
                 if (e.hash == hash &amp;&amp;
                    ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
                    break;
                 p = e;
-            }
-        }
+            &#125;
+        &#125;
         // 如果 key 已经存在，则把 value 更新为新的 value
-        if (e != null) { 
+        if (e != null) &#123; 
            V oldValue = e.value;
            if (!onlyIfAbsent || oldValue == null)
                e.value = value;
             return oldValue;
-        }
-    }
+        &#125;
+    &#125;
     // fail-fast 版本号更新
     ++modCount;
     // 如果容器中元素的数量大于扩容临界值，则进行扩容
     if (++size &gt; threshold)
         resize();
     return null;
-}
+&#125;
 </code></pre>
 <p>remove 方法的实现与 get 方法类似。</p>
 <p>clear 方法会将 map 中所有的桶都置为 null 来清空键值对。</p>
 <p>其他的操作都是组合这几个基本的操作来完成。</p>
-<h3>JDK8 的新特性</h3>
+<h3 id="JDK8-的新特性">JDK8 的新特性</h3>
 <p>在 JDK8 中，Map 中增加了一些新的方法，HashMap 对这些方法都进行了重写，加入了对 fail-fast 机制的支持。</p>
 <p>这些方法是用上面的增删改查方法来实现的。</p>
 <p>getOrDefault 方法，在值不存在的时候，返回一个默认值：</p>
@@ -358,12 +358,12 @@ map.put(&quot;name&quot;, &quot;xiaomi&quot;);
 
 // 方法1：
 Integer age = (Integer)map.get(&quot;key&quot;);
-if (age == null) {
+if (age == null) &#123;
     age = 18;
     map.put(&quot;key&quot;, age);
-}
+&#125;
 // 方法2：
-map.computeIfAbsent(&quot;age&quot;,  k -&gt; {return 18;});
+map.computeIfAbsent(&quot;age&quot;,  k -&gt; &#123;return 18;&#125;);
 </code></pre>
 <p>computeIfPresent 方法则是在键值对存在的情况下，对键值对进行处理，然后再更新 map，下面方法1和方法2功能完全一样：</p>
 <pre><code class="language-java">HashMap&lt;String, Object&gt; map = new HashMap&lt;&gt;();
@@ -375,7 +375,7 @@ Integer age = 18 + 4;
 map.put(&quot;key&quot;, age);
 
 // 方法2：
-map.computeIfPresent(&quot;age&quot;, (k,v) -&gt; {return 18 + 4;});
+map.computeIfPresent(&quot;age&quot;, (k,v) -&gt; &#123;return 18 + 4;&#125;);
 </code></pre>
 <p>merge 方法用来对相同的 key 的 value 进行合并，以下方法1和方法2的功能一致：</p>
 <pre><code class="language-java">HashMap&lt;String, Object&gt; map = new HashMap&lt;&gt;();
@@ -387,9 +387,9 @@ age += 14;
 map.put(&quot;key&quot;, age);
 
 // 方法2：
-map.merge(&quot;age&quot;, 18, (oldVal, newVal) -&gt; {return (Integer)oldVal + (Integer)newVal;});
+map.merge(&quot;age&quot;, 18, (oldVal, newVal) -&gt; &#123;return (Integer)oldVal + (Integer)newVal;&#125;);
 </code></pre>
-<h3>其他功能</h3>
+<h3 id="其他功能">其他功能</h3>
 <p>HashMap 同样也实现了迭代功能，HashMap 中有三个具体 Iterator 的实现：</p>
 <ul>
 <li>KeyIterator: 遍历 map 的 key</li>
@@ -423,7 +423,7 @@ map.merge(&quot;age&quot;, 18, (oldVal, newVal) -&gt; {return (Integer)oldVal + 
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

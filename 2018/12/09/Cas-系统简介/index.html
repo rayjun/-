@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -57,19 +57,19 @@
                     <div id="div-body">
                     <div class="post">
     <h1>Cas 系统简介</h1>
-    <h3>CAS 系统</h3>
-<h4>单点登录</h4>
+    <h3 id="CAS-系统">CAS 系统</h3>
+<h4 id="单点登录">单点登录</h4>
 <p>单点登录（SSO）的全称是 Single Sign On，是指在应用群中只需要登录一次就可以访问该应用群中所有应用的技术。Cas 是 SSO 的一种实现。</p>
-<h4>CAS 基础架构</h4>
+<h4 id="CAS-基础架构">CAS 基础架构</h4>
 <blockquote>
 <p>本文所讨论的 Cas 系统版本是 5.1.x</p>
 </blockquote>
-<h5>1. CAS 系统分为两部分：</h5>
+<h5 id="1-CAS-系统分为两部分：">1. CAS 系统分为两部分：</h5>
 <ul>
 <li><strong>CAS server</strong>: 基于 Spring 框架构建，主要用于让通过认证的用户访问注册了的系统（CAS client）,认证用户的方式通过分发和验证票据（TGT）。</li>
 <li><strong>CAS client</strong>：通常在 CAS server 上注册了应用系统。这些应用系统都可以通过 CAS server 支持的协议与 CAS server 进行通信。</li>
 </ul>
-<h5>2. CAS 支持的协议如下：</h5>
+<h5 id="2-CAS-支持的协议如下：">2. CAS 支持的协议如下：</h5>
 <ul>
 <li>CAS 1, 2, 3</li>
 <li>SAML 1.1, 2</li>
@@ -78,7 +78,7 @@
 <li>OAuth 2.0</li>
 <li>WS Federation</li>
 </ul>
-<h5>3. CAS server 主要组成部分</h5>
+<h5 id="3-CAS-server-主要组成部分">3. CAS server 主要组成部分</h5>
 <ul>
 <li>Web(SpringMVC/SpringWebflow)</li>
 <li>Ticketing</li>
@@ -86,27 +86,27 @@
 </ul>
 <p><strong>Web</strong> 部分主要是与外部进行交互，包括登录页面或者登录的接口，<strong>Ticketing</strong> 部分主要用于票据的分发和验证，<strong>Authentication</strong> 部分主要用于登录的验证过程。在通过验证之后，用户就可以拿到 CAS server 分发的（TGT） 票据。用户拿到票据后，在访问其他的系统时不需要再次进行登录，只需要到 CAS server 验证票据即可。</p>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/cas_architecture.png" alt=""></p>
-<h4>Cas 安装</h4>
+<h4 id="Cas-安装">Cas 安装</h4>
 <p>Cas 系统的安装分为两部分，一部分是 Cas Server 的安装，一部分是 Cas client 的安装。Cas Server 是一个独立的 Java Web 应用。而 Cas client 则支持不同的语言，可以嵌入到不同语言的应用中去。</p>
 <p>官方提供的 Cas Server 是开箱即用的，如果没有需要定制的认证逻辑，基本可以使用官方包直接部署，官方称这种方式为 Overlay 部署方式。具体可以基于 Docker 部署和 Servlet 容器（Tomcat等）进行部署。</p>
 <p>如果采用官方提供的包进行部署，只需要在配置文件里面修改一下数据库账号和密码就可以。</p>
 <p>在部署了 Cas server 系统之后，还需要部署一个 cas-managment Web 应用，这个应用用来管理在 Cas server 中注册的应用。</p>
-<h4>Web 端</h4>
+<h4 id="Web-端">Web 端</h4>
 <p>Cas Server 面向用户的模块采用了 Spring 框架，提供了 SpringMVC 和 SpringWebflow 两种选择。</p>
-<h4>Cas 认证过程</h4>
-<h5>Cas 1.0</h5>
+<h4 id="Cas-认证过程">Cas 认证过程</h4>
+<h5 id="Cas-1-0">Cas 1.0</h5>
 <p>下面这张图展示了 Cas 系统的工作方式，首先，用户在首次访问系统群中的一个应用1时，会跳转到 Cas 系统的登录页面。在用户名和密码得到 Cas 系统的认证了之后，就会拿到 Cas 系统生成一个票据 TGT（Ticket Granting Ticket），然后就会跳转回应用1，应用1会去 Cas server 验证票据的有效性，如果有效就可以访问应用1了。</p>
 <p>接下来如果用户关闭了应用1，在票据的有效期内再次访问了应用1，那么应用这时候只会验证 cookie， 而不需要再次验证票据了。</p>
 <p>但是如果应用此时访问了应用群里的应用2，那么还是需要先跳转到 Cas server 验证票据，验证通过后才会跳转到应用2。</p>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/cas_flow_diagram.png" alt=""></p>
-<h5>Cas 2.0</h5>
+<h5 id="Cas-2-0">Cas 2.0</h5>
 <p>以上的过程是标准的 Cas 认证过程，Cas 还支持通过代理的方式来实现的认证，也就是说，应用不需要直接和 Cas 系统进行通信，只需要和代理进行通信就行。但是产生的票据不是 TGT，在代理服务器上会产生一个 PGT（Proxy Granting Ticket）。在代理认证中，所有的应用不直接通过 Cas server 认证，而是与通过认证的代理应用进行交互。其他的认证的过程与直接通过 Cas server 基本没有差别，疼哦这种方式，可以完成非 Web 应用之间的单点登录。</p>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/cas_proxy_flow_diagram.jpg" alt=""></p>
 <p>通过上面的认证过程，也就完成了单点登录。那么登出功能自然也是要在一个应用中退出之后，在所有其他的应用中也需要退出。在退出的过程中，实际就是将 SSO session（一般存储在redis中） 删除的过程。</p>
-<h4>应用注册</h4>
+<h4 id="应用注册">应用注册</h4>
 <p>每一个嵌入 Cas client 的应用都称之为 service，在 service 接入到 Cas server 之前，都需要在系统中进行注册。需要通过 cas-managment 应用进行注册。</p>
 <p>参考文献:</p>
-<p>【1】<a href="https://apereo.github.io/cas/5.1.x/planning/Architecture.html" target="_blank" rel="noopener">Cas 5.1x 官方文档</a></p>
+<p>【1】<a href="https://apereo.github.io/cas/5.1.x/planning/Architecture.html">Cas 5.1x 官方文档</a></p>
 
 </div>
 
@@ -127,7 +127,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

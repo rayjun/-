@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -94,7 +94,7 @@
 <pre><code class="language-yaml">service: serverless-aap2
 
 custom:
-  tableName: 'users-table-${self:provider.stage}'
+  tableName: 'users-table-$&#123;self:provider.stage&#125;'
   dynamodb:
     start:
       migrate: true
@@ -115,9 +115,9 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource:
-        - { &quot;Fn::GetAtt&quot;: [&quot;UsersDynamoDBTable&quot;, &quot;Arn&quot; ] }
+        - &#123; &quot;Fn::GetAtt&quot;: [&quot;UsersDynamoDBTable&quot;, &quot;Arn&quot; ] &#125;
   #environment:
-    #USERS_TABLE: ${self:custom.tableName}
+    #USERS_TABLE: $&#123;self:custom.tableName&#125;
 plugins:
   - serverless-dynamodb-local
   - serverless-offline
@@ -132,7 +132,7 @@ functions:
           authorizer: aws_iam
       - http: 
           method: ANY
-          path: '{proxy+}'
+          path: '&#123;proxy+&#125;'
           authorizer: aws_iam 
 
 resources:
@@ -154,7 +154,7 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: ${self:custom.tableName}
+        TableName: $&#123;self:custom.tableName&#125;
 </code></pre>
 <p>​</p>
 </li>
@@ -179,7 +179,7 @@ resources:
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

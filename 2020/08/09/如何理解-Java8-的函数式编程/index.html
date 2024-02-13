@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -63,20 +63,20 @@
 <p>函数式编程的定义很晦涩，但是我们可以将函数式编程理解为函数本身可以作为参数进行传递，就是说，参数不仅仅可以是数据，也可以是行为（函数或者方法的实现其实就是逻辑行为）。</p>
 <p>可能是 Java8 步子跨的太大，以至于现在还有很多人没有赶上来，依然用 Java8 在写 Java5 风格的代码。</p>
 <p>这篇文章的目的就是彻底说清楚 Java8 的变化，以及快速全面的使用 Java8 的特性，让 Java 代码优雅起来。</p>
-<h2>函数式接口</h2>
+<h2 id="函数式接口">函数式接口</h2>
 <p>在开始说 Java8 的函数式编程之前，我们需要说明一下，在 Java8 中新增加的一个概念，叫<strong>函数式接口</strong>。</p>
 <p>这个函数式接口是 Java8 实现函数式编程的基础，正是这类接口的存在，才能把函数（方法）当做参数进行传递，至少表面上看起来是这样的，但是实际上传递的还是对象，这个问题我们下面再讨论，先回到函数式接口。</p>
 <p>下面就是一个函数式接口：</p>
-<pre><code class="language-java">public interface Action {
+<pre><code class="language-java">public interface Action &#123;
     public void action();
-}
+&#125;
 </code></pre>
 <p>这个函数式看起来和普通的接口没有什么区别，唯一的区别是函数式接口只能有<strong>一个抽象方法</strong>。</p>
 <p>如果你想让别人立马理解这个接口是函数式接口，可以加上 <code>@FunctionalInterface</code> 注解，这个注解不会提供任何额外的功能，仅仅用来表示这个接口是一个函数式接口。</p>
 <pre><code class="language-java">@FunctionalInterface
-public interface Action {
+public interface Action &#123;
     public void action();
-}
+&#125;
 </code></pre>
 <p>只能有一个抽象方法是为了更方便的把函数作为参数来传递，这个后面再细说。</p>
 <p>我们可以根据自己的需要来定义函数式接口，JDK 为了使用方便，内置了很多函数式接口，日常使用完全够了。</p>
@@ -87,17 +87,17 @@ public interface Action {
 <li>Consumer</li>
 </ul>
 <p>函数式接口其实就这么简单，看到这里你可能还是对函数式接口不是很理解，没关系，现在你仅仅只需要记住<strong>函数式接口就是模板</strong>。</p>
-<h2>Lambda 表达式</h2>
+<h2 id="Lambda-表达式">Lambda 表达式</h2>
 <p>说起 Java8 的函数式编程，很多人都知道 lambda 表达式，这也是 Java8 中最容易被人记住的地方。</p>
 <p>先来通过一个直观的例子来了解一下 lambda，在操作 ArrayList 等数据结构时，我们有可能要对其中的数据进行排序，比如：</p>
-<pre><code class="language-java">Comparator&lt;Integer&gt; comparator = new Comparator&lt;Integer&gt;() {
-    public int compare(Integer i1, Integer i2) {
+<pre><code class="language-java">Comparator&lt;Integer&gt; comparator = new Comparator&lt;Integer&gt;() &#123;
+    public int compare(Integer i1, Integer i2) &#123;
         return i1.comparaTo(i2);
-    }
-};
+    &#125;
+&#125;;
 </code></pre>
 <p>在上面的代码中，真正有用的代码也有比较大小的那行，其他的都是样板代码。在这样的情况下，lambda 就很有用。</p>
-<pre><code class="language-java">Comparator&lt;Integer&gt; comparator = (Integer i1, Integer i2) -&gt; {return i1.compareTo(i2);}
+<pre><code class="language-java">Comparator&lt;Integer&gt; comparator = (Integer i1, Integer i2) -&gt; &#123;return i1.compareTo(i2);&#125;
 </code></pre>
 <p>这样看起来是不是很简单了，但是还是继续优化，可以把返回参数的部分也省略：</p>
 <pre><code class="language-java">Comparator&lt;Integer&gt; comparator = (Integer i1, Integer i2) -&gt; i1.compareTo(i2)
@@ -119,39 +119,39 @@ public interface Action {
 <p>最关键的地方来了，<strong>只要 lambda 和函数式接口方法的签名一致，lambda 表达式就可以作为参数传入到以该函数式接口为参数类型的方法中</strong>。</p>
 <p>来看个详细的例子， <code>Comparator</code> 接口的定义如下：</p>
 <pre><code class="language-java">@FunctionalInterface
-public interface Comparator&lt;T&gt; {
+public interface Comparator&lt;T&gt; &#123;
     int compare(T o1, T o2);
-}
+&#125;
 </code></pre>
 <p>虽然 Comparator 中方法不止一个，但是抽象方法只有 <code>compare</code> 一个，上面的 lambda 完全可以作为 compare 方法的实现，实际上，<strong>lambda 表达式确实是作为函数式接口抽象方法的实现，而且，lambda 表达式为作为整个函数接口的实例</strong>。</p>
 <p>到这里，真相大白，Java 8 的虽然支持了函数式编程，这不代表函数就是 Java中的一等公民了，每一个函数其实还是被包裹成一个对象，对象依然是 Java 中的一等公民。</p>
 <p>所以简单来说，只要 lambda 的表达式的参数和返回类型可以与函数式接口中的抽象方法对的上，lambda 就可以作为该函数式接口的实现进行传递。</p>
 <p>比如上面列举的几种函数式接口，其实就是对一些通用函数的抽象，比如 Function 函数式接口如下：</p>
 <pre><code class="language-java">@FunctionalInterface
-public interface Function&lt;T,R&gt; {
+public interface Function&lt;T,R&gt; &#123;
     R apply(T t);
-}
+&#125;
 </code></pre>
 <p>这种就代表接受一个参数，返回另一个值的函数，只要满足这个要求的 lambda 表达式都可以作为 它的实现。</p>
 <p>再比如 Predicate 接口，代表接受一个参数返回一个布尔值的函数：</p>
 <pre><code class="language-java">@FunctionalInterface
-public interface Predicate&lt;T&gt; {
+public interface Predicate&lt;T&gt; &#123;
     boolean test(T t);
-}
+&#125;
 </code></pre>
 <p>Comsumer 接口表示接受一个参数，什么都不返回的函数：</p>
 <pre><code class="language-java">@FunctionalInterface
-public interface Predicate&lt;T&gt; {
+public interface Predicate&lt;T&gt; &#123;
     boolean test(T t);
-}
+&#125;
 </code></pre>
 <p>如果这样理解起来还是有点困难，那就把这些函数式接口理解为 lambda 表达式的类型。</p>
-<h2>类型检查和类型推断</h2>
+<h2 id="类型检查和类型推断">类型检查和类型推断</h2>
 <p>在上面我们说到了只要函数式接口抽象方法的函数签名与 lambda 一致，那么就可以把 lambda 表达式作为该函数式接口的实现。</p>
 <p>上面的例子中， lambda 的参数类型也是可以省略的，那么 Java 是如何判断 lambda 是否与函数式接口匹配呢？</p>
 <p>如果 lambda 表达式中，参数和返回值的类型都省略之后，需要从使用 lambda 的上下文推断出来。</p>
 <p><img src="1.png" alt=""></p>
-<h2>方法引用</h2>
+<h2 id="方法引用">方法引用</h2>
 <p>本来到这里应该就很完美了，lambda 够简洁，用它写代码，可以省略很多无用的样本代码，但是 lambda 也不完美，因为 lambda 表达式的代码很难复用，而且很多的 lambda 表达式仅仅就是调用了其他的方法。</p>
 <p>这个时候，方法引用就可以派上用场了，比如上面的例子，其实仅仅就是调用了 <code>Integer.compareTo()</code> 方法：</p>
 <pre><code class="language-java">Comparator&lt;Integer&gt; comparator = (i1, i2) -&gt; i1.compareTo(i2)
@@ -161,48 +161,48 @@ public interface Predicate&lt;T&gt; {
 </code></pre>
 <p>使用方法引用的时候，要使用 <code>::</code> ，而且任何方法都可以这样被引用，无论是静态方法还是实例方法。</p>
 <p>方法引用可以被认为是 lambda 的语法糖，使用方法引用可以让代码更加简洁，更直观，看到方法引用的名称就能大概知道代码的逻辑，并且还可以对一些代码进行复用。</p>
-<h2>写出Java8 风格的代码</h2>
+<h2 id="写出Java8-风格的代码">写出Java8 风格的代码</h2>
 <p>在 Java8 之后，很多代码的写法应该摒弃，下面列举一些常见的例子。</p>
-<h3>遍历 List</h3>
+<h3 id="遍历-List">遍历 List</h3>
 <p>Java8 以前：</p>
-<pre><code class="language-java">for(Integer i : list) {
+<pre><code class="language-java">for(Integer i : list) &#123;
     System.out.println(i);
-}
+&#125;
 </code></pre>
 <p>Java8 及以后：</p>
 <pre><code class="language-java">list.forEach(System.out::println);
 </code></pre>
 <p>forEach 接收 Consumer 类型的函数，而 System.out.println() 刚好就符合要求。</p>
-<h3>遍历 Map</h3>
+<h3 id="遍历-Map">遍历 Map</h3>
 <p>Java8 以前：</p>
-<pre><code class="language-java">for (Map.Entry&lt;Integer, Integer&gt; entry : map.entrySet()) {
+<pre><code class="language-java">for (Map.Entry&lt;Integer, Integer&gt; entry : map.entrySet()) &#123;
  
     System.out.println(&quot;Key: &quot; + entry.getKey() + &quot;, Value:&quot; + entry.getValue());
  
-}
+&#125;
 </code></pre>
 <p>Java8 及以后：</p>
-<pre><code class="language-java">map.forEach((k, v) -&gt; {System.out.println(&quot;Key: &quot;+ k +&quot;, Value: &quot;+ v)});
+<pre><code class="language-java">map.forEach((k, v) -&gt; &#123;System.out.println(&quot;Key: &quot;+ k +&quot;, Value: &quot;+ v)&#125;);
 </code></pre>
 <p>这里的 forEach 不是接收 Consumer 类型的函数，而是接收 BiConsumer 类的函数，可以用来处理 map 这种包含 key-value 类型的数据，在大多数场景下，内置的函数式接口以及足够我们使用，只有在一些特殊的场景下才需要自己定制。</p>
 <p>这里也没有现成的方法引用，所以就可以使用 lambda 表达式来实现。</p>
-<h3>执行异步任务</h3>
+<h3 id="执行异步任务">执行异步任务</h3>
 <p>假如要使用线程池来执行任务。</p>
 <p>Java8 以前：</p>
 <pre><code class="language-java">ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, 0, TimeUnit.SECONDS, new ArrayBlockingQueue&lt;Runnable&gt;(2000));
 
-executor.submit(new Runnable() {
-    public void run() {
+executor.submit(new Runnable() &#123;
+    public void run() &#123;
         System.out.println(&quot;Thread pool execute&quot;);
-    }
-}); 
+    &#125;
+&#125;); 
 </code></pre>
 <p>Java8 以后：</p>
 <pre><code class="language-java">ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, 0, TimeUnit.SECONDS, new ArrayBlockingQueue&lt;Runnable&gt;(2000));
 
-executor.submit(() -&gt;{
+executor.submit(() -&gt;&#123;
     System.out.println(&quot;Thread pool execute&quot;);
-});
+&#125;);
 </code></pre>
 <p>也可以使用 lambda 来解决这个问题，Runnable 也是一个函数式接口。</p>
 <p>文 / Rayjun</p>
@@ -226,7 +226,7 @@ executor.submit(() -&gt;{
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

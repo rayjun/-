@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -59,28 +59,28 @@
     <h1>Java 并发编程基础</h1>
     <p>并发编程这种技术在早期是没有的，因为所有的程序都能够独享 CPU、内存和 IO 设备，程序一个个接着执行，谁也不干扰谁，只要程序的逻辑没有出错，得到的结果就是准确的。但是慢慢有人发现：CPU、内存、和 IO 之间速度的差异太大。大致可以描述为：<strong>CPU 一天，内存一年、IO 设备几百年</strong>，所以特别贵的 CPU 和内存在程序执行的过程大多数时候都是空闲的，这就造成了资源的极大浪费。</p>
 <p>后来 Unix 系统提出了 CPU 分时的解决方法，这样就能多个程序在一个 CPU上并发的执行，提高 CPU 的使用效率。所以 Java 中出现的多线程编程是为了更好的利用 CPU 的资源。进程之间的数据都是独享，而线程之间的状态和数据都共享同一个进程的，所以线程之间的切换要比进程之间的切换代价更小。线程是现代操作系统进行任务调度的最小单位。</p>
-<h3>并发编程的三大模块</h3>
+<h3 id="并发编程的三大模块">并发编程的三大模块</h3>
 <p>并发的核心功能都是来自于操作系统的延展。所以在 Java 以及其他的编程语言的并发模块中，背后都有着共同的理论模型。</p>
 <p>在并发编程中，大致可以抽象成三个模块：分别是<strong>分工</strong>、<strong>同步</strong>和<strong>互斥</strong>。</p>
 <p><strong>分工</strong>可以提升任务的执行效率，在 Java 中就是使用多个线程分别去执行不同的任务。在执行任务的过程中，线程之间不是独立存在的，线程之间需要依赖关系的，那么<strong>同步</strong>就是用来调度线程之间的协作，具体的方式就是在一个线程完成工作后通知其他的线程开始工作。多线程的编程方式破坏了编程原本的顺序执行。所以也就引入了<strong>线程安全</strong>问题，也就是正确性问题，线程的安全问题最核心的解决方案就是<strong>互斥</strong>，实现互斥的关键就是<strong>锁</strong>。</p>
-<h3>并发问题的源头</h3>
+<h3 id="并发问题的源头">并发问题的源头</h3>
 <p>但是凡事有利有弊，并发计算带来了很大的好处，提升了系统资源的使用率，让系统可以把一件事又快又好的干完，但是同时也引入了新的问题。</p>
 <p>在电脑只有一颗 CPU 的时候，所有线程都直接对一个缓存就行读写，所以缓存中数据的一致性问题就很好解决了。一个线程对共享变量的修改对其他线程可见，就称之为<strong>可见性</strong>。</p>
 <p>但是在多颗 CPU 的环境下，每个 CPU 有自己的缓存，而且对其他的 CPU 是不可见的，看起的情况就如下所示:</p>
 <p>由于现代操作系统都是通过分时来使用 CPU 的，一个正在运行的线程随时有可能被抢夺 CPU 资源，对编写 Java 程序来说，我们通常感觉 <strong>i++</strong> 已经是一个原子操作了，但是对于 CPU 来说，完成这个操作任然需要 3 步。所以这条语句在执行的过程中就有可能被其他线程抢断，其他线程也有可能访问 <strong>i</strong>，两个线程同时对 <strong>i</strong> 进行了操作，然后导致结果不正确，这个问题就是 <strong>原子性</strong>被破坏了。</p>
 <p>有时候编译器会调整语句的执行顺序。因为顺序的改变也会出现bug。有一个经典的例子就是使用双重检查来创建单例对象。</p>
-<pre><code class="language-java">public class Singleton {
+<pre><code class="language-java">public class Singleton &#123;
   static Singleton instance;
-  static Singleton getInstance(){
-    if (instance == null) {
-      synchronized(Singleton.class) {
+  static Singleton getInstance()&#123;
+    if (instance == null) &#123;
+      synchronized(Singleton.class) &#123;
         if (instance == null)
           instance = new Singleton();
-        }
-    }
+        &#125;
+    &#125;
     return instance;
-  }
-}
+  &#125;
+&#125;
 </code></pre>
 <p>首先检查单例对象是不是存在，如果不存在，就用 <strong>synchronized</strong> 锁住 Class 对象，获得锁之后，再判断一次这个单例对象存不存在，如果不存在，那就创建一个新的单例对象。</p>
 <p>一切看起来都很完美。但是编译器这个时候要出来搞事情，本来实例化一个对象的步骤如下:</p>
@@ -102,8 +102,8 @@
 <li>原子性</li>
 <li>顺序性</li>
 </ul>
-<h3>Java 多线程编程</h3>
-<h4>Java 线程简介</h4>
+<h3 id="Java-多线程编程">Java 多线程编程</h3>
+<h4 id="Java-线程简介">Java 线程简介</h4>
 <p>Java 线程的生命周期如下：</p>
 <p><img src="http://rayjun.oss-cn-beijing.aliyuncs.com/Java/thread/javathread.png" alt=""></p>
 <ul>
@@ -130,7 +130,7 @@
 <li>SingleThreadExecutor: 相当于大小为 1 的 FixedThreadPool</li>
 </ul>
 <p>在线程执行的过程中，可以调用线程的 interrupt() 方法或者 Executor 的 shutdown() 方法来中断线程。</p>
-<h4>Java 进行并发编程</h4>
+<h4 id="Java-进行并发编程">Java 进行并发编程</h4>
 <p>在上面我们聊到，并发编程中涉及到的领域有三类：分工、同步、和互斥。针对这三类问题，Java 中提供完备的工具来完成这些任务：</p>
 <p>在分工和协作方面，<code>java.util.concurrent</code> 中提供了 <code>CountDownLatch</code>、<code>CyclicBarrier</code>、<code>Semahpore</code>、<code>FutureTask</code>、<code>BlockingQueue</code>、<code>ForkJoin</code> 等工具类来帮助进行并发编程。</p>
 <p>在多线程中，如果多个线程对一个共享的数据同时访问会带来<strong>线程安全</strong>问题，线程安全问题是并发编程下必然会出现的问题。</p>
@@ -161,7 +161,7 @@
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -61,37 +61,37 @@
 <p>Java 按照问题的严重程度进行分类，分成 Error和 Exception。Exception 又可以分成 CheckedException 和 RuntimeException。</p>
 <p>Error 和 Exception 都继承了 Throwable。</p>
 <p><img src="exception.png" alt=""></p>
-<h2>Error 和 Exception 的区别</h2>
+<h2 id="Error-和-Exception-的区别">Error 和 Exception 的区别</h2>
 <p>一般来说， Error 是无法恢复的错误，通常会导致程序终止， Error 通常是虚拟机层面的错误。Exception 只要妥善处理，程序就可以继续正常运行。</p>
 <p>一旦出现 Error，程序也就没有恢复的必要了，比如 OutOfMemoryError，说明是机器上的内存不够用了，这个时候任何处理都来不不及，只能停止服务。</p>
 <p>对于 Exception 就需要看情况。上面说到 Exception 可以分为 CheckedException 和 RuntimeException。</p>
 <p>在 Java 中，抛出一个异常很简单，通过 <code>throw</code> 关键字就可以，同时也需要方法后面通过关键字 <code>throws</code> 来表明这个方法会抛出那些异常。</p>
-<pre><code class="language-java">public void throwException() throws Exception {
+<pre><code class="language-java">public void throwException() throws Exception &#123;
     throw new Exception();
-}
+&#125;
 </code></pre>
 <p>在调用这个方法时，就要对这个方法有可能抛出的异常进行处理，有两种处理方法，即可以将异常 通过 <code>try-catch</code> 进行处理，也可以通过 <code>throws</code> 将异常抛向更上层。</p>
 <pre><code class="language-java">//方法1：使用 try-catch 来处理异常
-public void callFunction() {
-    try {
+public void callFunction() &#123;
+    try &#123;
         throwException();
-    } catch (Exception e) {
+    &#125; catch (Exception e) &#123;
         e.printStackTrace();
-    }
-}
+    &#125;
+&#125;
 //方法2：使用 throws 将异常抛向上层
-public void callFunction() throws Exception {
+public void callFunction() throws Exception &#123;
     throwException();
-}
+&#125;
 </code></pre>
 <p>上面提到的异常就是<strong>CheckedException</strong>，需要通过 try-catch 或者 throws 进行处理，否则就无法通过编译。</p>
 <p>下面的代码用于获取一个文件的输入流，在文件不存在的情况下，会抛出 <code>FileNotFoundException</code>。</p>
 <pre><code class="language-java">FileInputStream fis = null;
-try {
+try &#123;
     fis = new FileInputStream(&quot;data.txt&quot;);
-} catch (FileNotFoundException e) {
+&#125; catch (FileNotFoundException e) &#123;
     e.printStackTrace();
-}
+&#125;
 </code></pre>
 <p>这也是 CheckedException 的通用处理方式。</p>
 <pre><code class="language-java">int i = 0;
@@ -102,28 +102,28 @@ int result = 10 / i;
 </code></pre>
 <p>这类异常就是通常所说的　RuntimeException，这类的异常由 JVM 抛出，不需要通过 try-catch 等机制来处理。如果出现这类异常，说明程序的逻辑有问题，可以通过修改代码来防止这类异常发生。</p>
 <pre><code class="language-java">int i = 0;
-if (i != 0) {
+if (i != 0) &#123;
     int result = 10 / i;
-}
+&#125;
 </code></pre>
 <p>类似的 RuntimeException 还有 NullPointerException 以及 ArrayIndexOutOfBoundsException。</p>
-<h2>异常处理</h2>
+<h2 id="异常处理">异常处理</h2>
 <p>通常，Error 和 RuntimeException 不需要进行处理。</p>
 <p>需要进行处理的是 CheckedException，最常用的方式就是使用 try-catch。</p>
 <p>下面的代码表示读取一个文件的内容，如果在读取的过程中发生异常，就会跳转到 catch 模块进行异常处理，而不执行 return 语句。</p>
 <pre><code class="language-java">FileInputStream fis = null;
-try {
+try &#123;
     StringBuilder data = new StringBuilder();
     fis = new FileInputStream(&quot;data.txt&quot;);
     byte[] buffer = new byte[1024];
     int length = 0;
-    while ((length = fis.read(buffer)) != -1) {
+    while ((length = fis.read(buffer)) != -1) &#123;
         data.append(new String(buffer, 0, length));
-    }
+    &#125;
     return data.toString(); // 如果发生异常，那么这里的 return 语句不会执行
-} catch (IOException e) {
+&#125; catch (IOException e) &#123;
     e.printStackTrace();
-}
+&#125;
 return null;
 </code></pre>
 <p>这是如何实现的呢？这个方法完整的字节码如下：</p>
@@ -178,26 +178,26 @@ return null;
 <p>如果在 form 到 to 之间发生了异常，接会直接跳转到 target 的位置开始执行。</p>
 <p>对于文件流，使用过后需要对其进行关闭，否则可能会出现内存泄漏等问题，所以上面的代码还不完善。try-catch-finally 则可以解决这个问题，finallly 中的代码无论是否出现异常都会执行，确保文件流会关闭。</p>
 <pre><code class="language-java">FileInputStream fis = null;
-try {
+try &#123;
     StringBuilder data = new StringBuilder();
     fis = new FileInputStream(&quot;data.txt&quot;);
     byte[] buffer = new byte[1024];
     int length = 0;
-    while ((length = fis.read(buffer)) != -1) {
+    while ((length = fis.read(buffer)) != -1) &#123;
         data.append(new String(buffer, 0, length));
-    }
+    &#125;
     return data.toString();
-} catch (IOException e) {
+&#125; catch (IOException e) &#123;
     e.printStackTrace();
-} finally {
-    try {
-        if (fis != null) {
+&#125; finally &#123;
+    try &#123;
+        if (fis != null) &#123;
             fis.close();
-        }
-    } catch (Exception e) {
+        &#125;
+    &#125; catch (Exception e) &#123;
         e.printStackTrace();
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>如何确保 finally 中的代码一定会执行呢？为了看的更清楚，我将 finally 中的异常改成了 Exception，并且删除了一些无关的字节码：</p>
 <pre><code class="language-java">public java.lang.String readData();
@@ -240,54 +240,54 @@ Exception table:
 <p>在 Java7 以前，finally 中的异常会覆盖前面所抛出的异常，这种情况当然不是我们所想看到的。在 Java7 以后，引入了 Suppressed 异常来解决这个问题，这个特性允许将一个异常附在另一个异常上面，因此抛出的异常中可以附带多个异常信息。</p>
 <p>try-catch 除了可以用来处理异常之外，也可以专门用来处理资源关闭之类的问题。在一些情况下，catch 块也可以省略，直接使用 try-finally:</p>
 <pre><code class="language-java">FileInputStream fis = null;
-try {
+try &#123;
     StringBuilder data = new StringBuilder();
     fis = new FileInputStream(&quot;data.txt&quot;);
-} finally {
-    if (fis != null) {
+&#125; finally &#123;
+    if (fis != null) &#123;
         fis.close();
-    }
-} 
+    &#125;
+&#125; 
 </code></pre>
 <p>代码上面的每次都需要手动的去写 finally 中的代码，这样的样本代码其实毫无意义，无端增加了代码的复杂度。在 Java 7 以后，增加了 try-with-resources 语法糖，上面的代码可以这么写：</p>
-<pre><code class="language-java">try(FileInputStream fis = new FileInputStream(&quot;data.txt&quot;);) {
+<pre><code class="language-java">try(FileInputStream fis = new FileInputStream(&quot;data.txt&quot;);) &#123;
 
     StringBuilder data = new StringBuilder();
     byte[] buffer = new byte[1024];
     int length = 0;
-    while ((length = fis.read(buffer)) != -1) {
+    while ((length = fis.read(buffer)) != -1) &#123;
         data.append(new String(buffer, 0, length));
-    }
+    &#125;
     return data.toString();
-}
+&#125;
 </code></pre>
 <p>这样就可以少写很多的样本代码，需要注意的是，使用 try-with-resource 必须确保这个类实现了 AutoCloseable 接口。</p>
 <p>Java 7 中还提供了一些其他的语法糖，比如使用 catch 来处理多种异常：</p>
-<pre><code class="language-java">try {
+<pre><code class="language-java">try &#123;
   // ...
-} catch (Exception1 | Exception2 e) {
+&#125; catch (Exception1 | Exception2 e) &#123;
   // ...
-}
+&#125;
 </code></pre>
-<h2>断言</h2>
+<h2 id="断言">断言</h2>
 <p>Java 中还有一个特性叫<strong>断言</strong>，也可以用来进项异常情况的处理，使用很简单，如下：</p>
 <pre><code class="language-java">int i = 1;
 assert i &gt; 0;
 </code></pre>
-<p>Java 默认是不打开断言的，也就是说即使你在代码中写上断言代码也是不起作用的，
+<p>Java 默认是不打开断言的，也就是说即使你在代码中写上断言代码也是不起作用的，<br>
 如果要启用断言，要加上虚拟机参数 <code>-ea</code> 来启用断言。</p>
 <p>使用断言有一个问题，如果断言的结果与预期不符合，那么整个程序就会终止运行。</p>
-<p>断言适合在开发和测试阶段使用，用于快速发现以及定位问题，上线之后，可以将断言
+<p>断言适合在开发和测试阶段使用，用于快速发现以及定位问题，上线之后，可以将断言<br>
 禁用，这样就不用反复修改代码了。</p>
-<h2>日志</h2>
+<h2 id="日志">日志</h2>
 <p>日志是 Java 中不可缺少的部分。在大型系统中，日志是最重要的排查工具。JDK 中自带了 <code>java.util.logging.Logger</code>，使用起来很方便：</p>
-<pre><code class="language-java">public class LoggerTest {
+<pre><code class="language-java">public class LoggerTest &#123;
     private static final Logger logger = Logger.getLogger(String.valueOf(LoggerTest.class));
 
-    public static void main(String[] args) {
+    public static void main(String[] args) &#123;
         logger.info(&quot;Logger&quot;);
-    }
-}
+    &#125;
+&#125;
 </code></pre>
 <p>但这个框架在扩展性和性能上都不是很理想，所以出现了很多第三方的日志框架，比如 Log4j，Logback 等。</p>
 
@@ -310,7 +310,7 @@ assert i &gt; 0;
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 

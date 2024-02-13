@@ -30,7 +30,7 @@
       gtag('config', 'G-E9HMN12DB9');
       hljs.highlightAll();
      </script>
-<meta name="generator" content="Hexo 4.2.1"></head>
+<meta name="generator" content="Hexo 7.1.1"></head>
 <body>
     <div class="menu-outer">
         <div class="container">
@@ -59,7 +59,7 @@
     <h1>使用 make 还是 new</h1>
     <p>在 Go 中初始化变量的时候，会用到 make 和 new，如果学习过其他的面向对象语言，比如 Java，可能就会对 new 的使用有点迷惑，Go 中的 new 有着完全不同的含义。</p>
 <p>make 和 new 都涉及到内存的分配，但使用的场景却打不相同。</p>
-<h2>1. make</h2>
+<h2 id="1-make">1. make</h2>
 <p>make 的使用比较简单，用来初始化内置的数据结构，slice、map 和 channel，使用 make 返回的都是引用类型。对于不同的结构，返回的结果不同。</p>
 <p>make 接收的是可变参数，对于不同的类型，使用的参数不同。</p>
 <p>初始化 slice 时，至少需要两个参数，一个是 slice 的类型，另一个是 slice 的 cap 和 len，如果 len 和 cap 不同，就需要使用三个参数：</p>
@@ -78,7 +78,7 @@ fmt.Println(cap(s)) // 10
 <pre><code class="language-go">c := make(chan int, 10)
 </code></pre>
 <p><strong>make 只会用来初始化以上三种数据结构</strong>。</p>
-<h2>2. new</h2>
+<h2 id="2-new">2. new</h2>
 <p>new 的使用就会广泛很多，<strong>new 会为传入的类型分配一块内存，初始化该类型的零值，并返回这个内存的地址</strong>。</p>
 <p>如果想要声明一个 int 类型的变量，并获取到该变量的指针：</p>
 <pre><code class="language-go">var i int
@@ -91,10 +91,10 @@ fmt.Println(*p) // 0
 </code></pre>
 <p>以上的两种方式是等价的。</p>
 <p>除了这些类型，还可以把 new 用在自定的类型上：</p>
-<pre><code class="language-go">type Person struct {
+<pre><code class="language-go">type Person struct &#123;
 	Name string
 	Age  int
-}
+&#125;
 
 p := new(Person)
 p.Name = &quot;ray&quot;
@@ -112,11 +112,11 @@ fmt.Println(*c == nil) // true
 </code></pre>
 <p>使用 new 创建之后的结构都是 nil，这是因为 slice、map 和  channel 都是引用类型，而引用类型的零值就是 nil，这个结果是符合上面对于 new 的描述。</p>
 <p>通常情况下，不应该使用 new 去创建这三种结构，而是使用 make。</p>
-<h2>3. 小结</h2>
+<h2 id="3-小结">3. 小结</h2>
 <p>make 和 new 虽然都用来初始化新变量，但适用的情况却不一样，make <strong>主要用来初始化三种内置的引用类型的数据结构</strong>，而 new 则更通用一些，<strong>主要为一些值类型的变量申请内存</strong>。而且还需要注意一点，make 和 new 都不属于关键，而且内置函数，也就是说，下面的这种代码是合法的：</p>
-<pre><code class="language-go">func Cal(make, new int) int {
+<pre><code class="language-go">func Cal(make, new int) int &#123;
 	return make + new
-}
+&#125;
 </code></pre>
 <p>在这个函数中，就无法使用 make 或者 new 来初始化变量了。</p>
 <p>文 / Rayjun</p>
@@ -140,7 +140,7 @@ fmt.Println(*c == nil) // true
     <div class="bottom-outer">
         <div class="bottom-inner">
             <span>©2024 Rayjun</span>
-            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
         </div>
     </div>
 
