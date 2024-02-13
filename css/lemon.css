@@ -391,6 +391,11 @@ dark {
 	padding-top: 0;
 }
 
+.body-mobile .content-inner {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
 .body-mobile .menu-outer {
 	box-shadow: 0 1px 10px rgba(0,0,0,0.05);
 }
@@ -400,6 +405,11 @@ dark {
 }
 
 .body-mobile .blog-name {
-	margin-left: 50px;
+	margin-left: 20px;
 }
+
+.body-mobile .post h1 {
+	text-align: left;
+}
+
 
