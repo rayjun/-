@@ -6,7 +6,8 @@ function isMobile() {
 
 // isMobile
 if (isMobile()) {
-	console.log("mobile")
+	console.log("mobile");
+	document.body.classList.add("body-mobile")
 } else {
 	console.log("not mobile")
 }
