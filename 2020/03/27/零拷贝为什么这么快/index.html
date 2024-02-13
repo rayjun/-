@@ -2,8 +2,9 @@
 <html lang="zh-Hans">
 <head>
     <title>Rayjun</title>
-    <meta name="description" content="发现自己 - https://rayjun.wtf">
-    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta name="description" content="https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链,web3">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     
         
@@ -15,12 +16,6 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    <!--
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
-
-	
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
--->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
@@ -33,7 +28,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
-    hljs.highlightAll();
+      hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
@@ -60,7 +55,7 @@
                 <div class="content-inner">
                     <div id="local-search-result"></div>
                     <div id="div-body">
-                    <article class="post">
+                    <div class="post">
     <h1>零拷贝为什么这么快</h1>
     <p>文件拷贝是一个很常见的需求，无论是在程序中，还是日常使用计算机。在 Java 中，经常需要实现文件拷贝，而且有一种叫做零拷贝的技术，拷贝文件的效率非常高，在这篇文章中，我来来看一下零拷贝技术是怎么实现的。</p>
 <h2>文件拷贝</h2>
@@ -177,8 +172,7 @@ try (FileInputStream fis = new FileInputStream(originFile);
 <p>nio 的文件拷贝直接在内核态完成，整个过程仅仅需要 2 次上下文切换，所以就节省了很多时间，这个技术也称之为<strong>零拷贝</strong>。</p>
 <p>使用零拷贝技术来拷贝文件不需要用户态的参与，每一次拷贝过程都节省了两次上下文切换和拷贝内存的占用。</p>
 
-</article>
-
+</div>
 
                     </div>
                 </div>
@@ -196,16 +190,20 @@ try (FileInputStream fis = new FileInputStream(originFile);
     </div>
     <div class="bottom-outer">
         <div class="bottom-inner">
-            <span>© 2022 Rayjun</span>
+            <span>©2024 Rayjun</span>
             <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
         </div>
     </div>
-    
+
+    <!--
         
         
 <script src="/js/lemon.js"></script>
 
         
-    
+		 -->
+	
+<script src="/js/lemon.js"></script>
+
 </body>
 </html>

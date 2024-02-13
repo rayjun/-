@@ -2,8 +2,9 @@
 <html lang="zh-Hans">
 <head>
     <title>Rayjun</title>
-    <meta name="description" content="发现自己 - https://rayjun.wtf">
-    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta name="description" content="https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链,web3">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     
         
@@ -15,12 +16,6 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    <!--
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
-
-	
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
--->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
@@ -33,7 +28,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
-    hljs.highlightAll();
+      hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
@@ -60,7 +55,7 @@
                 <div class="content-inner">
                     <div id="local-search-result"></div>
                     <div id="div-body">
-                    <article class="post">
+                    <div class="post">
     <h1>Redis集群是如何运行的</h1>
     <p>Redis 在线上环境使用的时候，基本不会使用单机，而是会使用多台机器来配合使用，以便提高 Redis 的可靠性。</p>
 <p>多机器情况下，Redis 有三种使用方式：</p>
@@ -102,8 +97,7 @@
 <p>需要注意的是，Redis 的 16348 个 slot 都必须处在上线状态，整个集群才能对外提供服务，因为 slot 会分配到每一个主节点，如果 Redis 集群中一个主节点及其从节点都挂了，就会导致整个 redis 集群挂掉。</p>
 <p>slot 的数量最大为16384，所以一个 Redis 集群中主节点的最大个数是 16384，但每个主节点又可以有多个从节点，这个数量没有限制。</p>
 
-</article>
-
+</div>
 
                     </div>
                 </div>
@@ -121,16 +115,20 @@
     </div>
     <div class="bottom-outer">
         <div class="bottom-inner">
-            <span>© 2022 Rayjun</span>
+            <span>©2024 Rayjun</span>
             <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
         </div>
     </div>
-    
+
+    <!--
         
         
 <script src="/js/lemon.js"></script>
 
         
-    
+		 -->
+	
+<script src="/js/lemon.js"></script>
+
 </body>
 </html>

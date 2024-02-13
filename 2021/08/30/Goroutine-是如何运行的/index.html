@@ -2,8 +2,9 @@
 <html lang="zh-Hans">
 <head>
     <title>Rayjun</title>
-    <meta name="description" content="发现自己 - https://rayjun.wtf">
-    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta name="description" content="https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链,web3">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     
         
@@ -15,12 +16,6 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    <!--
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
-
-	
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
--->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
@@ -33,7 +28,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
-    hljs.highlightAll();
+      hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
@@ -60,7 +55,7 @@
                 <div class="content-inner">
                     <div id="local-search-result"></div>
                     <div id="div-body">
-                    <article class="post">
+                    <div class="post">
     <h1>Goroutine 是如何运行的</h1>
     <p>在 Go 语言中，没有线程，只有 goroutine，这也是 Go 语言原生支持高并发的关键。 goroutine 是 Go 语言对协程的实现。goroutine 非常轻量级，一般只有几 Kb 的大小，而一个线程最小都有 1 M。</p>
 <p>goroutine 本身只是一个数据结构，真正让 goroutine 运行起来的是<strong>调度器</strong>。</p>
@@ -102,8 +97,7 @@
 <p>为了让 goroutine 的运行更有效率，Go 实现了一个用户态的调度器，这个调度器充分利用现代计算机的多核特性，同时让多个 goroutine 运行，同时 goroutine 设计的很轻量级，调度和上下文切换的代价都比较小。 而且利用 work stealing 和 hand off 机制，对线程进行复用，避免了线程的重复创建。</p>
 <p>文 / Rayjun</p>
 
-</article>
-
+</div>
 
                     </div>
                 </div>
@@ -121,16 +115,20 @@
     </div>
     <div class="bottom-outer">
         <div class="bottom-inner">
-            <span>© 2022 Rayjun</span>
+            <span>©2024 Rayjun</span>
             <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
         </div>
     </div>
-    
+
+    <!--
         
         
 <script src="/js/lemon.js"></script>
 
         
-    
+		 -->
+	
+<script src="/js/lemon.js"></script>
+
 </body>
 </html>

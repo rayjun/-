@@ -2,8 +2,9 @@
 <html lang="zh-Hans">
 <head>
     <title>Rayjun</title>
-    <meta name="description" content="发现自己 - https://rayjun.wtf">
-    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta name="description" content="https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链,web3">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     
         
@@ -15,12 +16,6 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    <!--
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
-
-	
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
--->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
@@ -33,7 +28,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
-    hljs.highlightAll();
+      hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
@@ -60,7 +55,7 @@
                 <div class="content-inner">
                     <div id="local-search-result"></div>
                     <div id="div-body">
-                    <article class="post">
+                    <div class="post">
     <h1>Java基础之如何取舍Joda与 Java8 日期库</h1>
     <p>在 Java8 以前，时间和日期的类库很难用，而且有线程安全等诸多问题。</p>
 <p>Joda time 弥补了 Java 在这方面的不足，但是在 Java8 时，增加了 <code>java.time</code> 包，对 Java 在日期 API 方面的进行了增强，这些代码实现了 JSR-310 的标准。Joda 的官方推荐迁移到 Java8 的时间类库上来。</p>
@@ -252,8 +247,7 @@ dt = new DateTime(jdkGCal);
 <p>从设计上来说 Java time 都不再使用 new 来创建实例，而是使用工厂方法来创建实例。这点上比 Joda time 的设计要更好，而且更加安全。</p>
 <p>既然 Joda time 都推荐迁移回 Java time 了，那么最终肯定是要迁移的。但是目前来说，我觉得 Joda time 用起来更加顺手一些，暂时还会继续使用这个。</p>
 
-</article>
-
+</div>
 
                     </div>
                 </div>
@@ -271,16 +265,20 @@ dt = new DateTime(jdkGCal);
     </div>
     <div class="bottom-outer">
         <div class="bottom-inner">
-            <span>© 2022 Rayjun</span>
+            <span>©2024 Rayjun</span>
             <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
         </div>
     </div>
-    
+
+    <!--
         
         
 <script src="/js/lemon.js"></script>
 
         
-    
+		 -->
+	
+<script src="/js/lemon.js"></script>
+
 </body>
 </html>

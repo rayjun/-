@@ -3,10 +3,11 @@ body {
   background:#FFF;
   font-family: 'Open Sans', 'Helvetica Neue', Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', sans-serif;
   line-height: 1.5;
-  font-size: 17px;
+  font-size: 1rem;
   word-wrap: break-word;
   color: #2a3a4a;
   margin-top: 100px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 img {
@@ -58,7 +59,7 @@ p > a {
 	color: #706b6b;
 }
 
-html.dark {
+dark {
 	--color-anchor: #77e1cd;
     --color-bg: #1c1c1c;
     --color-blockquote-text: #c0bcbc;
@@ -75,7 +76,7 @@ html.dark {
 }
 
 .blog-name {
-  font-size: 24px;
+  font-size: 1.5rem;
   display: inline-block;
 }
 
@@ -113,7 +114,7 @@ html.dark {
 
 .menu {
   margin: 0;
-  font-size: 18px;
+  font-size: 1.1rem;
   height: auto;
   margin-left: 30px;
   display: inline-block;
@@ -171,7 +172,7 @@ html.dark {
 .post .code,
 .post pre {
   font-family: monospace, monospace;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .post hr {
@@ -194,40 +195,40 @@ html.dark {
 }
 
 .post h1 {
-  font-size: 32px;
+  font-size: 2rem;
   font-weight: 600;
   margin-bottom: 40px;
   text-align: center;
 }
 
 .post h2 {
-  font-size: 28px;
+  font-size: 1.8rem;
   font-weight: 500;
   margin-top: 30px;
   margin-bottom: 5px;
 }
 
 .post h3 {
-  font-size: 24px;
+  font-size: 1.6rem;
   font-weight: 400;
   margin-top: 20px;
   margin-bottom: 5px;
 }
 
 .post h4 {
-  font-size: 20px;
+  font-size: 1.2rem;
   font-weight: 600;
   margin: 20px 0;
 }
 
 .post h5 {
-  font-size: 18px;
+  font-size: 1.1rem;
   font-weight: 600;
   margin: 10px 0;
 }
 
 .post h6 {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
 }
 
@@ -287,7 +288,6 @@ html.dark {
 }
 
 .bottom-outer {
-  margin-left: 50px; 
   text-align: center;
   padding: 50px;
 }
@@ -377,3 +377,29 @@ html.dark {
 .search-keyword {
   color: red;
 }
+
+
+/**
+ * mobile
+ */
+.body-mobile .menu-outer .container,
+.body-mobile .content .container{
+	width: 100%;
+}
+
+.body-mobile .content-left {
+	padding-top: 0;
+}
+
+.body-mobile .menu-outer {
+	box-shadow: 0 1px 10px rgba(0,0,0,0.05);
+}
+
+.body-mobile .menu-inner{
+	display: none;
+}
+
+.body-mobile .blog-name {
+	margin-left: 50px;
+}
+

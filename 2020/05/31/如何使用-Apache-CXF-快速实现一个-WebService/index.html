@@ -2,8 +2,9 @@
 <html lang="zh-Hans">
 <head>
     <title>Rayjun</title>
-    <meta name="description" content="发现自己 - https://rayjun.wtf">
-    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta name="description" content="https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链,web3">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     
         
@@ -15,12 +16,6 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    <!--
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
-
-	
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
--->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
@@ -33,7 +28,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
-    hljs.highlightAll();
+      hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
@@ -60,7 +55,7 @@
                 <div class="content-inner">
                     <div id="local-search-result"></div>
                     <div id="div-body">
-                    <article class="post">
+                    <div class="post">
     <h1>如何使用 Apache CXF 快速实现一个 WebService</h1>
     <p>在单体架构向分布式架构演进的过程中，跨进程的通信成为刚需，如果直接利用 Socket 进行通信，那么就会使得编程变得很复杂。</p>
 <p>在 1984 年，Bruce Jay Nelson 提出了<a href="https://dl.acm.org/doi/pdf/10.1145/2080.357392" target="_blank" rel="noopener">跨进程通信</a>的标准，也就是我们通常说的 RPC(Remote Procedure Call)。后面所有的所有的 RPC 框架都是通过这个标准来设计的。</p>
@@ -246,8 +241,7 @@ System.out.println(&quot;Server : &quot; + reply); // Server: hello rayjun
 <p>然后使用 <code>mvn jetty:run-war</code>，服务端就运行起来了，客户端的代码不需要变，就可以很轻松的访问服务了。</p>
 <p>到这里，利用 CXF 就把服务的脚手架搭建起来了，就可以根据自己的需要加上其他的配置或者开始业务逻辑的开发。</p>
 
-</article>
-
+</div>
 
                     </div>
                 </div>
@@ -265,16 +259,20 @@ System.out.println(&quot;Server : &quot; + reply); // Server: hello rayjun
     </div>
     <div class="bottom-outer">
         <div class="bottom-inner">
-            <span>© 2022 Rayjun</span>
+            <span>©2024 Rayjun</span>
             <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
         </div>
     </div>
-    
+
+    <!--
         
         
 <script src="/js/lemon.js"></script>
 
         
-    
+		 -->
+	
+<script src="/js/lemon.js"></script>
+
 </body>
 </html>

@@ -2,8 +2,9 @@
 <html lang="zh-Hans">
 <head>
     <title>Rayjun</title>
-    <meta name="description" content="发现自己 - https://rayjun.wtf">
-    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta name="description" content="https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链,web3">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     
         
@@ -15,12 +16,6 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    <!--
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
-
-	
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
--->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
@@ -33,7 +28,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
-    hljs.highlightAll();
+      hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
@@ -60,7 +55,7 @@
                 <div class="content-inner">
                     <div id="local-search-result"></div>
                     <div id="div-body">
-                    <article class="post">
+                    <div class="post">
     <h1>Go 并发编程-channel 连接一切</h1>
     <p>在上一篇文章中，我们介绍了 Go 并发编程的基础—goroutine，同时也介绍 goroutine 的几种使用方式，但没有说明 goroutine 之间是如何通信的。</p>
 <p>Go 语言中有一句经典的话，<strong>不要通过共享内存来通信，而应该通过通信来共享内存</strong>。这个原则让 channel 成为了 Go 语言中非常重要的一个组件。</p>
@@ -178,8 +173,7 @@ func sendData(sendCh chan&lt;- int) {
 <p>这篇文章介绍了通道，通道对于 Go 语言来说很重要，是实现高并发的基础，通道为 goroutine 之间提供了一种高效安全的通信方式。但在使用通道的时候需要注意死锁问题。</p>
 <p>文 / Rayjun</p>
 
-</article>
-
+</div>
 
                     </div>
                 </div>
@@ -197,16 +191,20 @@ func sendData(sendCh chan&lt;- int) {
     </div>
     <div class="bottom-outer">
         <div class="bottom-inner">
-            <span>© 2022 Rayjun</span>
+            <span>©2024 Rayjun</span>
             <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
         </div>
     </div>
-    
+
+    <!--
         
         
 <script src="/js/lemon.js"></script>
 
         
-    
+		 -->
+	
+<script src="/js/lemon.js"></script>
+
 </body>
 </html>

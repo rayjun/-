@@ -2,8 +2,9 @@
 <html lang="zh-Hans">
 <head>
     <title>Rayjun</title>
-    <meta name="description" content="发现自己 - https://rayjun.wtf">
-    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta name="description" content="https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链,web3">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     
         
@@ -15,12 +16,6 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    <!--
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
-
-	
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
--->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
@@ -33,7 +28,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
-    hljs.highlightAll();
+      hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
@@ -60,7 +55,7 @@
                 <div class="content-inner">
                     <div id="local-search-result"></div>
                     <div id="div-body">
-                    <article class="post">
+                    <div class="post">
     <h1>Java容器系列-ConcurrentHashMap源码分析</h1>
     <p>ConcurrentHashMap 用法上与 HashMap 差别不大，但 ConcurrentHashMap 是线程安全的，可以在多线程环境中使用。这篇文章主要会说明 ConcurrentHashMap 专有的一些特点，与 HashMap 类似部分将不再赘述。</p>
 <p><img src="concurrenthashmap-class.png" alt=""></p>
@@ -539,8 +534,7 @@ final long sumCount() {
 <p>另外 ConcurrentHashMap 使用的是 fail-safe 的机制，也就是说在迭代的过程中如果容器中的元素变化，也不会抛出 ConcurrentModificationException 异常。</p>
 <p>最后说一下迭代器的问题，KeySetView，ValuesView，EntrySetView 这三个类分别可以迭代键、值、和键值对。具体的实现相对比较简单，而且对于迭代的过程也没有加上并发的控制，所以最后遍历的结果也不一定是准确的。</p>
 
-</article>
-
+</div>
 
                     </div>
                 </div>
@@ -558,16 +552,20 @@ final long sumCount() {
     </div>
     <div class="bottom-outer">
         <div class="bottom-inner">
-            <span>© 2022 Rayjun</span>
+            <span>©2024 Rayjun</span>
             <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
         </div>
     </div>
-    
+
+    <!--
         
         
 <script src="/js/lemon.js"></script>
 
         
-    
+		 -->
+	
+<script src="/js/lemon.js"></script>
+
 </body>
 </html>

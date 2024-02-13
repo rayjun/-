@@ -1,16 +1,15 @@
 
-function highlightCode() {
-    hljs.initHighlightingOnLoad();
-    var pres = document.querySelectorAll("figure");
-    hljs.configure({
-        languages: ["java", "javascript"]
-    });
-    for (var i = 0; i < pres.length; i++) {
-        hljs.highlightBlock(pres[i]);
-    }
+function isMobile() {
+    let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS)/i);
+    return flag;
 }
-highlightCode();
 
+// isMobile
+if (isMobile()) {
+	console.log("mobile")
+} else {
+	console.log("not mobile")
+}
 
 function getByClass(parent, cls){
     if(parent.getElementsByClassName){

@@ -2,8 +2,9 @@
 <html lang="zh-Hans">
 <head>
     <title>Rayjun</title>
-    <meta name="description" content="发现自己 - https://rayjun.wtf">
-    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta name="description" content="https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链,web3">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     
         
@@ -15,12 +16,6 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    <!--
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
-
-	
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
--->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
@@ -33,7 +28,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
-    hljs.highlightAll();
+      hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
@@ -60,7 +55,7 @@
                 <div class="content-inner">
                     <div id="local-search-result"></div>
                     <div id="div-body">
-                    <article class="post">
+                    <div class="post">
     <h1>Go Modules 常见使用陷阱</h1>
     <p>Go Modules 是 Go 官方推出的依赖管理工具，Go Modules 的使用可以参见我之前翻译的<a href="https://">官方博客</a>。</p>
 <p>Go Modules 在使用的过程中还是会有一些坑，这篇文章将会介绍一些我踩过的坑。</p>
@@ -116,8 +111,7 @@ go get -u github.com/rayjun/go-mod-demo@v1.0.1 # 获取最新的代码
 <p>对于一个良好的 Go Modules，应该使用 master 分支 + 多 tag 的形式来管理代码，意思就是 master 保持最新的代码，然后每一个已经发布的代码使用 tag 的形式发布出来。tag 的版本号应该符合语义版本号的规则。</p>
 <p>文/Rayjun</p>
 
-</article>
-
+</div>
 
                     </div>
                 </div>
@@ -135,16 +129,20 @@ go get -u github.com/rayjun/go-mod-demo@v1.0.1 # 获取最新的代码
     </div>
     <div class="bottom-outer">
         <div class="bottom-inner">
-            <span>© 2022 Rayjun</span>
+            <span>©2024 Rayjun</span>
             <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
         </div>
     </div>
-    
+
+    <!--
         
         
 <script src="/js/lemon.js"></script>
 
         
-    
+		 -->
+	
+<script src="/js/lemon.js"></script>
+
 </body>
 </html>

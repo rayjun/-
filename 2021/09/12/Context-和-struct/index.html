@@ -2,8 +2,9 @@
 <html lang="zh-Hans">
 <head>
     <title>Rayjun</title>
-    <meta name="description" content="发现自己 - https://rayjun.wtf">
-    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta name="description" content="https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链,web3">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     
         
@@ -15,12 +16,6 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    <!--
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
-
-	
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
--->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
@@ -33,7 +28,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
-    hljs.highlightAll();
+      hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
@@ -60,7 +55,7 @@
                 <div class="content-inner">
                     <div id="local-search-result"></div>
                     <div id="div-body">
-                    <article class="post">
+                    <div class="post">
     <h1>Context 和 struct</h1>
     <p>原文地址：<a href="https://go.dev/blog/context-and-structs" target="_blank" rel="noopener">https://go.dev/blog/context-and-structs</a></p>
 <p>在很多 Go 的 API 中，特别是新的 API，函数或者方法的第一个参数通常是 <code>context.Context</code>。context.Context 可以在不同的 API 之间传递一些信号，比如 deadline、调用者的取消信号，也可以传递一些请求范围内的数据。在一个库需要直接或者间接的与数据库、远程 API 等等远程服务进行交互的时候会用到。</p>
@@ -155,8 +150,7 @@ func (c *Client) CallContext(ctx context.Context) error {
 <p>当在设计一个带 context 的 API 时，记住一点：通过参数传递 context，不要把它存在 struct 中。</p>
 <p>文 / Rayjun</p>
 
-</article>
-
+</div>
 
                     </div>
                 </div>
@@ -174,16 +168,20 @@ func (c *Client) CallContext(ctx context.Context) error {
     </div>
     <div class="bottom-outer">
         <div class="bottom-inner">
-            <span>© 2022 Rayjun</span>
+            <span>©2024 Rayjun</span>
             <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
         </div>
     </div>
-    
+
+    <!--
         
         
 <script src="/js/lemon.js"></script>
 
         
-    
+		 -->
+	
+<script src="/js/lemon.js"></script>
+
 </body>
 </html>

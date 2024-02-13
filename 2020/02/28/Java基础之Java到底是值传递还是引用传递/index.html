@@ -2,8 +2,9 @@
 <html lang="zh-Hans">
 <head>
     <title>Rayjun</title>
-    <meta name="description" content="发现自己 - https://rayjun.wtf">
-    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta name="description" content="https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链,web3">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     
         
@@ -15,12 +16,6 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    <!--
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
-
-	
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
--->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
@@ -33,7 +28,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
-    hljs.highlightAll();
+      hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
@@ -60,7 +55,7 @@
                 <div class="content-inner">
                     <div id="local-search-result"></div>
                     <div id="div-body">
-                    <article class="post">
+                    <div class="post">
     <h1>Java基础之Java到底是值传递还是引用传递</h1>
     <p>Java 中有一个很经典但是一直争论不休的问题。就是 Java 在传参时到底是传递值还是传递引用。</p>
 <p>在讨论到底是值传递还是引用传递之前，先来准确定义一下<strong>值</strong>和<strong>引用</strong>。</p>
@@ -175,8 +170,7 @@ public void func2(ParamObject a) {
 <p>也与上面第三个例子的结果表现一致。所以在 Java 中参数传递的方式与赋值完全一样。都是拷贝原变量中的内容，这种方式就是<strong>值传递</strong>。如果在传递的过程中不是通过副本，而是直接传递变量本身，这种方式称之为<strong>引用传递</strong>。</p>
 <p>所以说 Java 中的参数传递是<strong>值传递</strong>。</p>
 
-</article>
-
+</div>
 
                     </div>
                 </div>
@@ -194,16 +188,20 @@ public void func2(ParamObject a) {
     </div>
     <div class="bottom-outer">
         <div class="bottom-inner">
-            <span>© 2022 Rayjun</span>
+            <span>©2024 Rayjun</span>
             <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
         </div>
     </div>
-    
+
+    <!--
         
         
 <script src="/js/lemon.js"></script>
 
         
-    
+		 -->
+	
+<script src="/js/lemon.js"></script>
+
 </body>
 </html>

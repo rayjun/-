@@ -2,8 +2,9 @@
 <html lang="zh-Hans">
 <head>
     <title>Rayjun</title>
-    <meta name="description" content="发现自己 - https://rayjun.wtf">
-    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta name="description" content="https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链,web3">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     
         
@@ -15,12 +16,6 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    <!--
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
-
-	
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
--->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
@@ -33,7 +28,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
-    hljs.highlightAll();
+      hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
@@ -60,7 +55,7 @@
                 <div class="content-inner">
                     <div id="local-search-result"></div>
                     <div id="div-body">
-                    <article class="post">
+                    <div class="post">
     <h1>Spring系列之依赖注入</h1>
     <p>Spring 中所有的 Bean 都是通过容器来进行管理的。每个 POJO 都可以是一个 Spring Bean。容器会管理 Bean 的依赖关系，这种依赖关系有可能是 Bean 之间的，也有可能是 Bean 对配置数据的依赖。在使用 Spring 的时候，开发者需要做的就是让 Spring 容器知道这些依赖关系，然后剩下的事情交给 Spring 容器就行了。</p>
 <p><img src="spring-container.png" alt=""></p>
@@ -406,8 +401,7 @@ public class ClassB {
 <p>改成 Setter 方法之后就可以注入成功了，原因就是构造函数注入和 Setter 方法注入的时机不同，构造函数需要在生成对象的时候就注入，这是 ClassA 和 ClassB 就产生了鸡生蛋还是蛋生鸡的问题。而 Setter 方法注入这是在生成对象之后，那就可以成功注入了。</p>
 <p>Spring 容器的内容很多，上面仅仅介绍了 Spring 最核心的部分，这是 Spring 容器构建的基础，下一篇会详细介绍 Spring 的另一大特性 AOP。关于容器的一些语法细节可以去查询官方文档。</p>
 
-</article>
-
+</div>
 
                     </div>
                 </div>
@@ -425,16 +419,20 @@ public class ClassB {
     </div>
     <div class="bottom-outer">
         <div class="bottom-inner">
-            <span>© 2022 Rayjun</span>
+            <span>©2024 Rayjun</span>
             <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
         </div>
     </div>
-    
+
+    <!--
         
         
 <script src="/js/lemon.js"></script>
 
         
-    
+		 -->
+	
+<script src="/js/lemon.js"></script>
+
 </body>
 </html>

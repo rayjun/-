@@ -2,8 +2,9 @@
 <html lang="zh-Hans">
 <head>
     <title>Rayjun</title>
-    <meta name="description" content="发现自己 - https://rayjun.wtf">
-    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链">
+    <meta name="description" content="https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链,web3">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     
         
@@ -15,12 +16,6 @@
     
 <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    <!--
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css">
-
-	
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
--->
     
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 
@@ -33,7 +28,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-E9HMN12DB9');
-    hljs.highlightAll();
+      hljs.highlightAll();
      </script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 <body>
@@ -60,7 +55,7 @@
                 <div class="content-inner">
                     <div id="local-search-result"></div>
                     <div id="div-body">
-                    <article class="post">
+                    <div class="post">
     <h1>一文入门 Go 的性能分析</h1>
     <p>Go 为了实现更高的并发，自己实现了用户态的调度器，称之为 GMP 模型，在上一篇文章中，我们已经简单分析了它的实现。由于自己实现了 goroutine 的调度器，这也会让代码的执行过程更加复杂。而代码在执行的过程中，有可能会出现性能问题，单纯的通过日志很难排查，这就需要其他的方式来辅助。</p>
 <p>Go 提供了一些工具，可以在代码运行的过程中采集一些信息，并且可以根据这些信息去生成可视化的图表，然后更方便排查问题。这些工具 Go 原生就提供了，不需要再引入其他的库。</p>
@@ -222,8 +217,7 @@ if *memprofile != &quot;&quot; {
 <p>这篇文章中，我们介绍了 Go 语言常用的性能分析工具，特别是在分析线上数据的时候，需要先采集数据，采集到数据之后，再对数据进行分析。而 Go 刚好都提供了相应的工具，pprof 和 go tool trace，大大简化了 Go 程序分析的难度。</p>
 <p>文 / Rayjun</p>
 
-</article>
-
+</div>
 
                     </div>
                 </div>
@@ -241,16 +235,20 @@ if *memprofile != &quot;&quot; {
     </div>
     <div class="bottom-outer">
         <div class="bottom-inner">
-            <span>© 2022 Rayjun</span>
+            <span>©2024 Rayjun</span>
             <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></span>
         </div>
     </div>
-    
+
+    <!--
         
         
 <script src="/js/lemon.js"></script>
 
         
-    
+		 -->
+	
+<script src="/js/lemon.js"></script>
+
 </body>
 </html>
