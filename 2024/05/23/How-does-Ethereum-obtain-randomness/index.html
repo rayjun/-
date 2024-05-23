@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <title>Rayjun</title>
+    <meta name="description" content="https://rayjun.wtf">
+    <meta name="keywords" content="程序员,算法,Go,Java,Rayjun,区块链,web3">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    
+        
+            
+<link rel="stylesheet" href="/css/lemon.css">
+
+        
+    
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9HMN12DB9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9HMN12DB9');
+      hljs.highlightAll();
+     </script>
+<meta name="generator" content="Hexo 7.1.1"></head>
+<body>
+    <div class="menu-outer">
+        <div class="container">
+			<a class="blog-name" href="/">Rayjun</a>
+            <nav class="menu-inner">
+                
+                    <a class="menu" href="/">首页</a>
+                
+            <div class="menu nav-search">
+                <span>
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" autocomplete="off" name="search" placeholder="搜索" id="local-search-input">
+            </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content-left">
+                <div class="content-inner">
+                    <div id="local-search-result"></div>
+                    <div id="div-body">
+                    <div class="post">
+    <h1>How does Ethereum obtain randomness</h1>
+    <p>Obtaining true randomness on the blockchain is very challenging. For Ethereum, true randomness is required; otherwise, the distribution of validators on the chain could be predictable and susceptible to malicious attacks. The key to generating randomness is to ensure the unpredictability of the random source. However, on-chain data such as txId, blockHash, and nonce are all predictable and cannot be used as sources of randomness.</p>
+<p>Ethereum addresses this issue using randao. The origin of the randao concept is no longer traceable, but it references this project: <a href="https://github.com/randao/randao">https://github.com/randao/randao</a>.</p>
+<p>The specific approach of randao is as follows: A DAO (Decentralized Autonomous Organization) allows anyone to participate, and these participants collaborate to generate random numbers. A RANDAO smart contract must be created on the blockchain, defining the rules for generating random numbers in three steps:</p>
+<ol>
+<li><strong>First Step: Collecting valid sha3(s)</strong> - Participants in the random number generation must first send m ETH as collateral to the smart contract C within a specified time interval (for example, a range of 6 blocks, approximately 72 seconds) and simultaneously send a sha3(s) value to smart contract C, where s is a number known only to the participant.</li>
+<li><strong>Second Step: Collecting valid s</strong> - After the first step, those who submitted sha3(s) must send s to smart contract C within a specified time interval. Smart contract C checks whether sha3(s) matches the previously submitted value. Identical s values are saved in a seed set for generating random numbers.</li>
+<li><strong>Third Step: Calculating the random number</strong> - After all the secret numbers s have been successfully collected, smart contract C uses a function f(s1,s2,…,sn) to calculate the random number. The result of the random number is written into the storage of the smart contract and is sent to all other smart contracts that previously requested the random number. Smart contract C returns the collateral to the participants, and then the reward is divided equally among all participants, with the reward coming from other smart contracts requesting the random value.</li>
+</ol>
+<p>Of course, the randao algorithm in Ethereum does not follow this approach exactly; instead, it cleverly utilizes BLS aggregate signatures to achieve this. BLS aggregate signatures require all validators to generate them together, which is equivalent to all validators participating in the generation of randomness.</p>
+<p>In the randao algorithm, randomness is not regenerated from scratch each time but is accumulated. We can think of randao as a deck of cards; as each participant takes turns shuffling, randomness accumulates over time.</p>
+<p>In the consensus layer, there are two key fields for generating randomness:</p>
+<ul>
+<li><strong>RandaoMixes</strong>: Represents the current randomness, which evolves with the creation of each new block. Over time, RandaoMixes accumulates the randomness generated by all blocks.</li>
+<li><strong>RandaoReveal</strong>: Stores the BLS aggregate signature from all Validators.</li>
+</ul>
+<p>In each block, a BLS signature is aggregated, resulting in a new RandaoReveal value. This newly generated RandaoReveal mixes with the RandaoMixes value to produce a new RandaoMixes value, which becomes the new source of randomness.</p>
+<p>Even if the randomness of each block is weak, the accumulated randomness is high. The randomness generated in the Nth epoch is used to calculate the distribution of validators in the N+2nd epoch.</p>
+<p>The calculation of randao is completed in the consensus layer. In the BeaconState, there is a variable maintained called randaoMixes, which will be different in each slot:</p>
+<pre><code class="language-go">type BeaconState struct &#123;
+  //...
+	slot                                primitives.Slot
+	// ...
+	randaoMixes                         customtypes.RandaoMixes
+	// ...
+&#125;
+</code></pre>
+<p>Every time a new block is produced, the randaoReveal variable within the block is used to update the value of randaoMixes：</p>
+<pre><code class="language-go">func ProcessRandao(
+	ctx context.Context,
+	beaconState state.BeaconState,
+	b interfaces.ReadOnlySignedBeaconBlock,
+) (state.BeaconState, error) &#123;
+	// ...
+	// get RandaoReveal value
+	randaoReveal := body.RandaoReveal()
+	if err := verifySignature(buf, proposerPub, randaoReveal[:], domain); err != nil &#123;
+		return nil, errors.Wrap(err, &quot;could not verify block randao&quot;)
+	&#125;
+  // update randaoMixes
+	beaconState, err = ProcessRandaoNoVerify(beaconState, randaoReveal[:])
+	if err != nil &#123;
+		return nil, errors.Wrap(err, &quot;could not process randao&quot;)
+	&#125;
+	return beaconState, nil
+&#125;
+
+func ProcessRandaoNoVerify(
+	beaconState state.BeaconState,
+	randaoReveal []byte,
+) (state.BeaconState, error) &#123;
+	// ...
+	// update randaoMixes
+	if err := beaconState.UpdateRandaoMixesAtIndex(uint64(currentEpoch%latestMixesLength), [32]byte(latestMixSlice)); err != nil &#123;
+		return nil, err
+	&#125;
+	return beaconState, nil
+&#125;
+</code></pre>
+<p>When validators need to be redistributed, a new random number seed is generated using the randaoMixes：</p>
+<pre><code class="language-go">func Seed(state state.ReadOnlyBeaconState, epoch primitives.Epoch, domain [bls.DomainByteLength]byte) ([32]byte, error) &#123;
+	lookAheadEpoch := epoch + params.BeaconConfig().EpochsPerHistoricalVector -
+		params.BeaconConfig().MinSeedLookahead - 1
+
+  // read randaoMix
+	randaoMix, err := RandaoMix(state, lookAheadEpoch)
+	if err != nil &#123;
+		return [32]byte&#123;&#125;, err
+	&#125;
+	seed := append(domain[:], bytesutil.Bytes8(uint64(epoch))...)
+	seed = append(seed, randaoMix...)
+
+	seed32 := hash.Hash(seed)
+
+	return seed32, nil
+&#125;
+
+// read RandaoMix
+func RandaoMix(state state.ReadOnlyBeaconState, epoch primitives.Epoch) ([]byte, error) &#123;
+	return state.RandaoMixAtIndex(uint64(epoch % params.BeaconConfig().EpochsPerHistoricalVector))
+&#125;
+</code></pre>
+<p>This implementation is so elegant, <strong>using BLS signatures to solve both the problem of signature aggregation and the issue of the randomness source</strong>.</p>
+<p>Additionally, after the completion of the Merge upgrade, the block.difficulty in the execution layer no longer serves any other purpose and is instead used to return the latest randao value. In Solidity versions after 0.8.18, a new field block.prevrandao was added to represent the latest randao value. Both variables return the same value, and you can choose which one to use depending on the version of Solidity.</p>
+
+</div>
+
+                    </div>
+                </div>
+            </div>
+            <!--<div class="content-right">
+                <div class="context-box">
+                    <div class="wechat">
+    <div class="header">
+        <img src="/images/wechat.jpeg">
+    </div>
+</div>
+                </div>
+			</div> -->
+        </div>
+    </div>
+    <div class="bottom-outer">
+        <div class="bottom-inner">
+            <span>©2024 Rayjun</span>
+            <span>&nbsp;&nbsp; PowerBy <a href="https://hexo.io/">Hexo</a></span>
+        </div>
+    </div>
+
+    
+        
+        
+<script src="/js/lemon.js"></script>
+
+        
+	
+</body>
+</html>
